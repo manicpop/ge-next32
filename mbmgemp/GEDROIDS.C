@@ -63,9 +63,8 @@
 
 /* LOCAL GLOBAL DEFS ****************************************************/
 
-char        droidname[UIDSIZ];
-
-
+char	droidname[UIDSIZ];
+double	dr_topspeed;
 
 /**************************************************************************
 ** Droid Init Function                                                   **
@@ -77,6 +76,11 @@ int   usrn;
 int   class;
 
 {
+
+WARSHP *wptr;
+
+int zothusn;
+double ddist;
 
 if (usrn < 0 || usrn >= nships)
 	{
@@ -102,53 +106,104 @@ logthis(spr("GE:INF:Adding %s ship - %d",ptr->userid,class));
 initshp(droidname,class);
 
 memcpy(ptr,&tmpshp,sizeof(WARSHP));  /* make is the current ship */
-sprintf(ptr->shipname,"%s%u\0",shipclass[class].shipname,usrn*usrn+gernd()%100);
+sprintf(ptr->shipname,"%s%u\0",shipclass[class].shipname,usrn*usrn+gernd()%(2*usrn+1));
 
-if (univmax < 20)
-	{
-	ptr->coord.xcoord    = rndm((double)univmax*2.0)-(double)univmax;
-	ptr->coord.ycoord    = rndm((double)univmax*2.0)-(double)univmax;
-	}
-else
-	{
-	ptr->coord.xcoord    = rndm(39.9)-19.8;
-	ptr->coord.ycoord    = rndm(39.9)-19.8;
-	}
+ptr->coord.xcoord    = rndm((double)univmax*2.0)-(double)univmax;
+ptr->coord.ycoord    = rndm((double)univmax*2.0)-(double)univmax;
 
-ptr->phasrtype = shipclass[class].max_phasr;
-ptr->shieldtype = shipclass[class].max_shlds;
-
-/* if murdonian transport - put tons on */
-if(sameas(shipclass[ptr->shpclass].typename,"Murdonian Transport"))
+if(shipclass[ptr->shpclass].loadout == 2)  /* Murdonian Transport */
 	{
-	ptr->items[I_FLUXPOD] = gernd()%50;
-	ptr->items[I_DECOYS] = gernd()%250;
-	ptr->items[I_TORPEDO] = gernd()%250;
-	ptr->items[I_MINE] = gernd()%100;
-	ptr->items[I_JAMMERS] = gernd()%100;
-	ptr->items[I_MISSILE] = gernd()%100;
+	ptr->items[I_MISSILE] = gernd()%10;
+	ptr->items[I_TORPEDO] = gernd()%10;
 	ptr->items[I_IONCANNON] = gernd()%25;
-	ptr->items[I_GOLD] = gernd()%250;
+	ptr->items[I_FLUXPOD] = gernd()%40;
+	ptr->items[I_DECOYS] = gernd()%100;
+	ptr->items[I_JAMMERS] = gernd()%100;
+	ptr->items[I_MINE] = gernd()%100;
+	ptr->items[I_GOLD] = gernd()%500;
+	}
+else
+if(shipclass[ptr->shpclass].loadout == 4)  /* Sarten Civil Transport */
+	{
+	ptr->items[I_FLUXPOD] = gernd()%40;
+	if (shipclass[ptr->shpclass].has_decoy)
+		ptr->items[I_DECOYS] = gernd()%100;
+	if (shipclass[ptr->shpclass].has_jam)
+		ptr->items[I_JAMMERS] = gernd()%100;
+	ptr->items[I_GOLD] = gernd()%100;
+	}
+else
+if(shipclass[ptr->shpclass].loadout == 5)  /* Sarten Attack Drone */
+	{
+	if (shipclass[ptr->shpclass].has_decoy)
+		ptr->items[I_TORPEDO] = gernd()%50;
+	ptr->items[I_FLUXPOD] = gernd()%40;
+	if (shipclass[ptr->shpclass].has_decoy)
+		ptr->items[I_DECOYS] = gernd()%50;
+	if (shipclass[ptr->shpclass].has_jam)
+		ptr->items[I_JAMMERS] = gernd()%50;
+	}
+else
+if(shipclass[ptr->shpclass].loadout == 6)  /* Galactic Command Freighter */
+	{
+	ptr->items[I_MISSILE] = gernd()%50;
+	ptr->items[I_TORPEDO] = gernd()%50;
+	ptr->items[I_IONCANNON] = gernd()%50;
+	ptr->items[I_FIGHTER] = gernd()%200;
+	ptr->items[I_FLUXPOD] = gernd()%100;
+	ptr->items[I_DECOYS] = gernd()%100;
+	ptr->items[I_JAMMERS] = gernd()%100;
+	ptr->items[I_ZIPPERS] = gernd()%100;
+	ptr->items[I_MINE] = gernd()%100;
+	ptr->items[I_GOLD] = gernd()%(cyb_gold+1000);
 	}
 else
 	{
-	ptr->items[I_FLUXPOD] = gernd()%50;
-	ptr->items[I_DECOYS] = gernd()%25;
-	ptr->items[I_MINE] = gernd()%10;
-	ptr->items[I_JAMMERS] = gernd()%10;
+	ptr->items[I_FLUXPOD] = gernd()%20;
+	if (shipclass[ptr->shpclass].has_decoy)
+		ptr->items[I_DECOYS] = gernd()%20;
+	if (shipclass[ptr->shpclass].has_jam)
+		ptr->items[I_JAMMERS] = gernd()%20;
 	}
 
 
-ptr->speed2b = rndm((double)(ptr->topspeed * 1000.0));
+cyb_cruise(ptr);
 ptr->holdcourse = 0;
-
 ptr->status = GESTAT_AUTO;
 ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
 
-/*gepdb(GEUPDATE,ptr->userid,ptr->shipno,ptr); DONT NEED TO MAKE PERM*/
-setsect(ptr);
-prfmsg(DROIDNEW,xsect,ysect);
-outwar(FILTER,usrn,0);
+if (shipclass[class].max_phasr > 1)
+	ptr->phasrtype = (gernd()%shipclass[class].max_phasr)+1;
+else
+	ptr->phasrtype = shipclass[class].max_phasr;
+if (shipclass[class].max_shlds > 1)
+	ptr->shieldtype = (gernd()%shipclass[class].max_shlds)+1;
+else
+	ptr->shieldtype = shipclass[class].max_shlds;
+
+ptr->cybmine = (byte)255;
+
+for (zothusn=0; zothusn<nterms; zothusn++)
+	{
+	wptr=warshpoff(zothusn);
+	if (ingegame(zothusn) && wptr->jammer == 0)
+		{
+		ddist = cdistance(&ptr->coord,&wptr->coord);
+		ddist *= 10000;
+		if (ddist > shipclass[wptr->shpclass].scanrange)
+			{
+			bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading)+.5);
+			prfmsg(DROIDNEW,bearing);
+			outprfge(FILTER,zothusn);
+			}
+		else
+			{
+			setsect(ptr);
+			prfmsg(DROIDNW2,xsect,ysect);
+			outprfge(FILTER,zothusn);
+			}
+		}
+	}
 }
 
 /**************************************************************************
@@ -175,31 +230,44 @@ logthis(spr("GE:%s Lives",droidname)); */
 /* reset the ticker to 255 to cause it to recalc */
 ptr->tick = 255;
 
-if(sameas(shipclass[ptr->shpclass].typename,"Lydorian Garbage Scow"))
-	droid_act_class_10(ptr,usrn);    /* Lydorian Garbage Scow */
+/* save off the topspeed in 1000's */
+/* if no warp, top speed is impulse 99 */
+if (ptr->topspeed == 0 && shipclass[ptr->shpclass].max_accel > 0)
+        dr_topspeed = 990;
 else
-if(sameas(shipclass[ptr->shpclass].typename,"Murdonian Transport"))
-	droid_act_class_11(ptr,usrn);    /* Murdonian Transport */
+        dr_topspeed = (double)ptr->topspeed*1000.0;
+
+if(shipclass[ptr->shpclass].loadout == 1)
+	droid_act_1(ptr,usrn);    /* Lydorian Garbage Scow */
 else
-if(sameas(shipclass[ptr->shpclass].typename,"Vakory Survey Drone"))
-	droid_act_class_12(ptr,usrn);    /* Vakory Survey Droid */
-
-
+if(shipclass[ptr->shpclass].loadout == 2)
+	droid_act_2(ptr,usrn);    /* Murdonian Transport */
+else
+if(shipclass[ptr->shpclass].loadout == 3)
+	droid_act_3(ptr,usrn);    /* Vakory Survey Drone */
+else
+if(shipclass[ptr->shpclass].loadout == 4)
+	droid_act_4(ptr,usrn);    /* Sarten Civil Transport */
+else
+if(shipclass[ptr->shpclass].loadout == 5)
+	droid_act_5(ptr,usrn);    /* Sarten Attack Drone */
+else
+if(shipclass[ptr->shpclass].loadout == 6)
+	droid_act_6(ptr,usrn);    /* Galactic Command Freighter */
 
 ptr->energy = 50000L;
 
+
 if (ptr->tick == 255)
-	{
-	/* if just cruising around don't get back to me for some time */
-	if (ptr->cantexit==0)
-		{
-		ptr->tick = (CYBTICKTIME + gernd()%CYBTICKTIME)*3;
-		}
-	else
-		{
-		ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
-		}
-	}
+        {
+        if (ptr->cybmine == 255)        /* if just cruising around don't get back to me for some time */
+                ptr->tick = (CYBTICKTIME + gernd()%CYBTICKTIME)*5;
+        else
+        if (ptr->cybmine >= nterms)     /* if going after a fellow NPC, medium speed */
+                ptr->tick = (CYBTICKTIME + gernd()%CYBTICKTIME)*3 - shipclass[ptr->shpclass].tough_factor;
+        else
+                ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME - shipclass[ptr->shpclass].tough_factor;
+        }
 }
 
 
@@ -212,79 +280,107 @@ int      first;
 int      last;
 {
 
+int base;
+int sel;
+
 if ((gernd()%rnd) == 1)
 	{
-	prfmsg(first+gernd()%(last-first+1),ptr->shipname);
-	outprfge(FILTER,usrn);
+	base = DRBASEM;
+	base += (ptr->shpclass - dr_class)*16;
+
+	first = first+base;
+	last = last+base;
+	sel = first+gernd()%(last-first+1);
+
+	if (sel < DRLASTM)
+		{
+		prfmsg(sel,ptr->shipname);
+		outprfge(FILTER,usrn);
+		}
+        sprintf(gechrbuf,"dr_ann shnm=<%s> usrn=%d base=%d frst=%d lst=%d sel=%d",ptr->shipname,usrn, base, first, last, sel);
+        logthis(gechrbuf);
 	}
 }
 
 
 /**************************************************************************
-** Class 10 Action                                                       **
-** Lydorian Garbage Scow						 **										 **
+** Lydorian Garbage Scow                                                 **
 **************************************************************************/
 
-void  FUNC droid_act_class_10(ptr,usrn)
+void  FUNC droid_act_1(ptr,usrn)
 
-WARSHP *ptr;
-int           usrn;
+WARSHP	*ptr;
+int	usrn;
 {
 
-WARSHP   *wptr;
-int      zothusn;
+WARSHP	*wptr;
+int	zothusn;
 
-double   ddist;
+double	ddist;
 
 /* am I being jammed ? */
 if (ptr->jammer == 0)
 	{
-	/* look at all the other ships */
-	for (zothusn=0 ; zothusn < nterms ; zothusn++)
+	if (ptr->cybmine == 255)
 		{
-		wptr=warshpoff(zothusn);
-		/* if not me, and playing, and not cyborg, go getem */
-		if (ingegame(zothusn) && wptr->status == GESTAT_USER)
+		/* look at user ships only */
+		for (zothusn=0 ; zothusn < nterms ; zothusn++)
 			{
-			ddist = cdistance(&ptr->coord,&wptr->coord);
-			ddist *= 10000;
-			if (ddist < (double)shipclass[ptr->shpclass].scanrange)
+			wptr=warshpoff(zothusn);
+			/* hail users in area */
+			if (ingegame(zothusn) && wptr->status == GESTAT_USER)
 				{
-				ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
-				droid_annoy(ptr,zothusn,4,DRDMSG6,DRDMSG6);
+				ddist = cdistance(&ptr->coord,&wptr->coord);
+				ddist *= 10000;
+				if (ddist < (double)shipclass[ptr->shpclass].scanrange)
+					{
+					ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
+					droid_annoy(ptr,zothusn,5,1,4);
+					}
 				}
 			}
 		}
+	if (ptr->cybmine < nships)
+		{
+		zothusn = ptr->cybmine;
+		wptr = warshpoff(zothusn);
+		ddist = cdistance(&ptr->coord,&wptr->coord);
+		ddist *= 10000;
+		if (ddist < (double)shipclass[ptr->shpclass].scanrange)
+			{
+			/* if still in range, flee */
+			ptr->speed2b = dr_topspeed;
+			ptr->head2b=(double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0) % 360);
+			droid_annoy(ptr,zothusn,20,9,12);
+			}
+		else
+			{
+			/* phew we're safe */
+			ptr->cybmine = 255;
+			cyb_cruise(ptr);
+			}
+		}
+	else
+		ptr->cybmine = 255;
 	}
-else
-	{
-	ptr->speed2b = 999.9; /* has no warp capability */
-	ptr->holdcourse = gernd()%50 + 10;
-	}
-/* Runs with shields up all the time */
-if (ptr->speed < 1000.0)
-	shieldup(ptr,usrn);
-else
-	shielddn(ptr,usrn);
+droid_check_state(ptr,usrn);
 }
 
-
 /**************************************************************************
-** Class 11 Action                                                       **
 ** Murdonian Transport                                                   **
 **************************************************************************/
 
-void  FUNC droid_act_class_11(ptr,usrn)
+void  FUNC droid_act_2(ptr,usrn)
 
-WARSHP *ptr;
-int           usrn;
+WARSHP	*ptr;
+int	usrn;
 {
 
-WARSHP   *wptr;
-int      zothusn;
+WARSHP	*wptr;
+int	zothusn;
 
 
-double   ddist;
+double	ddist;
 ddist = 999999.9;
 /* am I being jammed ? */
 if (ptr->jammer == 0)
@@ -308,7 +404,7 @@ if (ptr->jammer == 0)
 					shielddn(ptr,usrn);
 
 				ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
-				droid_annoy(ptr,zothusn,4,DRDMSG11,DRDMSG15);
+				droid_annoy(ptr,zothusn,10,1,4);
 				}
 			}
 		}
@@ -318,7 +414,7 @@ if (ptr->jammer == 0)
 		wptr = warshpoff(ptr->lastfired);
 		zothusn = ptr->lastfired;
 
-		droid_annoy(ptr,zothusn,4,DRDHLP11,DRDHLP15);
+		droid_annoy(ptr,zothusn,4,1,4);
 
 		/* fire phasers at the fool */
 		if (ptr->where == 1 && wptr->where == 1 )
@@ -373,16 +469,14 @@ else
 	ptr->speed2b = (double)(ptr->topspeed * 1000);
 	ptr->holdcourse = gernd()%50 + 10;
 	}
+droid_check_state(ptr,usrn);
 }
 
-
-
 /**************************************************************************
-** Class 12 Action                                                       **
-** Vakory Survey Droid                                                   **
+** Vakory Survey Drone                                                   **
 **************************************************************************/
 
-void  FUNC droid_act_class_12(ptr,usrn)
+void  FUNC droid_act_3(ptr,usrn)
 
 WARSHP *ptr;
 int           usrn;
@@ -413,7 +507,7 @@ if (ptr->jammer == 0)
 				else
 					shielddn(ptr,usrn);
 
-				droid_annoy(ptr,zothusn,4,DRDMSG1,DRDMSG5);
+				droid_annoy(ptr,zothusn,4,1,4);
 				ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
 
 				}
@@ -425,7 +519,7 @@ if (ptr->jammer == 0)
 		wptr = warshpoff(ptr->lastfired);
 		zothusn = ptr->lastfired;
 
-		droid_annoy(ptr,zothusn,4,DRDHLP1,DRDHLP5);
+		droid_annoy(ptr,zothusn,4,1,4);
 
 		/* fire phasers at the fool */
 		if (ptr->where == 1 && wptr->where == 1 )
@@ -501,16 +595,145 @@ else
 	ptr->speed2b = (double)(ptr->topspeed * 1000);
 	ptr->holdcourse = gernd()%50 + 10;
 	}
-
+droid_check_state(ptr,usrn);
 }
 
+/**************************************************************************
+** Sarten Civil Transport                                                **
+**************************************************************************/
+
+void  FUNC droid_act_4(ptr,usrn)
+
+WARSHP *ptr;
+int           usrn;
+{
+
+WARSHP   *wptr;
+int      zothusn;
+
+double   ddist;
+
+/* am I being jammed ? */
+if (ptr->jammer == 0)
+	{
+	/* look at all the other ships */
+	for (zothusn=0 ; zothusn < nterms ; zothusn++)
+		{
+		wptr=warshpoff(zothusn);
+		/* if not me, and playing, and not cyborg, go getem */
+		if (ingegame(zothusn) && wptr->status == GESTAT_USER)
+			{
+			ddist = cdistance(&ptr->coord,&wptr->coord);
+			ddist *= 10000;
+			if (ddist < (double)shipclass[ptr->shpclass].scanrange)
+				{
+				ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
+				droid_annoy(ptr,zothusn,4,1,4);
+				}
+			}
+		}
+	}
+else
+	{
+	ptr->speed2b = 999.9; /* has no warp capability */
+	ptr->holdcourse = gernd()%50 + 10;
+	}
+droid_check_state(ptr,usrn);
+}
+
+/**************************************************************************
+** Sarten Attack Drone                                                   **
+**************************************************************************/
+
+void  FUNC droid_act_5(ptr,usrn)
+
+WARSHP *ptr;
+int           usrn;
+{
+
+WARSHP   *wptr;
+int      zothusn;
+
+double   ddist;
+
+/* am I being jammed ? */
+if (ptr->jammer == 0)
+	{
+	/* look at all the other ships */
+	for (zothusn=0 ; zothusn < nterms ; zothusn++)
+		{
+		wptr=warshpoff(zothusn);
+		/* if not me, and playing, and not cyborg, go getem */
+		if (ingegame(zothusn) && wptr->status == GESTAT_USER)
+			{
+			ddist = cdistance(&ptr->coord,&wptr->coord);
+			ddist *= 10000;
+			if (ddist < (double)shipclass[ptr->shpclass].scanrange)
+				{
+				ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
+				droid_annoy(ptr,zothusn,4,1,4);
+				}
+			}
+		}
+	}
+else
+	{
+	ptr->speed2b = 999.9; /* has no warp capability */
+	ptr->holdcourse = gernd()%50 + 10;
+	}
+droid_check_state(ptr,usrn);
+}
+
+/**************************************************************************
+** Galactic Command Freighter                                            **
+**************************************************************************/
+
+void  FUNC droid_act_6(ptr,usrn)
+
+WARSHP *ptr;
+int           usrn;
+{
+
+WARSHP   *wptr;
+int      zothusn;
+
+double   ddist;
+
+/* am I being jammed ? */
+if (ptr->jammer == 0)
+	{
+	/* look at all the other ships */
+	for (zothusn=0 ; zothusn < nterms ; zothusn++)
+		{
+		wptr=warshpoff(zothusn);
+		/* if not me, and playing, and not cyborg, go getem */
+		if (ingegame(zothusn) && wptr->status == GESTAT_USER)
+			{
+			ddist = cdistance(&ptr->coord,&wptr->coord);
+			ddist *= 10000;
+			if (ddist < (double)shipclass[ptr->shpclass].scanrange)
+				{
+				ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
+				droid_annoy(ptr,zothusn,4,1,4);
+				}
+			}
+		}
+	}
+else
+	{
+	ptr->speed2b = 999.9; /* has no warp capability */
+	ptr->holdcourse = gernd()%50 + 10;
+	}
+droid_check_state(ptr,usrn);
+}
 
 
 void   FUNC droid_won(ptr)
 WARSHP   *ptr;
 
 {
-ptr->speed2b = rndm(5000.0);
+ptr->cybmine = 255;
+cyb_cruise(ptr);
 }
 
 
@@ -542,3 +765,21 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 return(FALSE);
 }
 
+void FUNC droid_check_state(ptr,usrn)
+WARSHP *ptr;
+int usrn;
+
+{
+if (ptr->speed < 1000.0)
+	{
+	ptr->where = 0;
+	if (ptr->shieldstat != SHIELDDM)
+		shieldup(ptr,usrn);
+	}
+else
+	{
+	ptr->where = 1;
+	if (ptr->shieldstat == SHIELDUP)
+		shielddn(ptr,usrn);
+	}
+}

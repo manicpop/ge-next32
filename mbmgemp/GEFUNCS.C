@@ -93,7 +93,7 @@ noships = findships();
 
 if (noships == 0)
 	{
-	initshp(usaptr->userid,0); /* give the dude a light freighter */
+	initshp(usaptr->userid,0); /* give the dude a class 1 ship */
 	gepdb(GEADD,tmpshp.userid,tmpshp.shipno,&tmpshp);
 	memcpy(warsptr,&tmpshp,sizeof(WARSHP));  /* make is the current ship */
 	prfmsg(FIRSTIME);
@@ -123,7 +123,7 @@ if (noships == 1)
 		{
 		/* somehow lost the ship... make one anyway */
 		geshocst(0,spr("GE:DBG:Ship Load Err %s",usaptr->userid));
-		initshp(usaptr->userid,0); /* give the dude a light freighter */
+		initshp(usaptr->userid,0); /* give the dude a class 1 ship */
 		gepdb(GEADD,tmpshp.userid,tmpshp.shipno,&tmpshp);
 		memcpy(warsptr,&tmpshp,sizeof(WARSHP));  /* make is the current ship */
 		prfmsg(FIRSTIME);
@@ -161,6 +161,7 @@ prfmsg(WELCOM,waruptr->userid);
 outprfge(ALWAYS,usrnum);
 usrptr->substt = FIGHTSUB;
 warsptr->status = GESTAT_USER;
+assign_cybs(usrnum);
 }
 
 /**************************************************************************
@@ -244,7 +245,7 @@ tmpshp.items[I_GOLD]	= 0;
 tmpshp.destruct		= 0;
 tmpshp.status		= 0;
 tmpshp.cybmine		= 0;
-tmpshp.cybskill		= 0;
+tmpshp.upgrade		= 0;  /*UNUSED ATM*/
 tmpshp.cybupdate	= 0;
 tmpshp.emulate		= 0;
 
@@ -473,6 +474,18 @@ int           usrn;
 int i,flag,usage;
 double absol();
 double  accelrate,decelrate;
+
+/*DEBUG*/
+if (ptr->speed >= 1000 && (ptr->where == 0 || ptr->shieldstat == SHIELDUP))
+	{
+	prf("hyperspace bug with usrn %d\r",usrn);
+	outprfge(ALWAYS,0);
+	}
+if (ptr->speed < 1000 && (ptr->where == 1))
+	{
+	prf("impulse bug with usrn %d\r",usrn);
+	outprfge(ALWAYS,0);
+	}
 
 if (ptr->speed < ptr->speed2b)
 	{
@@ -898,6 +911,7 @@ for (i=0; i<MAXPLANETS;++i)
 					ptr->damage+= 5.5;
 					outprfge(ALWAYS,usrn);
 					cleartm(usrn);	/* clear the tors and missiles */
+					assign_cybs(usrn); /* clear current cyb pursuits and pick closest new ones */
 					}
 				}
 			}
@@ -2073,6 +2087,10 @@ int    foc;
 {
 double dd,fd,dp,factor,disfact;
 unsigned dam;
+#ifdef MBBSEMU
+int i;
+double fractional;
+#endif
 
 if (wptr->where == 1)
 	{
@@ -2080,7 +2098,22 @@ if (wptr->where == 1)
 	dd = 1-(dist/40000.0);
 	if (dd<0)
 		dd = 0;
+
+#ifdef MBBSEMU
+	dp = 1.0;
+	if (factor > 0)
+		{
+		for (i = 0; i < (int)factor; ++i)
+			dp *= dd;
+		fractional = factor - (int)factor;
+		if (fractional > 0 && dd > 0)
+			dp *= 1 + fractional * (dd - 1);
+		}
+	else
+		dp = 0;
+#else
 	dp = pow(dd,factor);
+#endif
 	dam = hpdammax * dp;
 	}
 else
@@ -2091,7 +2124,25 @@ else
 	if (dd<0)
 		dd=0;
 	fd = 1 - ((double)foc/11);
+
+#ifdef MBBSEMU
+	dp = 1.0;
+	if (factor > 0)
+		{
+		for (i = 0; i < (int)factor; ++i)
+		dp *= dd;
+		fractional = factor - (int)factor;
+		if (fractional > 0 && dd > 0)
+		dp *= 1 + fractional * (dd - 1);
+		}
+	else
+		{
+		dp = 0;
+		}
+	dp *= (fd * fd) * (wptr->phasr / 100);
+#else
 	dp = (pow(dd,factor)) * (fd*fd) * (wptr->phasr/100);
+#endif
 	dam = pdammax * dp;
 	}
 
@@ -2666,10 +2717,85 @@ char * FUNC showarp(double speed)
 if (speed == 0.0)
 	sprintf(warpbuf,"0.00");
 else
-if ((speed/1000.0) > 99.999)
-	sprintf(warpbuf,"Hyper");
+#ifdef MBBSEMU
+if (fabs(speed - (long)(speed / FARSPEED) * FARSPEED) < 1e-6)
+#else
+if (fmod(speed, FARSPEED) == 0.0)
+#endif
+	sprintf(warpbuf,"??.??");
 else
 	sprintf(warpbuf,"%.2f",speed/1000.0);
 return(warpbuf);
 }
 
+/* assign closest cybs to ship entering game or going through wormhole */
+
+void FUNC assign_cybs(usrnum)
+int usrnum;
+
+{
+
+WARSHP *wptr;
+
+WARSHP *ptr;
+int zothusn;
+
+double	ddist;
+
+double	low_dist = 999999999.0;
+int	low_ship;
+int	lta; /* lowest to attack */
+int	i, cybpick;
+
+/* clear all current cyb pursuits */
+for (zothusn=nterms; zothusn < nships; ++zothusn)
+	{
+	ptr = warshpoff(zothusn);
+	if (ptr->status == GESTAT_AUTO && shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG && ptr->cybmine == usrnum)
+		ptr->cybmine = 255;
+	}
+
+wptr = warshpoff(usrnum);
+cybpick = shipclass[wptr->shpclass].noclaim;
+
+for (i=0; i < cybpick; ++i)
+	{
+	low_dist = 999999999.0;
+	low_ship = -1;
+
+	for (zothusn=nterms; zothusn < nships; ++zothusn)
+		{
+		ptr=warshpoff(zothusn);
+		lta = shipclass[ptr->shpclass].lowest_to_attk-1;
+		if (ingegame(zothusn) && ptr->status == GESTAT_AUTO && shipclass[ptr->shpclass].max_accel > 0 &&
+			shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG && lta <= wptr->shpclass && ptr->cybmine == 255)
+			{
+			ddist = cdistance(&ptr->coord,&wptr->coord);
+			if (ddist < low_dist)
+				{
+				low_dist = ddist;
+				low_ship = zothusn;
+				}
+			}
+		}
+		if (low_ship == -1)
+			return;
+
+		ptr=warshpoff(low_ship);
+		ptr->cybmine = usrnum;
+	}
+}
+
+/* is cyb in fast pursuit? */
+
+int FUNC cyb_fast(ptr)
+WARSHP *ptr;
+
+{
+return (ptr->speed != 0.0) &&
+#ifdef MBBSEMU
+	(fabs(ptr->speed - (long)(ptr->speed / FARSPEED) * FARSPEED) < 1e-6);
+#else
+	(fmod(ptr->speed, FARSPEED) == 0.0);
+#endif
+}

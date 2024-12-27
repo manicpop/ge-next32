@@ -172,6 +172,9 @@
 /*    2620 */ WARSHP *FUNC warshpoff P((int usrn ));
 /*    2632 */ double FUNC ton_fact P((WARSHP *ptr , double damfact ));
 /*    2645 */ char *FUNC showarp P((double speed ));
+/*         */ void FUNC assign_cybs P((int usrnum ));
+/*         */ int FUNC cyb_fast P((WARSHP *ptr ));
+
 
 /* gecmds.c */
 /*     217 */ struct cmd *FUNC gesearch P((char *ptr , struct cmd tab [], int len ));
@@ -189,6 +192,7 @@
 /*    1069 */ void FUNC cmd_torp P((void ));
 /*    1146 */ void FUNC torp P((WARSHP *ptr , int usrn , int shpnum ));
 /*    1183 */ void FUNC cmd_missl P((void ));
+/*         */ void FUNC misl P((WARSHP *ptr , int usrn , int shpnum , unsigned energy, unsigned eng_flu ));
 /*    1307 */ int FUNC lockon P((WARSHP *ptr , int type , int ship , int usrn ));
 /*    1400 */ int FUNC findshp P((char *ptr , int type ));
 /*    1493 */ void FUNC zaphim P((WARSHP *ptr , int usrn ));
@@ -268,27 +272,30 @@
 /*     168 */ void FUNC cyb_lives P((WARSHP *ptr , int usrn ));
 /*     327 */ int FUNC notclaimed P((WARSHP *ptr , int usrn ));
 /*     349 */ void FUNC cyb_annoy P((WARSHP *ptr , int usrn , int rnd , int first , int last ));
-/*     364 */ int FUNC cybwhoops P((WARSHP *ptr , int zothusn ));
-/*     386 */ int FUNC gebemean P((WARSHP *ptr , int usrn ));
+/*     386 */ int FUNC gebemean P((WARSHP *ptr ));
 /*     409 */ void FUNC db_update P((WARSHP *ptr , int usrn ));
 /*     453 */ void FUNC cyb_attack P((WARSHP *ptr , int usrn , WARSHP *wptr , int zothusn ));
-/*     552 */ void FUNC cyb_lay_decoys P((WARSHP *ptr , int zothusn ));
+/*     552 */ void FUNC cyb_lay_decoys P((WARSHP *ptr ));
 /*     573 */ void FUNC cyb_check_damage P((WARSHP *ptr , int usrn ));
 /*     603 */ void FUNC cyb_check_lockon P((WARSHP *ptr , int usrn ));
 /*     763 */ void FUNC cyb_won P((WARSHP *ptr , int usrn , WARSHP *wptr ));
 /*     776 */ void FUNC cyb_died P((WARSHP *ptr , int usrn , WARSHP *wptr ));
-/*     788 */ int FUNC isquad P((WARSHP *ptr ));
+/*         */ void FUNC cyb_cruise P((WARSHP *ptr ));
 
 /* gedroids.c */
 /*      68 */ void FUNC droid_init P((WARSHP *ptr , int usrn , int class ));
 /*     151 */ void FUNC droid_lives P((WARSHP *ptr , int usrn ));
 /*     202 */ void FUNC droid_annoy P((WARSHP *ptr , int usrn , int rnd , int first , int last ));
-/*     223 */ void FUNC droid_act_class_10 P((WARSHP *ptr , int usrn ));
-/*     272 */ void FUNC droid_act_class_11 P((WARSHP *ptr , int usrn ));
-/*     380 */ void FUNC droid_act_class_12 P((WARSHP *ptr , int usrn ));
+/*     223 */ void FUNC droid_act_1 P((WARSHP *ptr , int usrn ));
+/*     272 */ void FUNC droid_act_2 P((WARSHP *ptr , int usrn ));
+/*     380 */ void FUNC droid_act_3 P((WARSHP *ptr , int usrn ));
+/*     223 */ void FUNC droid_act_4 P((WARSHP *ptr , int usrn ));
+/*     272 */ void FUNC droid_act_5 P((WARSHP *ptr , int usrn ));
+/*     380 */ void FUNC droid_act_6 P((WARSHP *ptr , int usrn ));
 /*     504 */ void FUNC droid_won P((WARSHP *ptr ));
 /*     512 */ void FUNC droid_died P((WARSHP *ptr ));
 /*     520 */ int FUNC missl_attached P((WARSHP *ptr , int usrn ));
+/*         */ void FUNC droid_check_state P((WARSHP *ptr , int usrn ));
 
 /* geplanet.c */
 /*      54 */ void FUNC check_spy P((void ));

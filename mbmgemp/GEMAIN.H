@@ -51,6 +51,10 @@
 #include "mbmgeshp.h"
 #endif
 
+/* workarounds for mbbsemu math functions */
+/* hopefully not necessary much longer */
+#define MBBSEMU 1
+
 /***************************************************************************/
 /* The following defines have been carefully chosen and refined to provide */
 /* a well balanced and entertaining game play. Should they be modified,    */
@@ -96,6 +100,7 @@
 #define PI 3.1415927
 #define SLCAP 2147483647L	/* maximum value of signed long */
 #define ULCAP 4294967295UL	/* maximum value of unsigned long */
+#define FARSPEED 54321L		/* speed constant for cyb long pursuit */
 
 #define GELOOKUP 1
 #define GEADD 2
@@ -119,7 +124,7 @@
 #define DECOYTIME 15		/* times TICKTIME how long a decoy lives */
 #define TICKTIME 6		/* how often does RTKICK fire    6   */
 #define TICKTIME2 1		/* how often does RTKICK fire       */
-#define CYBTICKTIME 6		/* Cyborgs do stuff this fast       */
+#define CYBTICKTIME 5		/* Cyborgs do stuff this fast       */
 #define PLANTIME 55		/* how often do planets get updated */
 
 #define FIRETICKS 10		/* how many ticks to hold a player  */
@@ -150,10 +155,6 @@
 
 #define COUNTDOWN 20		/* self destruct countdown */
 
-#define CYBSLO 3		/* slows down the cyborgs reaction time */
-#define CYB_BE_NICE 30		/* 30 kills grace before we get tough */
-#define CYB_BE_EASY 60		/* 60 kills till we get really mean */
-#define CYB_BREAKOFF 500	/* 1 in x chance that cyb will break off attk */
 #define CYB_MINDAM 75		/* % of damage when cyb jams and mines */
 
 #define TELEDAM 17		/* amount of damage done when edge reached */
@@ -345,7 +346,7 @@ WARSHP {						/* user data blocks         */
 		byte		destruct;		/*   self destruct countdown                 */
 		byte		status;			/*   Status of this record                   */
 		byte		cybmine;		/*   I have found me a ship to seek          */
-		byte		cybskill;		/*   Cyborg skill level                      */
+		byte		upgrade;		/*   UNUSED ATM                              */
 		byte		cybupdate;		/*   update cyborg counter                   */
 		byte		tick;			/* Ship Ticker */
 		byte		emulate;		/* permits cybertron emulation */
@@ -555,8 +556,8 @@ SHIP	{
 	unsigned int	tot_to_create;
 	unsigned char	tough_factor;
 	unsigned int	damfact;
-	unsigned int	res_flag_2;
-	unsigned int	res_flag_3;
+	unsigned int	faction;
+	unsigned int	loadout;
 
 	int		hlpmsg;
 	void		(*init_func)	(WARSHP *, int, int);
@@ -565,9 +566,6 @@ SHIP	{
 	void		(*won_func)	(WARSHP *, int, WARSHP *);
 	};
 
-
-#define CYB_TOUGH_0	0
-#define CYB_TOUGH_1 	1
 
 struct cmd
 	{

@@ -683,6 +683,8 @@ else
 			}
 		prfmsg(ENGFIRE,deg);
 		outprfge(ALWAYS,usrnum);
+		if (shipclass[warsptr->shpclass].max_accel >= 1000 && warsptr->speed < 1000.0)
+			warsptr->speed = 0.0;	/* no fractional warp speeds */
 		warsptr->speed2b = 1000.0 * (float)speed;
 		if (deg != warsptr->head2b)
 			warsptr->head2b   = (double)deg;
@@ -1012,7 +1014,8 @@ if (ptr->phasr >=PMINFIRE)
 		wptr=warshpoff(othusn);
 		if (ingegame(othusn) && (wptr->where != 1 || ptr->phasrtype >= phatowrp))
 			{
-			if (othusn != usrn && !neutral(&wptr->coord))
+			if (othusn != usrn && !neutral(&wptr->coord) && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
+				|| shipclass[ptr->shpclass].faction == 0))
 				{
 				heading = (unsigned)vector(&ptr->coord,&wptr->coord);
 				if (smallest(heading,deg) < ptr->percent+PHABIAS)
@@ -1042,7 +1045,10 @@ if (ptr->phasr >=PMINFIRE)
 						wptr->cantexit = FIRETICKS;
 						ptr->cantexit = FIRETICKS;
 						if (wptr->status == GESTAT_AUTO)    /* if cyborg -sickum */
+							{
 							wptr->cybmine = usrn;
+							wptr->tick = 2;
+							}
 						if (wptr->shieldstat != SHIELDUP)
 							{
 							damstr(damage);
@@ -1110,7 +1116,8 @@ if (ptr->energy >= HPMINFIR)
 		wptr=warshpoff(othusn);
 		if (ingegame(othusn) && wptr->where == 1)
 			{
-			if (othusn != usrn && !neutral(&wptr->coord))
+			if (othusn != usrn && !neutral(&wptr->coord) && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
+                                || shipclass[ptr->shpclass].faction == 0))
 				{
 				heading = (unsigned)vector(&ptr->coord,&wptr->coord);
 				if (smallest(heading,deg) < HPBEAMW)
@@ -1135,8 +1142,10 @@ if (ptr->energy >= HPMINFIR)
 						damstr(damage);
 
 						if (wptr->status == GESTAT_AUTO)    /* if cyborg -sickum */
+							{
 							wptr->cybmine = usrn;
-
+							wptr->tick = 2;
+							}
 						prfmsg(HPHITM,gechrbuf,username(wptr));
 						outprfge(ALWAYS,usrn);
 						prfmsg(HPHITU,username(ptr),gechrbuf);
@@ -1291,11 +1300,10 @@ void  FUNC cmd_missl()
 
 {
 
-int     shpnum,i;
-WARSHP  *wptr;
+int shpnum;
 
 unsigned energy,eng_flu;
-long		eng_long;
+long eng_long;
 
 lockwarn = TRUE;
 
@@ -1376,29 +1384,7 @@ if ( shpnum >= 0)
 		outprfge(ALWAYS,usrnum);
 		return;
 		}
-	if (lockon(warsptr,1,shpnum,usrnum) == 1)
-		{
-		for (i=0; i<MAXMISSL;++i)
-			{
-			wptr=warshpoff(shpnum);
-			if (wptr->lmissl[i].distance == 0)
-				{
-				prfmsg(MFIRE1);
-				outprfge(FILTER,usrnum);
-				--(warsptr->items[I_MISSILE]);
-				warsptr->energy -= eng_flu;
-				prfmsg(MFIRE2,shpltr(shpnum,usrnum));
-				outprfge(FILTER,shpnum);
-				wptr->lmissl[i].distance = (unsigned)(cdistance(&warsptr->coord,&(wptr->coord))*10000);
-				wptr->lmissl[i].distance += 20;
-				wptr->lmissl[i].channel  = (unsigned char)usrnum;
-				wptr->lmissl[i].energy   = energy;
-				return;
-				}
-			}
-		prfmsg(MISMANY,MAXMISSL);
-		outprfge(FILTER,usrnum);
-		}
+	misl(warsptr,usrnum,shpnum,energy);
 	}
 else
 	{
@@ -1412,6 +1398,39 @@ if (warsptr->shieldstat == SHIELDUP)
 	}
 }
 
+void FUNC misl(ptr,usrnum,shpnum,energy,eng_flu)
+WARSHP	*ptr;
+int	usrnum, shpnum;
+unsigned energy, eng_flu;
+
+{
+WARSHP *wptr;
+int i;
+
+if (lockon(ptr,1,shpnum,usrnum) == 1)
+        {
+	for (i=0; i<MAXMISSL;++i)
+		{
+		wptr=warshpoff(shpnum);
+		if (wptr->lmissl[i].distance == 0)
+			{
+			prfmsg(MFIRE1);
+			outprfge(FILTER,usrnum);
+			--(ptr->items[I_MISSILE]);
+			ptr->energy -= eng_flu;
+			prfmsg(MFIRE2,shpltr(shpnum,usrnum));
+			outprfge(FILTER,shpnum);
+			wptr->lmissl[i].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
+			wptr->lmissl[i].distance += 20;
+			wptr->lmissl[i].channel  = (unsigned char)usrnum;
+			wptr->lmissl[i].energy   = energy;
+			return;
+			}
+		}
+	prfmsg(MISMANY,MAXMISSL);
+	outprfge(FILTER,usrnum);
+	}
+}
 
 int FUNC lockon(ptr,type,ship,usrn)
 WARSHP  *ptr;
@@ -1448,7 +1467,10 @@ dist = cdistance(&ptr->coord,&(wptr->coord));
 if (wptr->cloak < 10 && (dist*10000.0) < (double)shipclass[warsptr->shpclass].scanrange)
 	{
 	if (wptr->status == GESTAT_AUTO)
+		{
 		wptr->cybmine = usrn;
+		wptr->tick = 2;
+		}
 
 	speed = ptr->speed + wptr->speed;
 
@@ -2068,7 +2090,7 @@ if (sameas(margv[1],"nav"))
 	prfmsg(REP32,  xsect,ysect,xcord,ycord);
 	if (warsptr->status == GESTAT_AUTO)
 		{
-		prfmsg(REP40,warsptr->status,warsptr->cybmine,warsptr->cybskill,warsptr->cybupdate);
+		prfmsg(REP40,warsptr->status,warsptr->cybmine,warsptr->cybupdate);
 		}
 	}
 else
@@ -4834,7 +4856,11 @@ if ((!syscmds) || (sysonly && !(usrptr->flags&ISYSOP)))
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
-
+if (sameas("nterms",margv[1]))
+	{
+	prf("nterms %d\r",nterms);
+	outprfge(ALWAYS,usrnum);
+	}
 if (sameas("help",margv[1]) && margc == 2)
 	{
 	setmbk(gehlpmb);
@@ -5136,6 +5162,12 @@ if (sameas("orbit",margv[1]) && (margc == 3))
 		return;
 		}
 	}
+else
+if (sameas("assigncybs",margv[1]) && margc == 2)
+        {
+        assign_cybs(usrnum);
+        return;
+        }
 else
 
 prfmsg(FORMAT,"SYS");

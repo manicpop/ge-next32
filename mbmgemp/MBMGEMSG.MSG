@@ -1,5 +1,5 @@
 Galactic Empire Standard Message File
-Version ge-next 0.1
+Version ge-next 0.2
 
 LEVEL0 {}
 
@@ -90,14 +90,13 @@ player can own at the same time.
 
 MAXPLNTS {Maximum planets a single player can own? 200} N 1 256
 
-This value controls the maximum planets that will be created 
-at one time in a sector. Reducing this number reduces the 
-total planets in the game and the system load to create and
-manage them. If you are having performance problems when 
-planets are created you should reduce this number to
-limit the disk I/O each time. There is no problem changing
-this value AFTER a game has begun.
-
+This value controls the maximum planets that will be
+created at one time in a sector. Reducing this number
+reduces the total planets in the game and the system load
+to create and manage them. If you are having performance
+problems when  planets are created you should reduce this
+number to limit the disk I/O each time. There is no problem
+changing this value AFTER a game has begun.
 
 MAXPLSE {Maximum planets in a sector? 4} N 1 9
 
@@ -153,9 +152,9 @@ in a seperate directory.
 
 GEMAIL {MBMGEMAL.DAT} S 40 GE Mail Filename
 
-This option specifies the filename of the planet database. It
-is provided to you in case you wish to store the datafiles
-in a seperate directory.
+This option specifies the filename of the planet database.
+It is provided to you in case you wish to store the
+datafiles in a seperate directory.
 
 GEPLNT {MBMGEPLT.DAT} S 40 GE Planet Filename
 
@@ -214,23 +213,6 @@ a wormhole. The lower the number the more likely
 a sector will have a wormhole.
 
 WORMODDS {Frequency Factor for wormholes: 6} N 1 100
-
-Depending upon your CPU's performance you can have up to
-256 additional Robotic Ships (Automatons) in the game. 
-
-Caution: This value can DRAMATICALLY effect CPU 
-performance. If you are not confident about your specific
-system please set to a lower value at first and experiment
-with increased values as you evaluate your CPU's
-performance.
-
-NUMSHIPS {The number of additional ships (robots) in game? 32} N 0 500
-
-This value limits the number of DROID class ships
-insuring that there are plenty of CYBS for players.
-Recommended setting is half of NUMSHIPS.
-
-MAXDROID {Max droid class ships in game: 8} N 0 500
 
 This value controls how far from the center (sector 0 0) 
 the galaxy extends. The Galaxy is square and UNIVMAX
@@ -492,7 +474,7 @@ there faster.
 
 CAUTION: This number MUST be larger than HYPDST2.
 
-HYPDST1 {Max Cybertron Hyperwarp distance: 25} N 1 32000
+HYPDST1 {Max Cybertron Hyperwarp distance: 30} N 1 32000
 
 This option controls when the cybertrons drop out of
 hyperwarp. If the player is less than HYPDST2 sectors
@@ -500,7 +482,7 @@ away the cybertron will drop to normal speed.
 
 CAUTION: This number MUST be smaller than HYPDST1.
 
-HYPDST2 {Min Cybertron Hyperwarp distance: 10} N 1 32000
+HYPDST2 {Min Cybertron Hyperwarp distance: 20} N 1 32000
 
 This option controls the bonus amount added to the
 team score for each member. It adds value to the 
@@ -581,13 +563,12 @@ This value specifies the Resources for this Planet.
 
 S00P1RES {Resources for planet: 3} (S00P1DEF=YES) N 0 3
 
-This is the name of planet # 2 in the Neutral Zone.
-
 Is planet # 2 defined? This should be set to YES
 in the default version. 
 
 S00P2DEF {Is planet #2 defined? YES} B
 
+This is the name of planet # 2 in the Neutral Zone.
 
 S00P2NM {Tahanian Station} (S00P2DEF=YES) S 19 Planet #2 Name
 
@@ -1407,8 +1388,8 @@ absolute as it is adjusted by many other factors affecting
 planet production at update time. 
 
 Default for ge-next is 12000, default for GE 3.2e was 8000.
-If you set MENEAT to OFF, you may want to bring this back down
-to 8000 as well.
+If you set MENEAT to OFF, you may want to bring this back
+down to 8000 as well.
 
 ITMMH06 {10K ManWeeks of work creates n Food: 12000} N 0 201288837
 
@@ -1866,7 +1847,7 @@ are at least a 2 to 100 attacking ratio
 PLATTRT2 {Max percent of planets killed by attacker: 35 } N 5 1000
 
 
-LEVEL6{}
+LEVEL6 {}
 
 
 
@@ -1875,7 +1856,7 @@ INTRO {
          (C) Copyright 2024 ManicPop.org, https://manicpop.org/ge-next/
                         Based on Galactic Empire 3.2e
               (C) Copyright 1992,93,94 M.B. Murdock & Associates
-} T 
+} T GE beginning of menu
 
 
 MENUA {
@@ -1883,15 +1864,15 @@ MENUA {
 [0;31m   -----------------------------------------
 [1;34m   P ... Play Galactic Empire
    G ... General instructions
-   R ... Top players roster} T 
+   R ... Top players roster} T GE menu 1
 
 
 MENUB1 {   
-[1;30m   M ... Hyperspace messages (none)[1;34m} T 
+[1;30m   M ... Hyperspace messages (none)[1;34m} T GE menu 2 no msg
 
 
 MENUB2 {   
-[1;34m   M ... Hyperspace messages ([1;37mNEW[1;34m)} T 
+[1;34m   M ... Hyperspace messages ([1;37mNEW[1;34m)} T GE menu 2 w msg
 
 
 MENUC {
@@ -1899,48 +1880,48 @@ MENUC {
    ? ... Redisplay this menu
    X ... Exit [1;36m
 
-   Enter your selection: [1;37m} T 
+   Enter your selection: [1;37m} T GE menu 3
 
 
 REPRMT {
 
-[1;34mSelect P, G, R, M, N, I, X to exit, or ? for menu : [1;37m} T 
+[1;34mSelect P, G, R, M, N, I, X to exit, or ? for menu : [1;37m} T GE menu select
 
 
 MENUD {
 [1;36m   Hyperspace messages
 [0;31m   -----------------------------------------
-[1;34m} T 
+[1;34m} T GE msg menu
 
 
 MENUE1 {
-[1;30m   1 ... Distress messages  (none)[1;34m} T 
+[1;30m   1 ... Distress messages  (none)[1;34m} T GE distress no msg
 
 
 MENUE2 {
-[1;34m   1 ... Distress messages  ([1;37mNEW[1;34m)[1;34m} T 
+[1;34m   1 ... Distress messages  ([1;37mNEW[1;34m)[1;34m} T GE distress w msg
 
 
 MENUF1 {
-[1;30m   2 ... Production reports (none)[1;34m} T 
+[1;30m   2 ... Production reports (none)[1;34m} T GE prod report no msg
 
 
 MENUF2 {
-[1;34m   2 ... Production reports ([1;37mNEW[1;34m)[1;34m} T 
+[1;34m   2 ... Production reports ([1;37mNEW[1;34m)[1;34m} T GE prod report w msg
 
 
 MENUG {
 [1;34m   X ... Exit to main menu [1;36m
 
-   Enter your selection :[1;37m} T 
+   Enter your selection :[1;37m} T GE msg menu 2
 
 
 MENUG1 {
-[1;36mPress N for NEXT or X to stop:[1;37m } T 
+[1;36mPress N for NEXT or X to stop:[1;37m } T GE distress msg next prompt
 
 
 MENUG2 {
-[1;36mPress N for NEXT or X to stop:[1;37m } T 
+[1;36mPress N for NEXT or X to stop:[1;37m } T GE prod msg next prompt
 
 
 COINFO {
@@ -1954,24 +1935,24 @@ Galactic Empire and ge-next are free software released under the GPLv2 license.
 https://opensource.org/license/gpl-2-0
 
 <Press ENTER>
-} T 
+} T GE copyright info
 
 Please do not move or remove this definition.
 
-OPTDISP {} T 
+OPTDISP {} T GE OPTDISP
 
 Please do not move or remove this definition.
 
-OPTDISP2 {} T 
+OPTDISP2 {} T GE OPTDISP2
 
 Please do not move or remove this definition.
 
-CHOOSESH {} T 
+CHOOSESH {} T GE CHOOSESH
 
-This message is a place holder to distinguish between menu messages and
-game messages. Please do not remove or move.
+This message is a place holder to distinguish between menu
+messages and game messages. Please do not remove or move.
 
-FIGHTSUB {} T 
+FIGHTSUB {} T GE FIGHTSUB placeholder
 
 EXPLAIN {
 [1;36mIt is the Standard Year 3285, 1010 years since man developed interplanetary
@@ -1999,63 +1980,63 @@ decimated the Sarten Empire, the Cybertrons have greatly expanded their
 power and reach. Cybertrons have no interest in planetary colonization
 or diplomacy, your only option is to evade or destroy them.
 
-Good luck!} T 
+Good luck!} T GE EXPLAIN text
 
 FORLIVE {
 [1;33mSorry, only "Live" users can play Galactic Empire.[1;37m
 For information on this exciting game select 2. For more information
 on becoming a live user contact your SYSOP.
-} T 
+} T GE only live users
 
 FORPLAY {
 [1;33mSorry, only authorized users can play Galactic Empire.[1;37m
 Contact your SYSOP for more information.
-} T 
+} T GE only authorized users
 
 NOCANDO {
 [1;33mYou have to have credits to do that![1;37m
-} T 
+} T GE no credits
 
 GECALLS {
-[36mRULE THE UNIVERSE!!! If you can.......
+[36mRULE THE GALAXY!!! If you can.......
 Your ship awaits you in GALACTIC EMPIRE. 
 P.S. Beware the dreaded Cybertrons!!![37m
-} T 
+} T GE call 1
 
 GECALLS2 {
 [33mThe CYBERTRONS are waiting for you....
 Defend your property in GALACTIC EMPIRE.[37m
-} T 
+} T GE call 2
 
 EXIWAR {
 [1;36mExiting Galactic Empire...[1;37m
-} T 
+} T GE exit message
 
 CANTEXT {
 [1;36mSorry... the Galactic Codes of Engagement prevent you from abandoning a battle
 you are involved in until a cease fire of a period of time has passed. If you
 disconnect now, your ship will be destroyed![1;37m
-} T 
+} T GE cannot exit message
 
 EXIWAR2 {***
 [0;37mSensors can no longer locate the [0;36m%s[0;37m.[1;37m
-} T 
+} T GE sensors cannot locate message
 
 WARHUP {***
 [1;36mCommander [0;36m%s[1;36m's ship just vanished![1;37m
-} T 
+} T GE ship vanished message
 
 NOSHPS {
 [1;36mAll the ships have been assigned, please check back later.[1;37m
-} T 
+} T GE all ships assigned message
 
 NUMOOR {
 [0;37m[[1;31mERROR[0;37m] Please enter a number in the range from %d to %d.[1;37m
-} T 
+} T GE outside of numerical value message
 
 INVCMD {
 [0;37m[[1;31mERROR[0;37m] Invalid command, try again.[1;37m
-} T 
+} T GE invalid command message
 
 YOURDEAD {***
 [0;31mWARNING! WARNING! WARNING! WARNING!
@@ -2068,709 +2049,709 @@ You escape safely and are picked up by a Galactic Command freighter
 and transported back to their next stop, Zygor!
 
 [1;37m<Press ENTER>
-} T 
+} T GE you got blowed up message
 
 DIED {***
 [1;36mThe [0;36m%s[1;36m, commanded by [0;36m%s[1;36m, has been destroyed![1;37m
-} T 
+} T GE someone got blowed up message
 
 KILLEDBY {***
 [1;36mCommander [0;36m%s[1;36m's ship was destroyed by [0;36m%s[1;36m![1;37m
-} T 
+} T GE someone was blowed up by someone message
 
 PHITHIM {
 [0;37mThe phasers caused [0;31m%s[0;37m damage to Commander [0;36m%s[0;37m's ship![1;37m
-} T 
+} T GE phaser hit someone message
 
 PHITYOU {***
 [0;37m[[0;31mWARNING![0;37m] Phaser hit from Commander [0;36m%s[0;37m's ship, caused [0;31m%s[0;37m damage![1;37m
-} T 
+} T GE phaser hit you message
 
 PDEFLECT {
 [0;37mThe phasers were deflected by Commander [0;36m%s[0;37m's shields![1;37m
-} T 
+} T GE phasers you fired deflected message
 
 PHITDEF {***
 [0;37m[[1;31mCAUTION[0;37m] Phaser hit from the [0;36m%c[0;37m, Commander [0;36m%s[0;37m's ship,
 magnitude [0;31m%d[0;37m, was deflected by the shields![1;37m
-} T 
+} T GE phaser fired at you deflected message
 
 PHSRUP {***
 [1;33mPhaser banks are now at minimum fire power![1;37m
-} T 
+} T GE phasers at minimum message
 
 PHSRMAX {***
 [1;32mPhaser banks are now at full power![1;37m
-} T 
+} T GE phasers at full message
 
 PCLOKUP {
 [0;37m[[1;31mERROR[0;37m] %s inoperable while cloaking is on.[1;37m
-} T 
+} T GE cannot do that while cloaked message
 
 WARP {***
 [1;33mHelm reports warp [1;37m%s[1;33m....[1;37m
-} T 
+} T GE warp speed changing message
 
 DEADSTOP {***
 [0;37mHelm reports dead stop.[1;37m
-} T 
+} T GE dead stop message
 
 NOACCEL {***
 [0;37m[[0;31mWARNING![0;37m] Helm reports engine shutdown at warp [1;37m%d[0;37m![1;37m
-} T 
+} T GE warp shutdown message
 
 WARP01 {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with warp drive.[1;37m
-} T 
+} T GE no warp drive message
 
 WARP03 {
 [0;37m[[1;31mERROR[0;37m] The warp drive can't operate at that speed.[1;37m
-} T
+} T GE cannot go that fast message
 
 WARP04 {
 [0;37m[[1;31mCAUTION[0;37m] The warp drive can only safely operate at warp [1;37m%d[0;37m.[1;37m
-} T
+} T GE over top cruising speed message
 
 WARPFAST {***
 [0;37m[[0;31mWARNING![0;37m] Warp drives operating out of specification. Damage may result![1;37m
-} T
+} T GE over top cruising speed warning 0
 
 WARPFST1 {***
 [0;37m[[0;31mWARNING![0;37m] If this speed is maintained for long, the warp drive will be damaged.[1;37m
-} T
+} T GE over top cruising speed warning 1
 
 WARPFST2 {***
 [0;37m[[0;31mWARNING![0;37m] The warp drives are overheating and won't hold up much longer![1;37m
-} T
+} T GE over top cruising speed warning 2
 
 WARPFST3 {***
 [0;37m[[0;31mWARNING![0;37m] The warp drives are beginning to melt the neutron shield![1;37m
-} T
+} T GE over top cruising speed warning 3
 
 WARPFST4 {***
 [0;37m[[0;31mWARNING![0;37m] SLOW DOWN NOW OR RISK A WARP DRIVE CONTAINMENT BREACH![1;37m
-} T
+} T GE over top cruising speed warning 4
 
 WARPBRK {***
 [0;31mDANGER! DANGER! WARP ENGINE CONTAINMENT BREACH. NEUTRON CORE EJECTED!![0;37m
 Warp engine damaged severely![1;37m
-} T
+} T GE warp engine destroyed message
 
 WARPSPD {
 [0;37m[[1;31mERROR[0;37m] The warp drives need repair, and can only safely operate at warp [1;37m%d[0;37m.[1;37m
-} T
+} T GE warp needs repair message
 
 WARPSPD2 {
 [0;37m[[1;31mERROR[0;37m] The warp drives need repair, and only impulse power is left.[1;37m
-} T
+} T GE warp really needs repair message
 
 SPEEDIS {***
 [1;32mHelm reports speed is now warp [1;37m%s[1;32m![1;37m
-} T 
+} T GE speed is now message
 
 SPEED0 {***
 [0;37mHelm reports dead stop.[1;37m
-} T 
+} T GE dead stop message 2
 
 PFIRED {
 [0;32mPhasers fired at [0;31m%d[0;32m percent power - focus [0;31m%d[0;32m![1;37m
-} T 
+} T GE phasers fired message
 
 PHREPR {***
 [1;32mDamage Control reports phasers are now functional![1;37m
-} T 
+} T GE phasers now functional message
 
 NOROTPW {
 [0;37m[[1;31mERROR[0;37m] There is not enough power in the neutron flux to rotate.[1;37m
-} T 
+} T GE not enough power to rotate message
 
 NOWTURN {
 [1;33mShip is now turning to [1;37m%u[1;33m degrees.[1;37m
-} T 
+} T GE rotating message
 
 NOWALRD {
 [0;37mHelm reports ship is already at [1;37m%d[0;37m degrees.[1;37m
-} T 
+} T GE already at this heading message
 
 NOWTHER {***
 [1;32mHelm reports ship now heading [1;37m%d[1;32m degrees.[1;37m
-} T 
+} T GE now heading message
 
 ENGFIRE {
 [1;33mHelm reports engines firing, ship coming to [1;37m%u[1;33m degrees.[1;37m
-} T 
+} T GE engines firing message
 
 SHLDCHP {
 [1;33mShields energizing![1;37m
-} T 
+} T GE shields up message
 
 SHLDUP {***
 [1;32mShields are now fully charged![1;37m
-} T 
+} T GE shields fully up message
 
 SHLDAT {***
 [1;33mShields are at %d percent charge....[1;37m
-} T 
+} T GE shields charging message
 
 SHIELD0 {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with shields.[1;37m
-} T 
+} T GE no shields on this ship message
 
 SHNOPWR {
 [0;37m[[1;31mERROR[0;37m] There is not enough power in the neutron flux to raise the shields.[1;37m
-} T 
+} T GE not enough power for shields message
 
 SHNORPR {
 [0;37m[[1;31mERROR[0;37m] Damage Control is repairing the shields.[1;37m
-} T 
+} T GE shields being repaired message
 
 SHLDDN {
 [0;37mShields are now down.[1;37m
-} T 
+} T GE shields down message
 
 SHDNNOP {***
 [0;37m[[0;31mWARNING![0;37m] Shields have come down due to lack of power![1;37m
-} T 
+} T GE shields down no power message
 
 SHDAMAG {***
 [0;37m[[0;31mWARNING![0;37m] The last hit damaged the shields! Damage Control notified.[1;37m
-} T 
+} T GE shields knocked out message
 
 SHKNKDN {***
 [0;37m[[1;31mCAUTION[0;37m] The last hit knocked the shields down, they are being restored now.[1;37m
-} T 
+} T GE shields down but coming back up message
 
 SHREPR {***
 [1;32mDamage Control reports the shields have been repaired![1;37m
-} T 
+} T GE shields repaired message
 
 SHLD1 {
 [0;37m[[1;31mERROR[0;37m] Shields are not functional in hyperspace.[1;37m
-} T 
+} T GE no shields at warp message
 
 CLOK01 {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with a cloaking system.[1;37m
-} T 
+} T GE no cloak on this ship message
 
 CLOKCOM {
 [0;37m[[1;31mERROR[0;37m] The cloaking system is already activated.[1;37m
-} T
+} T GE cloak already up message
 
 CLOKDWN {
 [0;37m[[1;31mERROR[0;37m] The cloaking system is already deactivated.[1;37m
-} T
+} T GE cloak already down message
 
 CLOKUP {***
 [1;32mThe [0;36m%s[1;32m is now completely invisible![1;37m
-} T
+} T GE your ship cloaked message
 
 CLOKON {
 [1;33mCloaking system is now activating![1;37m
-} T 
+} T GE cloak activating message
 
 CLOKOFF {
 [0;37mCloaking system is now off.[1;37m
-} T 
+} T GE cloak deactivated message
 
 CLOKDAM {
 [0;37m[[1;31mERROR[0;37m] The cloaking system is damaged.[1;37m
-} T 
+} T GE cloak damaged message
 
 CLREPR {***
 [1;32mDamage Control reports that the cloaking system is now functional![1;37m
-} T 
+} T GE cloak fixed message
 
 CLOKPWR {
 [0;37m[[1;31mERROR[0;37m] There is not enough power in the neutron flux for cloaking.[1;37m
-} T 
+} T GE not enough power for cloak message
 
 CLOKNOP {***
 [0;37m[[0;31mWARNING![0;37m] The cloaking system has shut down due to lack of power![1;37m
-} T 
+} T GE cloak shut down because no power message
 
 CLOK1 {
 [0;37m[[1;31mERROR[0;37m] The cloaking system does not function in hyperspace.[1;37m
-} T 
+} T GE no cloak at warp message
 
 CLOK2 {***
 [0;37m[[1;31mCAUTION[0;37m] Sensors indicate a ship decloaking nearby![1;37m
-} T
+} T GE ship decloaking message
 
 CLOK3 {***
 [0;37mSensors indicate some background ion field displacement bearing [1;37m%d[0;37m![1;37m
-} T
+} T GE ship cloaked near you message
 
 RNDSHLD {***
 [0;37m[[0;31mWARNING![0;37m] The shields are no longer functioning! Damage Control notified![1;37m
-} T 
+} T GE shields knocked out message
 
 RNDPHSR {***
 [0;37m[[0;31mWARNING![0;37m] The phaser systems appear to be damaged! Damage Control notified![1;37m
-} T 
+} T GE phasers knocked out message
 
 RNDCLOK {***
 [0;37m[[0;31mWARNING![0;37m] The cloaking system appears to be damaged! Damage Control notified![1;37m
-} T 
+} T GE cloaking knocked out message
 
 RNDTACT {***
 [0;37m[[0;31mWARNING![0;37m] The tactical display has been damaged! Damage Control notified![1;37m
-} T 
+} T GE tactical knocked out message
 
 RNDNAVG {***
 [0;37m[[0;31mWARNING![0;37m] The helm and navigational systems have been damaged! Damage Control
 notified![1;37m
-} T 
+} T GE nav knocked out message
 
 RNDFCNT {***
 [0;37m[[0;31mWARNING![0;37m] The fire control systems have been damaged! Damage Control notified![1;37m
-} T 
+} T GE fire control knocked out message
 
 RNDXX1 {***
 [0;37m[[1;31mCAUTION[0;37m] The mess hall has been damaged! Damage Control notified![1;37m
-} T 
+} T GE display only knock out message 1
 
 RNDXX2 {***
 [0;37m[[1;31mCAUTION[0;37m] The living quarters have been damaged! Damage Control notified![1;37m
-} T 
+} T GE display only knock out message 2
 
 RNDXX3 {***
 [0;37m[[1;31mCAUTION[0;37m] The head has been damaged! Damage Control notified![1;37m
-} T 
+} T GE display only knock out message 3
 
 RNDXX4 {***
 [0;37m[[1;31mCAUTION[0;37m] The rec room has been damaged! Damage Control notified![1;37m
-} T 
+} T GE display only knock out message 4
 
 TAREPR {***
 [1;32mDamage Control reports the tactical display is functional![1;37m
-} T 
+} T GE tactical fixed message
 
 HLREPR {***
 [1;32mDamage Control reports the helm and navigational controls are functional![1;37m
-} T 
+} T GE helm fixed message
 
 TABROKE {
 [0;37m[[1;31mERROR[0;37m] Damage Control is repairing the scanners.[1;37m
-} T 
+} T GE scanners being repaired message
 
 HLBROKE {
 [0;37m[[1;31mERROR[0;37m] Damage Control is repairing the helm.[1;37m
-} T 
+} T GE helm being repaired message
 
 FCBROKE {
 [0;37m[[1;31mERROR[0;37m] Damage Control is repairing the fire control systems.[1;37m
-} T 
+} T GE fire control being repaired message
 
 PHBROKE {
 [0;37m[[1;31mERROR[0;37m] Damage Control is repairing the phasers.[1;37m
-} T 
+} T GE phasers being repaired message
 
 FCREPR {***
 [1;32mDamage Control reports fire control systems are now functional![1;37m
-} T 
+} T GE fire control fixed message
 
 FCNONO {
 [0;37m[[1;31mERROR[0;37m] The fire control system can't lock onto a ship in the neutral zone.[1;37m
-} T 
+} T GE can't fire into neutral zone message
 
 HYPERIN {***
 [1;35mHelm reports the [0;36m%s[1;35m is entering HYPERSPACE![1;37m
-} T 
+} T GE entering hyperspace messsage
 
 HYPERIN2 {***
 [0;37mSensors detect the [0;36m%s[0;37m has gone to hyperspace![1;37m
-} T 
+} T GE someone else entering hyperspace message
 
 HYPEROUT {***
 [1;35mHelm reports the [0;36m%s[1;35m is leaving hyperspace.[1;37m
-} T 
+} T GE leaving hyperspace message
 
 HYPEROU2 {***
 [0;37mSensors detect the [0;36m%s[0;37m coming out of hyperspace.[1;37m
-} T 
+} T GE someone else leaving hyperspace message
 
 NOTORPS {
 [0;37m[[1;31mERROR[0;37m] There are no torpedoes on-board.[1;37m
-} T 
+} T GE no torpedoes message
 
 NOSHIP {
 [0;37m[[1;31mERROR[0;37m] Scanners do not detect a ship with that designation.[1;37m
-} T 
+} T GE no such ship message
 
 TFIRE1 {
 [0;32mTorpedoes fired![1;37m
-} T 
+} T GE torpedoes fired message
 
 TFIRE2 {***
 [0;37m[[0;31mWARNING![0;37m] Incoming torpedo from ship [0;36m%c[1;37m.
-} T 
+} T GE incoming torpedo message
 
 TORMANY {
 [0;37m[[1;31mERROR[0;37m] Only %d torpedoes can lock onto a ship at once.[1;37m
-} T 
+} T GE too many torpedoes message
 
 TORP2 {
 [0;37m[[1;31mERROR[0;37m] Torpedoes are not functional in hyperspace.[1;37m
-} T 
+} T GE no torpedoes in hyperspace message
 
 TORP3 {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with a torpedo launcher.[1;37m
-} T 
+} T GE no torpedo launcher on this ship message
 
 NOMISSL {
 [0;37m[[1;31mERROR[0;37m] There are no hyper-missiles on-board.[1;37m
-} T 
+} T GE no missiles message
 
 MFIRE1 {
 [0;32mHyper-missile fired![1;37m
-} T 
+} T GE missiles fired message
 
 MFIRE2 {***
 [0;37m[[0;31mWARNING![0;37m] Incoming hyper-missile from ship [0;36m%c[0;37m.[1;37m
-} T 
+} T GE missiles fired at you message
 
 MISMANY {
 [0;37m[[1;31mERROR[0;37m] Only %d hyper-missiles can lock onto a ship at once.[1;37m
-} T 
+} T GE too many missiles message
 
 MISS01 {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with a missile launcher.[1;37m
-} T 
+} T GE no missile launcher on this ship message
 
 LOCK2 {***
 [0;37m[[0;31mWARNING![0;37m] Ship [0;36m%c[0;37m has a fire control scanner locked onto this ship![1;37m
-} T 
+} T GE someone locked onto you message
 
 LOCK3 {
 [0;37m[[1;31mERROR[0;37m] Fire control scanners cannot get a positive lock on ship [0;36m%c[0;37m![1;37m
-} T 
+} T GE cannot lock on message
 
 LOCK4 {***
 [0;37m[[0;31mWARNING![0;37m] Ship [0;36m%c[0;37m is attempting to lock fire control scanners onto this ship.[1;37m
-} T 
+} T GE attempting to lock on to you message
 
 LOCK5 {
 [0;37m[[1;31mERROR[0;37m] Scanners do not detect ship [0;36m%c[0;37m![1;37m
-} T 
+} T GE no such ship message
 
 THIT1 {***
 [0;37m[[0;31mWARNING![0;37m] Direct hit from a torpedo! Shields deflected some of the blast.[1;37m
-} T 
+} T GE hit by torp with shields message
 
 THIT2 {***
 [0;37m[[0;31mWARNING![0;37m] Direct hit from a torpedo! Damage control has been notified.[1;37m
-} T 
+} T GE hit by torp without shields message
 
 MHIT1 {***
 [0;37m[[0;31mWARNING![0;37m] Direct hit by a hyper-missile carrying a [0;31m%s[0;37m charge!
 Shields deflected most of the blast.[1;37m
-} T 
+} T GE hit by missile with shields message
 
 MHIT2 {***
 [0;37m[[0;31mWARNING![0;37m] Direct hit by a hyper-missile carrying a [0;31m%s[0;37m charge![1;37m
-} T 
+} T GE hit by missile without shields message
 
 MTACC1 {***
 [0;37mSensors indicate our torpedo has hit ship [0;36m%c[0;37m, the [0;36m%s[0;37m.[1;37m
-} T 
+} T GE your torp hit message
 
 MTACC2 {***
 [0;37mSensors indicate our hyper-missile has hit ship [0;36m%c[0;37m, the [0;36m%s[0;37m.[1;37m
-} T 
+} T GE your missile hit message
 
 TORP1 {***
 [0;37m[[0;31mWARNING![0;37m] Tracking incoming torpedo![1;37m
-} T 
+} T GE tracking torp message
 
 MISSL1 {***
 [0;37m[[0;31mWARNING![0;37m] Tracking incoming hyper-missile![1;37m
-} T 
+} T GE tracking missile message
 
 MISSL2 {***
 [0;37mAn incoming missile has lost lockon and self-destructed![1;37m
-} T 
+} T GE incoming missile got lost message
 
 HYSHDN {***
 [0;37mShields are now down.[1;37m
-} T 
+} T GE shields drop before hyperspace message
 
 HYCLDN {***
 [0;37mCloaking system is now off.[1;37m
-} T 
+} T GE cloak drops before hyperspace message
 
 SCAN1 {***
 [0;37mSensors indicate this ship is being scanned by ship [0;36m%c[0;37m, the [0;36m%s[0;37m.[1;37m
-} T 
+} T GE you are being scanned message
 
 SCAN2 {***
 [0;37mSensors indicate this ship is being scanned by a ship beyond scanner range,
 bearing [1;37m%d[0;37m.[1;37m
-} T 
+} T GE you are being scanned from far away message
 
 SCAN3 {***
 [0;37mSensors indicate this ship is being scanned by an unknown ship, bearing [1;37m%d[0;37m.[1;37m
-} T 
+} T GE you are being scanned by unknown ship message
 
 ENTWAR {***
 [1;36mA %s, the [0;36m%s[1;36m, just appeared in this star system![1;37m
-} T 
+} T GE ship just appeared message
 
 FIRSTIME {
 [1;36mSince you don't have a ship, the Zygorians are graciously offering you this
 Interceptor-class vessel free of charge.[1;37m
-} T 
+} T GE get free ship message
 
 ENTSHP {
 [1;36mYou are being transported to your waiting ship, Commander [0;36m%s.[1;37m
-} T 
+} T GE boarding ship message
 
 WELCOM {
 [0;37mWelcome aboard, Commander [0;36m%s[0;37m, the con is yours...
 Type [1;37m?[0;37m if you need assistance.[1;37m
-} T 
+} T GE welcome user message
 
 ANNOUN {***
 [0;37mA %s, the [0;36m%s[0;37m, has been detected cruising the galaxy.[1;37m
-} T 
+} T GE ship enters game message
 
 NOPLNT {
 [0;37m[[1;31mERROR[0;37m] There is no such planet in this sector.[1;37m
-} T 
+} T GE no such planet message
 
 FRCTER {
 [0;37m[[1;31mERROR[0;37m] Fire control malfunction, weapons not fired.[1;37m
-} T 
+} T GE fire control error message
 
 SCANER {
 [0;37m[[1;31mERROR[0;37m] Scanner malfunction.[1;37m
-} T 
+} T GE scanner error message
 
 ATTKER {
 [0;37m[[1;31mERROR[0;37m] Attack aborted.[1;37m
-} T 
+} T GE attack aborted message
 
 NODECOYS {
 [0;37m[[1;31mERROR[0;37m] There are no decoys on-board.[1;37m
-} T 
+} T GE no decoys message
 
 DECGONE {
 [0;37m[[1;31mCAUTION[0;37m] A decoy deployed from the [0;36m%s[0;37m has self-destructed![1;37m
-} T 
+} T GE decoy destructed message
 
 DECFIRE {
 [0;32mDecoy launched![1;37m
-} T 
+} T GE decoy launched message
 
 DECMANY {
 [0;37m[[1;31mERROR[0;37m] No more than 10 decoys can deployed at once.[1;37m
-} T 
+} T GE too many decoys message
 
 DECOY0 {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with a decoy launcher.[1;37m
-} T 
+} T GE no decoy launcher message
 
 DECOY1 {
 [0;37m[[1;31mERROR[0;37m] Decoys do not function in hyperspace.[1;37m
-} T 
+} T GE no decoys at warp message
 
 TORDEST {***
 [0;37mAn incoming torpedo locked onto a decoy, destroying both![1;37m
-} T 
+} T GE torpedo hit decoy message
 
 MISDEST {***
 [0;37mAn incoming missile locked onto a decoy, destroying both![1;37m
-} T 
+} T GE missile hit decoy message
 
 NOFLUX {
 [0;37m[[0;31mWARNING![0;37m] The neutron flux pile is empty, and there are no flux pods on-board!
 Speed is limited to warp 1; shields and phasers are unavailable.[1;37m
-} T 
+} T GE out of power message
 
 LASTFLUX {
 [0;37m[[1;31mCAUTION[0;37m] There are no more flux pods on-board. Make sure to stock up soon.[1;37m
-} T 
+} T GE out of flux pods message
 
 FLUXLOAD {***
 [0;37mFlux pod loaded, neutron flux levels back to normal.[1;37m
-} T 
+} T GE flux pod loaded message
 
 RADSET1 {
 [0;37mCommunications channel [1;34m%c[0;37m is set to the general hailing frequency.[1;37m
-} T 
+} T GE set to hail message
 
 RADSET2 {
 [0;37mCommunications channel [1;34m%c[0;37m is set to frequency [1;34m%u[0;37m.[1;37m
-} T 
+} T GE set to freq message
 
 RADSET3 {
 [0;37mCommunications channel [1;34m%c[0;37m is set to hyperspace packet code [1;34m%u[0;37m.[1;37m
-} T 
+} T GE set to hyp freq message
 
 MSGSNT1 {***
 [0;37mHailing message from the [0;36m%s[0;37m (channel [1;34m%c[0;37m)
 [1;36m<[1;37m %s [1;36m>[1;37m
-} T 
+} T GE hail received message
 
 MSGSNT2 {
 [0;37mMessage sent on all hailing channels.[1;37m
-} T 
+} T GE hail sent message
 
 MSGSNT3 {***
 [0;37mMessage from the [0;36m%s[0;37m (channel [1;34m%c[0;37m)
 [1;36m<[1;37m %s [1;36m>[1;37m
-} T 
+} T GE message received message
 
 MSGSNT4 {
 [0;37mMessage sent to all ships in this star system on frequency [1;34m%u[0;37m.[1;37m
-} T 
+} T GE message sent message
 
 MSGSNT5 {***
 [0;37mHyperspace message from the [0;36m%s[0;37m (channel [1;34m%c[0;37m)
 [1;36m<[1;37m %s [1;36m>[1;37m
-} T 
+} T GE hyp message received message
 
 MSGSNT6 {
 [0;37mHyperspace message encoded [1;34m%u[0;37m and sent.[0;37m
-} T 
+} T GE hyp message sent message
 
 BADCOM {
 [0;37m[[1;31mERROR[0;37m] Please specify channel [1;37mA[0;37m, [1;37mB[0;37m, or [1;37mC[0;37m.[1;37m
-} T 
+} T GE invalid channel message
 
 DASHES {[0;31m--------------------------------------[1;37m
-} T 
+} T GE dashes
 
 DASHESL {[0;31m----------------------------------------------------------[1;37m
-} T 
+} T GE longer dashes
 
 ORBIT0 {
 [0;37m[[1;31mERROR[0;37m] Wormholes cannot be orbited.[1;37m
-} T Orbit wormhole message
+} T GE no orbiting wormholes message
 
 ORBIT1 {
 [0;37mSensors confirm stationary orbit around planet [1;34m%d[0;37m, [1;34m%s[0;37m.[1;37m
-} T 
+} T GE orbit established message
 
 ORBIT1N {
 [0;37mSensors confirm stationary orbit around planet [1;34m%d[0;37m.[1;37m
-} T 
+} T GE orbit established no name message
 
 ORBIT2 {
 [0;37m[[1;31mERROR[0;37m] You must be within 250 subsectors of a planet to establish an orbit.[1;37m
-} T 
+} T GE too far to orbit message
 
 ORBIT3 {
 [0;37m[[1;31mERROR[0;37m] Orbit has already been established.[1;37m
-} T 
+} T GE already orbiting message
 
 ORBIT4 {
 [0;37m[[1;31mERROR[0;37m] An orbit cannot be established from hyperspace.[1;37m
-} T 
+} T GE no orbiting from warp message
 
 GRAVITY1 {***
 [0;37m[[1;31mCAUTION[0;37m] In gravity pull of planet [1;34m%d[0;37m, helm compensating![1;37m
-} T 
+} T GE planet gravity message 1
 
 GRAVITY2 {***
 [0;37m[[0;31mWARNING![0;37m] Gravity pull increasing, the ship is dangerously close to the
 escape horizon of planet [1;34m%d[0;37m![1;37m
-} T 
+} T GE planet gravity message 2
 
 GRAVITY3 {***
 [0;31mWARNING! WARNING! WARNING!
 The ship is being pulled into planet [1;34m%d[0;31m....[1;37m
-} T 
+} T GE planet gravity message 3
 
 GRAVWRM1 {***
 [0;37m[[1;31mCAUTION[0;37m] Within gravity pull of wormhole [1;34m%d[0;37m, prepare for impact![1;37m
-} T 
+} T GE wormhole gravity 1
 
 GRAVWRM2 {***
 [0;37m[[0;31mWARNING![0;37m] Gravity pull increasing, the ship is dangerously close to the
 escape horizon of wormhole [1;34m%d[0;37m![1;37m
-} T 
+} T GE wormhole gravity 2
 
 GRAVWRM3 {***
 [0;31mWARNING! WARNING! WARNING!
 The ship is being pulled into wormhole [1;34m%d[0;31m....[1;37m
-} T 
+} T GE wormhole gravity 3
 
 IMPULSE1 {
 [0;37m[[1;31mERROR[0;37m] Impulse drives don't function in hyperspace.[1;37m
-} T 
+} T GE no impulse in hyperspace message
 
 LEAVEORB {
 [0;37mLeaving orbit![1;37m
-} T 
+} T GE leaving orbit message
 
 TRANSFR1 {
 [1;36mThere are not that many on-board.[1;37m
-} T 
+} T GE not enough to transfer down message
 
 TRANSFR3 {
 [1;36mItems can only be transferred while in orbit.[1;37m
-} T 
+} T GE no transfer unless in orbit message
 
 TRANSFR4 {
 [1;36mYou don't own this planet; you can't transfer down items.[1;37m
-} T 
+} T GE no transfer down if not owner message
 
 TRANSFR5 {
 [1;37m%s %s[1;36m have been transferred to the planet.[1;37m
-} T 
+} T GE transfer down message
 
 TRANSUP1 {
 [1;36mThey don't have that many available.[1;37m
-} T 
+} T GE not enough to transfer up message
 
 TRANSUP4 {
 [1;36mYou don't own this planet; you can't transfer up items.[1;37m
-} T 
+} T GE no transfer up if not owner message
 
 TRANSUP5 {
 [1;37m%s %s[1;36m have been transferred from the planet.[1;37m
-} T 
+} T GE transfer up message
 
 TRANSUP6 {
 [1;36mThere is not enough space available for that many items.[1;37m
-} T 
+} T GE not enough space message
 
 ABAN01 {
 [1;36mYou must first orbit a planet you own.[1;37m
-} T 
+} T GE no abandon message
 
 ABAN02 {
 [1;36mConfirmed, the planet is now unclaimed.[1;37m
-} T 
+} T GE abandon message
 
 ADMIN1 {
 [1;36mYou must first orbit a planet.[1;37m
-} T 
+} T GE no admin message
 
 ADMIN2 {
 [1;36mYou do not own this planet.[1;37m
-} T 
+} T GE no admin if not owner message
 
 ADMIN3 {
 [1;36mReturning to command mode...[1;37m
-} T 
+} T GE exiting admin mode message
 
 ADMIN4 {
 [1;36mYou've already claimed %d planets, the maximum permitted by galactic law.[1;37m
-} T 
+} T GE you own too many planets message
 
 ADMENU1 {
-[1;36mDo you wish to settle this planet (Y/N)? [1;37m} T 
+[1;36mDo you wish to settle this planet (Y/N)? [1;37m} T GE do you want to admin question
 
 ADMENU1A {
 [1;36mPlease name this planet:
  [46m                   [0m
-[A[1;37m} T 
+[A[1;37m} T GE name planet prompt
 
 ADMENU1B {
 [0m[1;36mWe hereby declare planet [1;34m%d[1;36m to be named [1;34m%s[1;36m, and added to
 the empire of [0;36m%s[1;36m the Great, commander of the [0;36m%s[1;36m.[1;37m
-} T 
+} T GE planet is yours message
 
 ADMENU2 {
 [1;36m  Planet Administration Menu
@@ -2784,18 +2765,18 @@ ADMENU2 {
   7 - Set beacon message
   X - Exit to command mode[1;36m
 
-  Please select (1-6):[1;37m } T 
+  Please select (1-6):[1;37m } T GE admin menu
 
 ADMENU2B {
-[1;36mTransfer how much tax from the planetary bank to your account?[1;37m } T 
+[1;36mTransfer how much tax from the planetary bank to your account?[1;37m } T GE transfer tax question
 
 ADMENU2C {
 [0;33m%s[1;36m collected in taxes![1;37m
-} T 
+} T GE taxes collected message
 
 ADMENU2D {
 [1;36mThere isn't that much tax revenue in the planetary bank![1;37m
-} T 
+} T GE not enough taxes message
 
 ADMENU2E {
 [1;36mSelect the item to adjust
@@ -2815,834 +2796,834 @@ ADMENU2E {
   [1;37mgol[1;34m = adjust gold
   [1;37mspy[1;34m = adjust spies
 [0;31m----------------------------
-[1;36mSelect now:[1;37m } T 
+[1;36mSelect now:[1;37m } T GE item to adjust menu
 
 ADMEN2F1 {
-[1;36mPercentage of effort toward [1;37m%s[1;36m ([1;37m%u[1;36m)?[1;37m } T 
+[1;36mPercentage of effort toward [1;37m%s[1;36m ([1;37m%u[1;36m)?[1;37m } T GE item percent question
 
-ADMEN2F2 {[1;36mCharge how much for each [1;37m%s[1;36m ([1;37m%u[1;36m)?[1;37m } T 
+ADMEN2F2 {[1;36mCharge how much for each [1;37m%s[1;36m ([1;37m%u[1;36m)?[1;37m } T GE item cost question
 
-ADMEN2F3 {[1;36mSell [1;37m%s[1;36m to other ships ([1;37m%c[1;36m)?[1;37m } T 
+ADMEN2F3 {[1;36mSell [1;37m%s[1;36m to other ships ([1;37m%c[1;36m)?[1;37m } T GE sell to others question
 
-ADMEN2F4 {[1;36mReserve how many [1;37m%s[1;36m for stockpiling ([1;37m%u[1;36m)?[1;37m } T 
+ADMEN2F4 {[1;36mReserve how many [1;37m%s[1;36m for stockpiling ([1;37m%u[1;36m)?[1;37m } T GE item reserve question
 
 ADMEN2FA {
 [1;36mTotal percentage exceeds 100 percent. Percentage of effort toward
 [1;37m%s[1;36m adjusted to %d.
-} T 
+} T GE items over 100 message
 
 ADMEN2FB {
 [1;36mStill have %d percent effort un-assigned.
-} T 
+} T GE items under 100 message
 
 ADMENU2G {
 [1;36mEnter the new name:
  [46m                   [0m
-[A[1;37m} T 
+[A[1;37m} T GE rename planet question
 
 ADMENU2H {
-[1;36mEnter the new tax rate (0-100):[1;37m } T 
+[1;36mEnter the new tax rate (0-100):[1;37m } T GE tax rate question
 
 ADMENU2I {
-[1;36mEnter the new password, [1;37mteam[1;36m, or [1;37mnone[1;36m:[1;37m } T 
+[1;36mEnter the new password, [1;37mteam[1;36m, or [1;37mnone[1;36m:[1;37m } T GE password question
 
 ADMEN2I1 {
 [1;36mThe new password is [1;37m%s[1;36m.
-} T 
+} T GE password changed message
 
 ADMEN2I2 {
 [1;36mThere is no trade password required.
-} T 
+} T GE no password required message
 
 ADMEN2I3 {
 [1;36mTeam members can all trade with your planet now!
-} T
+} T GE team password message
 
 ADMEN2I4 {
 [1;36mIgnored! You are not a member of a team.
-} T
+} T GE not part of a team message
 
 ADMENU2J {
 [1;36mEnter the beacon message or leave blank for no message:
  [46m                                                                           [0m
-[A[1;37m} T 
+[A[1;37m} T GE beacon message question
 
 ADMEN2J1 {
 [0m[1;36mNo beacon message entered - none set.
-} T
+} T GE no beacon message entered message
 
 ADMEN2J2 {
 [0m[1;36mThe beacon message has been set. Approaching ships will be notified.
-} T
+} T GE beacon message entered message
 
-PRESSKEY {[1;36mPress ENTER to continue:[1;37m } T 
+PRESSKEY {[1;36mPress ENTER to continue:[1;37m } T GE press enter to continue message
 
 ATTACK0 {
 [1;36mYou can't attack your own planet.[1;37m
-} T 
+} T GE no attacking your own planet message
 
 ATTACK0A {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with a fighter launcher.[1;37m
-} T 
+} T GE no fighter launcher message
 
 ATTACKM0 {
 [1;36mThere are not that many troops on-board.[1;37m
-} T 
+} T GE not enough troops message
 
 ATTACKM1 {
 [1;36mOn your orders, [1;37m%s troops[1;36m have deployed to the planet.[1;37m
 
 ***
-} T 
+} T GE troops sent message
 
 ATTACKM2 {[1;36mIn the attack your troops took out [1;37m%s[1;36m, and suffered losses of [1;37m%s[1;36m.[1;37m
-} T 
+} T GE troops took out message
 
 ATTACKM3 {[1;36mThe remaining [1;37m%s[1;36m of the planetary forces have surrendered![1;37m
-} T 
+} T GE remaining troops surrendered message
 
 ATTACKM4 {[1;36mThe remaining [1;37m%s[1;36m of your forces have surrendered![1;37m
-} T 
+} T GE attacking troops surrendered message
 
 ATTACKM5 {[1;37m%s[1;36m of their [1;37m%s[1;36m were also destroyed![1;37m
-} T 
+} T GE troops collateral damage message
 
 ATTACKM6 {[1;37m%s[1;36m troops have returned to the ship.[1;37m
-} T 
+} T GE troops returned message
 
 ATTACKM7 {[1;36mThe planetary fighters are counter-attacking your troops.[1;37m
-} T 
+} T GE planet fighters attacking troops message
 
 ATTACKM8 {[1;36mThe planetary fighters have taken out [1;37m%s[1;36m of your troops![1;37m
-} T 
+} T GE planet fighters took out message
 
 ATTACKF0 {
 [0;37m[[1;31mERROR[0;37m] There are not that many fighters on-board.[1;37m
-} T 
+} T GE not enough fighters message
 
 ATTACKF1 {
 [0;32mLaunching [1;37m%s fighters[1;32m to the planet![1;37m
 
 ***
-} T 
+} T GE sending fighters message
 
 ATTACKF2 {[1;36mIn the attack your fighters destroyed [1;37m%s[1;36m fighters, and you lost [1;37m%s[1;36m![1;37m
-} T 
+} T GE fighters took out message
 
 ATTACKF5 {[1;36mYour fighters also destroyed [1;37m%s %s[1;36m in the attack![1;37m
-} T 
+} T GE fighters collateral damage message
 
 ATTACKF6 {[1;37m%s[1;36m fighters have returned to the ship.[1;37m
-} T 
+} T GE fighters returned message
 
 ATTACKF7 {[1;36mYour fighters have crushed their defenses![1;37m
-} T 
+} T GE fighters won message
 
 ATTACKF8 {[1;36mYour fighters are being fired upon by planetary troops![1;37m
-} T 
+} T GE fighters fired upon message
 
 ATTACK6 {***
 [0;37mIncoming distress message from [1;34m%s[0;37m in star system [1;34m%d %d[0;37m!
 They are under attack from Commander [1;34m%s[0;37m in the [1;34m%s[0;37m
 and are requesting immediate assistance!
-} T 
+} T GE distress message to owner message
 
 ATTACK6A {***
 [36m GALACTIC EMPIRE ALERT! *** 
 Planet under attack... Check GE Mail for details.[37m
-} T Ge Alert message to players not in game
+} T GE distress message to owner not in game message
 
 ATTACK7 {[1;36mThe planet is sending a distress signal![1;37m
-} T 
+} T GE attacker informed owner is notified message
 
 ATTACK8 {[1;36mYour forces have won, this planet is yours![1;37m
-} T 
+} T GE you won the planet message
 
 ATTACK9 {[1;36mThe planetary forces continue to put up a valiant resistance![1;37m
-} T 
+} T GE you did not win the planet message
 
 IHIT1 {***
 [0;37m[[0;31mWARNING![0;37m] Direct hit from an ion cannon burst, shields deflected some of the
 blast![1;37m
-} T 
+} T GE hit with ion with shields message
 
 IHIT2 {***
 [0;37m[[0;31mWARNING![0;37m] Direct hit from an ion cannon burst![1;37m
-} T 
+} T GE hit with ion without shields message
 
 ROSTER1 {
 [1;36mComplete roster list
 [0;31m--------------------------------------------------------------
 [1;34mPlayer                             Score Kills Pla Empire Size[1;37m
-} T 
+} T GE complete roster list message
 
 ROSTER2 {
 [1;36mTop %d roster list
 [0;31m--------------------------------------------------------------
 [1;34mPlayer                             Score Kills Pla Empire Size[1;37m
-} T 
+} T GE incomplete roster list message
 
 BUYPAS1 {
 [1;36mThey are asking for the correct trade password.[1;37m
-} T 
+} T GE asking for trade password message
 
 BUYPAS2 {
 [1;36mThey are not accepting that trade password.[1;37m
-} T 
+} T GE wrong trade password message
 
 BUYPAS3 {
 [1;36mThis is a team planet; no trading allowed![1;37m
-} T 
+} T GE team only planet no message
 
 BUYPAS4 {
 [1;36mYou are trading with a team planet![1;37m
-} T 
+} T GE team only planet yes message
 
 BUY1 {
 [1;36mYou must be orbiting a planet to buy goods.[1;37m
-} T 
+} T GE no buying unless orbiting message
 
 BUY2 {
 [1;36mThey want [0;33m%s[1;36m for the [1;37m%s %s[1;36m, you don't have that much cash.[1;37m
-} T 
+} T GE not enough money to buy message
 
 BUY3 {
 [1;36mThey only have [1;37m%s %s[1;36m available for sale.[1;37m
-} T 
+} T GE not enough stuff to buy message
 
 BUY4 {
 [1;36mThey are not selling their [1;37m%s[1;36m.[1;37m
-} T 
+} T GE not selling item message
 
 BUY7 {
 [1;36mThis planet is unsettled.[1;37m
-} T 
+} T GE no buying if no owner message
 
 BUY8 {
 [1;36mThere is not enough space available for that many items.[1;37m
-} T 
+} T GE not enough space to buy message
 
 BUY9 {
 [1;37m%s %s[1;36m purchased at the price of [0;33m%u[1;36m each for a total of [0;33m%s[1;36m.[1;37m
-} T 
+} T GE buy message
 
 PRICE1 {
 [1;37m%s %s[1;36m are going to cost [0;33m%u[1;36m each for a total of [0;33m%s[1;36m.[1;37m
-} T 
+} T GE price message
 
 PRICE2 {
 [1;37m%s %s[1;36m would cost [0;33m%u[1;36m each for a total of [0;33m%s[1;36m, but there
 is not enough space available for that many items.[1;37m
-} T 
+} T GE price but not enough space message
 
 FORHELP {
 [1;36mType [1;37m?[1;36m for help.[1;37m
-} T 
+} T GE for help message
 
 PHANONE {
 [0;37m[[1;31mERROR[0;37m] There is insufficient phaser power to fire![1;37m
-} T 
+} T GE no phaser power message
 
 SETOPTS {
 [0;37mUser options are:[1;37m
-} T
+} T GE set options message
 
 SETOPT {
 [0;37mUser option [1;37m%s[0;37m set [1;37m%s[0;37m.[1;37m
-} T
+} T GE set option changed message
 
 REP01 {
 [1;37m%s: the %s
-} T 
+} T GE report 01
 
 REP02 {[1;35mTraveling in hyperspace (sector [1;34m%d %d[1;35m)[1;37m
-} T 
+} T GE report 02
 
 REP03 {[1;37mSpeed................. Warp %s
-} T 
+} T GE report 03
 
 REP04 {[1;37mGalactic heading...... %d
-} T 
+} T GE report 04
 
 REP05 {[1;37mNavigating sector [1;34m%d %d[1;37m
-} T 
+} T GE report 05
 
 REP06 {[1;37mSpeed................. Warp %s
-} T 
+} T GE report 06
 
 REP07 {[1;37mGalactic heading...... %u
-} T 
+} T GE report 07
 
 REP08 {[1;37mOrbiting planet [1;34m%d[1;37m in sector [1;34m%d %d[1;37m
-} T 
+} T GE report 08
 
 REP09 {[1;37mNeutron flux.......... %u
-} T 
+} T GE report 09
 
 REP10 {[1;37mShields (Mark-%d)......[1;32m UP[1;37m
-} T 
+} T GE report 10
 
 REP10S {[1;37mShields (Mark-%d).....[1;32m UP[1;37m
-} T 
+} T GE report 10 short
 
 REP11 {[1;37mShields (Mark-%d)......[0;31m DOWN[1;37m
-} T 
+} T GE report 11
 
 REP11S {[1;37mShields (Mark-%d).....[0;31m DOWN[1;37m
-} T 
+} T GE report 11 short
 
 REP11B {[1;37mShield bank charge....[1;33m %d[1;37m
-} T 
+} T GE report 11B
 
 REP12 {[1;37mCloak.................[1;32m ON[1;37m
-} T 
+} T GE report 12
 
 REP13 {[1;37mCloak.................[0;31m OFF[1;37m
-} T 
+} T GE report 13
 
 REP14 {[1;37mDCO reports...........[0;31m %s[1;37m damage
-} T 
+} T GE report 14
 
 REP15 {[0;31m   Shields out[1;37m
-} T 
+} T GE report 15
 
 REP16 {[0;31m   Helm damaged[1;37m
-} T 
+} T GE report 16
 
 REP17 {[0;31m   Cloaking system damaged[1;37m
-} T 
+} T GE report 17
 
 REP18 {[0;31m   Tactical scanners damaged[1;37m
-} T 
+} T GE report 18
 
 REP18A {[0;31m   Maintenance status - %d centocks[1;37m
-} T 
+} T GE report 18A
 
 REP19 {[0;31m   Warp engines inoperable[1;37m
-} T 
+} T GE report 19
 
 REP20 {[0;31m   Warp engines damaged
    Warp [1;37m%d[0;31m or below recommended[1;37m
-} T 
+} T GE report 20
 
 REP21 {[0;31m   Phasers damaged[1;37m
-} T 
+} T GE report 21
 
 REP22 {[0;31m   Fire control damaged[1;37m
-} T 
+} T GE report 22
 
 REP23 {[1;37mPhasers (Mark-%d)...... [1;32m<operative>[1;37m
-} T 
+} T GE report 23
 
 REP23S {[1;37mPhasers (Mark-%d)..... [1;32m<operative>[1;37m
-} T 
+} T GE report 23 short
 
 REP24 {[1;37mPhasers (Mark-%d)...... [0;31m<inoperable>[1;37m
-} T 
+} T GE report 24
 
 REP24S {[1;37mPhasers (Mark-%d)..... [0;31m<inoperable>[1;37m
-} T 
+} T GE report 24 short
 
 REP24A {[1;37mComm frequenices...... [1;34mA[1;37m:[1;34m%u  B[1;37m:[1;34m%u  C[1;37m:[1;34m%u[1;37m
-} T 
+} T GE report 24A
 
 REP25 {[1;37mAccounting report:
-} T 
+} T GE report 25
 
 REP26 {[1;37mPlanets established... none
-} T 
+} T GE report 26
 
 REP27 {[1;37mPlanets established... %d
-} T 
+} T GE report 27
 
 REP28 {[1;37mCash on hand.......... [0;33m%s[1;37m
-} T 
+} T GE report 28
 
 REP30 {[1;37mScore................. %s
-} T 
+} T GE report 30
 
 REP31 {[1;37mKills................. %d
-} T 
+} T GE report 31
 
 REP31A {[1;37m   Team: %s
-} T
+} T GE report 31A
 
 REP32 {[1;37mGalactic position..... X:%d Y:%d
 Sector position....... X:%d Y:%d
-} T 
+} T GE report 32
 
 REP35 {[1;37mNavigational report:
-} T 
+} T GE report 35
 
 REP36 {[1;37mSystems report:
-} T 
+} T GE report 36
 
 REP37 {[1;37mTotal cargo weight.... %s tons
-} T 
+} T GE report 37
 
 REP38 {[1;37mInventory report:
-} T 
+} T GE report 38
 
 REP39 {[1;37mRoster position....... %d
-} T 
+} T GE report 39
 
-REP40 {[1;37mCyborg: %d, Cybmine: %d, Cybskill: %d, Cybupdate: %d
-} T 
+REP40 {[1;37mCyborg: %d, Cybmine: %d, Cybupdate: %d
+} T GE report 40
 
 SCAN01 {[0;37m
 Scanning the [1;34m%s[0;37m:
-} T 
+} T GE scan 01
 
 SCAN01A {[0;37mShip class: %s
-} T 
+} T GE scan 01A
 
 SCAN02 {[0;37mCommanded by: [1;34m%s
-} T 
+} T GE scan 02
 
 SCAN02A {[0;37mAlliance: [1;34m%s
-} T
+} T GE scan 02A
 
 SCAN03 {[0;37mBearing: [1;37m%d[0;37m Heading: [1;37m%d[0;37m Dist: [1;37m%s[0;37m
-} T 
+} T GE scan 03
 
 SCAN03A {[0;37mGalactic heading: [1;37m%d[0;37m Sect: [1;37m%d %d
-} T 
+} T GE scan 03A
 
 SCAN04 {[0;37mSpeed: [1;37mWarp %s
-} T 
+} T GE scan 04
 
 SCAN04A {[0;37mSize: [1;37m%sm long by %sm wide
-} T
+} T GE scan 04A
 
 SCAN05 {[0;37mDamage: [1;37m%s damage
-} T 
+} T GE scan 05
 
 SCAN06 {[0;37mShields: [1;32mUP
-} T 
+} T GE scan 06
 
 SCAN07 {[0;37mShields: [0;31mDOWN
-} T 
+} T GE scan 07
 
 SCAN07A {[0;37mRegistered kills: [1;37m%d
-} T 
+} T GE scan 07A
 
 SCAN08 {
 [0;37mScanning planet [1;34m%d[0;37m: [1;34m%s[1;37m
-} T 
+} T GE scan 08
 
 SCAN09 {[0;37mCommanded by: [1;34m%s[0;37m
-} T 
+} T GE scan 09
 
 SCAN10 {[0;37mBearing: [1;37m%d[0;37m  Distance: [1;37m%s[0;37m
-} T 
+} T GE scan 10
 
-SCAN11 {[0;37mEnvironment: } T 
+SCAN11 {[0;37mEnvironment: } T GE scan 11
 
 SCAN12 {[1;37mPoor
-} T 
+} T GE scan 12
 
 SCAN13 {[1;37mMarginal
-} T 
+} T GE scan 13
 
 SCAN14 {[1;37mGood
-} T 
+} T GE scan 14
 
 SCAN15 {[1;37mVery good
-} T 
+} T GE scan 15
 
-SCAN16 {[0;37mResources: } T 
+SCAN16 {[0;37mResources: } T GE scan 16
 
 SCAN24 {[0;37m
 Scanning range %s from sector [1;34m%d %d[0;37m:[1;37m
-} T 
+} T GE scan 24
 
 SCAN25 {[0;37m
 Scanning sector [1;34m%d %d[0;37m:[1;37m
-} T 
+} T GE scan 25
 
 SCAN28 {[0;37mPopulation: [1;37m%s
-} T 
+} T GE scan 28
 
 SCAN29 {[0;37m%s stockpile of missiles.
-} T 
+} T GE scan 29
 
 SCAN30 {[0;37m%s stockpile of torpedoes.
-} T 
+} T GE scan 30
 
 SCAN31 {[0;37mNo sign of fighters anywhere.
-} T 
+} T GE scan 31
 
 SCAN32 {[0;37mThere are indications of fighters.
-} T 
+} T GE scan 32
 
 SCAN33 {[0;37m%s stockpile of flux pods.
-} T 
+} T GE scan 33
 
 SCAN34 {[0;37m%s stockpile of mines.
-} T 
+} T GE scan 34
 
 SCANWRM {
 [0;37mScanning wormhole [1;34m%d[0;37m: [1;34m%s[1;37m
-} T 
+} T GE scan wormhole message
 
 PLUSDASH { [0;31m  +------------------------------+
-} T 
+} T GE dashes for scans
 
 PLUSFULL { [0;31m  +------------------------------+  [0;37mShip Distance Bearing Heading Speed[0;31m
-} T 
+} T GE dashes for scans with names
 
 ADMIN01 {
 Planet accounting report for %s:
-} T 
+} T GE admin 01
 
 ADMIN02 {Item         Rate        Qty Price  Resv  Sell     Sold
-} T 
+} T GE admin 02
 
 ADMIN04 {[0;37mCash in planetary bank ..... [0;33m%s
-} T 
+} T GE admin 04
 
 ADMIN04A {[0;37mTax revenue ................ [0;33m%s
-} T 
+} T GE admin 04A
 
 ADMIN04B {[0;37mTax rate ................... [1;37m%d
-} T 
+} T GE admin 04B
 
 ADMIN06 {[0;37mTrade password.............. [1;37m%s
-} T 
+} T GE admin 06
 
 MISSHRT {
 [0;37m[[1;31mERROR[0;37m] There is not that much energy in the neutron flux pile.[1;37m
-} T 
+} T GE not enough energy for missile message
 
 KILLGOT1 {***
 [1;36mYou have destroyed the [0;36m%s[1;36m. All usable flotsam have been retrieved.
-You have retrieved[1;37m} T 
+You have retrieved[1;37m} T GE you destroyed a ship message
 
 KILLPNTS {
 [1;36mYou got %s points for the %s.[1;37m
-} T 
+} T GE points for kill message
 
 KILLBON {
 [1;36mYou also got %s bonus points for taking out a top player.[1;37m
-} T
+} T GE points for top kill message
 
 CHGLSR1 {
 [1;36mAccording to galactic treaty, you have been ordered to pay to the winner the
 amount of [0;33m%s[1;36m as reparations and fines. Next time, don't lose![1;37m
-} T
+} T GE you have to pay because you lost message
 
 CHGLSR2 {
 [1;36mAccording to galactic treaty you are awarded the sum of [0;33m%s[1;36m as reparations
 and fines from Commander [0;36m%s[1;36m. Congratulations![1;37m
-} T
+} T GE you get paid because you won message
 
 PHASER0 {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with phasers.[1;37m
-} T 
+} T GE no phasers on this ship message
 
 HPFIRED {
 [0;32mHyper-phaser fired at bearing [1;37m%d[0;32m![1;37m
-} T 
+} T GE fired hyperphaser message
 
 HPHITM {
 [0;37mThe hyper-phaser caused [0;31m%s[0;37m damage to Commander [0;36m%s[0;37m's ship![1;37m
-} T 
+} T GE you hit a ship with hyperphaser message
 
 HPHITU {***
 [0;37m[[0;31mWARNING![0;37m] Hyper-phaser hit from Commander [0;36m%s[0;37m's ship, caused [0;31m%s[0;37m damage![1;37m
-} T 
+} T GE you got hit with a hyperphaser message
 
 HNOFIRP {
 [0;37m[[1;31mERROR[0;37m] There is insufficient power in the neutron flux to fire![1;37m
-} T 
+} T GE not enough power to use hyperphasers message
 
 HPWAIT {
 [0;37m[[1;31mERROR[0;37m] The hyper-phaser needs a few more seconds to cool before firing again.[1;37m
-} T 
+} T GE hyperphaser time out message
 
 MOVE1 {***
 [0;37mHelm reports leaving sector [1;34m%d %d[0;37m and entering sector [1;34m%d %d[0;37m.[1;37m
-} T 
+} T GE you changed sectors message
 
 MOVE2 {***
 [0;37mSensors indicate the [0;36m%s[0;37m has left this sector.[1;37m
-} T 
+} T GE someone else left your sector message
 
 MOVE3 {***
 [0;37mSensors indicate the [0;36m%s[0;37m has entered this sector.[1;37m
-} T 
+} T GE someone else entered your sector message
 
 MOVE4 {***
 [0;37m[[0;31mWARNING![0;37m] Neutron flux levels are too low. Engines shut down![1;37m
-} T 
+} T GE out of power engines stopping message
 
 ZAPHIM1 {***
 [0;37m[[0;31mWARNING![0;37m] Direct hit from the Enforcer Planet's energy beam, caused [0;31m%s[0;37m damage!
-} T 
+} T GE got hit with enforcer beam message
 
 ZAPHIM2 {***
 [0;37mHailing message from the Enforcer Planet
 [1;36m<[1;37m This sector is a neutral zone; any hostilities will be dealt with severely! [1;36m>[1;37m
-} T 
+} T GE you are in the neutral zone message
 
 PLAMSG1 {
 [1;36mPlanet Name         sector planet[1;37m
-} T 
+} T GE planet list message
 
 PLAMSG2 {
 [1;36mNo planets have been established.[1;37m
-} T 
+} T GE you have no planets message
 
 MAINT1 {
 [1;36mYou are not orbiting a planet.[1;37m
-} T 
+} T GE no maint if not orbiting message
 
 MAINT2 {
 [1;36mThey are requesting a trade password before commencing repairs.[1;37m
-} T 
+} T GE no maint if no password message
 
 MAINT3 {
 [1;36mThey say the password is not correct.[1;37m
-} T 
+} T GE no maint if password is wrong message
 
 MAINT4 {
 [1;36mThe Enforcer Planet does not have a repair depot.[1;37m
-} T 
+} T GE no maint at the enforcer planet message
 
 MAINT5 {
 [1;36mThey are commencing the maintenance and repairs and should be completed in %d
 centocks![1;37m
-} T 
+} T GE yes maint message
 
 MAINT6 {
 [1;36mYou don't have enough cash to pay for a maintenance team.[1;37m
-} T 
+} T GE no maint if no money message
 
 MAINT7 {***
 [1;32mRepairs and general maintenance have been completed![1;37m
-} T 
+} T GE maint is done message
 
 MAINT8 {
 [1;36mThis planet has not established a repair facility.[1;37m
-} T 
+} T GE no maint if planet not populated message
 
 MAINT9 {
 [1;36mThe maintenance team reports that under the conventions of their union contract
 they are not permitted to perform services on ships engaged in acts of war or
 in hostile situations.[1;37m
-} T
+} T GE no maint if you are fighting message
 
 MAINT10 {
 [1;36mThe maintenance team reports that they have ceased work under the conventions
 of their union contract preventing them from performing services on ships
 engaged in acts of war.[1;37m
-} T
+} T GE maint stopped message
 
 JAMMER0 {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with a jammer launcher.[1;37m
-} T 
+} T GE no jammer launcher message
 
 JAMMER1 {
 [0;37m[[1;31mERROR[0;37m] There are no jammers on-board.[1;37m
-} T 
+} T GE no jammers message
 
 JAMMER2 {
 [0;32mJammer fired![1;37m
-} T 
+} T GE you fired a jammer message
 
 JAMMER3 {***
 [0;37m[[0;31mWARNING![0;37m] The scanners are being jammed![1;37m
-} T 
+} T GE someone fired a jammer message
 
 JAMMER4 {
 [0;37m[[1;31mERROR[0;37m] All scanners are currently being jammed![1;37m
-} T 
+} T GE no scans because jammer message
 
 JAMMER5 {***
 [0;37mThe jamming has stopped![1;37m
-} T 
+} T GE jamming stopped message
 
 ZIPPER0 {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with a zipper launcher.[1;37m
-} T 
+} T GE no zipper launcher message
 
 ZIPPER1 {
 [0;37m[[1;31mERROR[0;37m] There are no zippers on-board.[1;37m
-} T 
+} T GE no zippers message
 
 ZIPPER2 {
 [0;32mZipper fired![1;37m
-} T 
+} T GE you fired a zipper message
 
 ZIPPER3 {***
 [0;37m[[1;31mCAUTION[0;37m] Sensors detect the [0;36m%s[0;37m just launched a zipper.[1;37m
-} T 
+} T GE someone else fired a zipper message
 
 NEW1 {
 [1;36mYou must go to Zygor in sector 0 0 to get a new ship.[1;37m
-} T 
+} T GE only buy ships at Zygor message
 
 NEW2 {
 [1;36mType [1;37mHELP CLASS[1;36m for a list of ship class types.[1;37m
-} T 
+} T GE no such ship class message
 
 NEW3 {
 [1;36mYou are now the proud owner of a %s.[1;37m
-} T 
+} T GE you bought a ship hooray message
 
 NEW4 {
 [1;36mYou don't have enough cash for a %s.[1;37m
-} T 
+} T GE not enough money for new ship message
 
 NEW5 {
 [1;36mYou must go to Zygor in sector 0 0 to get new equipment.[1;37m
-} T 
+} T GE only buy equipment at Zygor message
 
 NEW6 {
 [1;36mThis ship cannot be equipped with a Mark-%d shield.[1;37m
-} T 
+} T GE ship cannot take this shield message
 
 NEW7 {
 [1;36mFor the meager sum of [0;33m%s[1;36m, your ship now has a Mark-%d shield.[1;37m
-} T 
+} T GE you bought a new shield message
 
 NEW8 {
 [1;36mYou don't have enough cash for a Mark-%d shield.[1;37m
-} T 
+} T GE not enough money for new shield message
 
 NEW9 {
 [1;36mThis ship cannot be equipped with a Mark-%d phaser.[1;37m
-} T 
+} T GE ship cannot take this phaser message
 
 NEW10 {
 [1;36mFor the meager sum of [0;33m%s[1;36m, your ship now has a Mark-%d phaser.[1;37m
-} T 
+} T GE you bought a new phaser message
 
 NEW11 {
 [1;36mYou don't have enough cash for a Mark-%d phaser.[1;37m
-} T 
+} T GE not enough money for new phaser message
 
 NEW12 {
 [0;37m[[1;31mERROR[0;37m] There is no such item.[1;37m
-} T 
+} T GE no such item message
 
 NEW13 {
 [1;36mYour ship now has a Mark-%d shield.[1;37m
-} T 
+} T GE new shield message
 
 NEW14 {
 [1;36mYour ship now has a Mark-%d phaser.[1;37m
-} T 
+} T GE new phaser message
 
 NEW16 {
 [1;36mYou already have %d ships, the maximum amount permitted by galactic law.[1;37m
-} T 
+} T GE you have too many ships message
 
 NEW17 {
 [1;36mThe minimum charge of [0;33m1000[1;36m will be charged for installation.[1;37m
-} T
+} T GE install charge message
 
 NEW18 {
 [1;36mThere is no charge for the new shield and after deducting a transaction 
 fee of [0;33m%s[1;36m, [0;33m%s[1;36m has been deposited to your account.[1;37m
-} T
+} T GE shield refund message
 
 NEW19 {[1;36mYou will be credited [0;33m%s[1;36m for the existing used shield.[1;37m
-} T
+} T GE shield credit message
 
 NEW27 {[1;36mThe minimum charge of [0;33m1000[1;36m will be charged for installation.[1;37m
-} T
+} T GE install charge no line break message
 
 NEW28 {
 [1;36mThere is no charge for the new phaser and after deducting a transaction
 fee of [0;33m%s[1;36m, [0;33m%s[1;36m has been deposited to your account.[1;37m
-} T
+} T GE phaser refund message
 
 NEW29 {[1;36mYou will be credited us [0;33m%s[1;36m for the existing used phaser.[1;37m
-} T
+} T GE phaser credit message
 
 SELL1 {
 [1;36mYou must go to Zygor in sector 0 0 to sell items.[1;37m
-} T 
+} T GE no selling unless at Zygor message
 
 SELL2 {
 [1;36mAfter the transfer tax of [0;33m%s[1;36m, you have netted [0;33m%s[1;36m for the [1;37m%s %s[1;36m.[1;37m
-} T 
+} T GE sell message
 
 SELL3 {
 [1;36mThere are not that many [1;37m%s[1;36m on-board.[1;37m
-} T 
+} T GE not enough to sell message
 
 SELL5 {
 [1;36mThere are no [1;37m%s[1;36m on-board.[1;37m
-} T 
+} T GE none to sell message
 
 TOOMUCH {
 [1;36mThis is too of a large transaction to process at once. Try a smaller amount.[1;37m
-} T 
+} T GE transaction too big message
 
 TOORICH {
 [1;36mDue to the Galactic Financial Reform Act of 3264, no individual can have more
 than [0;33m%lu[1;36m in the bank.[1;37m
-} T 
+} T GE too much money meesage
 
 SYSGET {
 [1;37m%s %s[1;36m granted.[1;37m
-} T 
+} T GE sysop get message
 
 SYSKILL {
 [0;36m%s[1;36m killed.[1;37m
-} T 
+} T GE sysop kill message
 
 SYSKILN {
 [1;36mNo user by that name found.[1;37m
-} T 
+} T GE sysop no one to kill message
 
 SYSCASH {
 [0;33m%lu[1;36m granted.[1;37m
-} T 
+} T GE sysop get money message
 
 SYSCLS {
 [1;36mThe [0;36m%s[1;36m is now a %s.[1;37m
-} T 
+} T GE sysop change ship class message
 
 SYSLST {
 [1;36mChn Name                           Xsect Ysect Damage Tick Cybmine[1;37m
-} T
+} T GE sysop ship list message
 
 SYSCLL {
 [1;36mCls Name                        Cybs attack?   How many[1;37m
-} T
+} T GE sysop class list message
 
 SYSCYB {
 [1;36mCybertrons paused for %d seconds.[1;37m
-} T
+} T GE sysop cybpause message
 
 SYSPOP {
 [1;36m%d planetary cycles run.[1;37m
-} T
+} T GE sysop multiply message
 
 SYSNP {
 [1;36mThis planet is unowned or has no population -- skipped.[1;37m
-} T
+} T GE sysop no multiply message
 
 MAIL1 {
    You have no messages waiting...
-} T 
+} T GE no messages message
 
 MAIL2 {
-<Received: %s [%s]>} T 
+<Received: %s [%s]>} T GE mail 2
 
 MAIL3 {
 The message was garbled beyond reconstruction / type - %d
-} T 
+} T GE mail 3
 
 MESG02 {
 Distress message from %s in sector %d %d, they were attacked by 
 Commander %s in the %s with %s troops.
  
 They successfully defended the planet.
-} T 
+} T GE mesg 02
 
 
 MESG03 {
@@ -3650,7 +3631,7 @@ Distress message from %s in sector %d %d, they were attacked by
 Commander %s in the %s with %s troops. 
 
 They have surrendered the planet.
-} T 
+} T GE mesg 03
 
 
 MESG04 {
@@ -3658,7 +3639,7 @@ Distress message from %s in sector %d %d, they were attacked by
 Commander %s in the %s with %s fighters. 
 
 They successfully defended the planet.
-} T 
+} T GE mesg 04
 
 
 MESG05 {
@@ -3666,1688 +3647,269 @@ Distress message from %s in sector %d %d, they were attacked by
 Commander %s in the %s with %s fighters. 
 
 They have surrendered the planet.
-} T 
+} T GE mesg 05
 
 
 MESG06 {
 Distress message from %s in sector %d %d, the food supply is 
 extremely low and %s troops have been lost.
-} T 
+} T GE mesg 06
 
 
 MESG07 {
 Distress message from %s in sector %d %d, the food supply is 
 extremely low and %s men been lost.
-} T 
+} T GE mesg 07
 
 
 MESG08 {
 Message from %s in sector %d %d, the population of men has reached the
 maximum sustainable on this planet. Population now %s.
-} T 
+} T GE mesg 08
 
 
 MESG09 {
 Message from %s in sector %d %d, there are no more facilities for storing
 missiles, the missile production has been suspended at %s.
-} T 
+} T GE mesg 09
 
 
 MESG10 {
 Message from %s in sector %d %d, there are no more facilities for storing
 torpedoes, the torpedo production has been suspended at %s.
-} T 
+} T GE mesg 10
 
 
 MESG11 {
 Message from %s in sector %d %d, there are no more facilities for storing
 ion cannons, the ion cannon production has been suspended at %s.
-} T 
+} T GE mesg 11
 
 
 MESG12 {
 Message from %s in sector %d %d, there are no more facilities for storing
 flux pods, the flux pod production has been suspended at %s.
-} T 
+} T GE mesg 12
 
 
 MESG13 {
 Message from %s in Sector %d %d, there are no more facilities for storing
 food supplies, the food production has been suspended at %s.
-} T 
+} T GE mesg 13
 
 
 MESG14 {
 Message from %s in sector %d %d, there are no more support facilities for
 fighters, the fighter production has been suspended at %s.
-} T 
+} T GE mesg 14
 
 
 MESG15 {
 Message from %s in sector %d %d, there are no more facilities for storing
 decoys, the decoy production has been suspended at %s.
-} T 
+} T GE mesg 15
 
 
 MESG16 {
 Message from %s in sector %d %d, there are no more facilities for housing
 troops, the training has been suspended at %s troops in active duty.
-} T 
+} T GE mesg 16
 
 
 MESG17 {
 Message from %s in sector %d %d, there are no more facilities for storing
 zippers, the zipper production has been suspended at %s.
-} T 
+} T GE mesg 17
 
 
 MESG18 {
 Message from %s in sector %d %d, there are no more facilities for storing
 jammers, the jammer production has been suspended at %s.
-} T 
+} T GE mesg 18
 
 
 MESG19 {
 Message from %s in sector %d %d, there are no more facilities for storing
 mines, the mines production has been suspended at %s.
-} T 
+} T GE mesg 19
 
 
 MESG19A {
 Message from %s in sector %d %d, there are no more facilities for storing
 gold, the gold mining has been suspended at %s.
-} T 
+} T GE mesg 19A
 
 
 MESG19B {
 Message from %s in sector %d %d, the PIA (Planetary Intelligence Agency)
 has closed enrollment for its operative training facility at %s agents.
-} T 
+} T GE mesg 19b
 
 
 MESG20 {
 Production report from %s in sector %d %d 
-} T 
+} T GE mesg 20
 
 
 MESG30 {
 Distress message from %s in sector %d %d, the local population
 has revolted and overpowered our troops. %s troops joined the
 revolt, the rest were lost.
-} T 
+} T GE mesg 30
 
 
 CAPTDOC {
 [1;36mA secret document was also recovered, it reads...
 [1;37m
 Planet name         sector planet
-} T 
+} T GE capture document message
 
-FLEET3 {[1;36mWhich ship do you wish to command this mission?[1;37m } T 
+FLEET3 {[1;36mWhich ship do you wish to command this mission?[1;37m } T GE pick your ship question
 
 FLEET4 {
 [1;36mPick a ship from the list or "x" to return to the main menu.[1;37m
-} T 
+} T GE come on pick a real ship message
 
 RENAME1 {
 [1;36mYour ship is now named the [0;36m%s[1;36m.[1;37m
-} T 
+} T GE you renamed your ship message
 
 RENAME3 {
 [1;36mType [1;37mHELP RENAME[1;36m for the correct usage.[1;37m
-} T 
+} T GE rename error message
 
 SELFD1 {
 [1;36mSelf-destruct countdown begun, type [1;37mABORT[1;36m to cancel![1;37m
-} T 
+} T GE self destruct started message
 
 SELFD1A {
 [0;37m[[1;31mERROR[0;37m] Self-destruct is not permitted in the neutral zone.[1;37m
-} T 
+} T GE no self destruct in neutral zone message
 
 SELFD2 {***
 [0;37m[[0;31mWARNING![0;37m] Self-destruct in %d.[1;37m
-} T 
+} T GE self destruct countdown message
 
 SELFD2A {***
 [0;37m[[1;31mCAUTION[0;37m] Sensors detect a large neutron flux buildup in the [0;36m%s[0;37m.[1;37m
-} T 
+} T GE someone is self destructing message 1
 
 SELFD2B {***
 [0;37m[[0;31mWARNING![0;37m] Dangerous neutron flux overload condition in the [0;36m%s[0;37m.[1;37m
-} T 
+} T GE someone is self destructing message 2
 
 SELFD2C {***
 [0;37m[[0;31mWARNING![0;37m] Critical neutron flux overload condition in the [0;36m%s[0;37m.[1;37m
-} T 
+} T GE someone is self destructing message 3
 
 SELFD3 {***
 [0;37m[[0;31mWARNING![0;37m] Self-destruct initiated![1;37m
-} T 
+} T GE self destruct started message
 
 SELFD3A {***
 [0;37m[[0;31mWARNING![0;37m] The [0;36m%s[0;37m just exploded with a massive neutron implosion.
 Shock wave imminent![1;37m
-} T 
+} T GE someone self destructed message
 
 SELFD4 {
 [0;37mSelf-destruct sequence aborted![1;37m
-} T 
+} T GE self destruct aborted message
 
 SELFD4A {***
 [0;37mThe neutron flux overload on the [0;36m%s[0;37m appears to have been resolved.[1;37m
-} T 
+} T GE someone canceled their self destruct message
 
 SELFD5 {
 [0;37m[[1;31mERROR[0;37m] The self-destruct sequence has not been started![1;37m
-} T 
+} T GE no self destruct no abort message
 
 SELFD6 {
 [0;37mShields deflected some of the blast! Damage Control reports [0;31m%s[0;37m damage.[1;37m
-} T 
+} T GE self destruct with shields message
 
 SELFD7 {
 [0;37mThe shock wave caused [0;31m%s[0;37m damage![1;37m
-} T 
+} T GE self destruct with no shields message
 
 CYBNEW {***
-[0;37mA huge energy burst has been reported in sector [1;34m%d %d[0;37m.[1;37m
-} T 
+[0;37mA huge energy burst has been detected, bearing [1;37m%d[0;37m.[1;37m
+} T GE new Cyb outside scan range message
+
+CYBNEW2 {***
+[0;37mA huge energy burst has been detected in sector [1;34m%d %d[0;37m.[1;37m
+} T GE new Cyd inside scan range message
 
 DROIDNEW {***
-[0;37mSome low frequency energy fluxation has been reported in sector [1;34m%d %d[0;37m.[1;37m
-} T 
-
-
-**********************************************************************
-
-
-CYBBASEM {} T This is the BASE message - do not remove
-
-The following are sets of annoyance messages for 
-each class of Cybertron. There are 16 messages per
-class.
-
-**********************************************************************
-The following TABLE of messages MUST be copied to provide additional
-Messages should you add more than TWO additional Cybertron classes.
-**********************************************************************
-Cybertron Scout
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
-
-CYB1M1 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Organic beings are the scum of the universe, not fit to survive! [1;36m>[1;37m
-} T 
-
-CYB1M2 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Cybertrons shall rule the universe! [1;36m>[1;37m
-} T 
-
-CYB1M3 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You are not worth wasting a single torpedo on! [1;36m>[1;37m
-} T 
-
-CYB1M4 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m By cyborg decree, all organics are doomed to destruction! [1;36m>[1;37m
-} T 
-
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYB1M5 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You had better run if you know what's good for you! [1;36m>[1;37m
-} T 
-
-CYB1M6 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m I could kill you right now if it weren't so unsportsmanlike! [1;36m>[1;37m
-} T 
-
-CYB1M7 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You are so dumb you make a Toranian pig look like intelligent life. [1;36m>[1;37m
-} T 
-
-CYB1M8 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Are you just going to sit there and let me kill you without a fight? [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYB1M9 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You are no match for a Cybertron! [1;36m>[1;37m
-} T 
-
-CYB1M10 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m I will destroy you, organic vermin! [1;36m>[1;37m
-} T 
-
-CYB1M11 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Extermination is the only way to deal with organic scum! [1;36m>[1;37m
-} T 
-
-CYB1M12 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You are mine to toy with, and mine to slay! [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYB1M13 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Eat this, you biological misfit! [1;36m>[1;37m
-} T 
-
-CYB1M14 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Suck on this torpedo, you Gloxanian slugworm! [1;36m>[1;37m
-} T 
-
-CYB1M15 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You can't dodge torpedoes forever, you Mongonian mudmole! [1;36m>[1;37m
-} T 
-
-CYB1M16 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Give it up! I can keep this up for hours! [1;36m>[1;37m
-} T 
-
-**********************************************************************
-Cyber Battle Cruiser
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
-
-CYB2M1 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your puny race will join the Sartens in oblivion! [1;36m>[1;37m
-} T 
-
-CYB2M2 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Cybertrons are superior beings! [1;36m>[1;37m
-} T 
-
-CYB2M3 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your ship shall be mine! [1;36m>[1;37m
-} T 
-
-CYB2M4 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You cannot defeat us! [1;36m>[1;37m
-} T 
-
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYB2M5 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m This is your last warning. I WILL destroy you! [1;36m>[1;37m
-} T 
-
-CYB2M6 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your ship is no match for the Cybertron Battle Cruiser! [1;36m>[1;37m
-} T 
-
-CYB2M7 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your computational abilities are inferior to Cybertrons. [1;36m>[1;37m
-} T 
-
-CYB2M8 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your pathetic inaction is typical of organic beings. [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYB2M9 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You are no match for a Cybertron! [1;36m>[1;37m
-} T 
-
-CYB2M10 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m We will destroy you, organic vermin! [1;36m>[1;37m
-} T 
-
-CYB2M11 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your extermination is a certainty! [1;36m>[1;37m
-} T 
-
-CYB2M12 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Cybertrons shall purge your race from the universe! [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYB2M13 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Prepare to die! [1;36m>[1;37m
-} T 
-
-CYB2M14 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Cybertrons cannot be stopped! [1;36m>[1;37m
-} T 
-
-CYB2M15 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Die organic scum! [1;36m>[1;37m
-} T 
-
-CYB2M16 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m We shall prevail. You cannot survive! [1;36m>[1;37m
-} T 
-
-**********************************************************************
-Cybertron Base Star
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
-
-CYB3M1 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Halt your approach and prepare to be destroyed. [1;36m>[1;37m
-} T 
-
-CYB3M2 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m This sector is off limits to organics! [1;36m>[1;37m
-} T 
-
-CYB3M3 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Organic encroachment in this sector shall be repelled! [1;36m>[1;37m
-} T 
-
-CYB3M4 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m By Cyborg decree, all organics are doomed to destruction! [1;36m>[1;37m
-} T 
-
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYB3M5 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Cybertron domination is inevitable! [1;36m>[1;37m
-} T 
-
-CYB3M6 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Exterminate all organics! [1;36m>[1;37m
-} T 
-
-CYB3M7 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Halt and submit! [1;36m>[1;37m
-} T 
-
-CYB3M8 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Halt and prepare to be destroyed! [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYB3M9 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your destruction is certain! [1;36m>[1;37m
-} T 
-
-CYB3M10 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Cybertrons rule the galaxy! [1;36m>[1;37m
-} T 
-
-CYB3M11 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Extermination is the only way to deal with organic scum! [1;36m>[1;37m
-} T 
-
-CYB3M12 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your race shall be purged forever! [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYB3M13 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You have been targeted! [1;36m>[1;37m
-} T 
-
-CYB3M14 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Prepare to be destroyed! [1;36m>[1;37m
-} T 
-
-CYB3M15 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m This Base Star is invincible! [1;36m>[1;37m
-} T 
-
-CYB3M16 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m It's time to pray to your maker! [1;36m>[1;37m
-} T 
-
-**********************************************************************
-Sarten Attack Drone
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
-
-CYB4M1 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m The Sarten Empire demands you pay for passage through this sector! [1;36m>[1;37m
-} T 
-
-CYB4M2 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m An Obliterator has been summoned. [1;36m>[1;37m
-} T 
-
-CYB4M3 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m The Sarten Empire has no treaty with your race! [1;36m>[1;37m
-} T 
-
-CYB4M4 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your approach shall be considered an act of hostility. [1;36m>[1;37m
-} T 
-
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYB4M5 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m This Sarten vessel is acting in the defense of the Sarten Empire. [1;36m>[1;37m
-} T 
-
-CYB4M6 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You MUST retract from this sector immediately! [1;36m>[1;37m
-} T 
-
-CYB4M7 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You have been warned -- leave now! [1;36m>[1;37m
-} T 
-
-CYB4M8 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Final warning -- retreat or you will be attacked. [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYB4M9 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You must retreat now! [1;36m>[1;37m
-} T 
-
-CYB4M10 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m A Sarten Obliterator has been summoned. [1;36m>[1;37m
-} T 
-
-CYB4M11 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m The Sarten Empire shall not take this agression lightly. [1;36m>[1;37m
-} T 
-
-CYB4M12 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your race has been designated UV (Universal Vermin). [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYB4M13 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your actions leave us no recourse. [1;36m>[1;37m
-} T 
-
-CYB4M14 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your hostile actions will not be tolerated. [1;36m>[1;37m
-} T 
-
-CYB4M15 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You have sealed your own destruction. [1;36m>[1;37m
-} T 
-
-CYB4M16 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m The Sarten Obliterator shall be here soon. [1;36m>[1;37m
-} T 
-
-**********************************************************************
-Sarten Obliterator
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
-
-CYB5M1 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m The Sarten Empire lays claim to this sector! [1;36m>[1;37m
-} T 
-
-CYB5M2 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You shall retreat or be destroyed. [1;36m>[1;37m
-} T 
-
-CYB5M3 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You obviously are not familiar with the firepower of this vessel. [1;36m>[1;37m
-} T 
-
-CYB5M4 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m If you take any hostile action, we will destroy your ship. [1;36m>[1;37m
-} T 
-
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYB5M5 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Retreat or be destroyed! You have been warned! [1;36m>[1;37m
-} T 
-
-CYB5M6 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m The Sarten Empire has been informed of your actions! [1;36m>[1;37m
-} T 
-
-CYB5M7 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m It is my duty to inform you that I shall destroy your ship. [1;36m>[1;37m
-} T 
-
-CYB5M8 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your actions have sealed your fate! [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYB5M9 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You shall be destroyed. [1;36m>[1;37m
-} T 
-
-CYB5M10 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m The Sarten Empire shall defend its interests. Remove yourself now! [1;36m>[1;37m
-} T 
-
-CYB5M11 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your kind always chooses aggression first. We shall prevail! [1;36m>[1;37m
-} T 
-
-CYB5M12 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Death is too easy for Traxlyn Scurge like you. [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYB5M13 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You have sealed your fate! [1;36m>[1;37m
-} T 
-
-CYB5M14 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m The Sarten Empire claims your ship! [1;36m>[1;37m
-} T 
-
-CYB5M15 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Retreat or be destroyed! [1;36m>[1;37m
-} T 
-
-CYB5M16 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m You have offended the Sarten Empire -- your destruction is required! [1;36m>[1;37m
-} T 
-
-**********************************************************************
-<not used yet>
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
-
-CYB6M1 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M1 [1;36m>[1;37m
-} T 
-
-CYB6M2 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M2 [1;36m>[1;37m
-} T 
-
-CYB6M3 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M3 [1;36m>[1;37m
-} T 
-
-CYB6M4 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M4 [1;36m>[1;37m
-} T 
-
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYB6M5 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M5 [1;36m>[1;37m
-} T 
-
-CYB6M6 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M6 [1;36m>[1;37m
-} T 
-
-CYB6M7 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M7 [1;36m>[1;37m
-} T 
-
-CYB6M8 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M8 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYB6M9 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M9 [1;36m>[1;37m
-} T 
-
-CYB6M10 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M10 [1;36m>[1;37m
-} T 
-
-CYB6M11 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M11 [1;36m>[1;37m
-} T 
-
-CYB6M12 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M12 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYB6M13 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M13 [1;36m>[1;37m
-} T 
-
-CYB6M14 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M14 [1;36m>[1;37m
-} T 
-
-CYB6M15 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M15 [1;36m>[1;37m
-} T 
-
-CYB6M16 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB6M16 [1;36m>[1;37m
-} T 
-
-**********************************************************************
-<not used yet>
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
-
-CYB7M1 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M1 [1;36m>[1;37m
-} T 
-
-CYB7M2 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M2 [1;36m>[1;37m
-} T 
-
-CYB7M3 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M3 [1;36m>[1;37m
-} T 
-
-CYB7M4 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M4 [1;36m>[1;37m
-} T 
-
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYB7M5 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M5 [1;36m>[1;37m
-} T 
-
-CYB7M6 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M6 [1;36m>[1;37m
-} T 
-
-CYB7M7 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M7 [1;36m>[1;37m
-} T 
-
-CYB7M8 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M8 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYB7M9 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M9 [1;36m>[1;37m
-} T 
-
-CYB7M10 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M10 [1;36m>[1;37m
-} T 
-
-CYB7M11 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M11 [1;36m>[1;37m
-} T 
-
-CYB7M12 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M12 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYB7M13 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M13 [1;36m>[1;37m
-} T 
-
-CYB7M14 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M14 [1;36m>[1;37m
-} T 
-
-CYB7M15 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M15 [1;36m>[1;37m
-} T 
-
-CYB7M16 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB7M16 [1;36m>[1;37m
-} T 
-
-**********************************************************************
-<not used yet>
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
-
-CYB8M1 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M1 [1;36m>[1;37m
-} T 
-
-CYB8M2 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M2 [1;36m>[1;37m
-} T 
-
-CYB8M3 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M3 [1;36m>[1;37m
-} T 
-
-CYB8M4 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M4 [1;36m>[1;37m
-} T 
-
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYB8M5 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M5 [1;36m>[1;37m
-} T 
-
-CYB8M6 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M6 [1;36m>[1;37m
-} T 
-
-CYB8M7 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M7 [1;36m>[1;37m
-} T 
-
-CYB8M8 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M8 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYB8M9 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M9 [1;36m>[1;37m
-} T 
-
-CYB8M10 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M10 [1;36m>[1;37m
-} T 
-
-CYB8M11 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M11 [1;36m>[1;37m
-} T 
-
-CYB8M12 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M12 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYB8M13 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M13 [1;36m>[1;37m
-} T 
-
-CYB8M14 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M14 [1;36m>[1;37m
-} T 
-
-CYB8M15 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M15 [1;36m>[1;37m
-} T 
-
-CYB8M16 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB8M16 [1;36m>[1;37m
-} T 
-
-**********************************************************************
-<not used yet>
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
-
-CYB9M1 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M1 [1;36m>[1;37m
-} T 
-
-CYB9M2 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M2 [1;36m>[1;37m
-} T 
-
-CYB9M3 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M3 [1;36m>[1;37m
-} T 
-
-CYB9M4 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M4 [1;36m>[1;37m
-} T 
-
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYB9M5 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M5 [1;36m>[1;37m
-} T 
-
-CYB9M6 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M6 [1;36m>[1;37m
-} T 
-
-CYB9M7 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M7 [1;36m>[1;37m
-} T 
-
-CYB9M8 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M8 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYB9M9 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M9 [1;36m>[1;37m
-} T 
-
-CYB9M10 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M10 [1;36m>[1;37m
-} T 
-
-CYB9M11 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M11 [1;36m>[1;37m
-} T 
-
-CYB9M12 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M12 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYB9M13 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M13 [1;36m>[1;37m
-} T 
-
-CYB9M14 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M14 [1;36m>[1;37m
-} T 
-
-CYB9M15 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M15 [1;36m>[1;37m
-} T 
-
-CYB9M16 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYB9M16 [1;36m>[1;37m
-} T 
-
-**********************************************************************
-<not used yet>
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
-
-CYBAM1 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM1 [1;36m>[1;37m
-} T 
-
-CYBAM2 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM2 [1;36m>[1;37m
-} T 
-
-CYBAM3 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM3 [1;36m>[1;37m
-} T 
-
-CYBAM4 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM4 [1;36m>[1;37m
-} T 
-
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYBAM5 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM5 [1;36m>[1;37m
-} T 
-
-CYBAM6 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM6 [1;36m>[1;37m
-} T 
-
-CYBAM7 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM7 [1;36m>[1;37m
-} T 
-
-CYBAM8 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM8 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYBAM9 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM9 [1;36m>[1;37m
-} T 
-
-CYBAM10 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM10 [1;36m>[1;37m
-} T 
-
-CYBAM11 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM11 [1;36m>[1;37m
-} T 
-
-CYBAM12 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM12 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYBAM13 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM13 [1;36m>[1;37m
-} T 
-
-CYBAM14 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM14 [1;36m>[1;37m
-} T 
-
-CYBAM15 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM15 [1;36m>[1;37m
-} T 
-
-CYBAM16 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBAM16 [1;36m>[1;37m
-} T 
-
-**********************************************************************
-<not used yet>
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
-
-CYBBM1 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM1 [1;36m>[1;37m
-} T 
-
-CYBBM2 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM2 [1;36m>[1;37m
-} T 
-
-CYBBM3 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM3 [1;36m>[1;37m
-} T 
-
-CYBBM4 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM4 [1;36m>[1;37m
-} T 
-
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYBBM5 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM5 [1;36m>[1;37m
-} T 
-
-CYBBM6 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM6 [1;36m>[1;37m
-} T 
-
-CYBBM7 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM7 [1;36m>[1;37m
-} T 
-
-CYBBM8 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM8 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYBBM9 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM9 [1;36m>[1;37m
-} T 
-
-CYBBM10 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM10 [1;36m>[1;37m
-} T 
-
-CYBBM11 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM11 [1;36m>[1;37m
-} T 
-
-CYBBM12 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM12 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYBBM13 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM13 [1;36m>[1;37m
-} T 
-
-CYBBM14 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM14 [1;36m>[1;37m
-} T 
-
-CYBBM15 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM15 [1;36m>[1;37m
-} T 
-
-CYBBM16 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBBM16 [1;36m>[1;37m
-} T 
-
-**********************************************************************
-<not used yet>
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
-
-CYBCM1 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM1 [1;36m>[1;37m
-} T 
-
-CYBCM2 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM2 [1;36m>[1;37m
-} T 
-
-CYBCM3 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM3 [1;36m>[1;37m
-} T 
-
-CYBCM4 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM4 [1;36m>[1;37m
-} T 
-
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYBCM5 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM5 [1;36m>[1;37m
-} T
-
-CYBCM6 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM6 [1;36m>[1;37m
-} T 
-
-CYBCM7 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM7 [1;36m>[1;37m
-} T 
-
-CYBCM8 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM8 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYBCM9 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM9 [1;36m>[1;37m
-} T 
-
-CYBCM10 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM10 [1;36m>[1;37m
-} T 
-
-CYBCM11 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM11 [1;36m>[1;37m
-} T 
-
-CYBCM12 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM12 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYBCM13 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM13 [1;36m>[1;37m
-} T 
-
-CYBCM14 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM14 [1;36m>[1;37m
-} T 
-
-CYBCM15 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM15 [1;36m>[1;37m
-} T 
-
-CYBCM16 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBCM16 [1;36m>[1;37m
-} T 
-
-**********************************************************************
-<not used yet>
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
-
-CYBDM1 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM1 [1;36m>[1;37m
-} T 
-
-CYBDM2 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM2 [1;36m>[1;37m
-} T 
-
-CYBDM3 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM3 [1;36m>[1;37m
-} T 
-
-CYBDM4 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM4 [1;36m>[1;37m
-} T 
-
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYBDM5 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM5 [1;36m>[1;37m
-} T 
-
-CYBDM6 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM6 [1;36m>[1;37m
-} T 
-
-CYBDM7 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM7 [1;36m>[1;37m
-} T 
-
-CYBDM8 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM8 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYBDM9 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM9 [1;36m>[1;37m
-} T 
-
-CYBDM10 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM10 [1;36m>[1;37m
-} T 
-
-CYBDM11 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM11 [1;36m>[1;37m
-} T 
-
-CYBDM12 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM12 [1;36m>[1;37m
-} T 
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYBDM13 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM13 [1;36m>[1;37m
-} T 
-
-CYBDM14 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM14 [1;36m>[1;37m
-} T 
-
-CYBDM15 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM15 [1;36m>[1;37m
-} T 
-
-CYBDM16 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m CYBDM16 [1;36m>[1;37m
-} T 
-
-**********************************************************************
-**********************************************************************
-
-CYBWOOP1 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Cyborgs are perfect per per perfzzzzztt perfzzzzztt perfzzzzztt. [1;36m>[1;37m
-} T 
-
-CYBWOOP2 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Cybertrons cannot be stopzzz be stopzzz be stopped. [1;36m>[1;37m
-} T 
-
-CYBWOOP3 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Cyborgs are [click] are [click] are [click] are [1;36m>[1;37m
-} T 
-
-CYBWOOP4 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Prepare to be destroyed! [1;36m>[1;37m
-} T 
-
-CYBTERM {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Cybertrons are superior beings!! [1;36m>[1;37m
-} T 
-
-CYBLUCK {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m I shall be back for you later, vermin!! [1;36m>[1;37m
-} T 
-
-DRDMSG1 {***
-[0;37mBeacon message from the [0;36m%s
-[1;36m<[1;37m This survey ship is protected under Galactic Treaty Gt05-66A7-5847. [1;36m>[1;37m
-} T 
-
-DRDMSG2 {***
-[0;37mBeacon message from the [0;36m%s
-[1;36m<[1;37m Disturbing this survey ship is punishable under galactic law. [1;36m>[1;37m
-} T 
-
-DRDMSG3 {***
-[0;37mBeacon message from the [0;36m%s
-[1;36m<[1;37m Maintain standard approach clearance regulations Gr06-25K6-41D6. [1;36m>[1;37m
-} T 
-
-DRDMSG4 {***
-[0;37mBeacon message from the [0;36m%s
-[1;36m<[1;37m Caution! Auto-defense systems activated! [1;36m>[1;37m
-} T 
-
-DRDMSG5 {***
-[0;37mBeacon message from the [0;36m%s
-[1;36m<[1;37m Warning! This vessel equiped with auto-defense systems! [1;36m>[1;37m
-} T 
-
-DRDHLP1 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your actions are in violation of Galactic Treaty! Cease and desist! [1;36m>[1;37m
-} T 
-
-DRDHLP2 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Auto-defense systems activated. Cease and desist this attack! [1;36m>[1;37m
-} T 
-
-DRDHLP3 {***
-[0;37mDistress call from the [0;36m%s
-[1;36m<[1;37m This vessel under an illegal attack. Request assistance! [1;36m>[1;37m
-} T 
-
-DRDHLP4 {***
-[0;37mDistress call from the [0;36m%s
-[1;36m<[1;37m Under attack. Requesting assistance from any vessel. [1;36m>[1;37m
-} T 
-
-DRDHLP5 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m The Vakory High Command has been informed of your illegal aggression. [1;36m>[1;37m
-} T 
-
-DRDMSG6 {***
-[0;37mBeacon message from the [0;36m%s
-[1;36m<[1;37m CAUTION! This vessel transports hazardous material. [1;36m>[1;37m
-} T 
-
-DRDMSG7 {***
-[0;37mBeacon message from the [0;36m%s
-[1;36m<[1;37m This vessel is protected under Galactic Treaty Gt05-66A7-5847. [1;36m>[1;37m
-} T 
-
-DRDMSG8 {***
-[0;37mBeacon message from the [0;36m%s
-[1;36m<[1;37m Disturbing this vessel is punishable under galactic law. [1;36m>[1;37m
-} T 
-
-DRDMSG9 {***
-[0;37mBeacon message from the [0;36m%s
-[1;36m<[1;37m Maintain standard approach clearance regulations Gr06-25K6-41D6. [1;36m>[1;37m
-} T 
-
-DRDMSG10 {***
-[0;37mBeacon message from the [0;36m%s
-[1;36m<[1;37m CAUTION! Avoid contamination! Maintain clearance. [1;36m>[1;37m
-} T 
-
-DRDMSG11 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Warning! This ship is transporting goods under Murdonian Imperial Authority. [1;36m>[1;37m
-} T 
-
-DRDMSG12 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Warning! Interfering with this vessel is punishable by Murdonian law. [1;36m>[1;37m
-} T 
-
-DRDMSG13 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Warning! Approaching this vessel will be considered an act of aggression. [1;36m>[1;37m
-} T 
-
-DRDMSG14 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Warning! This vessel is transporting goods under Galactic Treaty. [1;36m>[1;37m
-} T 
-
-DRDMSG15 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Warning! Maintain clearance from this vessel. [1;36m>[1;37m
-} T 
-
-DRDHLP11 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Your actions will be reported to the Murdonian Imperial Defense Command. [1;36m>[1;37m
-} T 
-
-DRDHLP12 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m This is a peaceful transport ship. Your actions are reprehensible! [1;36m>[1;37m
-} T 
-
-DRDHLP13 {***
-[0;37mDistress call from the [0;36m%s
-[1;36m<[1;37m This vessel under an illegal aggression. Requesting assistance! [1;36m>[1;37m
-} T 
-
-DRDHLP14 {***
-[0;37mDistress call from the [0;36m%s
-[1;36m<[1;37m Under attack. Requesting assistance from any vessel. [1;36m>[1;37m
-} T 
-
-DRDHLP15 {***
-[0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m The Murdonian Imperial Defense has been informed of your illegal agression. [1;36m>[1;37m
-} T 
-
-****************************************************************************
-This is the end of the Variable Cybertron and Droid annoyance messages
-****************************************************************************
-
-
-CYBLASTM {DO NOT REMOVE THIS MESSAGE!!!!!!} T
-
+[0;37mSome low frequency energy fluxation has been detected, bearing [1;37m%d[0;37m.[1;37m
+} T GE new droid outside scan range message
+
+DROIDNW2 {***
+[0;37mSome low frequency energy fluxation has been detected in sector [1;34m%d %d[0;37m.[1;37m
+} T GE new droid inside scan range message
 
 TELEPORT {***
 [0;37m[[0;31mWARNING![0;37m] Navigation beyond the galactic perimeter is not permitted. Engines
 shut down under emergency procedures.
 
 Damage control reports [0;31m%s[0;37m damage to all sections due to kinetic shock.[1;37m
-} T 
+} T GE hit galactic barrier message
 
 MINE0 {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with a mine launcher.[1;37m
-} T 
+} T GE no mine launcher message
 
 MINE1 {
 [0;37m[[1;31mERROR[0;37m] There are no neutron mines on-board.[1;37m
-} T 
+} T GE no mines message
 
 MINE3 {
 [0;32mNeutron mine launched. Detonation in %u centocks![1;37m
-} T 
+} T GE you launched a mine message
 
 MINE2 {
 [0;37m[[1;31mERROR[0;37m] The mine launcher can only safely deploy %d mines at once.[1;37m
-} T 
+} T GE too many mines message
 
 MINE4 {***
 [0;37m[[0;31mWARNING![0;37m] A neutron mine exploded bearing [1;37m%d[0;37m, distance [1;37m%u[0;37m, causing
 [0;31m%s[0;37m damage![1;37m
-} T 
+} T GE mine exploded close message
 
 MINE5 {***
 [0;37mSensors indicate a large neutron explosion, bearing [1;37m%d[0;37m![1;37m
-} T 
+} T GE mine exploded far message
 
 MINE6 {***
 [0;37m[[1;31mCAUTION[0;37m] Sensors indicate a neutron mine, bearing [1;37m%d[0;37m, distance [1;37m%u[0;37m.[1;37m
-} T 
+} T GE mine near message
 
 MINE7 {
 [0;37m[[1;31mERROR[0;37m] The Galactic Command does not permit mining in the neutral zone.[1;37m
-} T 
+} T GE no mining in neutral zone message
 
 LOCK01 {
 [0;37mFire control lock removed![1;37m
-} T 
+} T GE fire control lock removed message
 
 LOCK02 {
 [0;37mFire control locked on [0;36m%s[0;37m commanded by [0;36m%s[0;37m.[1;37m
-} T 
+} T GE fire control locked message
 
 NOLOCK {
 [0;37m[[1;31mERROR[0;37m] Fire control has no lock set.[1;37m
-} T 
+} T GE no fire control lock message
 
 NAV01 {
 [0;37mSector [1;37m%d %d[0;37m is bearing [1;37m%d[0;37m, distance [1;37m%s[0;37m.[1;37m
-} T 
+} T GE navigate message
 
 TOOMANY {
 [1;36mThere are already a maximum of %d teams declared.[1;37m
-} T
+} T GE too many teams message
 
 TEAMEXST {
 [1;36mThat team name or team code already exists... choose another.[1;37m
-} T
+} T GE team already exists message
 
 TEAMCRT {
 [1;36m-- Team Created --
@@ -5358,124 +3920,124 @@ Founder password..: [0;36m%s[1;36m
 
 Please write down the founder password as you will not be able to change it
 or display it again.[1;37m
-} T
+} T GE team created message
 
 TEAMBAD {
 [1;36mThat team code is not valid.[1;37m
-} T
+} T GE invalid team code message
 
 TEAMBIG {
 [1;36mThat team is full. You cannot join at this time.[1;37m
-} T
+} T GE team is full message
 
 TEAMBADP {
 [1;36mThat is not the password. Please contact the team leader for the correct one.[1;37m
-} T
+} T GE team bad password message
 
 TEAMJOIN {
 [1;36mYou are now a member of the [0;36m%s[1;36m team.[1;37m
-} T
+} T GE team joined message
 
 TEAMUNJN {
 [1;36mYou are no longer a member of the [0;36m%s[1;36m team.[1;37m
-} T
+} T GE team left message
 
 TEAMHDR {
 [1;36mCode   Team Name                    Members Score
 [0;31m------------------------------------------------------[1;37m
-} T
+} T GE team display header message
 
 TEAMTLR {
-} T
+} T GE team display trailer message
 
 TEAMBDSC {
 [1;36mSorry, that is not the valid founder password.[1;37m
-} T
+} T GE team not founder password message
 
 TEAMNOT {
 [1;36mYou are not currently a member of a valid team.[1;37m
-} T
+} T GE not on team message
 
 TEAMNFND {
 [1;36mThat Commander is not currently in the game.[1;37m
-} T
+} T GE team player not in game message
 
 TEAMNTM {
 [1;36mThat Commander is not currently on your team.[1;37m
-} T
+} T GE team player no on team mesage
 
 TEAMKYOU {
 [1;36mYour membership in team [0;36m%s[1;36m has been revoked by [0;36m%s[1;36m.[1;37m
-} T
+} T GE team kicked off message
 
 TEAMKICK {
 [1;36mAs you requested, [0;36m%s[1;36m has been removed from the team and 
 sent an email message notifying them of this action.[1;37m
-} T
+} T GE team you kicked someone message
 
 TEAMBPSS {
 [1;36mThat password is too long, please shorten it to 10 characters or fewer.[1;37m
-} T
+} T GE team password too long message
 
 TEAMNPSS {
 [1;36mThe team password has been changed to [1;37m%s[1;36m.[1;37m
-} T
+} T GE team password changed message
 
 TEAMBNAM {
 [1;36mThe team name must be at least 5 characters long.[1;37m
-} T
+} T GE team name too short message
 
 TEAMNNAM {
 [1;36mThe new team name is now [1;37m%s[1;36m.[1;37m
-} T
+} T GE team name changed message
 
 TEAMMHDR {
 [1;36mThe members of your team are...[1;37m
-} T
+} T GE team list header message
 
 JETT1 {
 [0;37m[[1;31mERROR[0;37m] There are not that many on-board.[1;37m
-} T 
+} T GE not enough to jettison message
 
 JETT3 {
 [1;37m%s %s[0;37m have been jettisoned.[1;37m
-} T 
+} T GE jettison message
 
 FORMAT {
 [1;36mType [1;37mHELP %s[1;36m for the correct usage.[1;37m
-} T 
+} T GE universal format message
 
 MSGPRF {
 [0;37m[[1;31mERROR[0;37m] The Galactic Communications Commission will not allow such a message.[1;37m
-} T 
+} T GE bad word message
 
 BEAC01 {***
 [0;37mBeacon message from planet [1;34m%d
 [1;36m< [1;37m%s[1;36m >[1;37m
-} T
+} T GE beacon message received message
 
 SPY0 {
 [1;36mYou own this planet, you can't spy on it.[1;37m
-} T 
+} T GE no spying on your own planet message
 
 SPY0C {
 [1;36mSpying on the Galactic Command is a capital offense![1;37m
-} T
+} T GE no spying on Galactic Command message
 
 SPYM0 {
 [1;36mThere are no spies on-board.[1;37m
-} T 
+} T GE no spies message
 
 SPYM1 {
 [0;32mTransporting a spy to the planet![1;37m
-} T 
+} T GE spy sent message
 
 SPYC1 {
 The government of the planet %s in sector %d %d has arrested a spy believed
 to be in your employ. They have lodged an official protest with the Galactic
 Command and are demanding a formal apology. 
 
-} T
+} T GE spy captured message
 
 SPYC2 {
 The government of your planet %s in sector %d %d has captured and arrested
@@ -5483,7 +4045,7 @@ a spy believed to be in the employment of %s.
 
 They have already sent notice to %s demanding an apology.
 
-} T
+} T GE spy caught message
 
 SPYM2 {
 Classification: TOP SECRET/EYES ONLY
@@ -5498,7 +4060,7 @@ Planetary reserves of %s - %s
 --------------------------------------------------------------------------
 End report
 
-} T
+} T GE spy found something message
 
 SPYM3 {
 Classification: TOP SECRET
@@ -5509,7 +4071,7 @@ on this planet. The outcome was unclear as of this report.
 
 End report
 
-} T
+} T GE spy witnessed failed attack message
 
 SPYM4 {
 Classification: TOP SECRET
@@ -5520,8 +4082,996 @@ defenses and taken over the planet.
 
 End report
 
-} T
+} T GE spy witnessed successful attack message
 
+**********************************************************************
+
+CYBBASEM {DO NOT REMOVE THIS MESSAGE!!!!!!} T Cyb message beginning divider
+
+The following are sets of annoyance messages for 
+each class of Cybertron. There are 16 messages per
+class.
+
+**********************************************************************
+Cyber-Interceptor
+
+The first four messages are general messages displayed 
+when the cybertron approaches another player from a distance.
+
+CYB1M1 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Organic beings are the scum of the galaxy, not fit to survive! [1;36m>[1;37m
+} T GE Cyb 1 message 1
+
+CYB1M2 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Cybertrons shall rule the galaxy! [1;36m>[1;37m
+} T GE Cyb 1 message 2
+
+CYB1M3 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Extermination is the only way to deal with organic scum! [1;36m>[1;37m
+} T GE Cyb 1 message 3
+
+CYB1M4 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m By cyborg decree, all organics are doomed to destruction! [1;36m>[1;37m
+} T GE Cyb 1 message 4
+
+The next four messages are general messages displayed 
+when the cybertron begins to brake to engage a player.
+
+CYB1M5 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You had better run if you know what's good for you! [1;36m>[1;37m
+} T GE Cyb 1 message 5
+
+CYB1M6 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m I could kill you right now if it weren't so unsportsmanlike! [1;36m>[1;37m
+} T GE Cyb 1 message 6
+
+CYB1M7 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are so dumb you make a Toranian pig look like intelligent life. [1;36m>[1;37m
+} T GE Cyb 1 message 7
+
+CYB1M8 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m I will destroy you, organic vermin! [1;36m>[1;37m
+} T GE Cyb 1 message 8
+
+The next four messages are displayed when a player is 
+to a cybertron but the cyb chooses not to attack for
+any number of reasons.
+
+CYB1M9 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are no match for a Cybertron! [1;36m>[1;37m
+} T GE Cyb 1 message 9
+
+CYB1M10 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Destroying your pathetic vessel would be a waste of time! [1;36m>[1;37m
+} T GE Cyb 1 message 10
+
+CYB1M11 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are not worth wasting a single torpedo on! [1;36m>[1;37m
+} T GE Cyb 1 message 11
+
+CYB1M12 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are mine to toy with, and mine to slay! [1;36m>[1;37m
+} T GE Cyb 1 message 12
+
+The next four messages are displayed when a cybertron 
+attacks another player.
+
+CYB1M13 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Eat this, you biological misfit! [1;36m>[1;37m
+} T GE Cyb 1 message 13
+
+CYB1M14 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m I'm only getting started, you Gloxanian slugworm! [1;36m>[1;37m
+} T GE Cyb 1 message 14
+
+CYB1M15 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You can't dodge torpedoes forever, you Mongonian mudmole! [1;36m>[1;37m
+} T GE Cyb 1 message 15
+
+CYB1M16 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Give it up! I can keep this up for hours! [1;36m>[1;37m
+} T GE Cyb 1 message 16
+
+**********************************************************************
+Cyber-Destroyer
+
+The first four messages are general messages displayed 
+when the cybertron approaches another player from a distance.
+
+CYB2M1 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your puny race will join the Sartens in oblivion! [1;36m>[1;37m
+} T GE Cyb 2 message 1
+
+CYB2M2 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Cybertrons are superior beings! [1;36m>[1;37m
+} T GE Cyb 2 message 2
+
+CYB2M3 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your ship shall be mine! [1;36m>[1;37m
+} T GE Cyb 2 message 3
+
+CYB2M4 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You cannot defeat us! [1;36m>[1;37m
+} T GE Cyb 2 message 4
+
+The next four messages are general messages displayed 
+when the cybertron begins to brake to engage a player.
+
+CYB2M5 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m This is your last warning. I WILL destroy you! [1;36m>[1;37m
+} T GE Cyb 2 message 5
+
+CYB2M6 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your ship is no match for the Cyber-Destroyer! [1;36m>[1;37m
+} T GE Cyb 2 message 6
+
+CYB2M7 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your computational abilities are inferior to Cybertrons. [1;36m>[1;37m
+} T GE Cyb 2 message 7
+
+CYB2M8 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your pathetic inaction is typical of organic beings. [1;36m>[1;37m
+} T GE Cyb 2 message 8
+
+The next four messages are displayed when a player is 
+to a cybertron but the cyb chooses not to attack for
+any number of reasons.
+
+CYB2M9 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are no match for a Cybertron! [1;36m>[1;37m
+} T GE Cyb 2 message 9
+
+CYB2M10 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m We will destroy you, organic vermin! [1;36m>[1;37m
+} T GE Cyb 2 message 10
+
+CYB2M11 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your extermination is a certainty! [1;36m>[1;37m
+} T GE Cyb 2 message 11
+
+CYB2M12 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are not worth wasting a single torpedo on! [1;36m>[1;37m
+} T GE Cyb 2 message 12
+
+The next four messages are displayed when a cybertron 
+attacks another player.
+
+CYB2M13 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Prepare to be destroyed! [1;36m>[1;37m
+} T GE Cyb 2 message 13
+
+CYB2M14 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Cybertrons cannot be stopped! [1;36m>[1;37m
+} T GE Cyb 2 message 14
+
+CYB2M15 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You will never survive this attack! [1;36m>[1;37m
+} T GE Cyb 2 message 15
+
+CYB2M16 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m We shall prevail. You cannot survive! [1;36m>[1;37m
+} T GE Cyb 2 message 16
+
+**********************************************************************
+Cyber-Base
+
+The first four messages are general messages displayed 
+when the cybertron approaches another player from a distance.
+
+CYB3M1 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Halt your approach or prepare to be destroyed. [1;36m>[1;37m
+} T GE Cyb 3 message 1
+
+CYB3M2 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Only Cybertrons are permitted in this region of space. [1;36m>[1;37m
+} T GE Cyb 3 message 2
+
+CYB3M3 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are approaching a Cybertron base. Turn around now! [1;36m>[1;37m
+} T GE Cyb 3 message 3
+
+CYB3M4 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Retreat from this area! This is your only warning! [1;36m>[1;37m
+} T GE Cyb 3 message 4
+
+The next four messages are general messages displayed 
+when the cybertron begins to brake to engage a player.
+
+CYB3M5 {} T GE Cyb 3 message 5
+
+CYB3M6 {} T GE Cyb 3 message 6
+
+CYB3M7 {} T GE Cyb 3 message 7
+
+CYB3M8 {} T GE Cyb 3 message 8
+
+The next four messages are displayed when a player is 
+to a cybertron but the cyb chooses not to attack for
+any number of reasons.
+
+CYB3M9 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m This sector is off limits to organics! [1;36m>[1;37m
+} T GE Cyb 3 message 9
+
+CYB3M10 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m This Cyber-Base is invincible! [1;36m>[1;37m
+} T GE Cyb 3 message 10
+
+CYB3M11 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Retreat from this sector immediately! [1;36m>[1;37m
+} T GE Cyb 3 message 11
+
+CYB3M12 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Destroying your ship would be a waste of time! [1;36m>[1;37m
+} T GE Cyb 3 message 12
+
+The next four messages are displayed when a cybertron 
+attacks another player.
+
+CYB3M13 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You have been targeted! [1;36m>[1;37m
+} T GE Cyb 3 message 13
+
+CYB3M14 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Prepare to be destroyed! [1;36m>[1;37m
+} T GE Cyb 3 message 14
+
+CYB3M15 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m This Cyber-Base is invincible! [1;36m>[1;37m
+} T GE Cyb 3 message 15
+
+CYB3M16 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Only a fool would dare attack a Cyber-Base! [1;36m>[1;37m
+} T GE Cyb 3 message 16
+
+**********************************************************************
+Cyber-Cruiser
+
+The first four messages are general messages displayed 
+when the cybertron approaches another player from a distance.
+
+CYB4M1 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your puny race will join the Sartens in oblivion! [1;36m>[1;37m
+} T GE Cyb 4 message 1
+
+CYB4M2 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Cybertrons are superior beings! [1;36m>[1;37m
+} T GE Cyb 4 message 2
+
+CYB4M3 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your ship shall be mine! [1;36m>[1;37m
+} T GE Cyb 4 message 3
+
+CYB4M4 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You cannot defeat us! [1;36m>[1;37m
+} T GE Cyb 4 message 4
+
+The next four messages are general messages displayed 
+when the cybertron begins to brake to engage a player.
+
+CYB4M5 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m This is your last warning. I WILL destroy you! [1;36m>[1;37m
+} T GE Cyb 4 message 5
+
+CYB4M6 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your extermination is a certainty! [1;36m>[1;37m
+} T GE Cyb 4 message 6
+
+CYB4M7 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your computational abilities are inferior to Cybertrons. [1;36m>[1;37m
+} T GE Cyb 4 message 7
+
+CYB4M8 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your pathetic inaction is typical of organic beings. [1;36m>[1;37m
+} T GE Cyb 4 message 8
+
+The next four messages are displayed when a player is 
+to a cybertron but the cyb chooses not to attack for
+any number of reasons.
+
+CYB4M9 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your puny vessel is no threat to us. [1;36m>[1;37m
+} T GE Cyb 4 message 9
+
+CYB4M10 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m We will destroy you, organic vermin! [1;36m>[1;37m
+} T GE Cyb 4 message 10
+
+CYB4M11 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your ship is no match for the Cyber-Cruiser! [1;36m>[1;37m
+} T GE Cyb 4 message 11
+
+CYB4M12 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Cybertrons shall purge your race from the galaxy! [1;36m>[1;37m
+} T GE Cyb 4 message 12
+
+The next four messages are displayed when a cybertron 
+attacks another player.
+
+CYB4M13 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Give up! You cannot survive this attack! [1;36m>[1;37m
+} T GE Cyb 4 message 13
+
+CYB4M14 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Cybertrons cannot be stopped! [1;36m>[1;37m
+} T GE Cyb 4 message 14
+
+CYB4M15 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your destruction is a mathematical certainty! [1;36m>[1;37m
+} T GE Cyb 4 message 15
+
+CYB4M16 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m We shall prevail. You cannot survive! [1;36m>[1;37m
+} T GE Cyb 4 message 16
+
+**********************************************************************
+Cyber-Dreadnought
+
+The first four messages are general messages displayed 
+when the cybertron approaches another player from a distance.
+
+CYB5M1 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your puny race will join the Sartens in oblivion! [1;36m>[1;37m
+} T GE Cyb 5 message 1
+
+CYB5M2 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Cybertrons are superior beings! [1;36m>[1;37m
+} T GE Cyb 5 message 2
+
+CYB5M3 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your ship shall be mine! [1;36m>[1;37m
+} T GE Cyb 5 message 3
+
+CYB5M4 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You cannot defeat us! [1;36m>[1;37m
+} T GE Cyb 5 message 4
+
+The next four messages are general messages displayed 
+when the cybertron begins to brake to engage a player.
+
+CYB5M5 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m This is your last warning. I WILL destroy you! [1;36m>[1;37m
+} T GE Cyb 5 message 5
+
+CYB5M6 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your ship is no match for the Cyber-Dreadnought! [1;36m>[1;37m
+} T GE Cyb 5 message 6
+
+CYB5M7 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your computational abilities are inferior to Cybertrons. [1;36m>[1;37m
+} T GE Cyb 5 message 7
+
+CYB5M8 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your pathetic inaction is typical of organic beings. [1;36m>[1;37m
+} T GE Cyb 5 message 8
+
+The next four messages are displayed when a player is 
+to a cybertron but the cyb chooses not to attack for
+any number of reasons.
+
+CYB5M9 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are no match for a Cybertron! [1;36m>[1;37m
+} T GE Cyb 5 message 9
+
+CYB5M10 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m We will destroy you, organic vermin! [1;36m>[1;37m
+} T GE Cyb 5 message 10
+
+CYB5M11 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your extermination is a certainty! [1;36m>[1;37m
+} T GE Cyb 5 message 11
+
+CYB5M12 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Wasting my time destroying your ship would be pointless! [1;36m>[1;37m
+} T GE Cyb 5 message 12
+
+The next four messages are displayed when a cybertron 
+attacks another player.
+
+CYB5M13 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Prepare to be destroyed! [1;36m>[1;37m
+} T GE Cyb 5 message 13
+
+CYB5M14 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Cybertrons cannot be stopped! [1;36m>[1;37m
+} T GE Cyb 5 message 14
+
+CYB5M15 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your destruction is a mathematical certainty! [1;36m>[1;37m
+} T GE Cyb 5 message 15
+
+CYB5M16 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m We shall prevail. You cannot survive! [1;36m>[1;37m
+} T GE Cyb 5 message 16
+
+CYBLASTM {DO NOT REMOVE THIS MESSAGE!!!!!!} T Cyb message end divider
+
+**********************************************************************
+**********************************************************************
+
+DRBASEM {DO NOT REMOVE THIS MESSAGE!!!!!!} T Droid message beginning divider
+
+**********************************************************************
+Lydorian Garbage Scow
+
+The first four messages are sent to players that approach
+but are not (yet) considered threats.
+
+DR1M1 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m CAUTION! This vessel transports hazardous material. [1;36m>[1;37m
+} T GE Droid 1 message 1
+
+DR1M2 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m This vessel is protected under Galactic Treaty Gt05-66A7-5847. [1;36m>[1;37m
+} T GE Droid 1 message 2
+
+DR1M3 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m CAUTION! Avoid contamination! Maintain clearance. [1;36m>[1;37m
+} T GE Droid 1 message 3
+
+DR1M4 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Maintain standard approach clearance regulations Gr06-25K6-41D6. [1;36m>[1;37m
+} T GE Droid 1 message 4
+
+The next four messages can be sent to players who are
+considered unfriendly by this faction.
+
+DR1M5 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are no friend to the Lydorians! [1;36m>[1;37m
+} T GE Droid 1 message 5
+
+DR1M6 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m This vessel poses no threat to you. Halt your approach! [1;36m>[1;37m
+} T GE Droid 1 message 6
+
+DR1M7 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m We are not carrying anything of value. Move along! [1;36m>[1;37m
+} T GE Droid 1 message 7
+
+DR1M8 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You have been identified as an enemy of the Lydorians! [1;36m>[1;37m
+} T GE Droid 1 message 8
+
+The next four messages are sent when a player attacks
+this ship.
+
+DR1M9 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your actions are in violation of Galactic Treaty! Cease and desist! [1;36m>[1;37m
+} T GE Droid 1 message 9
+
+DR1M10 {***
+[0;37mDistress call from the [0;36m%s
+[1;36m<[1;37m This vessel under an illegal attack. Requesting assistance! [1;36m>[1;37m
+} T GE Droid 1 message 10
+
+DR1M11 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Please spare this vessel! We carry nothing of value! [1;36m>[1;37m
+} T GE Droid 1 message 11
+
+DR1M12 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Stop this pointless aggression at once! [1;36m>[1;37m
+} T GE Droid 1 message 12
+
+These four messages are sent when a ship identifies a
+player as a threat and breaks off to stage a preemptive
+attack.
+
+DR1M13 {} T GE Droid 1 message 13
+DR1M14 {} T GE Droid 1 message 14
+DR1M15 {} T GE Droid 1 message 15
+DR1M16 {} T GE Droid 1 message 16
+
+**********************************************************************
+Murdonian Transport
+
+The first four messages are sent to players that approach
+but are not (yet) considered threats.
+
+DR2M1 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Warning! This ship is transporting goods under Murdonian Imperial Authority. [1;36m>[1;37m
+} T GE Droid 2 message 1
+
+DR2M2 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Warning! Interfering with this vessel is punishable by Murdonian law. [1;36m>[1;37m
+} T GE Droid 2 message 2
+
+DR2M3 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Warning! This vessel is transporting goods under Galactic Treaty. [1;36m>[1;37m
+} T GE Droid 2 message 3
+
+DR2M4 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Maintain standard approach clearance regulations Gr06-25K6-42D6. [1;36m>[1;37m
+} T GE Droid 2 message 4
+
+The next four messages can be sent to players who are
+considered unfriendly by this faction.
+
+DR2M5 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Warning! Approaching this vessel will be considered an act of aggression. [1;36m>[1;37m
+} T GE Droid 2 message 5
+
+DR2M6 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Warning! We are prepared to defend this vessel and its passengers! [1;36m>[1;37m
+} T GE Droid 2 message 6
+
+DR2M7 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are wanted for crimes against the Murdonian Imperial Authority! [1;36m>[1;37m
+} T GE Droid 2 message 7
+
+DR2M8 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your presence is unwelcome. Cease your approach at once! [1;36m>[1;37m
+} T GE Droid 2 message 8
+
+The next four messages are sent when a player attacks
+this ship.
+
+DR2M9 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m This vessel is carrying hundreds of civilian passengers! [1;36m>[1;37m
+} T GE Droid 2 message 9
+
+DR2M10 {***
+[0;37mDistress call from the [0;36m%s
+[1;36m<[1;37m Under attack. Requesting assistance from any vessel. [1;36m>[1;37m
+} T GE Droid 2 message 10
+
+DR2M11 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m This is a peaceful transport ship. Your actions are reprehensible! [1;36m>[1;37m
+} T GE Droid 2 message 11
+
+DR2M12 {***
+[0;37mDistress call from the [0;36m%s
+[1;36m<[1;37m The Murdonian Imperial Defense has been informed of your illegal agression. [1;36m>[1;37m
+} T GE Droid 2 message 12
+
+These four messages are sent when a ship identifies a
+player as a threat and breaks off to stage a preemptive
+attack.
+
+DR2M13 {} T GE Droid 2 message 13
+DR2M14 {} T GE Droid 2 message 14
+DR2M15 {} T GE Droid 2 message 15
+DR2M16 {} T GE Droid 2 message 16
+
+**********************************************************************
+Vakory Survey Drone
+
+The first four messages are sent to players that approach
+but are not (yet) considered threats.
+
+DR3M1 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m This survey ship is protected under Galactic Treaty Gt05-66A7-5821. [1;36m>[1;37m
+} T GE Droid 3 message 1
+
+DR3M2 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Disturbing this survey ship is punishable under galactic law. [1;36m>[1;37m
+} T GE Droid 3 message 2
+
+DR3M3 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Maintain standard approach clearance regulations Gr06-25K6-43D2. [1;36m>[1;37m
+} T GE Droid 3 message 3
+
+DR3M4 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m This unmanned vessel is engaged in scientific research. [1;36m>[1;37m
+} T GE Droid 3 message 4
+
+The next four messages can be sent to players who are
+considered unfriendly by this faction.
+
+DR3M5 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Warning! This vessel is equiped with auto-defense systems! [1;36m>[1;37m
+} T GE Droid 3 message 5
+
+DR3M6 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You have been identified as a threat to this vessel. [1;36m>[1;37m
+} T GE Droid 3 message 6
+
+DR3M7 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are responsible for the destruction of a research vessel! [1;36m>[1;37m
+} T GE Droid 3 message 7
+
+DR3M8 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m This survey ship is no threat to you. Back off now! [1;36m>[1;37m
+} T GE Droid 3 message 8
+
+The next four messages are sent when a player attacks
+this ship.
+
+DR3M9 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m The Vakory High Command has been informed of your illegal aggression. [1;36m>[1;37m
+} T GE Droid 3 message 9
+
+DR3M10 {***
+[0;37mDistress call from the [0;36m%s
+[1;36m<[1;37m Survey ship under attack. Requesting assistance! [1;36m>[1;37m
+} T GE Droid 3 message 10
+
+DR3M11 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Auto-defense systems activated. Cease and desist this attack! [1;36m>[1;37m
+} T GE Droid 3 message 11
+
+DR3M12 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Destroying this scientific research vessel is pointless! [1;36m>[1;37m
+} T GE Droid 3 message 12
+
+These four messages are sent when a ship identifies a
+player as a threat and breaks off to stage a preemptive
+attack.
+
+DR3M13 {} T GE Droid 3 message 13
+DR3M14 {} T GE Droid 3 message 14
+DR3M15 {} T GE Droid 3 message 15
+DR3M16 {} T GE Droid 3 message 16
+
+**********************************************************************
+Sarten Civil Transport
+
+The first four messages are sent to players that approach
+but are not (yet) considered threats.
+
+DR4M1 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m This vessel is transporting civilians. We are no threat! [1;36m>[1;37m
+} T GE Droid 4 message 1
+
+DR4M2 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m We are seeking refuge from Cybertron aggression. [1;36m>[1;37m
+} T GE Droid 4 message 2
+
+DR4M3 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m We no longer have any animosity towards your kind. [1;36m>[1;37m
+} T GE Droid 4 message 3
+
+DR4M4 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Cybertrons have decimated our species. We seek peace! [1;36m>[1;37m
+} T GE Droid 4 message 4
+
+The next four messages can be sent to players who are
+considered unfriendly by this faction.
+
+DR4M5 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are an enemy of the Sarten Empire! Attack Drones summoned! [1;36m>[1;37m
+} T GE Droid 4 message 5
+
+DR4M6 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m We are prepared to defend ourselves from all aggressors! [1;36m>[1;37m
+} T GE Droid 4 message 6
+
+DR4M7 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are responsible for the destruction of Sarten vessels. [1;36m>[1;37m
+} T GE Droid 4 message 7
+
+DR4M8 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Why do you wish for more destruction? We seek peace! [1;36m>[1;37m
+} T GE Droid 4 message 8
+
+The next four messages are sent when a player attacks
+this ship.
+
+DR4M9 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your actions leave us no recourse. [1;36m>[1;37m
+} T GE Droid 4 message 9
+
+DR4M10 {***
+[0;37mDistress call from the [0;36m%s
+[1;36m<[1;37m Sarten civilian vessel under attack. Requesting assistance! [1;36m>[1;37m
+} T GE Droid 4 message 10
+
+DR4M11 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You have no more honor than a Cybertron! [1;36m>[1;37m
+} T GE Droid 4 message 11
+
+DR4M12 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m The Sarten Empire shall not take this agression lightly. [1;36m>[1;37m
+} T GE Droid 4 message 12
+
+These four messages are sent when a ship identifies a
+player as a threat and breaks off to stage a preemptive
+attack.
+
+DR4M13 {} T GE Droid 4 message 13
+DR4M14 {} T GE Droid 4 message 14
+DR4M15 {} T GE Droid 4 message 15
+DR4M16 {} T GE Droid 4 message 16
+
+**********************************************************************
+Sarten Attack Drone
+
+The first four messages are sent to players that approach
+but are not (yet) considered threats.
+
+DR5M1 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m This Sarten vessel is acting in the defense of the Sarten Empire. [1;36m>[1;37m
+} T GE Droid 5 message 1
+
+DR5M2 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Do not interfere with the operation of this vessel. [1;36m>[1;37m
+} T GE Droid 5 message 2
+
+DR5M3 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Cybertrons must be stopped! [1;36m>[1;37m
+} T GE Droid 5 message 3
+
+DR5M4 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Join us in defending the galaxy from Cybertron aggression! [1;36m>[1;37m
+} T GE Droid 5 message 4
+
+The next four messages can be sent to players who are
+considered unfriendly by this faction.
+
+DR5M5 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are an enemy of the Sarten Empire! Do not approach! [1;36m>[1;37m
+} T GE Droid 5 message 5
+
+DR5M6 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You were offered peaceful coexistence, and refused! [1;36m>[1;37m
+} T GE Droid 5 message 6
+
+DR5M7 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are responsible for the destruction of Sarten vessels. [1;36m>[1;37m
+} T GE Droid 5 message 7
+
+DR5M8 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your foolishness will be your destruction! [1;36m>[1;37m
+} T GE Droid 5 message 8
+
+The next four messages are sent when a player attacks
+this ship.
+
+DR5M9 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your hostile actions will not be tolerated. [1;36m>[1;37m
+} T GE Droid 5 message 9
+
+DR5M10 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You have no more honor than a Cybertron! [1;36m>[1;37m
+} T GE Droid 5 message 10
+
+DR5M11 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m The Sarten Empire has been informed of your actions! [1;36m>[1;37m
+} T GE Droid 5 message 11
+
+DR5M12 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Death is too easy for Traxlyn Scurge like you. [1;36m>[1;37m
+} T GE Droid 5 message 12
+
+These four messages are sent when a ship identifies a
+player as a threat and breaks off to stage a preemptive
+attack.
+
+DR5M13 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You have offended the Sarten Empire -- your destruction is required! [1;36m>[1;37m
+} T GE Droid 5 message 13
+
+DR5M14 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You have been identified as an enemy of the Sarten Empire. [1;36m>[1;37m
+} T GE Droid 5 message 14
+
+DR5M15 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are an enemy of the Sarten Empire! Attack Drones summoned! [1;36m>[1;37m
+} T GE Droid 5 message 15
+
+DR5M16 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your attacks against our vessels will not go unanswered. [1;36m>[1;37m
+} T GE Droid 5 message 16
+
+**********************************************************************
+Galactic Command Freighter
+
+The first four messages are sent to players that approach
+but are not (yet) considered threats.
+
+DR6M1 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Be prepared for anything... stock up on weapons at Zygor! [1;36m>[1;37m
+} T GE Droid 6 message 1
+
+DR6M2 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Ready for a new ship? Check out the selection at Zygor! [1;36m>[1;37m
+} T GE Droid 6 message 2
+
+DR6M3 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Visit Zygor in sector 0 0 for all your galactic needs! [1;36m>[1;37m
+} T GE Droid 6 message 3
+
+DR6M4 {***
+[0;37mBeacon message from the [0;36m%s
+[1;36m<[1;37m Need more colonists and food? Visit Tahanian Station today! [1;36m>[1;37m
+} T GE Droid 6 message 4
+
+The next four messages can be sent to players who are
+considered unfriendly by this faction.
+
+DR6M5 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You have committed crimes against the Galactic Command! [1;36m>[1;37m
+} T GE Droid 6 message 5
+
+DR6M6 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Your presence is unwelcome. Back off now! [1;36m>[1;37m
+} T GE Droid 6 message 6
+
+DR6M7 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m We are prepared to defend this vessel. [1;36m>[1;37m
+} T GE Droid 6 message 7
+
+DR6M8 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You have been identified as a threat! Do not approach! [1;36m>[1;37m
+} T GE Droid 6 message 8
+
+The next four messages are sent when a player attacks
+this ship.
+
+DR6M9 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m You are no longer welcome at Zygor! [1;36m>[1;37m
+} T GE Droid 6 message 9
+
+DR6M10 {***
+[0;37mDistress call from the [0;36m%s
+[1;36m<[1;37m Zygorian freighter under attack. Requesting assistance. [1;36m>[1;37m
+} T GE Droid 6 message 10
+
+DR6M11 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m An attack on this freighter is an affront to galactic law! [1;36m>[1;37m
+} T GE Droid 6 message 11
+
+DR6M12 {***
+[0;37mHailing message from the [0;36m%s
+[1;36m<[1;37m Cease and desist this attack at once! [1;36m>[1;37m
+} T GE Droid 6 message 12
+
+These four messages are sent when a ship identifies a
+player as a threat and breaks off to stage a preemptive
+attack.
+
+DR6M13 {} T GE Droid 6 message 13
+
+DR6M14 {} T GE Droid 6 message 14
+
+DR6M15 {} T GE Droid 6 message 15
+
+DR6M16 {} T GE Droid 6 message 16
+
+DRLASTM {DO NOT REMOVE THIS MESSAGE!!!!!!} T Droid message end divider
 
 ENDMARK {ENDMARK} T Endmark - do not remove
 

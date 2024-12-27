@@ -222,8 +222,8 @@ int				gemaxplrs,
 				decodds,
 				nummines,
 				usermines,
-				maxdroids,
 				cyb_class,
+				dr_class,
 				clenguse,
 				logflag,
 				optmenu,
@@ -390,8 +390,6 @@ syscmds		= ynopt(SYSCMDS);
 sysonly		= ynopt(SYSONLY);
 max_plnts	= numopt(MAXPLNTS,1,256);
 plantock	= lngopt(PLANTOCK,1,32760)*60L;
-numships	= numopt(NUMSHIPS,1,500);
-maxdroids	= numopt(MAXDROID,0,500);
 plodds		= numopt(PLODDS,1,20);
 wormodds	= numopt(WORMODDS,1,100);
 univmax		= numopt(UNIVMAX,10,32767);
@@ -560,12 +558,139 @@ if (plantime < 4)
 geshocst(1,spr("Numrecs calculated to be %ld",numrecs));
 geshocst(1,spr("Plantime set to %d",plantime));
 
+cyb_class = 0;
+dr_class = 0;
+
+/* load the ship class table */
+geshmb		= opnmsg(geshipcl);
+setmbk(geshmb);
+
+#define NCL 28
+
+/* first audit the table */
+
+/* does the table have all the elements? */
+n = (SXXEND - S01TYPE);
+i = n/NCL;
+if ((i*NCL) != n)
+		catastro("GE:ERR:Ship Class Tbl Corrupted");
+
+/* this is how many inactive and active classes we have */
+/* since we only load active classes we must go figure  */
+/* out how many that really is.                         */
+
+geshocst(1,spr("GE:INF:Fnd %d class slots",i));
+tot_classes = i;
+
+n = 0;
+
+for (i=0; i<tot_classes; ++i)
+	{
+	classbase = S01TYPE+(i*NCL);
+	type = tokopt(classbase,"USER","CYBORG","DROID","<NONE>",NULL);
+
+	class_tab[i] = classbase;
+
+	if (type != CLASSTYPE_NONE)
+		{
+		++n;
+		}
+	}
+
+geshocst(1,spr("GE:INF:Fnd %d defined classes",n));
+
+/* allocate memory for ship class table*/
+
+shipclass = (SHIP *)alcmem(n=tot_classes*sizeof(SHIP));
+setmem(shipclass,n,0);
+geshocst(1,spr("GE:INF:Ship Class Mem: %d",n));
+
+/* read in the ship classes */
+
+i = 0;
+for (n=0; n<tot_classes; ++n)
+	{
+	classbase = class_tab[i];
+	shipclass[i].max_type  = tokopt(classbase,"USER","CYBORG","DROID","<NONE>",NULL);
+	shipclass[i].typename = stgopt(++classbase);
+	logthis(spr("Loaded class %d - %s",i,shipclass[i].typename));
+
+	shipclass[i].shipname = stgopt(++classbase);
+	logthis(spr("  Shipname %s",shipclass[i].shipname));
+
+	shipclass[i].max_shlds = numopt(++classbase,0,19);
+	shipclass[i].max_phasr = numopt(++classbase,0,19);
+	shipclass[i].max_torps = ynopt(++classbase);
+	shipclass[i].max_missl = ynopt(++classbase);
+	shipclass[i].has_decoy = ynopt(++classbase);
+	shipclass[i].has_jam = ynopt(++classbase);
+	shipclass[i].has_zip = ynopt(++classbase);
+	shipclass[i].has_mine = ynopt(++classbase);
+	shipclass[i].max_attk = ynopt(++classbase);
+	shipclass[i].max_cloak = ynopt(++classbase);
+	shipclass[i].max_accel = numopt(++classbase,0,32767);
+	shipclass[i].max_warp = numopt(++classbase,0,255);
+	shipclass[i].max_tons = lngopt(++classbase,1,2000000000L);
+	shipclass[i].max_price = lngopt(++classbase,1,2000000000L);
+	shipclass[i].max_points = numopt(++classbase,1,32767);
+	shipclass[i].scanrange = lngopt(++classbase,1,9999999L);
+	shipclass[i].cybs_can_att = ynopt(++classbase);
+	shipclass[i].noclaim = numopt(++classbase,0,255);
+	shipclass[i].lowest_to_attk = numopt(++classbase,0,255);
+	shipclass[i].tot_to_create = numopt(++classbase,0,255);
+	shipclass[i].tough_factor = numopt(++classbase,0,4);
+	shipclass[i].damfact = numopt(++classbase,0,32767);
+	shipclass[i].faction = numopt(++classbase,0,32767);
+	shipclass[i].loadout = numopt(++classbase,0,32767);
+
+	shipclass[i].hlpmsg = ++classbase;
+
+	shipclass[i].init_func = NULL;
+	shipclass[i].tick_func = NULL;
+	shipclass[i].kill_func = NULL;
+	shipclass[i].won_func  = NULL;
+
+	if (shipclass[i].max_type == CLASSTYPE_CYBORG ||
+		shipclass[i].max_type == CLASSTYPE_DROID)
+		{
+		numships += shipclass[i].tot_to_create;
+		}
+
+	if (shipclass[i].max_type == CLASSTYPE_CYBORG) /* CYBORG */
+		{
+		if (cyb_class == 0)  /* set up base cybertron class */
+			cyb_class = i;
+		shipclass[i].init_func = cyb_init;
+		shipclass[i].tick_func = cyb_lives;
+		shipclass[i].kill_func = cyb_died;
+		shipclass[i].won_func  = cyb_won;
+		}
+	else
+	if (shipclass[i].max_type == CLASSTYPE_DROID) /* DROID */
+		{
+		if (dr_class == 0)  /* set up base droid class */
+			dr_class = i;
+		shipclass[i].init_func = droid_init;
+		shipclass[i].tick_func = droid_lives;
+		shipclass[i].kill_func = droid_died;
+		shipclass[i].won_func  = droid_won;
+		}
+	geshocst(1,spr("GE:INF:Init Class %s",shipclass[i].typename));
+
+	++i; /* index the next table entry */
+	}
+
 gebb5=opnbtv(geuser,sizeof(WARUSR));
 
 gehlpmb =opnmsg(GEHELP);
 
 /* ships in game is at least number of terminal channels */
 nships = nterms + numships;
+if (nships > 125)
+	{
+	geshocst(0,spr("GE:ERR:Too many ships defined"));
+	nships = 125;
+	}
 
 /* allocate memory for user data table */
 
@@ -651,124 +776,6 @@ planet.plnum = 32767;
 worm.xsect = 32767;
 worm.ysect = 32767;
 worm.plnum = 32767;
-
-
-setmbk(gemb);
-
-cyb_class = 0;
-
-/* load the ship class table */
-geshmb		= opnmsg(geshipcl);
-setmbk(geshmb);
-
-#define NCL 28
-
-/* first audit the table */
-
-/* does the table have all the elements? */
-n = (SXXEND - S01TYPE);
-i = n/NCL;
-if ((i*NCL) != n)
-		catastro("GE:ERR:Ship Class Tbl Corrupted");
-
-/* this is how many inactive and active classes we have */
-/* since we only load active classes we must go figure  */
-/* out how many that really is.                         */
-
-geshocst(1,spr("GE:INF:Fnd %d class slots",i));
-tot_classes = i;
-
-n = 0;
-
-for (i=0; i<tot_classes; ++i)
-	{
-	classbase = S01TYPE+(i*NCL);
-	type = tokopt(classbase,"USER","CYBORG","DROID","<NONE>",NULL);
-
-	class_tab[i] = classbase;
-
-	if (type != CLASSTYPE_NONE)
-		{
-		++n;
-		}
-	}
-
-geshocst(1,spr("GE:INF:Fnd %d defined classes",n));
-
-/* allocate memory for ship class table*/
-
-shipclass = (SHIP *)alcmem(n=tot_classes*sizeof(SHIP));
-setmem(shipclass,n,0);
-geshocst(1,spr("GE:INF:Ship Class Mem: %d",n));
-
-/* read in the ship classes */
-
-i = 0;
-for (n=0; n<tot_classes; ++n)
-	{
-	classbase = class_tab[i];
-	shipclass[i].max_type  = tokopt(classbase,"USER","CYBORG","DROID","<NONE>",NULL);
-	shipclass[i].typename = stgopt(++classbase);
-	logthis(spr("Loaded class %d - %s",i,shipclass[i].typename));
-
-	shipclass[i].shipname = stgopt(++classbase);
-	logthis(spr("  Shipname %s",shipclass[i].shipname));
-
-	shipclass[i].max_shlds = numopt(++classbase,0,19);
-	shipclass[i].max_phasr = numopt(++classbase,0,19);
-	shipclass[i].max_torps = ynopt(++classbase);
-	shipclass[i].max_missl = ynopt(++classbase);
-	shipclass[i].has_decoy = ynopt(++classbase);
-	shipclass[i].has_jam = ynopt(++classbase);
-	shipclass[i].has_zip = ynopt(++classbase);
-	shipclass[i].has_mine = ynopt(++classbase);
-	shipclass[i].max_attk = ynopt(++classbase);
-	shipclass[i].max_cloak = ynopt(++classbase);
-	shipclass[i].max_accel = numopt(++classbase,0,32767);
-	shipclass[i].max_warp = numopt(++classbase,0,255);
-	shipclass[i].max_tons = lngopt(++classbase,1,2000000000L);
-	shipclass[i].max_price = lngopt(++classbase,1,2000000000L);
-	shipclass[i].max_points = numopt(++classbase,1,32767);
-	shipclass[i].scanrange = lngopt(++classbase,1,9999999L);
-	shipclass[i].cybs_can_att = ynopt(++classbase);
-	shipclass[i].noclaim = numopt(++classbase,0,255);
-	shipclass[i].lowest_to_attk = numopt(++classbase,0,255);
-	shipclass[i].tot_to_create = numopt(++classbase,0,255);
-	shipclass[i].tough_factor = numopt(++classbase,0,1);
-	shipclass[i].damfact = numopt(++classbase,0,32767);
-	shipclass[i].res_flag_2 = numopt(++classbase,0,32767);
-	shipclass[i].res_flag_3 = numopt(++classbase,0,32767);
-
-	shipclass[i].hlpmsg = ++classbase;
-
-	shipclass[i].init_func = NULL;
-	shipclass[i].tick_func = NULL;
-	shipclass[i].kill_func = NULL;
-	shipclass[i].won_func  = NULL;
-
-
-	if (shipclass[i].max_type == CLASSTYPE_CYBORG) /* CYBORG */
-		{
-		if (cyb_class == 0)  /* set up base cybertron class */
-			cyb_class = i;
-		shipclass[i].init_func = cyb_init;
-		shipclass[i].tick_func = cyb_lives;
-		shipclass[i].kill_func = cyb_died;
-		shipclass[i].won_func  = cyb_won;
-		}
-	else
-	if (shipclass[i].max_type == CLASSTYPE_DROID) /* DROID */
-		{
-		shipclass[i].init_func = droid_init;
-		shipclass[i].tick_func = droid_lives;
-		shipclass[i].kill_func = droid_died;
-		shipclass[i].won_func  = droid_won;
-		}
-	geshocst(1,spr("GE:INF:Init Class %s",shipclass[i].typename));
-
-	++i; /* index the next table entry */
-	}
-
 
 setmbk(gemb);
 
@@ -1800,6 +1807,10 @@ setbtv(gebb2);
 
 ++tocks;
 
+/* DEBUG 2024-12AGS */
+geshocst(1,spr("plarti:fpos %ld, plntcnt %d, plntpop %d, sectcnt %d, wormcnt %d",fpos,plntcnt,plntpop,sectcnt,wormcnt));
+geshocst(1,spr("plarti:firstime %d, tocks %d",firstime,tocks)); /**/
+
 /* if first time through get the first record in the file */
 
 if (fpos == 0)
@@ -1810,6 +1821,8 @@ if (fpos == 0)
 		{
 		logthis("plarti:querried first planet get fpos");
 		fpos=absbtv();
+		/* DEBUG 2024-12AGS */
+		geshocst(1,spr("plarti:fpos %ld",fpos)); /**/
 		}
 	tocks = 0;
 	sectcnt = 0;
@@ -1822,6 +1835,8 @@ if (fpos == 0)
 /* if we still do not have any records go no further */
 if (fpos == 0)
 	{
+	/* DEBUG 2024-12AGS */
+	geshocst(1,spr("plarti: go no further")); /**/
 #ifdef PHARLAP
 	rtkick(plantime,pplarti);
 #else
@@ -1845,7 +1860,9 @@ do
 		/* must get the current record to mark the spot */
 		gcrbtv(&planet,2);
 		fpos=absbtv();
-		logthis("plarti:hit max tic - break do loop");
+                logthis("plarti:hit max tic - break do loop");
+		/* DEBUG 2024-12AGS */
+		geshocst(1,spr("plarti do loop: maxtic fpos %ld",fpos)); /**/
 		break;
 		}
 
@@ -1859,6 +1876,7 @@ do
 
 
 		plnt_type = (int)(gebb2->key[0]);
+		geshocst(1,spr("plarti do loop: plnt_type %d",plnt_type));
 		if (plnt_type == SECTYPE_NORMAL)
 			{
 			logthis("plarti:found sector record");
@@ -1871,13 +1889,14 @@ do
 			fpos=absbtv();
 			not_done = FALSE;
 			logthis("plarti:found planet record");
+			/* DEBUG 2024-12AGS */
+			geshocst(1,spr("plarti do loop: found planet fpos %ld",fpos)); /**/
 			++plntcnt;
 			}
 		else
 		if (plnt_type == PLTYPE_WORM)
 			{
 			logthis("plarti:found wormhole record");
-
 			++wormcnt;
 			}
 		else
@@ -2167,26 +2186,6 @@ if (ticktock2 >= 30 && ticktock1 < nships)
 				if (clscnt < shipclass[i].tot_to_create)
 					{
 					/* NO - (i) is now set to the class to create */
-					class = i;
-					break;
-					}
-				}
-			}
-
-		/* should also add a random factor to choose a auto class even if the
-		class is full */
-
-		if (gernd()%100 == 0 || class == -1)
-			{
-			logthis("pick random class");
-			/* look through the classes for artificial classes */
-			class = -1;
-			for (j=0;j<200;++j)
-				{
-				i = gernd()%tot_classes;
-				if (shipclass[i].max_type == CLASSTYPE_CYBORG ||
-					shipclass[i].max_type == CLASSTYPE_DROID)
-					{
 					class = i;
 					break;
 					}

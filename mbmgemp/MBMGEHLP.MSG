@@ -1,6 +1,6 @@
 Galactic Empire Help Message Database
 
-LEVEL5 {}
+LEVEL6 {}
 
 HLPINDEX {
 [1;36mHelp is available on the following commands and topics:
@@ -15,7 +15,7 @@ Commands: [1;32mabandon  abort  admin  attack  buy  cloak  cls  decoy  destruct
           scoring  sector  starting  strategy  wormholes
 
 [1;36mEnter [1;37mHELP[1;36m followed by any of these commands or topics for more information.[1;37m
-} T 
+} T GE help list of subjects message
 
 
 HLPSTART {
@@ -44,7 +44,7 @@ player might bring short term gains, but long term trouble.
 Good luck and enjoy the game.
 
 Further hints are available under other help topics.
-[1;37m} T 
+[1;37m} T GE help starting message
 
 HLPGALXY {
 [1;36mTopic: Galaxy
@@ -92,7 +92,7 @@ left to bottom right as follows:
        |                              |
        |9999 0               9999 9999|
        +------------------------------+
-} T 
+} T GE help galaxy message
 
 
 HLPSECTR {
@@ -118,7 +118,7 @@ to find a new planet to live (and work) on, and purchase food supplies.
 
 Once out of Sector 0 0 it is a free for all, and you have to decide how to
 best defend yourself and your planets.
-[1;37m} T 
+[1;37m} T GE help sector message
 
 HLPCOMMU {
 [1;36mTopic: Communications
@@ -134,7 +134,7 @@ Use the [1;37mFREQ[1;36m command to change the communications frequency.
 Note that if the frequency is set above 20000 then it is determined to be a
 hyperspace communications packet code and transmissions will be sent via
 hyperspace to anyone with the same packet code anywhere in the galaxy.
-[1;37m} T 
+[1;37m} T GE help communicate message
 
 
 HLPNAVIG {
@@ -163,7 +163,7 @@ the ship is facing toward you, while a heading of 180 is away from you.
 
 GALACTIC HEADING -- This is the absolute heading in the galaxy. A galactic
 heading of 0 means you (or the other ship) is facing north up.
-[1;37m} T 
+[1;37m} T GE help navigate message
 
 HLPPLANT {
 [1;36mTopic: Owning planets
@@ -188,7 +188,7 @@ it. This is done with the [1;37mTRANSFER[1;36m command to shuttle items from y
 ship to the planet.
 
 Type [1;37mHELP PLANETS2[1;36m for more information on planets.
-[1;37m} T 
+[1;37m} T GE help planets message
 
 HLPPLAN2 {
 [1;36mTopic: Owning planets (section 2)
@@ -215,7 +215,7 @@ with an ion cannon firing upon them. You can have multiple ion cannons, but
 only one will be active at a time.
 
 Type [1;37mHELP PLANETS3[1;36m for more information on planets.
-[1;37m} T 
+[1;37m} T GE help planets2 message
 
 HLPPLAN3 {
 [1;36mTopic: Owning planets (section 3)
@@ -246,7 +246,7 @@ Remember that the better your planet, the more attractive it is to marauders.
 Nothing can take the place of a well-rounded defense system and frequent supply
 runs. Leaving a planet unchecked for more than a few days may spell disaster
 for your colony.  
-[1;37m} T 
+[1;37m} T GE help planets3 message
 
 HLPSTRAT {
 [1;36mTopic: Game strategy
@@ -280,7 +280,7 @@ larger and more powerful ships and expand your empire.
 
 Remember, these are only a couple suggested strategies, and others are only
 limited by your imagination.
-[1;37m} T 
+[1;37m} T GE help strategy message
 
 HLPBATTL {
 [1;36mTopic: Battle strategy
@@ -307,7 +307,7 @@ When launching an attack try to get close to the target and use the faster
 torpedoes as they will have less time to react.
 
 Type [1;37mHELP BATTLE2[1;36m for more information on battling.
-[1;37m} T 
+[1;37m} T GE help battle message
 
 HLPBATT2 {
 [1;36mTopic: Battle strategy (section 2)
@@ -335,7 +335,7 @@ When you destroy another ship, you will get some of the goods that were on that
 ship. This can be very helpful when you are running low.
 
 Type [1;37mHELP BATTLE3[1;36m for more information on battling.
-[1;36m} T 
+[1;36m} T GE help battle 2 message
 
 HLPBATT3 {
 [1;36mTopic: Battle strategy (section 3, planetary battles)
@@ -370,7 +370,7 @@ After each wave, some fighters or troops may return to your ship if they are
 not all eliminated in the attack. If you wish to send them back, you can do so.
 Remember, you will not take a planet so long as 1 fighter or 1 squad of troops
 (5) exists on the planet.
-[1;37m} T 
+[1;37m} T GE help battle 3 message
 
 HLPCYBER {
 [1;36mTopic: Cybertrons
@@ -380,19 +380,21 @@ organic life from the universe. They command a class of ship manufactured
 specifically for them, also called the Cybertron. Both pilot and ship function
 as a single fighting unit, and they can be quite deadly.
 
-The Cybertron is armed with phasers, and torpedoes, but has no missile
-capability. They can be deadly in hyperspace with hyper-phasers, but cannot
-recycle the phaser as fast as most other ships. Cybertrons are prone to battle
-failure, and they will malfunction occasionally. This is often noted by strange
-transmissions from their ship.
+All Cybertrons are equipped with a pursuit capability to identify
+non-Cybertron ships throughout the galaxy, and are capability of traversing
+the galaxy in mere moments to reach a ship, at speeds far beyond warp as
+currently understood. All attempts by the Galactic Command to reverse
+engineer this technology have so far failed. A scan of a Cybertron ship
+traveling at this pursuit speed will display "??.??" for speed.
 
-The top speed of a Cybertron Scout is warp 8.0, so they can be outrun with a
-faster ship. They will however continue seeking, and if you stay too long in a
-single spot, they will catch up. As you destroy Cybertrons and upgrade to more
-powerful ships, you will find additional, more powerful classes of Cybertrons
-will be dispatched to intercept you. It is up to you to discover the
-capabilities of these ships.
-[1;37m} T 
+The least powerful Cybertron is a Cybertron Interceptor, which can be
+identified by its "1x" marking. The top cruising speed of a Cybertron
+Interceptor is warp 8.0, and it is equipped only with phaser, shield, and
+torpedo systems. As you destroy Cybertrons and upgrade to more powerful ships,
+you will find additional, more powerful classes of Cybertrons will be
+dispatched to intercept you. It is up to you to discover the capabilities of
+these ships.
+[1;37m} T GE help cybertron message
 
 HLPSCORE {
 [1;36mTopic: Scoring
@@ -411,7 +413,7 @@ in addition to the ship points.
 Finally, when you destroy another player's ship, their score also goes down.
 This means that you can actually knock players down on the top player list,
 making it easier to overtake them (or pass them further).
-[1;37m} T 
+[1;37m} T GE help scoring message
 
 HLPWORM {
 [1;36mTopic: Wormholes
@@ -428,7 +430,7 @@ Each time you pass through a wormhole, some damage to systems may occur.
 Passing through a wormhole while severely damaged is not recommended. Wormholes
 are usually bidirectional, but an even rarer form of one way wormhole has been
 speculated to exist.
-[1;37m} T 
+[1;37m} T GE help wormhole message
 
 HLPADM {
 [1;36mThe [1;37mADMIN[1;36m command permits you to claim and administer a planet once in orbit.
@@ -451,19 +453,19 @@ Option 5 is for adjusting the planet's tax rate.
 Option 6 is for setting a trade password; only users that know this password
 will be able to purchase goods or request maintenance.
 
-Option 7 sets a beacon message that will be broadcast to all ships in the same
-sector.
-[1;37m} T 
+Option 7 sets a beacon message that will be broadcast to all ships that scan
+your planet.
+[1;37m} T GE help admin message
 
 HLPABA {
 [1;36mThe [1;37mABANDON[1;36m command will release ownership of a planet previously claimed. You
 must be in orbit around the planet to be abandoned.
-[1;37m} T 
+[1;37m} T GE help abandon message
 
 HLPABO {
 [1;36mThe [1;37mABORT[1;36m command will abort a self-destruct countdown and prevent the
 destruction of your ship.
-[1;37m} T 
+[1;37m} T GE help abort message
 
 HLPATT {
 [1;36mThe [1;37mATTACK[1;36m command launches an attack on a planet with either troops or
@@ -477,7 +479,7 @@ fighters. Issue the command as follows:
 
 Examples: [1;37mattack 100 troops
           att 30 fig
-} T 
+} T GE help attack message
 
 HLPBUY {
 [1;36mUse the [1;37mBUY[1;36m command to purchase goods from a planet. Issue the command as
@@ -511,7 +513,7 @@ Examples: [1;37mbuy 1000 men
           buy max ion
           buy all jam
           buy 500 foo drowssap
-} T 
+} T GE help buy message
 
 HLPCLO {
 [1;36mThe [1;37mCLOAK[1;36m command will turn on or off the cloaking system, if your ship is
@@ -520,11 +522,11 @@ careful not to drain all your energy pool. The cloaking system takes a few
 seconds to charge once the command is issued. Issue the command as follows:
 
    [1;37mcloak [1;32m[[1;37mon[1;32m/[1;37moff[1;32m][1;37m
-} T 
+} T GE help cloak message
 
 HLPCLS {
 [1;36mThe [1;37mCLS[1;36m command simply clears the screen.
-[1;37m} T 
+[1;37m} T GE help cls message
 
 HLPDEC {
 [1;36mThe [1;37mDECOY[1;36m command deploys a single decoy. Decoys proceed away from your ship
@@ -534,26 +536,26 @@ The decoy will self-destruct after a period of time to prevent stray decoys
 floating around in your navigation path. You can deploy up to ten decoys at a
 time, and the more that are deployed, the greater the odds are of a successful
 interception.
-[1;37m} T 
+[1;37m} T GE help decoy message
 
 HLPDES {
 [1;36mThe [1;37mDESTRUCT[1;36m command will begin a self-destruct countdown timer that,
 when it reaches zero, will destroy your ship. The countdown can be aborted with
 the [1;37mABORT[1;36m command.
-[1;37m} T 
+[1;37m} T GE help destruct message
 
 HLPFLU {
 [1;36mThe [1;37mFLUX[1;36m command will replace an exhausted flux pod from the energy pool with
 a new one. This command presumes that you want it changed now, and does not
 warn you if there is still a good percentage of power left in the old pod.
 The old pod is jettisoned. Your power is restored to full charge automatically.
-[1;37m} T 
+[1;37m} T GE help flux message
 
 HLPHEL {
 [1;36mThe [1;37mHELP[1;36m command will display a vast amount of information on Galactic Empire.
 Type [1;37mhelp[1;36m for a list of subjects, and [1;37mhelp [1;32m[subject][1;36m for information on
 that subject.
-[1;37m} T 
+[1;37m} T GE help help message
 
 HLPHYP {
 [1;36mIn hyperspace, a ship's standard phasers are useless. The hyper-phaser,
@@ -570,7 +572,7 @@ issue the [1;37mPHASER[1;36m command as follows:
 
 Examples: [1;37mphaser 4       [1;36mfire 4 degrees off starboard
           [1;37mpha 180        [1;36mfire directly behind you
-[1;37m} T 
+[1;37m} T GE help hyper message
 
 HLPIMP {
 [1;36mThe [1;37mIMPULSE[1;36m command directs your impulse (sub-light) engines and sets your
@@ -589,13 +591,13 @@ Examples: [1;37mimpulse 5     [1;36malter the speed to warp 0.05, not changing
                         25 degrees to the port (left)
           [1;37mimp 50 @140   [1;36malter the speed to warp 0.50 and turn the ship
                         140 degrees absolute
-[1;37m} T 
+[1;37m} T GE help impulse message
 
 HLPJAM {
 [1;36mThe [1;37mJAMMER[1;36m command will launch a jammer device from your ship. It disrupts all
 scanner systems on all ships within range of the device, yours included. It is
 useful for covering an escape or distracting an opponent.
-[1;37m} T 
+[1;37m} T GE help jam message
 
 HLPLOC {
 [1;36mThe [1;37mLOCK[1;36m command locks your fire control systems onto a ship. As long as the
@@ -611,7 +613,7 @@ Issue the command as follows:
 
 [1;36mOnce a ship is destroyed the lock is released automatically. Use the [1;37mLOCK[1;36m
 command with no options to release the lock.
-[1;37m} T 
+[1;37m} T GE help lock message
 
 HLPMAI {
 [1;36mUse the [1;37mMAINTENANCE[1;36m command when you are in orbit at Zygor or any other
@@ -620,7 +622,7 @@ ship and charge you a nominal fee of [0;33m2500[1;36m at Zygor and [0;33m200
 
 Leaving orbit early will cease all repairs on the ship. If the planet has a
 trade password set, it will be required.
-[1;37m} T 
+[1;37m} T GE help maintenance message
 
 HLPMIN {
 [1;36mThe [1;37mMINE[1;36m command causes a neutron mine to be deposited at your current
@@ -633,7 +635,7 @@ follows:
   [1;37mmine [1;32m[time]
 
   time [1;36m= the time until detonation in centocks (approx 5 seconds)
-[1;37m} T 
+[1;37m} T GE help mine message
 
 HLPMIS {
 [1;36mThe [1;37mMISSILE[1;36m command fires a hyper-missile at a given ship with a given charge.
@@ -656,14 +658,14 @@ Examples: [1;37mmissile A 100    [1;36mfires a missile at ship A which cause m
                    damage, and drains your ship's flux by 4000
           [1;37mmis @ 10000      [1;36mfires on the ship that a previous [1;37mLOCK[1;36m
                    command has locked onto, and drains your ship's flux by 1000
-[1;37m} T 
+[1;37m} T GE help missile message
 
 HLPNAV {
 [1;36mThe [1;37mNAVIGATE[1;36m command will display the bearing and distance to the center
 of the sector you specify. Issue the command as follows:
 
   [1;37mnavigate [1;32m[sector]
-[1;37m} T 
+[1;37m} T GE help navigate message
 
 HLPNEW {
 [1;36mThe [1;37mNEW[1;36m command is used to purchase a new ship, or a new phaser or shield
@@ -678,7 +680,7 @@ Issue the command as follows:
 You must be orbiting around Zygor in Sector 0 0 to issue this command. A
 complete list of ship classes and prices can be obtained from the [1;37mHELP CLASS[1;36m
 command. For phaser and shield prices, use the [1;37mHELP NEWPRICE[1;36m command.
-[1;37m} T 
+[1;37m} T GE help new message
 
 HLPNEW2 {
 [1;36mThe prices for phasers and shields are as follows:
@@ -703,7 +705,7 @@ Mark-16...... 30.0m             Mark-16...... 28.0m
 Mark-17...... 60.0m             Mark-17...... 55.0m
 Mark-18......100.0m             Mark-18...... 90.0m
 Mark-19......200.0m             Mark-19......180.0m
-[1;37m} T 
+[1;37m} T GE help newprice message
 
 HLPORB {
 [1;36mThe [1;37mORBIT[1;36m command is used to orbit a given planet. You must be
@@ -715,7 +717,7 @@ Issue the command as follows:
 [1;37m  orbit [1;32m[planet number]
 [1;36m
 You must be within 250 subsectors of a planet to establish an orbit.
-[1;37m} T 
+[1;37m} T GE help orbit message
 
 HLPPHA {
 [1;36mThe [1;37mPHASER[1;36m command fires your ship's phasers in a given direction with a given
@@ -737,11 +739,11 @@ Examples: [1;37mphaser -15     [1;36mfire 15 degrees off port, focus 1.
 
 If you are traveling at warp speed, the hyper-phasers will be used instead. For
 more information on hyper-phasers, see [1;37mHELP HYPER[1;36m.
-[1;37m} T 
+[1;37m} T GE help phaser message
 
 HLPPLA {
 [1;36mThe [1;37mPLANET[1;36m command shows a list of planets in your empire.
-[1;37m} T 
+[1;37m} T GE help planet message
 
 HLPPRI {
 [1;36mUse the [1;37mPRICE[1;36m command to determine the price of items for sale at a planet. You
@@ -768,7 +770,7 @@ Issue the command as follows:
     [1;37mzip[1;36m = price of zippers
     [1;37mgol[1;36m = price of gold
     [1;37mspy[1;36m = price of spies
-[1;37m} T 
+[1;37m} T GE help price message
 
 HLPREN {
 [1;36mThe [1;37mRENAME[1;36m command will change the name assigned to your ship. Issue the
@@ -777,7 +779,7 @@ command as follows:
 [1;37m  rename [1;32m[new ship name]
 
 [1;36mYour ship name can be up to 19 characters long.
-[1;37m} T 
+[1;37m} T GE help rename message
 
 HLPREP {
 [1;36mThe [1;37mREPORT[1;36m command gives you status information on navigation, ship systems,
@@ -789,7 +791,7 @@ inventory, and accounting. Issue the command as follows:
           [1;37mreport sys [1;36m produces a systems report
           [1;37mreport inv [1;36m produces an inventory report
           [1;37mrep acc    [1;36m produces an accounting report
-[1;37m} T 
+[1;37m} T GE help report message
 
 HLPROS {
 [1;36mThe [1;37mROSTER[1;36m command will display the top players roster. Players that have yet
@@ -799,7 +801,7 @@ to score any points will not be displayed. Issue the command as follows:
 
 [1;36mExamples: [1;37mroster [1;36mdisplays the top players
           [1;37mroster all [1;36mdisplays all players
-[1;37m} T 
+[1;37m} T GE help roster message
 
 HLPROT {
 [1;36mThe [1;37mROTATE[1;36m command will cause the directional thrusters to rotate the ship a
@@ -818,7 +820,7 @@ follows:
   examples: [1;37mrotate 5   [1;36mturns the ship 5 degrees to the starboard (right)
             [1;37mrotate -5  [1;36mturns the ship 5 degrees to the port (left)
             [1;37mrot @5     [1;36mturns the ship to 5 degrees absolute
-[1;37m} T 
+[1;37m} T GE help rotate message
 
 HLPSET {
 [1;36mThe [1;37mSET[1;36m command lets you set user-configurable options. Issue the command as
@@ -838,7 +840,7 @@ Examples:
 [1;37m  set scanhome on
   set scannames off
   set ?     
-} T 
+} T GE help set message
 
 HLPSCA {
 [1;36mThe [1;37mSCAN[1;36m command displays information from your ship's tactical scanners.
@@ -860,7 +862,7 @@ Issue the command as follows:
           sca lo
 
 [1;36mSee the [1;37mSET[1;36m command for additional configuration options for [1;37mSCAN[1;36m.
-[1;37m} T 
+[1;37m} T GE help scan message
 
 HLPSEL {
 [1;36mUse the [1;37mSELL[1;36m command to sell items to Zygor. The Galactic Command will charge
@@ -891,7 +893,7 @@ Issue the command as follows:
 Examples:[1;37m sell 1000 men
           sel 3 ion
           sell all gol 
-} T 
+} T GE help set message
 
 HLPSEN {
 [1;36mUse the [1;37mSEND[1;36m command to communicate with other ships and team members. Issue
@@ -903,7 +905,7 @@ the command as follows:
 
 Examples: [1;37msend A Why you scum guzzler, I am gonna get you
           sen C This is a warning to all ships.... I am here!!!!
-} T 
+} T GE help send message
 
 HLPFRE {
 [1;36mUse the [1;37mFREQ[1;36m command to set the communications channels which your ship will
@@ -918,7 +920,7 @@ Examples: [1;37mfreq A 12345
 Channel frequencies above 20000 are converted to hyperspace modulation packets
 and transmitted through hyperspace. Channel frequencies below 20000 are
 transmitted in the current star system only.
-[1;37m} T 
+[1;37m} T GE help freq message
 
 HLPSHI {
 [1;36mThe [1;37mSHIELD[1;36m command will raise or lower the ship's shields. The shields will
@@ -932,7 +934,7 @@ Issue the command as follows:
 
 [1;36mWhen firing a weapon with the shields up, the shields will be automatically
 lowered. They WILL NOT be automatically raised after the firing.
-[1;37m} T 
+[1;37m} T GE help shield message
 
 HLPTOR {
 [1;36mThe [1;37mTORPEDO[1;36m command fires a torpedo at a given ship. Your ship's fire control
@@ -946,7 +948,7 @@ is made, the torpedo is launched. Issue the command as follows:
 
   examples: [1;37mtorpedo A   [1;36mfires a torpedo at ship A.
             [1;37mtor @       [1;36mfires at the ship you locked on with the [1;37mLOCK[1;36m cmd
-[1;37m} T 
+[1;37m} T GE help torpedo message
 
 HLPTRA {
 [1;36mThe [1;37mTRANSFER[1;36m command permits you to transfer goods from your ship to a planet
@@ -978,7 +980,7 @@ Examples:[1;37m transfer up 3 ion
           tra down 500 foo
           tra u max foo
           tra d all mis
-} T 
+} T GE help transfer message
 
 HLPWAR {
 [1;36mThe [1;37mWARP[1;36m command starts the warp drives (provided your type of ship has them)
@@ -997,7 +999,7 @@ Examples: [1;37mwarp 5     [1;36malters the speed to warp 5 and does not chang
                      to the port (left).
           [1;37mwar 8 @90  [1;36malters the speed to warp 8 and turns the ship to 90
                      degrees absolute.
-[1;37m} T 
+[1;37m} T GE help warp message
 
 HLPZIP {
 [1;36mThe [1;37mZIPPER[1;36m command launches a defensive (and sometimes offensive) weapon which
@@ -1006,7 +1008,7 @@ in the vicinity of the players ship into exploding immediately. This weapon can
 be used to trip an opponent's mines after they have laid them but before they
 can distance themself from them, causing the mines to do damage to the
 opponent's own ship.
-[1;37m} T 
+[1;37m} T GE help zipper message
 
 HLPCLS1 {
 [1;36mThese are the classes of ships manufactured at Zygor and their capabilities:
@@ -1014,16 +1016,16 @@ HLPCLS1 {
                                 P  W  S  P T M M F D J Z C   A    S    T     P
                                 r  r  h  h o i i i e a i l   c    c    o     t
                                 c  p  i  a r s n g c m p o   l    n    n     s
-} T 
+} T GE help class header
 
 HLPCLS2 {
 [1;36mFor more details on a class of ship, enter [1;37mHELP CLASS [1;32m[class number][1;36m.
-[1;37m} T 
+[1;37m} T GE help class trailer
 
 HLPCLS3 {
-[1;36mType HELP CLASS for a list of valid ship classes.
-[1;37m
-} T 
+[1;36mType [1;37mHELP CLASS[1;36m for a list of valid ship classes.
+[1;37m 
+} T GE help class invalid class message
 
 HLPTEA {
 [1;36mThe [1;37mTEAM[1;36m command performs a number of functions related to teams. It allows
@@ -1060,7 +1062,7 @@ Team founder commands are:
 [1;36m      displays a list of the current teams and their scores.
 [1;37m   team members
 [1;36m      displays a list of the members of the player's current team.
-[1;37m} T 
+[1;37m} T GE team help message
 
 HLPSPY {
 [1;36mThe [1;37mSPY[1;36m command will transport a spy (provided you have one on board) to the
@@ -1070,7 +1072,7 @@ will from time to time get intellegence reports on the planet.
 You can defend from spies by having your own spies on your planets. The more
 trained spies you have, the better your chances you will catch any foreign
 spies who sneak onto your planet.
-[1;37m} T 
+[1;37m} T GE help spy message
 
 HLPJET {
 [1;36mThe [1;37mJETTISON[1;36m command permits you to dump goods from your ship. You can dump a
@@ -1098,7 +1100,7 @@ specific number, or all you have of a item type. Issue the command as follows:
 
 Examples: [1;37mjettison ALL ion 
           jet 500 foo 
-} T 
+} T GE help jettison message
 
 HLPSYS {
 [1;36mLucky you, you have access to the [1;37mSYS[1;36m command. The following commands are
@@ -1119,7 +1121,8 @@ available for the use of sysops, game administrators, or their designees:
 [1;37m  sys cybpause [1;32m[number][1;36m -- pause the Cybertrons for the specified seconds
 [1;37m  sys multiply [1;32m[number][1;36m -- run the planetary update cycle of the orbited planet
 [1;37m  sys orbit [1;32m[number][1;36m -- orbit planet in the current sector, even if not close
+[1;37m  sys assigncybs [1;32m[number][1;36m -- reshuffle Cybs pursuing you based on distance
 [1;37m
-} T 
+} T GE help sys message 
 
 

@@ -63,11 +63,11 @@
 
 /* LOCAL GLOBAL DEFS ****************************************************/
 
-char        cybname[UIDSIZ]; /*BJ REMOVED CYBORG- name*/
-int			cybhaltflg = 0;
+char	cybname[UIDSIZ]; /*BJ REMOVED CYBORG- name*/
+int	cybhaltflg = 0;
 
 
-double		d_topspeed;
+double	d_topspeed;
 
 /**************************************************************************
 ** Cyborg functions                                                      **
@@ -75,10 +75,15 @@ double		d_topspeed;
 
 void  FUNC cyb_init(ptr, usrn, class)
 WARSHP *ptr;
-int   usrn;
-int   class;
+int	usrn;
+int	class;
 
 {
+
+WARSHP *wptr;
+
+int	i, goldwin, goldspin, goldtry, zothusn;
+double	ddist;
 
 logthis(spr("@Cyb_init usrn=%d,class=%d",usrn,class));
 
@@ -114,9 +119,10 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		logthis(spr("GE:INF:Load %s ship",ptr->userid));
 
 		ptr->status = GESTAT_AUTO;
+		ptr->shield = 40 + (ptr->shieldtype*10);
 		ptr->phasr = 100;
 		ptr->cybmine = (byte)255;
-		ptr->speed2b = (double)(ptr->topspeed)*500.0;
+		cyb_cruise(ptr);
 		ptr->cybupdate = 100 + gernd()%20;
 		ptr->holdcourse = 0;
 		ptr->tick = CYBTICKTIME + gernd()%(CYBTICKTIME*5);
@@ -129,7 +135,7 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		}
 	else
 		{
-		/* make me a Cybertron or a Cyberquad */
+		/* make me a Cybertron */
 		logthis(spr("GE:INF:Adding %s ship - %d",ptr->userid,class));
 
 		initshp(cybname,class);
@@ -137,40 +143,91 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		memcpy(ptr,&tmpshp,sizeof(WARSHP));  /* make is the current ship */
 
 		logthis(spr("GE:INF:Add shp,cls=%d/%d",class,ptr->shpclass));
-		sprintf(ptr->shipname,"%s%u\0",shipclass[class].shipname,usrn*usrn+gernd()%100);
+		sprintf(ptr->shipname,"%s%u\0",shipclass[class].shipname,usrn*usrn+gernd()%(2*usrn+1));
 		logthis(spr("  Named: %s",ptr->shipname));
 
 		ptr->coord.xcoord    = rndm((double)univmax*2.0)-(double)univmax;
 		ptr->coord.ycoord    = rndm((double)univmax*2.0)-(double)univmax;
-		ptr->phasrtype = shipclass[class].max_phasr;
-		ptr->shieldtype = shipclass[class].max_shlds;
+
+		if (shipclass[class].max_phasr > 1)
+		        ptr->phasrtype = (gernd()%shipclass[class].max_phasr)+1;
+		else
+		        ptr->phasrtype = shipclass[class].max_phasr;
+		if (shipclass[class].max_shlds > 1)
+		        ptr->shieldtype = (gernd()%shipclass[class].max_shlds)+1;
+		else
+		        ptr->shieldtype = shipclass[class].max_shlds;
+
 		ptr->cybmine = (byte)255;
+		ptr->shield = 40 + (ptr->shieldtype*10);
+		ptr->phasr = 100;
 
+		ptr->items[I_FLUXPOD] = (gernd()%20)+10;
+		if (shipclass[ptr->shpclass].has_decoy)
+			ptr->items[I_DECOYS] = (gernd()%20)+10;
+		if (shipclass[ptr->shpclass].max_missl)
+			ptr->items[I_MISSILE] = (gernd()%10)+20;
+		if (shipclass[ptr->shpclass].max_torps)
+			ptr->items[I_TORPEDO] = (gernd()%20)+20;
+		if (shipclass[ptr->shpclass].has_mine)
+			ptr->items[I_MINE] = (gernd()%40)+10;
+		if (shipclass[ptr->shpclass].has_jam)
+			ptr->items[I_JAMMERS] = (gernd()%20)+10;
+		if (shipclass[ptr->shpclass].has_zip)
+			ptr->items[I_ZIPPERS] = (gernd()%5)+5;
 
-		ptr->items[I_FLUXPOD] = gernd()%5;
-		ptr->items[I_DECOYS] = gernd()%25;
-		ptr->items[I_TORPEDO] = gernd()%25;
-		ptr->items[I_MINE] = gernd()%100;
-		ptr->items[I_JAMMERS] = gernd()%100;
-		ptr->items[I_GOLD] = gernd()%cyb_gold;
+		/* favor higher gold amounts for tougher cybertrons */
+		/* level 2 gets one spin of the wheel, other levels get mulitple */
+		/* higher levels get the best outcome, lowest the worst */
+
+		if (cyb_gold > 0)
+			{
+			goldwin = gernd()%cyb_gold;
+			goldtry = abs(shipclass[ptr->shpclass].tough_factor - 2);
+
+			for (i = 0; i < goldtry; i++)
+				{
+				goldspin = gernd()%cyb_gold;
+				if (shipclass[ptr->shpclass].tough_factor < 2 && goldspin < goldwin)
+					goldwin = goldspin;
+				if (shipclass[ptr->shpclass].tough_factor > 2 && goldspin > goldwin)
+					goldwin = goldspin;
+				}
+			ptr->items[I_GOLD] = goldwin;
+			}
 
 		ptr->holdcourse = 0;
 
-/* cyborg skill level is his propensity to make an error, the higher the #
-	the less chance he will make an error                                   */
-
-		ptr->cybskill = (byte)gernd()%15+3;
-/*
-		ptr->cybskill = 100;*/
-
 		ptr->status = GESTAT_AUTO;
 		ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
-		/* DEBUG */
+
+		ptr->cybupdate = 1;
 
 		gepdb(GEUPDATE,ptr->userid,ptr->shipno,ptr);
-		setsect(ptr);
-		prfmsg(CYBNEW,xsect,ysect);
-		outwar(FILTER,usrn,0);
+		/* show users sector of new Cyb if in scan range */
+		/* show bearing if far away */
+		/* thanks Dave Walton for the idea */
+		for (zothusn=0; zothusn<nterms; zothusn++)
+			{
+			wptr=warshpoff(zothusn);
+			if (ingegame(zothusn) && wptr->jammer == 0)
+				{
+				ddist = cdistance(&ptr->coord,&wptr->coord);
+				ddist *= 10000;
+				if (ddist > shipclass[wptr->shpclass].scanrange)
+					{
+					bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading)+.5);
+					prfmsg(CYBNEW,bearing);
+					outprfge(FILTER,zothusn);
+					}
+				else
+					{
+					setsect(ptr);
+					prfmsg(CYBNEW2,xsect,ysect);
+					outprfge(FILTER,zothusn);
+					}
+				}
+			}
 		}
 	}
 else
@@ -187,18 +244,18 @@ WARSHP *ptr;
 int           usrn;
 {
 
-WARSHP   *wptr;
-int      zothusn;
-int		i;
 
-double   ddist;
+WARSHP	*wptr;
+int	zothusn;
+int	i;
+
+double	ddist;
 
 
 if (!sameas(ptr->userid,warusroff(usrn)->userid))
 	geshocst(0,"GE:ERR:Cyb Names !=");
 
 i = usrn;
-++i;
 
 sprintf(&cybname[7],"%d",i);
 
@@ -209,7 +266,11 @@ logthis(spr("@cyb_lives %s",cybname));
 ptr->tick = 255;
 
 /* save off the topspeed in 1000's */
-d_topspeed = (double)ptr->topspeed*1000.0;
+/* if no warp, top speed is impulse 99 */
+if (ptr->topspeed == 0 && shipclass[ptr->shpclass].max_accel > 0)
+	d_topspeed = 990;
+else
+	d_topspeed = (double)ptr->topspeed*1000.0;
 
 /* countdown to database update */
 
@@ -219,36 +280,24 @@ db_update(ptr,usrn);
 if (ptr->jammer == 0)
 	{
 	/* look at all the other ships */
-	for (zothusn=0 ; zothusn < nterms ; zothusn++)
+	for (zothusn=0 ; zothusn < nships ; zothusn++)
 		{
 		wptr=warshpoff(zothusn);
-		/* if not me, and playing, and not cyborg, go getem */
-		if (user[zothusn].state == gestt
-			&& user[zothusn].substt >= FIGHTSUB
-			&& wptr->cloak != 10)
+		/* if in game, not cloaked, and not same faction, go getem */
+		if (ingegame(zothusn) && wptr->cloak != 10 &&
+			(shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction))
 			{
 
 			ddist = cdistance(&ptr->coord,&wptr->coord);
 			ddist *= 10000;
 
+
 			if (!neutral(&ptr->coord)
 				&& ddist < (double)shipclass[ptr->shpclass].scanrange)
 				{
-				/* if ordinary cyb see if this is his lucky day */
-				if (isquad(ptr) && gernd()%CYB_BREAKOFF == 0)
-					{
-					prfmsg(CYBLUCK,ptr->shipname);
-					outprfge(FILTER,zothusn);
-					ptr->cybmine = (byte)255; /* take a break */
+				/* fire phasers (or maybe even missiles) at the fool */
 
-					ptr->speed2b = d_topspeed;
-					}
-
-				/* fire phasers at the fool */
-
-				if (ptr->where == 1
-					&& wptr->where == 1
-					&& gebemean(ptr,zothusn))
+				if (wptr->where == 1 && gebemean(ptr))
 					{
 					if (ddist < (tooclose+rndm(tooclose))
 						|| shipclass[wptr->shpclass].cybs_can_att
@@ -257,14 +306,30 @@ if (ptr->jammer == 0)
 						{
 						if (ddist < 30000.0)
 							{
-							ptr->degrees = (int)(cbearing(&ptr->coord,&wptr->coord,ptr->heading)+.5);
-							firehp(ptr,usrn);
+							cyb_annoy(ptr,zothusn,20,13,16);
+							if (shipclass[ptr->shpclass].max_missl && (ptr->items[I_MISSILE] > 0) && (gernd()%10 == 0))
+								{
+								misl(ptr,usrn,zothusn,((shipclass[ptr->shpclass].tough_factor+1)*8000),0);
+								}
+							else
+								{
+								ptr->degrees = (int)(cbearing(&ptr->coord,&wptr->coord,ptr->heading)+.5);
+								if (wptr->where == 1 && ptr->where == 1)
+									firehp(ptr,usrn);
+								else
+									if (shipclass[ptr->shpclass].max_phasr >= phatowrp &&
+										ptr->phasr >= PMINFIRE && ptr->where == 0)
+										firep(ptr,usrn);
+								}
 							}
+						}
+					else
+						{
+						cyb_annoy(ptr,zothusn,30,1,4);
 						}
 					}
 				else
-				if (ptr->where == 0
-					&& wptr->where != 1)
+				if (ptr->where == 0 && wptr->where != 1)
 					{
 					ptr->degrees = (int)(cbearing(&ptr->coord,&wptr->coord,ptr->heading)+.5);
 					ptr->percent = 2;
@@ -276,7 +341,7 @@ if (ptr->jammer == 0)
 						{
 						cyb_attack(ptr,usrn,wptr,zothusn);
 						cyb_annoy(ptr,zothusn,20,13,16);
-						cyb_lay_decoys(ptr,zothusn);
+						cyb_lay_decoys(ptr);
 						}
 					else
 						{
@@ -289,21 +354,27 @@ if (ptr->jammer == 0)
 	}
 else
 	{
+	/* don't mine or move if immobile */
+	if (shipclass[ptr->shpclass].max_accel > 0)
+		{
 	/* as long as they can't see ... the other player must be trying to get
 		away.... might as well mine the area */
+		if (shipclass[ptr->shpclass].has_mine
+			&& ptr->items[I_MINE] > 0
+			&& gernd()%5 == 0)
+			laymine(ptr,usrn,10);
 
-	if (shipclass[ptr->shpclass].has_mine
-		&& ptr->items[I_MINE] > 0
-		&& gernd()%5 == 0)
-		laymine(ptr,usrn,10);
-
-	ptr->speed2b = d_topspeed + rndm(3000.0);
-	ptr->holdcourse = gernd()%7 + 2;
+		ptr->speed2b = d_topspeed;
+		ptr->holdcourse = gernd()%7 + 2;
+		}
 	}
 
-cyb_check_damage(ptr,usrn);
 
-cyb_check_lockon(ptr,usrn);
+if (shipclass[ptr->shpclass].max_accel > 0)
+	{
+	cyb_check_damage(ptr,usrn);
+	cyb_check_lockon(ptr,usrn);
+	}
 
 ptr->energy = 50000L;
 
@@ -311,27 +382,21 @@ ptr->energy = 50000L;
 geshocst(0,spr("GE:cm %d",(int)ptr->cybmine)); */
 
 /* check for jammer */
-if (ptr->jammer > 0)
+if (ptr->jammer > 0 && shipclass[ptr->shpclass].max_accel > 0)
 	{
-
-	ptr->speed2b = d_topspeed + rndm(3000.0);
+	ptr->speed2b = d_topspeed;
 	ptr->holdcourse = gernd()%10 + 5;
 	}
 
 if (ptr->tick == 255)
 	{
-	/* if just cruising around don't get back to me for some time */
-	if (ptr->cantexit == 0)
-		{
+	if (ptr->cybmine == 255)	/* if just cruising around don't get back to me for some time */
 		ptr->tick = (CYBTICKTIME + gernd()%CYBTICKTIME)*5;
-		}
 	else
-		{
-		if (!isquad(ptr))
-			ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
-		else
-			ptr->tick = 2 + gernd()%CYBTICKTIME;
-		}
+	if (ptr->cybmine >= nterms)	/* if going after a fellow NPC, medium speed */
+		ptr->tick = (CYBTICKTIME + gernd()%CYBTICKTIME)*3 - shipclass[ptr->shpclass].tough_factor;
+	else
+		ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME - shipclass[ptr->shpclass].tough_factor;
 	}
 }
 
@@ -390,44 +455,26 @@ if ((gernd()%rnd) == 1)
 	}
 }
 
-int    FUNC cybwhoops(ptr,zothusn)
-WARSHP   *ptr;
-int      zothusn;
+int  FUNC gebemean(ptr)
+WARSHP	*ptr;
+
 {
+WARSHP	*wptr;
 
-unsigned err,i;
-err = 0;
 
-for (i=0; i<zothusn;++i)
-	gernd();
-
-if ((gernd()%(int)(ptr->cybskill)) == 1)
+if (ptr->cybmine >= nterms && ptr->cybmine < nships)
 	{
-	err = 1;
-	if (gernd()%5 == 1)
-		{
-/*		cyb_annoy(ptr,zothusn,4,CYBWOOP1,CYBWOOP4);*/
-		}
+	wptr = warshpoff(ptr->cybmine);
+
+	if (wptr->status == GESTAT_AUTO)		/* always go easy on NPCs */
+		if (gernd()%6 == 0)
+			return(1);
+		else
+			return(0);
 	}
-return(err);
-}
 
-int  FUNC gebemean(ptr,usrn)
-WARSHP   *ptr;
-int      usrn;
-{
-
-/* cyberquads are ALWAYS mean */
-if (isquad(ptr))
+if (gernd()%(5-shipclass[ptr->shpclass].tough_factor) == 0)
 	return(1);
-
-/* if this player has accumulated 50 kills play harder */
-if (warusroff(usrn)->kills > CYB_BE_NICE)
-	return(1);
-
-if (gernd()%CYBSLO == 0)
-	return(1);
-
 
 return(0);
 }
@@ -448,20 +495,13 @@ if (ptr->cybupdate > 1)
 	--ptr->cybupdate;
 	return;
 	}
-else
-if (ptr->cybupdate == 1)
+if (ptr->cybupdate == 1 && ptr->cybmine == 255) /* if cruising around and about to update, change speed/direction */
 	{
-	if (ptr->cybmine == 255)
-		{
-		ptr->speed2b = rndm(d_topspeed); /* change the direction */
-		ptr->head2b = rndm(359.9);
-		}
-	ptr->cybupdate = 100 + gernd()%100;
+	cyb_cruise(ptr);
+	--ptr->cybupdate;
 	return;
 	}
-else
-/* am I crazy or does this code never ever get executed???????????*/
-if (ptr->cybupdate == 0)
+if (ptr->cybupdate == 0 && ptr->cybmine == 255)
 	{
 	wuptr= warusroff(usrn);
 	logthis(spr("GE:DBG:Cyb UUpd %s",wuptr->userid));
@@ -471,8 +511,7 @@ if (ptr->cybupdate == 0)
 	ptr->cybupdate = 100 + gernd()%100;
 	return;
 	}
-
-ptr->cybupdate = 20;
+ptr->cybupdate = 20; /* if engaged with another ship, update later */
 }
 
 /**************************************************************************
@@ -494,58 +533,50 @@ int i,j;
 
 wptr = wptr; /* eliminates warning*/
 
-if (ptr->phasr >= PMINFIRE
-	&& gebemean(ptr,zothusn))
-	{
-	/* geshocst(0,spr("GE:phaser fired %d",ptr->degrees));*/
-	if (!cybwhoops(ptr,zothusn))
-		firep(ptr,usrn);
-	}
+if (ptr->phasr >= PMINFIRE && gebemean(ptr))
+	firep(ptr,usrn);
 
-/* fire torpedoes at the fool */
-j = gernd()%6;
-if (!isquad(ptr) && warusroff(zothusn)->kills < CYB_BE_EASY)
-	j = gernd()%2;
+/* fire torpedoes or missiles at the fool */
+j = gernd()%(shipclass[ptr->shpclass].tough_factor+2);
 
-if (!gebemean(ptr,zothusn))
-	j=0;
-
-/* if this class has no torps don't fire any */
-if (shipclass[ptr->shpclass].max_torps == 0)
+if (!gebemean(ptr))
 	j = 0;
 
 for (i=0;i<j;++i)
 	{
-	ptr->items[I_TORPEDO] = (gernd()%5)+1;
-	if (i>0) lockwarn = FALSE;
-	torp(ptr,usrn,zothusn);
+	if (i>0)
+		lockwarn = FALSE;
+	if (gernd()%10 == 0 && shipclass[ptr->shpclass].max_missl && (ptr->items[I_MISSILE] > 0))
+		{
+		misl(ptr,usrn,zothusn,((shipclass[ptr->shpclass].tough_factor+1)*8000),0);
+		}
+	else
+		{
+		if (shipclass[ptr->shpclass].max_torps && (ptr->items[I_TORPEDO] > 0))
+			torp(ptr,usrn,zothusn);
+		}
 	}
 
 /* launch Zippers if needed */
-if (gernd()%10 == 1 && shipclass[ptr->shpclass].has_zip)
+if (gernd()%20 == 1 && shipclass[ptr->shpclass].has_zip && shipclass[ptr->shpclass].max_accel > 0)
 	{
-	if(ptr->minesnear == TRUE)
+	if (ptr->minesnear == TRUE)
 		{
-		if (gernd()%3 == 1)
+		if (gernd()%3 == 1 && ptr->items[I_ZIPPERS] > 0)
 			{
-			ptr->items[I_ZIPPERS] = 1;
 			zip(ptr,usrn);
 			ptr->minesnear = FALSE;
 			}
 		/* get the hell out of here ...then come back */
+		if (shipclass[ptr->shpclass].max_accel > 0)
+			{
 		ptr->speed2b = d_topspeed;
 		ptr->head2b = rndm(359.9);
 		ptr->holdcourse = gernd()%20 + 3;
+			}
 		}
 	}
 
-/* just to confuse them sometimes alter attack vector */
-if (gernd()%20 == 1)
-	{
-	ptr->speed2b = d_topspeed;
-	ptr->head2b = rndm(359.9);
-	ptr->holdcourse = gernd()%10 + 3;
-	}
 /* if we are in hyperspace and fighting and missiles detected
 	get out of hyperspace and get shields up */
 
@@ -555,7 +586,7 @@ if (ptr->where == 1)
 		{
 		if (mptr->distance > 0)
 			{
-			ptr->speed2b = rndm(5000.00)+4500.00;
+			ptr->speed2b = d_topspeed;
 			ptr->holdcourse = gernd()%5 + 5;
 			break;
 			}
@@ -563,36 +594,26 @@ if (ptr->where == 1)
 	}
 else
 	{
-	shieldup(ptr,usrn);
+	if (ptr->shieldstat != SHIELDDM)
+		shieldup(ptr,usrn);
 	}
-/*
-if (!cybwhoops(ptr,zothusn) && gebemean(ptr,zothusn))
-	{
-	prfmsg(SCAN1,ptr->shipname);
-	outprfge(FILTER,zothusn);
-	}
-EXTRA MESSAGES WE JUST DON'T NEED */
 }
 
 /**************************************************************************
 ** Lay down some decoys                                                  **
 **************************************************************************/
 
-void  FUNC cyb_lay_decoys(ptr,zothusn)
+void  FUNC cyb_lay_decoys(ptr)
 WARSHP   *ptr;
-int   zothusn;
 
 {
 
 int   i;
 
 /* send out a decoy */
-if (!cybwhoops(ptr,zothusn))
-	{
-	for (i=0; i<5;++i)
-		if (ptr->decout[i] == 0)
-			ptr->decout[i] = DECOYTIME;
-	}
+for (i=0; i<5;++i)
+	if (ptr->decout[i] == 0)
+		ptr->decout[i] = DECOYTIME;
 }
 
 /**************************************************************************
@@ -605,9 +626,7 @@ int      usrn;
 
 {
 
-if (ptr->cybmine < 255
-	&& ptr->damage > CYB_MINDAM
-	&& (gernd()%10 == 0))
+if (ptr->cybmine < 255 && ptr->damage > CYB_MINDAM && (gernd()%10 == 0))
 	{
 	if (shipclass[ptr->shpclass].has_mine
 		&& ptr->items[I_MINE] > 0
@@ -638,15 +657,16 @@ int      usrn;
 WARSHP   *wptr;
 int      zothusn;
 
-double   ddist;
+double	ddist;
 
-double   low_dist = 999999999.0;
-int		low_ship;
-int		lta; /* lowest to attack */
+double	low_dist = 999999999.0;
+int	low_ship;
+int	lta; /* lowest to attack */
+int	usersin;
 
 low_dist = 999999999.0;
 low_ship = -1;
-
+usersin = FALSE;
 
 /* if cyborg not seeking - countdown */
 
@@ -658,7 +678,7 @@ if (ptr->holdcourse > 0)
 	return;
 	}
 
-if (zothusn >= nterms)
+if (zothusn >= nships)
 	{
 	ptr->cybmine = (byte)255;
 	}
@@ -667,7 +687,7 @@ else
 	if (!ingegame(zothusn))
 		{
 		ptr->cybmine = (byte)255;
-		ptr->speed2b = rndm(d_topspeed); /* let them cruise */
+		ptr->speed2b = rndm(ptr->topspeed)*1000; /* let them cruise */
 		return;
 		}
 
@@ -676,7 +696,7 @@ else
 	if (wptr->cloak == 10)
 		{
 		ptr->holdcourse=gernd()%5+5;
-		ptr->speed2b = rndm(d_topspeed); /* let them cruise */
+		ptr->speed2b = rndm(ptr->topspeed)*1000; /* let them cruise */
 
 		/* if the guy is cloaked then give up after awhile */
 		if(gernd()%10 == 0)
@@ -689,17 +709,34 @@ else
 	low_dist = cdistance(&ptr->coord,&(wptr->coord));
 	}
 
+/* don't pick new fights with NPCs if no users are playing */
+for (zothusn=0; zothusn < nterms; zothusn++)
+	{
+	wptr=warshpoff(zothusn);
+	if (ingegame(zothusn) && wptr->status == GESTAT_USER)
+		{
+		usersin = TRUE;
+		break;
+		}
+	}
+
+
 if (ptr->cybmine == (byte)255)
 	{
 	lta = shipclass[ptr->shpclass].lowest_to_attk-1;
 
-	for (zothusn=0 ; zothusn < nterms ; zothusn++)
+	for (zothusn=0 ; zothusn < nships ; zothusn++)
 		{
 		wptr=warshpoff(zothusn);
-		/* if playing, and not cloaked, go getem */
-		if (ingegame(zothusn) && wptr->cloak != 10)
+		/* if playing, and not cloaked, and not same faction, go getem */
+		if (ingegame(zothusn) && wptr->cloak != 10 &&
+			(shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction))
 			{
-			if (lta <= wptr->shpclass && notclaimed(wptr,zothusn))
+			/* if high enough class to attack, not already claimed, and user or attackable NPC */
+			if (lta <= wptr->shpclass && notclaimed(wptr,zothusn)
+				&& (wptr->status == GESTAT_USER ||
+				(wptr->status == GESTAT_AUTO && shipclass[wptr->shpclass].cybs_can_att &&
+					usersin == TRUE && gernd()%3000 == 0)))
 				{
 				/* figure out who is closest */
 				ddist = cdistance(&ptr->coord,&wptr->coord);
@@ -713,7 +750,7 @@ if (ptr->cybmine == (byte)255)
 		}
 	}
 
-if (low_ship == -1 || low_ship >= nterms)
+if (low_ship == -1 || low_ship >= nships)
 	{
 	ptr->tick = 255; /* no one in game so cool it for awhile */
 	ptr->cybmine = 255;
@@ -724,70 +761,139 @@ else
 	wptr=warshpoff(low_ship);
 	if (low_dist >= hyperdist1)
 		{
-		/* if far away invoke hyper-warp 20 X normal speed */
-		ptr->speed2b = (double)low_dist*2000.0;
+		ptr->speed2b = ((int)(low_dist/hyperdist1))*FARSPEED;
 		ptr->speed = ptr->speed2b;
 		ptr->head2b = vector(&ptr->coord,&(wptr->coord));
-		ptr->where = 1;
-		ptr->shieldstat = SHIELDDN;
 		/* DEBUG
-		logthis(spr("CybSpeed LONG Top=%d S2B=%ld Dist=%ld",
-			ptr->topspeed,(long)ptr->speed2b,(long)low_dist));
-			prf("***\r<%s>W gonna get you LONG<%d-%d> S2B=%s \r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b));
-		outwar(ALWAYS,usrn,0);*/
+		prf("***\r%s, LONG, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
+			spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
+		outwar(ALWAYS,usrn,0); */
 		}
 	else
 	if (low_dist >= hyperdist2)
 		{
-		/* BRAKE!!!!!! */
-		if (ptr->speed > 20000.0)
-			ptr->speed = 20000.0;
-		ptr->speed2b = d_topspeed;
+		if (cyb_fast(ptr))
+			{
+			ptr->speed2b = FARSPEED;
+			ptr->speed = ptr->speed2b;
+			}
+		else
+			ptr->speed2b = d_topspeed;
 		ptr->head2b = vector(&ptr->coord,&(wptr->coord));
-		logthis(spr("CybSpeed MID Top=%d S2B=%ld Dist=%ld",
-			ptr->topspeed,(long)ptr->speed2b,(long)low_dist));
 		/* DEBUG
-		prf("***\r<%s>W gonna get you MID <%d-%d> S2B=%s \r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b));
-		outwar(ALWAYS,usrn,0);*/
+		prf("***\r%s, MID, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
+			spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
+		outwar(ALWAYS,usrn,0); */
 		cyb_annoy(ptr,low_ship,60,1,4);
 		}
 	else
-	if (low_dist > 3.0)
+	if (low_dist >= 3)
 		{
-		if (ptr->speed > d_topspeed)
-			ptr->speed = d_topspeed;
-
+		if (cyb_fast(ptr))
+			{
+			ptr->speed2b = d_topspeed;
+			ptr->speed = ptr->speed2b;
+			}
+		else
+			ptr->speed2b = d_topspeed;
 		ptr->head2b = vector(&ptr->coord,&(wptr->coord));
-		ptr->speed2b = d_topspeed;
 		/* DEBUG
-		prf("***\r<%s>I gonna get you SHORT <%d-%d> S2B=%s \r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b));
+		prf("***\r%s, SHORT, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
+			spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
 		outwar(ALWAYS,usrn,0); */
-		cyb_annoy(ptr,low_ship,30,5,8);
-		if (ptr->where == 0)
-			shieldup(ptr,usrn);
 		}
 	else
-	if (low_dist <= 3.0)
+	if (wptr->where == 1)
 		{
-		if (ptr->speed > d_topspeed)
-			ptr->speed = d_topspeed;
-
-		ptr->head2b = vector(&ptr->coord,&(wptr->coord));
-		if (wptr->where == 1)
-			ptr->speed2b = ((wptr->speed2b > d_topspeed) ? d_topspeed:(wptr->speed2b*1.25));
+		if (cyb_fast(ptr))
+			{
+			ptr->speed2b = d_topspeed;
+			ptr->speed = ptr->speed2b;
+			}
+		if (wptr->speed * 1.25 >= d_topspeed)
+		    ptr->speed2b = d_topspeed;
 		else
-			ptr->speed2b = ((low_dist > .5) ? 990.0:rndm(500.0));
-
+		    ptr->speed2b = ((int)(wptr->speed * 1.25)/1000)*1000;
+		ptr->head2b = vector(&ptr->coord,&(wptr->coord));
 		/* DEBUG
-		prf("***\r<%s>I gonna get you SHORT <%d-%d> S2B=%s \r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b));
+		prf("***\r%s, CLOSE, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
+			spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
+		outwar(ALWAYS,usrn,0); */
+		}
+	else
+	if (shipclass[wptr->shpclass].cybs_can_att || wptr->cantexit > 0 || ptr->cantexit > 0)
+		{
+		if (low_dist > .5)
+			{
+			if (cyb_fast(ptr))
+				{
+				ptr->speed2b = 990.0;
+				ptr->speed = ptr->speed2b;
+				}
+			else
+				ptr->speed2b = 990.0;
+			ptr->head2b = vector(&ptr->coord,&(wptr->coord));
+			}
+		else
+			{
+			if (cyb_fast(ptr))
+				{
+				ptr->speed2b = ((int)(rndm(350.0)+150.0)/10)*10;
+				ptr->speed = ptr->speed2b;
+				}
+			else
+				ptr->speed2b = ((int)(rndm(350.0)+150.0)/10)*10;
+			ptr->head2b = rndm(359.9);
+			}
+		/* DEBUG
+		prf("***\r%s, IMPULSE, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
+			spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
 		outwar(ALWAYS,usrn,0); */
 		cyb_annoy(ptr,low_ship,30,5,8);
-		if (ptr->where == 0)
-			shieldup(ptr,usrn);
+		}
+	else
+		{
+		/* back off if not going to shoot first */
+		if (cyb_fast(ptr))
+			{
+			ptr->speed2b = ((int)(rndm(750.0)+150.0)/10)*10;
+			ptr->speed = ptr->speed2b;
+			}
+		else
+			ptr->speed2b = ((int)(rndm(750.0)+150.0)/10)*10;
+		if (low_dist < 1.5)
+			ptr->head2b=(double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0) % 360);
+		else
+			ptr->head2b = vector(&ptr->coord,&(wptr->coord));
+		cyb_annoy(ptr,low_ship,30,9,12);
+		}
+	/* make sure speed jumps won't leave us in a weird state */
+	/* avoid fractional warp values */
+	if (ptr->speed < 1000)
+		{
+		if (ptr->speed2b >= 1000 && shipclass[ptr->shpclass].max_accel >= 1000)
+			{
+			if (ptr->speed2b <= shipclass[ptr->shpclass].max_accel)
+				ptr->speed = ptr->speed2b;
+			else
+				ptr->speed = shipclass[ptr->shpclass].max_accel;
+			}
+		else
+			{
+			ptr->where = 0;
+			if (ptr->shieldstat != SHIELDDM)
+				shieldup(ptr,usrn);
+			}
+		}
+	if (ptr->speed >= 1000)
+		{
+		ptr->where = 1;
+		if (ptr->shieldstat == SHIELDUP)
+			shielddn(ptr,usrn);
+
 		}
 	}
 }
-
 
 void   FUNC cyb_won(ptr,usrn,wptr)
 WARSHP	*ptr;				/* ptr to Cyber who won */
@@ -798,7 +904,7 @@ WARSHP   *wptr;			/* ptr to ship cyber killed */
 usrn = usrn;
 wptr = wptr;
 ptr->cybmine = (byte)255;
-ptr->speed2b = 2000.0;
+cyb_cruise(ptr);
 ptr->cybupdate = 0;
 }
 
@@ -814,8 +920,25 @@ wptr = wptr;
 ptr->status = GESTAT_AVAIL;
 }
 
-int	 FUNC isquad(ptr)
-WARSHP	*ptr;				/* ptr to Cyber */
+/**************************************************************************
+** Set random speed and heading if cruising                              **
+**************************************************************************/
+
+void FUNC cyb_cruise(ptr)
+WARSHP *ptr;
+
 {
-return(shipclass[ptr->shpclass].tough_factor == CYB_TOUGH_1);
+if (ptr->topspeed == 0)
+	{
+	if (shipclass[ptr->shpclass].max_accel > 0) /* impulse only */
+		ptr->speed2b = ((gernd()%99)+1)*10;
+	else
+		ptr->speed2b = 0;
+	}
+else
+	{
+	ptr->speed2b = (gernd()%(ptr->topspeed)+1)*1000;
+	}
+if (shipclass[ptr->shpclass].max_accel > 0)	/* if ya can't move, ya can't rotate */
+	ptr->head2b = rndm(359.9);
 }
