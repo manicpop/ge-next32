@@ -155,7 +155,7 @@ if(shipclass[ptr->shpclass].loadout == 6)  /* Galactic Command Freighter */
 	ptr->items[I_JAMMERS] = gernd()%100;
 	ptr->items[I_ZIPPERS] = gernd()%100;
 	ptr->items[I_MINE] = gernd()%100;
-	ptr->items[I_GOLD] = gernd()%(cyb_gold+1000);
+	ptr->items[I_GOLD] = (gernd()%cyb_gold)+1000;
 	}
 else
 	{
@@ -328,7 +328,7 @@ if (ptr->jammer == 0)
 			{
 			wptr=warshpoff(zothusn);
 			/* hail users in area */
-			if (ingegame(zothusn) && wptr->status == GESTAT_USER)
+			if (ingegame(zothusn) && wptr->status == GESTAT_USER && wptr->cloak != 10)
 				{
 				ddist = cdistance(&ptr->coord,&wptr->coord);
 				ddist *= 10000;
@@ -346,7 +346,7 @@ if (ptr->jammer == 0)
 		wptr = warshpoff(zothusn);
 		ddist = cdistance(&ptr->coord,&wptr->coord);
 		ddist *= 10000;
-		if (ddist < (double)shipclass[ptr->shpclass].scanrange)
+		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && wptr->cloak != 10) || ptr->cantexit > 0)
 			{
 			/* if still in range, flee */
 			ptr->speed2b = dr_topspeed;
@@ -379,94 +379,71 @@ int	usrn;
 WARSHP	*wptr;
 int	zothusn;
 
-
 double	ddist;
-ddist = 999999.9;
+
 /* am I being jammed ? */
 if (ptr->jammer == 0)
 	{
-	/* look at all the other ships */
-	for (zothusn=0 ; zothusn < nterms ; zothusn++)
+	if (ptr->cybmine == 255)
 		{
-		wptr=warshpoff(zothusn);
-		/* if not me, and playing, and not cyborg, go getem */
-		if (ingegame(zothusn) && wptr->status == GESTAT_USER)
+		/* look at user ships only */
+		for (zothusn=0 ; zothusn < nterms ; zothusn++)
 			{
-			ddist = cdistance(&ptr->coord,&wptr->coord);
-			ddist *= 10000;
-			if (ddist < (double)shipclass[ptr->shpclass].scanrange)
+			wptr=warshpoff(zothusn);
+			/* hail users in area */
+			if (ingegame(zothusn) && wptr->status == GESTAT_USER && wptr->cloak != 10)
 				{
-				if (ptr->holdcourse == 0)
-					ptr->speed2b = rndm(999.9);
-				if (ptr->speed < 1000.0)
-					shieldup(ptr,usrn);
-				else
-					shielddn(ptr,usrn);
-
-				ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
-				droid_annoy(ptr,zothusn,10,1,4);
+				ddist = cdistance(&ptr->coord,&wptr->coord);
+				ddist *= 10000;
+				if (ddist < (double)shipclass[ptr->shpclass].scanrange)
+					{
+					if (ptr->holdcourse == 0)
+						ptr->speed2b = ((gernd()%85)+15)*10;
+					ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
+					droid_annoy(ptr,zothusn,5,1,4);
+					}
 				}
 			}
 		}
-	if (ptr->cantexit > 0 && ptr->lastfired >= 0)
+	if (ptr->cybmine < nships)
 		{
-		logthis(spr("Droid (murtran) cantexit - lastfired = %d",ptr->lastfired));
-		wptr = warshpoff(ptr->lastfired);
-		zothusn = ptr->lastfired;
-
-		droid_annoy(ptr,zothusn,4,1,4);
-
-		/* fire phasers at the fool */
-		if (ptr->where == 1 && wptr->where == 1 )
+		zothusn = ptr->cybmine;
+		wptr = warshpoff(zothusn);
+		ddist = cdistance(&ptr->coord,&wptr->coord);
+		ddist *= 10000;
+		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && wptr->cloak != 10) || ptr->cantexit > 0)
 			{
+			/* if still in range, flee and attack */
+			if (ptr->damage > 50)
+				ptr->speed2b = dr_topspeed;
+			else
+				ptr->speed2b = 990.0;
+			ptr->head2b = (double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0 + (rand() % 51 - 25)) % 360);
+			droid_annoy(ptr,zothusn,20,9,12);
 			if (ddist < 30000)
 				{
 				ptr->degrees = (int)(cbearing(&ptr->coord,&wptr->coord,ptr->heading)+.5);
-				firehp(ptr,usrn);
-				}
-			}
-		else
-		if ((ptr->where == 0 && wptr->where == 0)
-			|| (ptr->where == 0 && wptr->where >= 2))
-			{
-			ptr->degrees = 0;
-			ptr->percent = 2;
-			if (ptr->phasr >= PMINFIRE && wptr->cloak != 10)
-				{
-				/* logthis(spr("GE:phaser fired %d",ptr->degrees));*/
-				firep(ptr,usrn);
-				}
-
-			/* just to confuse them sometimes alter attack vector */
-
-			if (ptr->holdcourse == 0 && gernd()%10 == 0)
-				{
-				ptr->speed2b = rndm(10000.0);
-				ptr->head2b = rndm(359.9);
-				ptr->holdcourse = gernd()%10 + 3;
-				}
-			}
-
-		/* if we are in hyperspace and fighting and missiles detected
-			get out of hyperspace */
-
-		if (ptr->where == 1)
-			{
-			if (missl_attached(ptr,usrn))
-				{
-				ptr->speed2b = rndm(999.0);
-				ptr->holdcourse = gernd()%15 + 5;
+				if (wptr->where == 1 && ptr->where == 1)
+					firehp(ptr,usrn);
+				else
+				if (ptr->where == 0 && (wptr->where == 0 || (wptr->where == 1 &&
+					shipclass[ptr->shpclass].max_phasr >= phatowrp)) && ptr->phasr >= PMINFIRE)
+					firep(ptr,usrn);
 				}
 			}
 		else
 			{
-			shieldup(ptr,usrn);
+			/* phew we're safe */
+			ptr->cybmine = 255;
+			cyb_cruise(ptr);
 			}
 		}
+	else
+		ptr->cybmine = 255;
 	}
 else
 	{
-	ptr->speed2b = (double)(ptr->topspeed * 1000);
+	ptr->speed2b = dr_topspeed;
 	ptr->holdcourse = gernd()%50 + 10;
 	}
 droid_check_state(ptr,usrn);

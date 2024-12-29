@@ -5102,7 +5102,7 @@ For users, ships start with a Mark-1 phaser and can purchase
 up to this value. For NPCs, this will be a random value
 between 1 and this class.
 
-S32PHSR {Maximum phaser type: 5} (S32TYPE#<NONE>) N 0 19
+S32PHSR {Maximum phaser type: 10} (S32TYPE#<NONE>) N 0 19
 
 Torpedo capability for class 32.
 
@@ -5166,7 +5166,7 @@ S32PNTS {Points awarded: 200} (S32TYPE#<NONE>) N 1 32767
 
 Scanner range of a class 32 ship in subsectors.
 
-S32SRNG {Scanner range: 25000} (S32TYPE#<NONE>) L 1 10000000
+S32SRNG {Scanner range: 50000} (S32TYPE#<NONE>) L 1 10000000
 
 Will Cybertrons fire on a class 32 ship unprovoked?
 If YES, Cybertrons will pursue and fire upon this class.
@@ -5193,7 +5193,7 @@ S32MAKE {Number of NPCs of this class to make: 2} (S32TYPE=CYBORG,DROID) N 0 255
 Toughness level of class 32 (NPCs only)?
 This is a level from 0 to 4.
 
-S32TOUGH {Toughness level: 0} (S32TYPE=CYBORG,DROID) N 0 4
+S32TOUGH {Toughness level: 2} (S32TYPE=CYBORG,DROID) N 0 4
 
 Class 32 damage factor, 100 is normal. 200 is twice as
 resilient, 50 is half as resilient.
