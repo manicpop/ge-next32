@@ -319,6 +319,7 @@ if (ptr->jammer == 0)
 								else
 									if (shipclass[ptr->shpclass].max_phasr >= phatowrp &&
 										ptr->phasr >= PMINFIRE && ptr->where == 0)
+										ptr->percent = 2;
 										firep(ptr,usrn);
 								}
 							}
@@ -534,7 +535,11 @@ int i,j;
 wptr = wptr; /* eliminates warning*/
 
 if (ptr->phasr >= PMINFIRE && gebemean(ptr))
+	{
+	ptr->degrees = (int)(cbearing(&ptr->coord,&wptr->coord,ptr->heading)+.5);
+	ptr->percent = 2;
 	firep(ptr,usrn);
+	}
 
 /* fire torpedoes or missiles at the fool */
 j = gernd()%(shipclass[ptr->shpclass].tough_factor+2);

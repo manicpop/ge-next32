@@ -5095,7 +5095,7 @@ For users, ships start with a Mark-1 shield and can purchase
 up to this value. For NPCs, this will be a random value
 between 1 and this class.
 
-S32SHLD {Maximum shield type: 2} (S32TYPE#<NONE>) N 0 19
+S32SHLD {Maximum shield type: 4} (S32TYPE#<NONE>) N 0 19
 
 Maximum phaser type for class 32. 0 for no phasers at all.
 For users, ships start with a Mark-1 phaser and can purchase
@@ -5114,11 +5114,11 @@ S32MISL {Has missile capability? NO} (S32TYPE#<NONE>) B
 
 Decoy capability for class 32.
 
-S32DECY {Has decoy capability? YES} (S32TYPE#<NONE>) B
+S32DECY {Has decoy capability? NO} (S32TYPE#<NONE>) B
 
 Jammer capability for class 32.
 
-S32JAMMR {Has jammer capability? YES} (S32TYPE#<NONE>) B
+S32JAMMR {Has jammer capability? NO} (S32TYPE#<NONE>) B
 
 Zipper capability for class 32.
 
@@ -5259,7 +5259,7 @@ S33PHSR {Maximum phaser type: 1} (S33TYPE#<NONE>) N 0 19
 
 Torpedo capability for class 33.
 
-S33TORP {Has torpedo capability? NO} (S33TYPE#<NONE>) B
+S33TORP {Has torpedo capability? YES} (S33TYPE#<NONE>) B
 
 Missile capability for class 33.
 
@@ -5267,7 +5267,7 @@ S33MISL {Has missile capability? NO} (S33TYPE#<NONE>) B
 
 Decoy capability for class 33.
 
-S33DECY {Has decoy capability? YES} (S33TYPE#<NONE>) B
+S33DECY {Has decoy capability? NO} (S33TYPE#<NONE>) B
 
 Jammer capability for class 33.
 
@@ -5275,11 +5275,11 @@ S33JAMMR {Has jammer capability? YES} (S33TYPE#<NONE>) B
 
 Zipper capability for class 33.
 
-S33ZIPPR {Has zipper capability? YES} (S33TYPE#<NONE>) B
+S33ZIPPR {Has zipper capability? NO} (S33TYPE#<NONE>) B
 
 Mine capability for class 33.
 
-S33MINE {Has mine capability? NO} (S33TYPE#<NONE>) B
+S33MINE {Has mine capability? YES} (S33TYPE#<NONE>) B
 
 Fighter capability for class 33.
 
@@ -5346,7 +5346,7 @@ S33MAKE {Number of NPCs of this class to make: 2} (S33TYPE=CYBORG,DROID) N 0 255
 Toughness level of class 33 (NPCs only)?
 This is a level from 0 to 4.
 
-S33TOUGH {Toughness level: 0} (S33TYPE=CYBORG,DROID) N 0 4
+S33TOUGH {Toughness level: 1} (S33TYPE=CYBORG,DROID) N 0 4
 
 Class 33 damage factor, 100 is normal. 200 is twice as
 resilient, 50 is half as resilient.

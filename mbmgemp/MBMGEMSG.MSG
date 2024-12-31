@@ -3588,7 +3588,7 @@ SYSCLS {
 } T GE sysop change ship class message
 
 SYSLST {
-[1;36mChn Name                           Xsect Ysect Damage Tick Cybmine[1;37m
+[1;36mChn Name                      Xsect Ysect Damage Tick Cybmine HoldC[1;37m
 } T GE sysop ship list message
 
 SYSCLL {

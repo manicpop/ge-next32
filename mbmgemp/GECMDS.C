@@ -4856,11 +4856,6 @@ if ((!syscmds) || (sysonly && !(usrptr->flags&ISYSOP)))
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
-if (sameas("nterms",margv[1]))
-	{
-	prf("nterms %d\r",nterms);
-	outprfge(ALWAYS,usrnum);
-	}
 if (sameas("help",margv[1]) && margc == 2)
 	{
 	setmbk(gehlpmb);
@@ -4949,32 +4944,6 @@ if (sameas("goto",margv[1]) && margc == 4)
 			}
 		}
 	}
-/*
-else
-if (sameas("cyborg",margv[1]))
-	{
-	warsptr->status = GESTAT_AUTO;
-	warsptr->shpclass = atoi(margv[2]);
-	warsptr->cybmine = (byte)99;
-	warsptr->emulate = (byte)1;
-	return;
-	}
-else
-if (sameas("cyborgoff",margv[1]))
-	{
-	warsptr->emulate = (byte)0;
-	return;
-	}
-else
-if (sameas("cybmine",margv[1]) && margc == 3)
-	{
-	if (atoi(margv[2]) < nships)
-		{
-		warsptr->cybmine = atoi(margv[2]);
-		return;
-		}
-	}
-*/
 else
 if (sameas("class",margv[1]) && margc == 3)
 	{
@@ -5047,7 +5016,7 @@ if (sameas("list",margv[1]))
 		if (ptr->status != GESTAT_AVAIL)
 			{
 			setsect(ptr);
-			prf("%3d %-30s %5d %5d %6d %4d %7d\r",i,username(ptr),xsect,ysect,(int)(ptr->damage),(int)(ptr->tick),(int)(ptr->cybmine));
+			prf("%3d %-25s %5d %5d %6d %4d %7d %5d\r",i,username(ptr),xsect,ysect,(int)(ptr->damage),(int)(ptr->tick),(int)(ptr->cybmine),(int)(ptr->holdcourse));
 			}
 		}
 	outprfge(ALWAYS,usrnum);
