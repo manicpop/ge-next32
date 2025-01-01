@@ -497,9 +497,9 @@ if (ptr->jammer == 0)
 					ptr->speed2b = ((gernd()%99)+1)*10;
 				else
 					{
-					if (ptr->items[I_MINE] > 0)
+					if (ptr->items[I_MINE] > 0 && shipclass[ptr->shpclass].has_mine)
 						laymine(ptr,usrn,10);
-					if (ptr->items[I_JAMMERS] > 0)
+					if (ptr->items[I_JAMMERS] > 0 && shipclass[ptr->shpclass].has_jam)
 						jam(ptr,usrn);
 					ptr->speed2b = (double)(ptr->topspeed * 1000);
 					ptr->head2b = (double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0 + (rand() % 51 - 25)) % 360);
@@ -567,27 +567,77 @@ double   ddist;
 /* am I being jammed ? */
 if (ptr->jammer == 0)
 	{
-	/* look at all the other ships */
-	for (zothusn=0 ; zothusn < nterms ; zothusn++)
+	if (ptr->cybmine == 255)
 		{
-		wptr=warshpoff(zothusn);
-		/* if not me, and playing, and not cyborg, go getem */
-		if (ingegame(zothusn) && wptr->status == GESTAT_USER)
+		/* look at user ships only */
+		for (zothusn=0 ; zothusn < nterms ; zothusn++)
 			{
-			ddist = cdistance(&ptr->coord,&wptr->coord);
-			ddist *= 10000;
-			if (ddist < (double)shipclass[ptr->shpclass].scanrange)
+			wptr=warshpoff(zothusn);
+			/* hail users in area */
+			if (ingegame(zothusn) && wptr->status == GESTAT_USER && wptr->cloak != 10)
 				{
-				ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
-				droid_annoy(ptr,zothusn,4,1,4);
+				ddist = cdistance(&ptr->coord,&wptr->coord);
+				ddist *= 10000;
+				if (ddist < (double)shipclass[ptr->shpclass].scanrange)
+					{
+					ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
+					droid_annoy(ptr,zothusn,5,1,4);
+					}
 				}
 			}
 		}
-	}
-else
-	{
-	ptr->speed2b = 999.9; /* has no warp capability */
-	ptr->holdcourse = gernd()%50 + 10;
+	if (ptr->cybmine < nships)
+		{
+		zothusn = ptr->cybmine;
+		wptr = warshpoff(zothusn);
+		ddist = cdistance(&ptr->coord,&wptr->coord);
+		ddist *= 10000;
+		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && wptr->cloak != 10) || ptr->cantexit > 0)
+			{
+			/* if still in range, flee and attack */
+			if (ptr->holdcourse == 0)
+				{
+				if (ptr->damage < 50)
+					ptr->speed2b = dr_topspeed;
+				else
+					ptr->speed2b = 990.0;
+				ptr->head2b = (double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0 + (rand() % 51 - 25)) % 360);
+				ptr->holdcourse = gernd()%7 + 2;
+				}
+			droid_annoy(ptr,zothusn,20,9,12);
+			if (ddist < 30000)
+				{
+				ptr->degrees = (int)(cbearing(&ptr->coord,&wptr->coord,ptr->heading)+.5);
+				if (wptr->where == 1 && ptr->where == 1)
+					{
+					firehp(ptr,usrn);
+					prf("firehp\r");
+					outprfge(ALWAYS,0);
+					}
+				else
+				if (ptr->where == 0 && (wptr->where == 0 || (wptr->where == 1 &&
+					shipclass[ptr->shpclass].max_phasr >= phatowrp)) && ptr->phasr >= PMINFIRE)
+					{
+					ptr->percent = 2;
+					firep(ptr,usrn);
+					prf("firep\r");
+					outprfge(ALWAYS,0);
+					}
+				}
+			if (ptr->where == 0 && ptr->items[I_DECOYS] > 0 && shipclass[ptr->shpclass].has_decoy)
+				cyb_lay_decoys(ptr);
+			if (ptr->holdcourse == 1 && ptr->items[I_JAMMERS] > 0 && shipclass[ptr->shpclass].has_jam)
+				jam(ptr,usrn);
+			}
+		else
+			{
+			/* phew we're safe */
+			ptr->cybmine = 255;
+			cyb_cruise(ptr);
+			}
+		}
+	else
+		ptr->cybmine = 255;
 	}
 droid_check_state(ptr,usrn);
 }
