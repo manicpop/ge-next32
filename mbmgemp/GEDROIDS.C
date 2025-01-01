@@ -609,19 +609,13 @@ if (ptr->jammer == 0)
 				{
 				ptr->degrees = (int)(cbearing(&ptr->coord,&wptr->coord,ptr->heading)+.5);
 				if (wptr->where == 1 && ptr->where == 1)
-					{
 					firehp(ptr,usrn);
-					prf("firehp\r");
-					outprfge(ALWAYS,0);
-					}
 				else
 				if (ptr->where == 0 && (wptr->where == 0 || (wptr->where == 1 &&
 					shipclass[ptr->shpclass].max_phasr >= phatowrp)) && ptr->phasr >= PMINFIRE)
 					{
 					ptr->percent = 2;
 					firep(ptr,usrn);
-					prf("firep\r");
-					outprfge(ALWAYS,0);
 					}
 				}
 			if (ptr->where == 0 && ptr->items[I_DECOYS] > 0 && shipclass[ptr->shpclass].has_decoy)
