@@ -11,7 +11,7 @@
  *                                                                         *
  *   ge-next                                                               *
  *                                                                         *
- *   Copyright (C) 2024 Anthony Schmidt, anthony@manicpop.org              *
+ *   Copyright (C) 2024-2025 Anthony Schmidt, anthony@manicpop.org         *
  *                                                                         *
  *   https://manicpop.org/ge-next/  https://github.com/manicpop/ge-next    *
  *                                                                         *
@@ -297,6 +297,7 @@ if ((gernd()%rnd) == 1)
 
 /**************************************************************************
 ** Lydorian Garbage Scow                                                 **
+** Impulse only, no phasers, no projectiles                              **
 **************************************************************************/
 
 void  FUNC droid_act_1(ptr,usrn)
@@ -360,6 +361,7 @@ droid_check_state(ptr,usrn);
 
 /**************************************************************************
 ** Murdonian Transport                                                   **
+** Warp, phasers, no projectiles                                         **
 **************************************************************************/
 
 void  FUNC droid_act_2(ptr,usrn)
@@ -448,6 +450,7 @@ droid_check_state(ptr,usrn);
 
 /**************************************************************************
 ** Vakory Survey Drone                                                   **
+** Warp, phasers, torps, jammers, mines                                  **
 **************************************************************************/
 
 void  FUNC droid_act_3(ptr,usrn)
@@ -551,6 +554,7 @@ droid_check_state(ptr,usrn);
 
 /**************************************************************************
 ** Sarten Civil Transport                                                **
+** Warp, phasers, decoys, jammers                                        **
 **************************************************************************/
 
 void  FUNC droid_act_4(ptr,usrn)
@@ -638,6 +642,7 @@ droid_check_state(ptr,usrn);
 
 /**************************************************************************
 ** Sarten Attack Drone                                                   **
+** Warp, phasers, torps, decoys, jammers, zippers                        **
 **************************************************************************/
 
 void  FUNC droid_act_5(ptr,usrn)
@@ -681,6 +686,7 @@ droid_check_state(ptr,usrn);
 
 /**************************************************************************
 ** Galactic Command Freighter                                            **
+** Warp, phasers, torps, decoys, jammers, zippers                        **
 **************************************************************************/
 
 void  FUNC droid_act_6(ptr,usrn)

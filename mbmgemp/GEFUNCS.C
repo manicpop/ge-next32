@@ -11,7 +11,7 @@
  *                                                                         *
  *   ge-next                                                               *
  *                                                                         *
- *   Copyright (C) 2024 Anthony Schmidt, anthony@manicpop.org              *
+ *   Copyright (C) 2024-2025 Anthony Schmidt, anthony@manicpop.org         *
  *                                                                         *
  *   https://manicpop.org/ge-next/  https://github.com/manicpop/ge-next    *
  *                                                                         *

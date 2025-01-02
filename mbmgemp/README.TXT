@@ -1,7 +1,7 @@
 Galactic Empire ge-next
 Copyright (C) 1988, 89, 90, 91, 92 Michael B. Murdock
 Copyright (C) 2018 Bil Simser
-Copyright (C) 2024 Anthony Schmidt, anthony@manicpop.org
+Copyright (C) 2024-2025 Anthony Schmidt, anthony@manicpop.org
 
 This is the source for the Galactic Empire game module which is being 
 released under the terms of the GNU General Public License (see below).

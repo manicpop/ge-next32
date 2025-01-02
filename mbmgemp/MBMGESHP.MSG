@@ -5142,7 +5142,7 @@ Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
 
-S32ACCL {Acceleration rate: 400} (S32TYPE#<NONE>) N 0 32767
+S32ACCL {Acceleration rate: 1000} (S32TYPE#<NONE>) N 0 32767
 
 Maximum warp cruising speed of class 32.
 For user ships, actual top speed is 1.5x this value, but
@@ -5154,7 +5154,7 @@ S32WARP {Maximum warp cruising speed: 8} (S32TYPE#<NONE>) N 0 255
 
 Maximum cargo capacity of class 32 in tons.
 
-S32TONS {Maximum tonnage: 30000} (S32TYPE#<NONE>) L 1 2000000000
+S32TONS {Maximum tonnage: 50000} (S32TYPE#<NONE>) L 1 2000000000
 
 Price of a class 32 ship (user ships only).
 
@@ -5295,7 +5295,7 @@ Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
 
-S33ACCL {Acceleration rate: 1200} (S33TYPE#<NONE>) N 0 32767
+S33ACCL {Acceleration rate: 1000} (S33TYPE#<NONE>) N 0 32767
 
 Maximum warp cruising speed of class 33.
 For user ships, actual top speed is 1.5x this value, but
@@ -5307,7 +5307,7 @@ S33WARP {Maximum warp cruising speed: 4} (S33TYPE#<NONE>) N 0 255
 
 Maximum cargo capacity of class 33 in tons.
 
-S33TONS {Maximum tonnage: 100} (S33TYPE#<NONE>) L 1 2000000000
+S33TONS {Maximum tonnage: 500} (S33TYPE#<NONE>) L 1 2000000000
 
 Price of a class 33 ship (user ships only).
 
@@ -5601,7 +5601,7 @@ Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
 
-S35ACCL {Acceleration rate: 1200} (S35TYPE#<NONE>) N 0 32767
+S35ACCL {Acceleration rate: 2000} (S35TYPE#<NONE>) N 0 32767
 
 Maximum warp cruising speed of class 35.
 For user ships, actual top speed is 1.5x this value, but
@@ -5613,7 +5613,7 @@ S35WARP {Maximum warp cruising speed: 8} (S35TYPE#<NONE>) N 0 255
 
 Maximum cargo capacity of class 35 in tons.
 
-S35TONS {Maximum tonnage: 500} (S35TYPE#<NONE>) L 1 2000000000
+S35TONS {Maximum tonnage: 1000} (S35TYPE#<NONE>) L 1 2000000000
 
 Price of a class 35 ship (user ships only).
 
