@@ -5778,7 +5778,7 @@ S36PNTS {Points awarded: 2000} (S36TYPE#<NONE>) N 1 32767
 
 Scanner range of a class 36 ship in subsectors.
 
-S36SRNG {Scanner range: 30000} (S36TYPE#<NONE>) L 1 10000000
+S36SRNG {Scanner range: 300000} (S36TYPE#<NONE>) L 1 10000000
 
 Will Cybertrons fire on a class 36 ship unprovoked?
 If YES, Cybertrons will pursue and fire upon this class.
@@ -5805,7 +5805,7 @@ S36MAKE {Number of NPCs of this class to make: 2} (S36TYPE=CYBORG,DROID) N 0 255
 Toughness level of class 36 (NPCs only)?
 This is a level from 0 to 4.
 
-S36TOUGH {Toughness level: 0} (S36TYPE=CYBORG,DROID) N 0 4
+S36TOUGH {Toughness level: 3} (S36TYPE=CYBORG,DROID) N 0 4
 
 Class 36 damage factor, 100 is normal. 200 is twice as
 resilient, 50 is half as resilient.
