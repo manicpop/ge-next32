@@ -5561,7 +5561,7 @@ For users, ships start with a Mark-1 phaser and can purchase
 up to this value. For NPCs, this will be a random value
 between 1 and this class.
 
-S35PHSR {Maximum phaser type: 3} (S35TYPE#<NONE>) N 0 19
+S35PHSR {Maximum phaser type: 5} (S35TYPE#<NONE>) N 0 19
 
 Torpedo capability for class 35.
 
@@ -5573,11 +5573,11 @@ S35MISL {Has missile capability? NO} (S35TYPE#<NONE>) B
 
 Decoy capability for class 35.
 
-S35DECY {Has decoy capability? YES} (S35TYPE#<NONE>) B
+S35DECY {Has decoy capability? NO} (S35TYPE#<NONE>) B
 
 Jammer capability for class 35.
 
-S35JAMMR {Has jammer capability? YES} (S35TYPE#<NONE>) B
+S35JAMMR {Has jammer capability? NO} (S35TYPE#<NONE>) B
 
 Zipper capability for class 35.
 
@@ -5585,7 +5585,7 @@ S35ZIPPR {Has zipper capability? YES} (S35TYPE#<NONE>) B
 
 Mine capability for class 35.
 
-S35MINE {Has mine capability? NO} (S35TYPE#<NONE>) B
+S35MINE {Has mine capability? YES} (S35TYPE#<NONE>) B
 
 Fighter capability for class 35.
 
@@ -5609,7 +5609,7 @@ causes engine damage over time. A value of 0 means impulse
 only. To make a class completely immobile, set SXXACCL to 0
 as well.
 
-S35WARP {Maximum warp cruising speed: 8} (S35TYPE#<NONE>) N 0 255
+S35WARP {Maximum warp cruising speed: 20} (S35TYPE#<NONE>) N 0 255
 
 Maximum cargo capacity of class 35 in tons.
 
