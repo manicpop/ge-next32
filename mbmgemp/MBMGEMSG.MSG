@@ -3607,6 +3607,22 @@ SYSNP {
 [1;36mThis planet is unowned or has no population -- skipped.[1;37m
 } T GE sysop no multiply message
 
+SYSACY {
+[1;36mClosest Cybertrons assigned..[1;37m
+} GE sysop assign cybs message
+
+SYSFAC {
+[1;36mUsers: %d
+Cybertrons: %d
+Sartens: %d
+Lydorians: %d
+Murdonians: %d
+Vakories: %d
+Zygorians: %d
+Unused: %d
+[1;37m
+} GE sysop faction status
+
 MAIL1 {
    You have no messages waiting...
 } T GE no messages message

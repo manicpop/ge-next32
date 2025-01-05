@@ -980,9 +980,10 @@ WARSHP  *ptr;
 int             usrn;
 {
 WARSHP  *wptr;
+WARUSR	*wuptr;
+
 unsigned        deg;
 double factor,tonfact;
-
 
 if (ptr->cloak > 0 )
 	{
@@ -1057,10 +1058,14 @@ if (ptr->phasr >=PMINFIRE)
 							prfmsg(PHITYOU,username(ptr),gechrbuf);
 							outprfge(ALWAYS,othusn);
 							wptr->damage += (double)damage;
+							wuptr = warusroff(usrn);
+							set_dislike(wuptr,shipclass[wptr->shpclass].faction,damage);
 							}
 						else
 							{
 							shieldhit(wptr,othusn,damage); /* modify the damage */
+							wuptr = warusroff(usrn);
+							set_dislike(wuptr,shipclass[wptr->shpclass].faction,2);
 							prfmsg(PDEFLECT,username(wptr));
 							outprfge(ALWAYS,usrn);
 							prfmsg(PHITDEF,shpltr(othusn,usrn),username(ptr),(int)damage);
@@ -1092,6 +1097,7 @@ WARSHP  *ptr;
 int             usrn;
 {
 WARSHP  *wptr;
+WARUSR	*wuptr;
 unsigned        deg;
 double factor,tonfact;
 
@@ -1151,6 +1157,8 @@ if (ptr->energy >= HPMINFIR)
 						prfmsg(HPHITU,username(ptr),gechrbuf);
 						outprfge(ALWAYS,othusn);
 						wptr->damage += (double)damage;
+						wuptr = warusroff(usrn);
+						set_dislike(wuptr,shipclass[wptr->shpclass].faction,damage);
 						wptr->lastfired = usrn;
 						wptr->cantexit = FIRETICKS;
 						ptr->cantexit = FIRETICKS;
@@ -4853,6 +4861,12 @@ if ((!syscmds) || (sysonly && !(usrptr->flags&ISYSOP)))
 #endif
 	{
 	prfmsg(INVCMD);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+if (sameas("factions",margv[1]) && margc == 2)
+	{
+	prfmsg(SYSFAC,waruptr->factions[0],waruptr->factions[1],waruptr->factions[2],waruptr->factions[3],waruptr->factions[4],waruptr->factions[5],waruptr->factions[6],waruptr->factions[7]);
 	outprfge(ALWAYS,usrnum);
 	return;
 	}

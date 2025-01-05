@@ -174,7 +174,7 @@
 /*    2645 */ char *FUNC showarp P((double speed ));
 /*         */ void FUNC assign_cybs P((int usrnum ));
 /*         */ int FUNC cyb_fast P((WARSHP *ptr ));
-
+/*         */ void FUNC set_dislike P((WARUSR *wuptr , int facnum, int dislike ));
 
 /* gecmds.c */
 /*     217 */ struct cmd *FUNC gesearch P((char *ptr , struct cmd tab [], int len ));

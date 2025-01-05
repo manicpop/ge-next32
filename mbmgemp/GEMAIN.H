@@ -280,7 +280,8 @@ WARUSR {						/* user data blocks                       */
 		unsigned long	population;
 		byte		options[30];
 		unsigned long	teamcode;
-		char		filler[256-109-UIDSIZ];
+		byte		factions[8];		/* do NPCs like me */
+		char		filler[256-117-UIDSIZ];
 };
 
 

@@ -292,6 +292,8 @@ tmpusr.topshipno	= 0;
 tmpusr.options[0]	= TRUE; /* scannames default */
 tmpusr.options[2]	= TRUE; /* scanfull default */
 
+memset(tmpusr.factions, 0, sizeof(tmpusr.factions));
+
 return(0);
 }
 
@@ -1429,6 +1431,7 @@ void  FUNC checkmines()
 int i;
 int zothusn;            /* general purpose other-user channel number */
 WARSHP  *wptr;
+WARUSR	*wuptr;
 double  ddist, cdistance(), cbearing(), damfact;
 unsigned udist;
 MINE            *mptr;
@@ -1486,6 +1489,8 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 								}
 							wptr->damage += (double)damage;
 							wptr->lastfired = (int)mptr->channel;
+							wuptr = warusroff((int)mptr->channel);
+							set_dislike(wuptr,shipclass[wptr->shpclass].faction,damage);
 							wptr->minesnear = FALSE;
 							/*DEBUG
 							prf("MINE: chn # %d gets credit\r",wptr->lastfired);
@@ -1550,6 +1555,7 @@ int           usrn;
 {
 int i,j,flag,power;
 
+WARUSR				*wuptr;
 MISSILE				*mptr;
 TORPEDO				*tptr;
 unsigned			*dptr;
@@ -1580,7 +1586,11 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 				damfact = ton_fact(ptr,damfact); /* adjust for weight */
 
 				ptr->damage += damfact;
-				ptr->lastfired = tptr->channel;
+				if ((int)tptr->channel < nships)
+					{
+					wuptr = warusroff((int)tptr->channel);
+					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
+					}
 				prfmsg(THIT1);
 				outprfge(ALWAYS,usrn);
 				acctm(ptr,usrn,0,tptr->channel);
@@ -1596,6 +1606,11 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 				damfact = ton_fact(ptr,damfact); /* adjust for weight */
 
 				ptr->damage += damfact;
+				if ((int)tptr->channel < nships)
+					{
+					wuptr = warusroff((int)tptr->channel);
+					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
+					}
 				acctm(ptr,usrn,0,tptr->channel);
 				}
 			randamage(ptr,usrn); /*assess any random damage */
@@ -1666,6 +1681,11 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 				ptr->damage += mdammax*damfact;
 				prfmsg(MHIT1,tmpbuf);
 				outprfge(ALWAYS,usrn);
+				if ((int)mptr->channel < nships)
+					{
+					wuptr = warusroff((int)mptr->channel);
+					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)(mdammax*damfact));
+					}
 				acctm(ptr,usrn,1,mptr->channel);
 
 				power = mptr->energy/999;
@@ -1679,6 +1699,12 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 				damfact = damfact/50000.0;
 				damfact = damfact * (rndm(.5)+.5);
 				ptr->damage += mdammax*damfact;
+				outprfge(ALWAYS,usrn);
+				if ((int)mptr->channel < nships)
+					{
+					wuptr = warusroff((int)mptr->channel);
+					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)(mdammax*damfact));
+					}
 				acctm(ptr,usrn,1,mptr->channel);
 				}
 			randamage(ptr,usrn); /*assess any random damage */
@@ -2798,4 +2824,24 @@ return (ptr->speed != 0.0) &&
 #else
 	(fmod(ptr->speed, FARSPEED) == 0.0);
 #endif
+}
+
+/* set faction dislike status */
+
+void FUNC set_dislike(wuptr,facnum,dislike)
+WARUSR *wuptr;
+int facnum, dislike;
+
+{
+if (facnum < 0 || facnum > 7)
+	{
+	geshocst(0,spr("GE:set_dislike:bad facnum [%d]",facnum));
+	return;
+	}
+prf("set_dislike: %d %d",facnum,dislike);
+outprfge(ALWAYS,0);
+if ((unsigned int)(wuptr->factions[facnum]) + dislike > 255)
+	wuptr->factions[facnum] = 255;
+else
+	wuptr->factions[facnum] += dislike;
 }
