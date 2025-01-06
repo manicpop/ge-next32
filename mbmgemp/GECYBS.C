@@ -319,8 +319,10 @@ if (ptr->jammer == 0)
 								else
 									if (shipclass[ptr->shpclass].max_phasr >= phatowrp &&
 										ptr->phasr >= PMINFIRE && ptr->where == 0)
+										{
 										ptr->percent = 2;
 										firep(ptr,usrn);
+										}
 								}
 							}
 						}
@@ -342,7 +344,8 @@ if (ptr->jammer == 0)
 						{
 						cyb_attack(ptr,usrn,wptr,zothusn);
 						cyb_annoy(ptr,zothusn,20,13,16);
-						cyb_lay_decoys(ptr);
+						if (shipclass[ptr->shpclass].has_decoy && ptr->items[I_DECOYS] > 0)
+							cyb_lay_decoys(ptr);
 						}
 					else
 						{

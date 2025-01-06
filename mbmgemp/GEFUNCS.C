@@ -1625,6 +1625,11 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 						{
 						prfmsg(TORDEST);
 						outprfge(FILTER,usrn);
+						if (tptr->channel < nterms)
+							{
+							prfmsg(TORDEST2);
+							outprfge(FILTER,tptr->channel);
+							}
 						dptr[j] = 0;
 						tptr->distance = 0;
 						break;
@@ -1719,6 +1724,11 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 						{
 						prfmsg(MISDEST);
 						outprfge(FILTER,usrn);
+						if (mptr->channel < nterms)
+							{
+							prfmsg(MISDEST2);
+							outprfge(FILTER,mptr->channel);
+							}
 						dptr[j] = 0;
 						mptr->distance = 0;
 						break;
@@ -2838,8 +2848,7 @@ if (facnum < 0 || facnum > 7)
 	geshocst(0,spr("GE:set_dislike:bad facnum [%d]",facnum));
 	return;
 	}
-prf("set_dislike: %d %d",facnum,dislike);
-outprfge(ALWAYS,0);
+
 if ((unsigned int)(wuptr->factions[facnum]) + dislike > 255)
 	wuptr->factions[facnum] = 255;
 else

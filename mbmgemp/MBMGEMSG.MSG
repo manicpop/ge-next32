@@ -2558,9 +2558,17 @@ TORDEST {***
 [0;37mAn incoming torpedo locked onto a decoy, destroying both![1;37m
 } T GE torpedo hit decoy message
 
+TORDEST2 {***
+[0;37mAn outgoing torpedo was lost to a decoy![1;37m
+} T GE torpedo hit decoy message
+
 MISDEST {***
 [0;37mAn incoming missile locked onto a decoy, destroying both![1;37m
 } T GE missile hit decoy message
+
+MISDEST2 {***
+[0;37mAn outgoing torpedo was lost to a decoy![1;37m
+} T GE torpedo hit decoy message
 
 NOFLUX {
 [0;37m[[0;31mWARNING![0;37m] The neutron flux pile is empty, and there are no flux pods on-board!
