@@ -1756,7 +1756,7 @@ for (i=0,dptr=ptr->decout;i<MAXDECOY;++i)
 		{
 		if (--dptr[i] == 0)
 			{
-			prfmsg(DECGONE,warsptr->shipname);
+			prfmsg(DECGONE,ptr->shipname);
 			outprfge(FILTER,usrn);
 			}
 		}
@@ -1780,7 +1780,7 @@ else
 if (ptr->cloak == 2)
 	{
 	ptr->cloak = 10;
-	prfmsg(CLOKUP,warsptr->shipname);
+	prfmsg(CLOKUP,ptr->shipname);
 	outprfge(ALWAYS,usrn);
 	}
 }
