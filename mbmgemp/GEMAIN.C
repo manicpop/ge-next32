@@ -2547,7 +2547,7 @@ return(1);
 
 int	 FUNC mnu_main_ans()
 {
-if (margc == 0)
+if (margc == 0 || margc > 1)
 	{
 	prfmsg(REPRMT);
 	outprfge(ALWAYS,usrnum);
@@ -2632,7 +2632,7 @@ if (margc == 1)
 		return(1);
 		}
 	else
-	if (sameas(input,"x"))
+	if (sameas(input,"X"))
 		{
 		prfmsg(EXIWAR);
 		outprfge(ALWAYS,usrnum);
@@ -2649,7 +2649,7 @@ if (margc == 1)
 			return(1);
 			}
 		}
-	disp_main_menu();
+	prfmsg(REPRMT);
 	outprfge(ALWAYS,usrnum);
 	return(1);
 	}
