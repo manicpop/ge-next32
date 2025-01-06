@@ -1067,7 +1067,7 @@ Team founder commands are:
 HLPSPY {
 [1;36mThe [1;37mSPY[1;36m command will transport a spy (provided you have one on board) to the
 planet you are currently orbiting. If the spy survives and is not caught you
-will from time to time get intellegence reports on the planet.
+will from time to time get intelligence reports on the planet.
 
 You can defend from spies by having your own spies on your planets. The more
 trained spies you have, the better your chances you will catch any foreign

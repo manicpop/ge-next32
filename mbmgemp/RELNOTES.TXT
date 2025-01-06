@@ -17,7 +17,8 @@ Please contact with me thoughts and suggestions.
   up to the amount of NUMSHIPS. The game will create only the
   amount of NPCs you specify with the MAKE options, and allocates
   memory for only that amount.
-* The Sysop ship was removed.
+* The Sysop ship was removed. "Hidden" ships might return in
+  future versions.
 * Four new Cybertron classes replace the Cybertrons and
   Cyberquads: the Cyber-Interceptor, Cyber-Destroyer, Cyber-Cruiser,
   and Cyber-Dreadnought. The Cyber-Base is still around.
@@ -34,6 +35,9 @@ Please contact with me thoughts and suggestions.
   have different codes. Faction codes higher than 0 can't damage
   other ships with the same code, which will keep Cybertrons from
   destroying each other with phasers if they are lined up in pursuit.
+* Non-Cybertron factions will remember if you have attacked them
+  and will respond accordingly in future encounters. Something to
+  think about before destroying that NPC minding its own business.
 * Loadout codes: Also new is the loadout code, which is used to
   identify the various classes of droid ships, so that droids can
   be added, removed, renamed, etc. This code will also be used
@@ -69,10 +73,20 @@ Please contact with me thoughts and suggestions.
 * GE_BE_NICE and GE_BE_EASY, the values that made the
   Cybertrons easier until you accumulated a certain number of
   kills, have also been removed in favor of these new levels.
+* NPCs can no longer travel at above their maximum specified
+  warp (except for Cybertrons in pursuit) or travel at
+  fractional (non-integer) warp values.
+* Cybertrons in long-range pursuit (the "hyperwarp" mode)
+  will now show "??.??" for their speed when traveling at
+  this speed, then immediately snap into a "normal" speed
+  when reaching their destination.
+  
 
 Other stuff:
 * A bug that sometimes showed the wrong defaults in the planetary
   administration menu should be resolved.
+* A bug that sometimes showed the wrong ship name in messages
+  regarding decoys and cloaking has been resolved.
 
 === 0.1.1 === 2026-09-30:
 
@@ -103,7 +117,7 @@ overflow.
 * When ADMINing a planet for the first time, all items automatically have
 their price set to base prices.
 * When ADMINing a planet that has been previously owned and abandoned,
-the exisiting settings are kept.
+the existing settings are kept.
 * When editing an item on the admin screen, it will show you the existing
 value and you can now press enter to keep the current value.
 
@@ -197,7 +211,7 @@ menu in case you decide you don't want to play after all.
 all the way to (default) 300 300, you are only bounced back after trying to
 pass that. If you have wraparound on, it now wraps to the correct sector
 (e.g. 300 to -300).
-* Changed the CYBNEW and DROIDNEW announcments to show the sector of the
+* Changed the CYBNEW and DROIDNEW announcements to show the sector of the
 newly created ship, as opposed to the (fake) bearing.
 * Changed "spy" to be "spies" so it's plural like all other items. Also
 changed the amount of letters you have to use to buy/sell/ transfer spies

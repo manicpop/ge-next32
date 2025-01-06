@@ -972,7 +972,7 @@ S06PNTS {Points awarded: 1000} (S06TYPE#<NONE>) N 1 32767
 
 Scanner range of a class 06 ship in subsectors.
 
-S06SRNG {Scaner range: 200000} (S06TYPE#<NONE>) L 1 10000000
+S06SRNG {Scanner range: 200000} (S06TYPE#<NONE>) L 1 10000000
 
 Will Cybertrons fire on a class 06 ship unprovoked?
 If YES, Cybertrons will pursue and fire upon this class.
@@ -1733,7 +1733,7 @@ the hearts of your enemies when you enter a sector, it's time to check out
 Zygor's BATTLE CRUISER.
 
 With Mark-16-capable phasers and shields and the full compliment of
-offensive and defensive capablities, the Battle Cruiser is focused solely
+offensive and defensive capabilities, the Battle Cruiser is focused solely
 on combat.
 
 The Battle Cruiser retails for [0;33m2,000,000[1;36m."
@@ -1796,7 +1796,7 @@ S11MINE {Has mine capability? YES} (S11TYPE#<NONE>) B
 
 Fighter capability for class 11.
 
-S11ATTK {Has fighter launching apability? YES} (S11TYPE=USER) B
+S11ATTK {Has fighter launching capability? YES} (S11TYPE=USER) B
 
 Cloaking capability for class 11.
 

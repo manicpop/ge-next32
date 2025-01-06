@@ -136,25 +136,25 @@ LOGFLG {Enable extended trace logging? NO} B
 
 This option specifies the filename of the user database. It
 is provided to you in case you wish to store the datafiles
-in a seperate directory.
+in a separate directory.
 
 GEUSER {MBMGEUSR.DAT} S 40 GE User Filename
 
 This option specifies the filename of the Ship database. It
 is provided to you in case you wish to store the datafiles
-in a seperate directory.
+in a separate directory.
 
 GESHIP {MBMGESHP.DAT} S 40 GE Ship Filename
 
 This option specifies the filename of the Mail database. It
 is provided to you in case you wish to store the datafiles
-in a seperate directory.
+in a separate directory.
 
 GEMAIL {MBMGEMAL.DAT} S 40 GE Mail Filename
 
 This option specifies the filename of the planet database.
 It is provided to you in case you wish to store the
-datafiles in a seperate directory.
+datafiles in a separate directory.
 
 GEPLNT {MBMGEPLT.DAT} S 40 GE Planet Filename
 
@@ -235,7 +235,7 @@ side to side.
 UNIVWRAP {Does the Galaxy wrap around? NO} B
 
 This value controls how large the GEPLANET.DAT data file
-will grow to. Each time a sector is "teraformed" the 
+will grow to. Each time a sector is "terraformed" the 
 GEPLANET.DAT database grows by the following formula; 
 space added = (number planets * 512) + 512
 
@@ -282,7 +282,7 @@ range down from the maximum possible range of 50,000. The
 specific formula for those who want to know is as follows;
 
 IF ((5-distance)/(MISFACT/10))
-IS GREATER THAN .7 LOCKON SUCCESSFULL
+IS GREATER THAN .7 LOCKON SUCCESSFUL
 
 speed = opponents speed
 distance = opponents distance 
@@ -1817,7 +1817,7 @@ random ratio selects 80% then 800 attackers are killed.
 
 PLATTRF2 {Max ratio of attackers killed by planet: 100 } N 5 1000
 
-This ratio specifies the effectivness of the attacking
+This ratio specifies the effectiveness of the attacking
 fighters. It is the upper limit of a random function 
 with a spread between 20% and PLATTRF3+20%. On each 
 attack the selected random ratio of planets fighters 
@@ -2072,7 +2072,7 @@ PDEFLECT {
 } T GE phasers you fired deflected message
 
 PHITDEF {***
-[0;37m[[1;31mCAUTION[0;37m] Phaser hit from the [0;36m%c[0;37m, Commander [0;36m%s[0;37m's ship,
+[0;37m[[1;31mCAUTION[0;37m] Phaser hit from ship [0;36m%c[0;37m, Commander [0;36m%s[0;37m's ship,
 magnitude [0;31m%d[0;37m, was deflected by the shields![1;37m
 } T GE phaser fired at you deflected message
 
@@ -2356,7 +2356,7 @@ FCNONO {
 
 HYPERIN {***
 [1;35mHelm reports the [0;36m%s[1;35m is entering HYPERSPACE![1;37m
-} T GE entering hyperspace messsage
+} T GE entering hyperspace message
 
 HYPERIN2 {***
 [0;37mSensors detect the [0;36m%s[0;37m has gone to hyperspace![1;37m
@@ -2567,8 +2567,8 @@ MISDEST {***
 } T GE missile hit decoy message
 
 MISDEST2 {***
-[0;37mAn outgoing torpedo was lost to a decoy![1;37m
-} T GE torpedo hit decoy message
+[0;37mAn outgoing missile was lost to a decoy![1;37m
+} T GE torpedo hit missile message
 
 NOFLUX {
 [0;37m[[0;31mWARNING![0;37m] The neutron flux pile is empty, and there are no flux pods on-board!
@@ -2821,7 +2821,7 @@ ADMEN2FA {
 } T GE items over 100 message
 
 ADMEN2FB {
-[1;36mStill have %d percent effort un-assigned.
+[1;36mStill have %d percent effort unassigned.
 } T GE items under 100 message
 
 ADMENU2G {
@@ -3132,7 +3132,7 @@ REP24 {[1;37mPhasers (Mark-%d)...... [0;31m<inoperable>[1;37m
 REP24S {[1;37mPhasers (Mark-%d)..... [0;31m<inoperable>[1;37m
 } T GE report 24 short
 
-REP24A {[1;37mComm frequenices...... [1;34mA[1;37m:[1;34m%u  B[1;37m:[1;34m%u  C[1;37m:[1;34m%u[1;37m
+REP24A {[1;37mComm frequencies...... [1;34mA[1;37m:[1;34m%u  B[1;37m:[1;34m%u  C[1;37m:[1;34m%u[1;37m
 } T GE report 24A
 
 REP25 {[1;37mAccounting report:
@@ -3539,9 +3539,6 @@ fee of [0;33m%s[1;36m, [0;33m%s[1;36m has been deposited to your account.[1
 NEW19 {[1;36mYou will be credited [0;33m%s[1;36m for the existing used shield.[1;37m
 } T GE shield credit message
 
-NEW27 {[1;36mThe minimum charge of [0;33m1000[1;36m will be charged for installation.[1;37m
-} T GE install charge no line break message
-
 NEW28 {
 [1;36mThere is no charge for the new phaser and after deducting a transaction
 fee of [0;33m%s[1;36m, [0;33m%s[1;36m has been deposited to your account.[1;37m
@@ -3567,13 +3564,13 @@ SELL5 {
 } T GE none to sell message
 
 TOOMUCH {
-[1;36mThis is too of a large transaction to process at once. Try a smaller amount.[1;37m
+[1;36mThis is too large of a transaction to process at once. Try a smaller amount.[1;37m
 } T GE transaction too big message
 
 TOORICH {
 [1;36mDue to the Galactic Financial Reform Act of 3264, no individual can have more
 than [0;33m%lu[1;36m in the bank.[1;37m
-} T GE too much money meesage
+} T GE too much money message
 
 SYSGET {
 [1;37m%s %s[1;36m granted.[1;37m
@@ -3861,14 +3858,14 @@ CYBNEW {***
 
 CYBNEW2 {***
 [0;37mA huge energy burst has been detected in sector [1;34m%d %d[0;37m.[1;37m
-} T GE new Cyd inside scan range message
+} T GE new Cyb inside scan range message
 
 DROIDNEW {***
-[0;37mSome low frequency energy fluxation has been detected, bearing [1;37m%d[0;37m.[1;37m
+[0;37mSome low frequency energy fluctuation has been detected, bearing [1;37m%d[0;37m.[1;37m
 } T GE new droid outside scan range message
 
 DROIDNW2 {***
-[0;37mSome low frequency energy fluxation has been detected in sector [1;34m%d %d[0;37m.[1;37m
+[0;37mSome low frequency energy fluctuation has been detected in sector [1;34m%d %d[0;37m.[1;37m
 } T GE new droid inside scan range message
 
 TELEPORT {***
@@ -3988,7 +3985,7 @@ TEAMNFND {
 
 TEAMNTM {
 [1;36mThat Commander is not currently on your team.[1;37m
-} T GE team player no on team mesage
+} T GE team player no on team message
 
 TEAMKYOU {
 [1;36mYour membership in team [0;36m%s[1;36m has been revoked by [0;36m%s[1;36m.[1;37m
@@ -4057,15 +4054,16 @@ SPYM1 {
 } T GE spy sent message
 
 SPYC1 {
-The government of the planet %s in sector %d %d has arrested a spy believed
-to be in your employ. They have lodged an official protest with the Galactic
-Command and are demanding a formal apology. 
+The government of the planet %s in sector %d %d has
+arrested a spy believed to be in your employ. They have lodged an official
+protest with the Galactic Command and are demanding a formal apology.
 
 } T GE spy captured message
 
 SPYC2 {
-The government of your planet %s in sector %d %d has captured and arrested
-a spy believed to be in the employment of %s. 
+The government of your planet %s in sector %d %d has
+captured and arrested a spy believed to be in the employment
+of %s. 
 
 They have already sent notice to %s demanding an apology.
 
@@ -4074,9 +4072,9 @@ They have already sent notice to %s demanding an apology.
 SPYM2 {
 Classification: TOP SECRET/EYES ONLY
 
-Your operative on %s in sector %d %d has acquired 
-the following intellegence from his local operatives. The information
-is from questionable source but has a %d% confidence rating.
+Your operative on %s in sector %d %d has acquired
+the following intelligence from his local operatives. The information is from
+a questionable source but has a %d percent confidence rating.
 --------------------------------------------------------------------------
 
 Planetary reserves of %s - %s
@@ -4089,7 +4087,7 @@ End report
 SPYM3 {
 Classification: TOP SECRET
 
-Your operative on %s in sector %d %d reports 
+Your operative on %s in sector %d %d reports
 that hostile forces commanded by %s launched an attack 
 on this planet. The outcome was unclear as of this report.
 
@@ -4741,7 +4739,7 @@ DR2M11 {***
 
 DR2M12 {***
 [0;37mDistress call from the [0;36m%s
-[1;36m<[1;37m The Murdonian Imperial Defense has been informed of your illegal agression. [1;36m>[1;37m
+[1;36m<[1;37m The Murdonian Imperial Defense has been informed of your illegal aggression. [1;36m>[1;37m
 } T GE Droid 2 message 12
 
 These four messages are sent when a ship identifies a
@@ -4784,7 +4782,7 @@ considered unfriendly by this faction.
 
 DR3M5 {***
 [0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m Warning! This vessel is equiped with auto-defense systems! [1;36m>[1;37m
+[1;36m<[1;37m Warning! This vessel is equipped with auto-defense systems! [1;36m>[1;37m
 } T GE Droid 3 message 5
 
 DR3M6 {***
@@ -4903,7 +4901,7 @@ DR4M11 {***
 
 DR4M12 {***
 [0;37mHailing message from the [0;36m%s
-[1;36m<[1;37m The Sarten Empire shall not take this agression lightly. [1;36m>[1;37m
+[1;36m<[1;37m The Sarten Empire shall not take this aggression lightly. [1;36m>[1;37m
 } T GE Droid 4 message 12
 
 These four messages are sent when a ship identifies a
