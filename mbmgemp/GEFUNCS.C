@@ -650,8 +650,11 @@ WARSHP *ptr;
 int           usrn;
 {
 
-COORD oldsect,newsect;
+COORD oldsect,newsect,neutsect;
 int	diff,intspeed;
+
+neutsect.xcoord = 0.50001;
+neutsect.ycoord = 0.50001;
 
 if (ptr->speed > 0)
 	{
@@ -673,8 +676,13 @@ if (ptr->speed > 0)
 				}
 			else
 				{
-				ptr->coord.xcoord       = (double)(univmax-2);
-				telezip(ptr,usrn);
+				ptr->coord.xcoord       = (double)(univmax-2-(int)(ptr->speed/1000));
+				if (ptr->coord.ycoord <= univmax+1 && ptr->coord.ycoord >= (univmax*-1)) /* avoid double bounce */
+					{
+					ptr->head2b = normal((double)(cbearing(&(ptr->coord),&neutsect,0)));
+					ptr->heading = ptr->head2b;
+					telezip(ptr,usrn);
+					}
 				}
 			}
 		else
@@ -686,8 +694,13 @@ if (ptr->speed > 0)
 				}
 			else
 				{
-				ptr->coord.xcoord       = (double)((univmax-2)*-1);
-				telezip(ptr,usrn);
+				ptr->coord.xcoord       = (double)((univmax-2-(int)(ptr->speed/1000))*-1);
+				if (ptr->coord.ycoord <= univmax+1 && ptr->coord.ycoord >= (univmax*-1))
+					{
+					ptr->head2b = normal((double)(cbearing(&(ptr->coord),&neutsect,0)));
+					ptr->heading = ptr->head2b;
+					telezip(ptr,usrn);
+					}
 				}
 			}
 
@@ -700,7 +713,9 @@ if (ptr->speed > 0)
 				}
 			else
 				{
-				ptr->coord.ycoord       = (double)(univmax-2);
+				ptr->coord.ycoord       = (double)(univmax-2-(int)(ptr->speed/1000));
+				ptr->head2b = normal((double)(cbearing(&(ptr->coord),&neutsect,0)));
+				ptr->heading = ptr->head2b;
 				telezip(ptr,usrn);
 				}
 			}
@@ -713,7 +728,9 @@ if (ptr->speed > 0)
 				}
 			else
 				{
-				ptr->coord.ycoord       = (double)((univmax-2)*-1);
+				ptr->coord.ycoord       = (double)((univmax-2-(int)(ptr->speed/1000))*-1);
+				ptr->head2b = normal((double)(cbearing(&(ptr->coord),&neutsect,0)));
+				ptr->heading = ptr->head2b;
 				telezip(ptr,usrn);
 				}
 			}
@@ -841,12 +858,21 @@ int           usrn;
 ptr->coord.xcoord       = (rndm((double)(univmax-2)))+1;
 ptr->coord.ycoord       = (rndm((double)(univmax-2)))+1;
 */
-ptr->speed = 0.0;
 ptr->speed2b = 0.0;
-ptr->damage += TELEDAM;
-damstr(TELEDAM);
-prfmsg(TELEPORT,gechrbuf);
-outprfge(ALWAYS,usrn);
+ptr->speed = ptr->speed2b;
+ptr->where = 0;
+if (ptr->status == GESTAT_USER)
+	{
+	ptr->damage += TELEDAM;
+	damstr(TELEDAM);
+	prfmsg(TELEPORT,gechrbuf);
+	prfmsg(NOWTHER,(int)ptr->heading);	/* show now pointing towards 0 0 */
+	outprfge(ALWAYS,usrn);
+	}
+else
+	{
+	ptr->speed2b = (double)ptr->topspeed*1000.0;	/* head toward 0 0 for the moment */
+	}
 }
 
 

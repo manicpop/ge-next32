@@ -87,6 +87,14 @@ Other stuff:
   administration menu should be resolved.
 * A bug that sometimes showed the wrong ship name in messages
   regarding decoys and cloaking has been resolved.
+* If a ship bounces off the galactic perimeter, the size of the
+  bounce backwards is now determined by the speed the ship is
+  traveling when it hits. Ships will no longer be doubly damaged
+  if they hit a corner (that is, cross the X boundary and Y
+  boundary at the same time), but will be bounced in both
+  directions. The ship will also be pointed directly toward
+  sector 0 0 after the bounce. This should keep NPCs from
+  destroying themselves by repeatedly running into the barrier.
 
 === 0.1.1 === 2026-09-30:
 

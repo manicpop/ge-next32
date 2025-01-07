@@ -3869,7 +3869,7 @@ DROIDNW2 {***
 } T GE new droid inside scan range message
 
 TELEPORT {***
-[0;37m[[0;31mWARNING![0;37m] Navigation beyond the galactic perimeter is not permitted. Engines
+[0;37m[[0;31mWARNING![0;37m] Navigation beyond the galactic perimeter is not possible. Engines
 shut down under emergency procedures.
 
 Damage control reports [0;31m%s[0;37m damage to all sections due to kinetic shock.[1;37m
