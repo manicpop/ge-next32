@@ -1138,7 +1138,7 @@ WARSHP	*wptr;
 WARUSR	*wuptr;
 
 unsigned i;
-int     who;
+int     who, comma, full;
 long scr,amt,bonus,ded_amt;
 
 /* 12/19/91 fix to prevent a player from being awarded points for killing */
@@ -1147,6 +1147,9 @@ long scr,amt,bonus,ded_amt;
 waruptr=warusroff(usrn);
 
 who = ptr->lastfired;
+
+comma = FALSE;
+full = FALSE;
 
 if (who >= 0 && who < nships && who != usrn)
 	{
@@ -1165,26 +1168,50 @@ if (who >= 0 && who < nships && who != usrn)
 
 	prfmsg(KILLGOT1,ptr->shipname);
 
-	/* no men or troops can be collected */
+	/* get gold drop first, complete amount */
+	amt = ptr->items[I_GOLD];
+	if (amt > 0)
+		{
+		if (!chkweight(wptr,I_GOLD,amt))
+			{
+			amt = ((shipclass[wptr->shpclass].max_tons - calcweight(wptr))/((double)weight[I_GOLD]/100.0));
+			full = TRUE;
+			}
+		wptr->items[I_GOLD] += amt;
+		sprintf(gechrbuf2,"%ld",amt);
+		prf(" %s %s",gechrbuf2,item_name[I_GOLD]);
+		comma = TRUE;
+		}
+	/* get the rest except casualties, random amounts */
 	for (i=1;i<NUMITEMS;++i)
 		{
-		if (i != I_MEN && i != I_TROOPS)
+		if (full == TRUE)
+			break;
+		if (i != I_MEN && i != I_TROOPS && i != I_SPY && i != I_GOLD)
 			{
 			amt = ptr->items[i] / (gernd()%5 +1);
 			/* only collect as much as we can hold */
-			if (amt > 0  && chkweight(wptr,i,amt))
+			if (amt > 0)
 				{
+				if (!chkweight(wptr,i,amt))
+					{
+					amt = ((shipclass[wptr->shpclass].max_tons - calcweight(wptr))/((double)weight[i]/100.0));
+					full = TRUE;
+					}
 				wptr->items[i] += amt;
 				sprintf(gechrbuf2,"%ld",amt);
-				prf(", %s %s",gechrbuf2,item_name[i]);
+				if (comma == TRUE)
+					prf(", %s %s",gechrbuf2,item_name[i]);
+				else
+					prf(" %s %s",gechrbuf2,item_name[i]);
+				comma = TRUE;
 				}
 			}
 		}
-/*	k = ptr->cash / (long)((gernd()%15) +5);
-	waruptr->cash -= k;
-	wuptr->cash += k;
-	sprintf(gechrbuf,"%ld",k);*/
 	prf(".\r");
+
+	if (full == TRUE)
+		prfmsg(KILLFULL);
 
 	/* grant points for the kill */
 

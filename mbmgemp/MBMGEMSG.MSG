@@ -3307,6 +3307,10 @@ KILLGOT1 {***
 [1;36mYou have destroyed the [0;36m%s[1;36m. All usable flotsam have been retrieved.
 You have retrieved[1;37m} T GE you destroyed a ship message
 
+KILLFULL {
+[1;36mYour ship is now full; no more items could be collected.[1;37m
+} T GE no more room for spoils message
+
 KILLPNTS {
 [1;36mYou got %s points for the %s.[1;37m
 } T GE points for kill message
