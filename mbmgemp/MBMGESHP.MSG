@@ -3822,7 +3822,7 @@ Class 23 damage factor, 100 is normal. 200 is twice as
 resilient, 50 is half as resilient.
 Damage = damage / (SnnDAMF / 100)
 
-S23DAMF {Damage effect factor: 1000} (S23TYPE#<NONE>) N 1 32767
+S23DAMF {Damage effect factor: 900} (S23TYPE#<NONE>) N 1 32767
 
 Class 23 faction code.
 0 for user ships. 1 for Cybertrons.
