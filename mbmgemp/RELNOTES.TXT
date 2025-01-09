@@ -17,8 +17,6 @@ Please contact with me thoughts and suggestions.
   up to the amount of NUMSHIPS. The game will create only the
   amount of NPCs you specify with the MAKE options, and allocates
   memory for only that amount.
-* The Sysop ship was removed. "Hidden" ships might return in
-  future versions.
 * Four new Cybertron classes replace the Cybertrons and
   Cyberquads: the Cyber-Interceptor, Cyber-Destroyer, Cyber-Cruiser,
   and Cyber-Dreadnought. The Cyber-Base is still around.
@@ -83,8 +81,10 @@ Please contact with me thoughts and suggestions.
   
 
 Other stuff:
+* The Sysop ship was removed. "Hidden" ships might return in
+  future versions.
 * A bug that sometimes showed the wrong defaults in the planetary
-  administration menu should be resolved.
+  administration menu has been resolved.
 * A bug that sometimes showed the wrong ship name in messages
   regarding decoys and cloaking has been resolved.
 * If a ship bounces off the galactic perimeter, the size of the
@@ -95,8 +95,21 @@ Other stuff:
   directions. The ship will also be pointed directly toward
   sector 0 0 after the bounce. This should keep NPCs from
   destroying themselves by repeatedly running into the barrier.
+* If you destroy another ship while you are low on space, gold
+  is now prioritized, and you will collect as much as you can
+  hold. You will also now collect the entire amount of gold (space
+  permitting) from the ship you destroyed (all other items remain
+  a random amount between 20% and 100% of the ship's contents).
+* Damage factors (DAMF) have been set for each ship to make
+  the larger and/or more powerful ones more difficult to damage.
+* A phaser's effective damage is now factored by the DAMF value
+  of the ship. The size (cargo capacity) of the ship is no
+  longer part of the equation, bringing it into line with all
+  other forms of damage. This should keep freighters from being
+  nearly impossible to damage with phasers.
 
-=== 0.1.1 === 2026-09-30:
+
+=== 0.1.1 === 2024-09-30:
 
 Some silly bugs involving the sell command, wrong degrees showing,
 absolute rotation not working with warp command, and a few other

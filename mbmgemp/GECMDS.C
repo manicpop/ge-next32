@@ -983,7 +983,7 @@ WARSHP  *wptr;
 WARUSR	*wuptr;
 
 unsigned        deg;
-double factor,tonfact;
+double factor;
 
 if (ptr->cloak > 0 )
 	{
@@ -1023,12 +1023,9 @@ if (ptr->phasr >=PMINFIRE)
 					{
 					damage = pdamage(ptr,cdistance(&ptr->coord,&wptr->coord)*10000,ptr->percent);
 
-					factor = (double)damage;
-					tonfact = 1.0 + ((double)(shipclass[wptr->shpclass].max_tons)/TONFACT);
+					factor = (double)(damage*(1+ptr->phasrtype/2));
 
-
-
-					factor = (factor*((double)(1+ptr->phasrtype)/2.5)) / tonfact;
+					factor = ton_fact(wptr,factor);
 
 					/* lower it for hyper */
 					if (wptr->where == 1)
@@ -1099,7 +1096,7 @@ int             usrn;
 WARSHP  *wptr;
 WARUSR	*wuptr;
 unsigned        deg;
-double factor,tonfact;
+double factor;
 
 
 if (ptr->energy >= HPMINFIR)
@@ -1132,12 +1129,12 @@ if (ptr->energy >= HPMINFIR)
 					ddistance = cdistance(&ptr->coord,&wptr->coord)*10000;
 					if (ddistance < (double)shipclass[ptr->shpclass].scanrange)
 						{
-						damage = pdamage(ptr,ddistance,0);
-						factor = (double)damage;
-						/* figure how big the ship is */
-						tonfact = 1.0 + ((double)(shipclass[wptr->shpclass].max_tons)/TONFACT);
 
-						factor = (factor*(double)ptr->phasrtype) / tonfact;
+						damage = pdamage(ptr,ddistance,0);
+
+						factor = (double)(damage*(1+ptr->phasrtype/2));
+
+						factor = ton_fact(wptr,factor);
 
 						damage = (int)(factor);
 
