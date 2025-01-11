@@ -244,16 +244,9 @@ if ((da*dc) > 0)
 	}
 else
 if (da == 0.0)	/* same exact position */
-	{
-	prf("angleb else1 0\r");
 	angle = 0.0;
-	}
 else		/* must be vertically aligned */
-	{
-	prf("angleb else2 90\r");
 	angle = 90.0;
-	}
-outprfge(ALWAYS,0);
 
 return (angle);
 
@@ -283,16 +276,9 @@ if ((da*db) > 0)
 	}
 else
 if (da == 0.0)	/* same exact position */
-	{
-	prf("anglec else1 0\r");
 	angle = 0.0;
-	}
 else		/* must be horizontally aligned */
-	{
-	prf("anglec else2 180\r");
 	angle = 180.0;
-	}
-outprfge(ALWAYS,0);
 
 return (angle);
 
