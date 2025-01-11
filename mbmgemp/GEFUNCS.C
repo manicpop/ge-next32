@@ -680,7 +680,6 @@ if (ptr->speed > 0)
 				if (ptr->coord.ycoord <= univmax+1 && ptr->coord.ycoord >= (univmax*-1)) /* avoid double bounce */
 					{
 					ptr->head2b = normal(vector(&(ptr->coord),&neutsect));
-	/*				ptr->head2b = normal((double)(cbearing(&(ptr->coord),&neutsect,0))); */
 					ptr->heading = ptr->head2b;
 					telezip(ptr,usrn);
 					}
@@ -699,7 +698,6 @@ if (ptr->speed > 0)
 				if (ptr->coord.ycoord <= univmax+1 && ptr->coord.ycoord >= (univmax*-1))
 					{
 					ptr->head2b = normal(vector(&(ptr->coord),&neutsect));
-	/*				ptr->head2b = normal((double)(cbearing(&(ptr->coord),&neutsect,0))); */
 					ptr->heading = ptr->head2b;
 					telezip(ptr,usrn);
 					}
@@ -717,7 +715,6 @@ if (ptr->speed > 0)
 				{
 				ptr->coord.ycoord       = (double)(univmax-2-(int)(ptr->speed/1000));
 				ptr->head2b = normal(vector(&(ptr->coord),&neutsect));
-	/*			ptr->head2b = normal((double)(cbearing(&(ptr->coord),&neutsect,0))); */
 				ptr->heading = ptr->head2b;
 				telezip(ptr,usrn);
 				}
@@ -733,7 +730,6 @@ if (ptr->speed > 0)
 				{
 				ptr->coord.ycoord       = (double)((univmax-2-(int)(ptr->speed/1000))*-1);
 				ptr->head2b = normal(vector(&(ptr->coord),&neutsect));
-	/*			ptr->head2b = normal((double)(cbearing(&(ptr->coord),&neutsect,0))); */
 				ptr->heading = ptr->head2b;
 				telezip(ptr,usrn);
 				}

@@ -233,18 +233,27 @@ COORD *ptr1, *ptr2;
 
 double   da,db,dc, angle;
 
-
-
 da = cdistance(ptr1, ptr2);
 dc = absol(ptr1->xcoord - ptr2->xcoord);
 db = absol(ptr1->ycoord - ptr2->ycoord);
 
 if ((da*dc) > 0)
+	{
 	angle = (double) acos( ((da*da) + (dc*dc) - (db*db)) / (2*da*dc));
+	angle = radtodeg(angle);
+	}
 else
-	angle = 0;
-
-angle = radtodeg(angle);
+if (da == 0.0)	/* same exact position */
+	{
+	prf("angleb else1 0\r");
+	angle = 0.0;
+	}
+else		/* must be vertically aligned */
+	{
+	prf("angleb else2 90\r");
+	angle = 90.0;
+	}
+outprfge(ALWAYS,0);
 
 return (angle);
 
@@ -268,12 +277,22 @@ dc = absol(ptr1->xcoord - ptr2->xcoord);
 db = absol(ptr1->ycoord - ptr2->ycoord);
 
 if ((da*db) > 0)
+	{
 	angle = (double) acos( ((da*da) + (db*db) - (dc*dc)) / (2*da*db));
+	angle = radtodeg(angle);
+	}
 else
-/* this should not be 0 - figure out what rad(360) is. */
-	angle = 0;
-
-angle = radtodeg(angle);
+if (da == 0.0)	/* same exact position */
+	{
+	prf("anglec else1 0\r");
+	angle = 0.0;
+	}
+else		/* must be horizontally aligned */
+	{
+	prf("anglec else2 180\r");
+	angle = 180.0;
+	}
+outprfge(ALWAYS,0);
 
 return (angle);
 
