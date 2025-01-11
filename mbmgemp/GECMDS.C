@@ -4578,6 +4578,13 @@ if (warsptr->cantexit > 0)
 	return;
 	}
 
+if (warsptr->repair > 0)
+	{
+	prfmsg(MAINT11);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
 price = 200;
 
 if (neutral(&warsptr->coord))
