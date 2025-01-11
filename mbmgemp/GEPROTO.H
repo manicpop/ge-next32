@@ -183,6 +183,7 @@
 /*     325 */ void FUNC cmd_gehelp P((void ));
 /*     450 */ void FUNC cmd_impulse P((void ));
 /*     529 */ void FUNC cmd_warp P((void ));
+/*         */ void FUNC cmd_stop P((void ));
 /*     611 */ void FUNC cmd_rotate P((void ));
 /*     703 */ void FUNC cmd_flux P((void ));
 /*     726 */ void FUNC cmd_orbit P((void ));

@@ -146,6 +146,7 @@ struct  cmd     gecmds[]={
 			{"set",	cmd_set,	1},
 			{"shi",	cmd_shields,	1},
 			{"spy",	cmd_spy,	1},
+			{"sto", cmd_stop,	1},
 			{"sys",	cmd_sysop,	1},
 			{"tea", cmd_team,	1},
 			{"tor",	cmd_torp,	1},
@@ -203,6 +204,7 @@ struct hlpcmd gehlp[] = {
 		{"set",				HLPSET},
 		{"shield",			HLPSHI},
 		{"spy",				HLPSPY},
+		{"stop",			HLPSTO},
 		{"sys",				HLPSYS},
 		{"team",			HLPTEA},
 		{"torpedo",			HLPTOR},
@@ -586,6 +588,8 @@ if (valpcnt(margv[1],0,99))
 	else
 		{
 		prfmsg(HLBROKE);
+		if (warsptr->speed != 0)
+			prfmsg(HLBROKE2);
 		outprfge(ALWAYS,usrnum);
 		}
 	}
@@ -683,7 +687,7 @@ else
 			}
 		prfmsg(ENGFIRE,deg);
 		outprfge(ALWAYS,usrnum);
-		if (shipclass[warsptr->shpclass].max_accel >= 1000 && warsptr->speed < 1000.0)
+		if (shipclass[warsptr->shpclass].max_accel >= 1000 && warsptr->speed < 1000.0 && speed != 0)
 			warsptr->speed = 0.0;	/* no fractional warp speeds */
 		warsptr->speed2b = 1000.0 * (float)speed;
 		if (deg != warsptr->head2b)
@@ -692,9 +696,26 @@ else
 	else
 		{
 		prfmsg(HLBROKE);
+		if (warsptr->speed != 0)
+			prfmsg(HLBROKE2);
 		outprfge(ALWAYS,usrnum);
 		}
 	}
+}
+
+/**************************************************************************
+** Emergency stop                                                        **
+**************************************************************************/
+
+void FUNC cmd_stop()
+{
+if (warsptr->helm < 0 && warsptr->speed > 0)
+	prfmsg(EMERSTOP);
+else
+	prfmsg(ENGFIRE,(unsigned)warsptr->head2b);
+
+outprfge(ALWAYS,0);
+warsptr->speed2b = 0;
 }
 
 /**************************************************************************
@@ -749,6 +770,8 @@ if (*margv[1] == '@') /* turn absolute */
 	else
 		{
 		prfmsg(HLBROKE);
+		if (warsptr->speed != 0)
+			prfmsg(HLBROKE2);
 		outprfge(ALWAYS,usrnum);
 		}
 	}
@@ -780,6 +803,8 @@ if (valdegree(margv[1]))
 	else
 		{
 		prfmsg(HLBROKE);
+		if (warsptr->speed != 0)
+			prfmsg(HLBROKE2);
 		outprfge(ALWAYS,usrnum);
 		}
 	}

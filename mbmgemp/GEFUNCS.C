@@ -562,7 +562,7 @@ if (ptr->speed > ptr->speed2b)
 			}
 		else
 			{
-			prfmsg(SPEED0);
+			prfmsg(DEADSTOP);
 			outprfge(FILTER,usrn);
 			}
 		}

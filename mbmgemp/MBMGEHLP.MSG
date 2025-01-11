@@ -8,8 +8,8 @@ HLPINDEX {
 Commands: [1;32mabandon  abort  admin  attack  buy  cloak  cls  decoy  destruct  
           flux  freq  help  impulse  jammer  jettison  lock  maintenance  mine
           missile  navigate  new  orbit  phaser  planet  price  rename  report
-          roster  rotate  scan  sell  send  set  shield  spy  team  torpedo
-          transfer  warp  zipper
+          roster  rotate  scan  sell  send  set  shield  spy  stop  team
+          torpedo  transfer  warp  zipper
 
 [1;36m Topics:  [1;32mbattle  class  communicate  cybertron  galaxy  moving  planets
           scoring  sector  starting  strategy  wormholes
@@ -1000,6 +1000,12 @@ Examples: [1;37mwarp 5     [1;36malters the speed to warp 5 and does not chang
           [1;37mwar 8 @90  [1;36malters the speed to warp 8 and turns the ship to 90
                      degrees absolute.
 [1;37m} T GE help warp message
+
+HLPSTO {
+[1;36mThe [1;37mSTOP[1;36m command cuts the engines and brings your ship to a complete stop,
+even if your ship's helm is damaged and not accepting commands.
+[1;37m} T GE help stop message
+
 
 HLPZIP {
 [1;36mThe [1;37mZIPPER[1;36m command launches a defensive (and sometimes offensive) weapon which

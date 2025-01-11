@@ -2096,6 +2096,10 @@ DEADSTOP {***
 [0;37mHelm reports dead stop.[1;37m
 } T GE dead stop message
 
+EMERSTOP {***
+[0;37mEmergency stop initiated![1;37m
+} T GE emergency stop message
+
 NOACCEL {***
 [0;37m[[0;31mWARNING![0;37m] Helm reports engine shutdown at warp [1;37m%d[0;37m![1;37m
 } T GE warp shutdown message
@@ -2148,10 +2152,6 @@ WARPSPD2 {
 SPEEDIS {***
 [1;32mHelm reports speed is now warp [1;37m%s[1;32m![1;37m
 } T GE speed is now message
-
-SPEED0 {***
-[0;37mHelm reports dead stop.[1;37m
-} T GE dead stop message 2
 
 PFIRED {
 [0;32mPhasers fired at [0;31m%d[0;32m percent power - focus [0;31m%d[0;32m![1;37m
@@ -2336,6 +2336,9 @@ TABROKE {
 
 HLBROKE {
 [0;37m[[1;31mERROR[0;37m] Damage Control is repairing the helm.[1;37m
+} T GE helm being repaired message
+
+HLBROKE2 {[0;37mType STOP to issue emergency engine shutdown.[1;37m
 } T GE helm being repaired message
 
 FCBROKE {
