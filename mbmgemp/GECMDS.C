@@ -2327,8 +2327,6 @@ int shpnum,gheading;
 WARSHP  *wptr;
 WARUSR	*wuptr;
 char            ltr;
-long	len,wid;
-long	tons;
 
 if (margc != 3)
 	{
@@ -2368,11 +2366,6 @@ if (shpnum >= 0)
 		setsect(wptr);
 		prfmsg(SCAN03A,gheading,xsect, ysect);
 		prfmsg(SCAN04,showarp(wptr->speed));
-		tons = (long)(shipclass[wptr->shpclass].max_tons);
-		len  =tons/32L;
-		wid  =tons/96L;
-
-		prfmsg(SCAN04A,spr("%ld",len),spr("%ld",wid));
 
 		if (warsptr->where != 1 && wptr->where != 1)
 			{

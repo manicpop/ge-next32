@@ -3200,9 +3200,6 @@ SCAN03A {[0;37mGalactic heading: [1;37m%d[0;37m Sect: [1;37m%d %d
 SCAN04 {[0;37mSpeed: [1;37mWarp %s
 } T GE scan 04
 
-SCAN04A {[0;37mSize: [1;37m%sm long by %sm wide
-} T GE scan 04A
-
 SCAN05 {[0;37mDamage: [1;37m%s damage
 } T GE scan 05
 
