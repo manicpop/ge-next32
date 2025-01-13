@@ -5197,10 +5197,16 @@ if (sameas("phasertype",margv[1]) && margc == 3)
 else
 if (sameas("maint",margv[1]))
 	{
-	warsptr->repair = 1;
-	prfmsg(MAINT5);
+	if (warsptr->cantexit > 0)
+		{
+		prfmsg(MAINT9);
+		outprfge(ALWAYS,usrnum);
+		return;
+		}
+	warsptr->damage = 3;
+	warsptr->repair = (unsigned)(warsptr->damage/3.0)+1;
+	prfmsg(MAINT5,warsptr->repair);
 	outprfge(ALWAYS,usrnum);
-	repairship(warsptr,usrnum);
 	return;
 	}
 else
