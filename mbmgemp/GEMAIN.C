@@ -2905,7 +2905,8 @@ if (amt <= plptr->tax)
 	{
 	if (waruptr->cash > ULCAP - amt)
 		{
-		prfmsg(TOORICH,ULCAP);
+		sprintf(gechrbuf,"%lu",ULCAP);
+		prfmsg(TOORICH,gechrbuf);
 		outprfge(ALWAYS,usrnum);
 		}
 	else

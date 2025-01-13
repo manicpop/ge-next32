@@ -1283,7 +1283,8 @@ if (who >= 0 && who < nships && who != usrn)
 			if (wuptr->cash > ULCAP - amt)
 				{
 				amt = ULCAP - wuptr->cash;
-				prfmsg(TOORICH,ULCAP,ptr->userid);
+				sprintf(gechrbuf,"%lu",ULCAP);
+				prfmsg(TOORICH,gechrbuf);
 				outprfge(ALWAYS,who);
 				}
 			wuptr->cash += amt;

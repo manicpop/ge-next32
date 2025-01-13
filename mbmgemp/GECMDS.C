@@ -4369,7 +4369,8 @@ if ((amt = atol(margv[1])) > 0L || sameas("ALL",margv[1]))
 
 			if (waruptr->cash > ULCAP - (doll - fee))
 				{
-				prfmsg(TOORICH,ULCAP);
+				sprintf(gechrbuf,"%lu",ULCAP);
+				prfmsg(TOORICH,gechrbuf);
 				return;
 				}
 			else
@@ -4872,7 +4873,8 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 				if (waruptr->cash > ULCAP - credit)
 					{
 					credit = ULCAP - waruptr->cash;
-					prfmsg(TOORICH,ULCAP);
+					sprintf(gechrbuf,"%lu",ULCAP);
+					prfmsg(TOORICH,gechrbuf);
 					}
 				prfmsg(NEW18,l2as(fee),l2as(credit));
 				outprfge(ALWAYS,usrnum);
@@ -4946,7 +4948,8 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 				if (waruptr->cash > ULCAP - credit)
 					{
 					credit = ULCAP - waruptr->cash;
-					prfmsg(TOORICH,ULCAP);
+					sprintf(gechrbuf,"%lu",ULCAP);
+					prfmsg(TOORICH,gechrbuf);
 					}
 				prfmsg(NEW28,l2as(fee),l2as(credit));
 				outprfge(ALWAYS,usrnum);
@@ -5081,7 +5084,8 @@ else
 if (sameas("cash",margv[1]) && margc == 3)
 	{
 	waruptr->cash += atol(margv[2]);
-	prfmsg(SYSCASH,atol(margv[2]));
+	sprintf(gechrbuf,"%lu",atol(margv[2]));
+	prfmsg(SYSCASH,gechrbuf);
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
