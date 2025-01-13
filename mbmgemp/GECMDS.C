@@ -1075,9 +1075,15 @@ if (ptr->phasr >=PMINFIRE)
 						if (wptr->shieldstat != SHIELDUP)
 							{
 							damstr(damage);
-							prfmsg(PHITHIM,gechrbuf,username(wptr));
+							if (wptr->status == GESTAT_AUTO)
+								prfmsg(PHITNPC,gechrbuf,username(wptr));
+							else
+								prfmsg(PHITHIM,gechrbuf,username(wptr));
 							outprfge(ALWAYS,usrn);
-							prfmsg(PHITYOU,username(ptr),gechrbuf);
+							if (ptr->status == GESTAT_AUTO)
+								prfmsg(PNPCHIT,username(ptr),gechrbuf);
+							else
+								prfmsg(PHITYOU,username(ptr),gechrbuf);
 							outprfge(ALWAYS,othusn);
 							wptr->damage += (double)damage;
 							wuptr = warusroff(usrn);
@@ -1088,9 +1094,15 @@ if (ptr->phasr >=PMINFIRE)
 							shieldhit(wptr,othusn,damage); /* modify the damage */
 							wuptr = warusroff(usrn);
 							set_dislike(wuptr,shipclass[wptr->shpclass].faction,2);
-							prfmsg(PDEFLECT,username(wptr));
+							if (wptr->status == GESTAT_AUTO)
+								prfmsg(PDEFLNPC,username(wptr));
+							else
+								prfmsg(PDEFLECT,username(wptr));
 							outprfge(ALWAYS,usrn);
-							prfmsg(PHITDEF,shpltr(othusn,usrn),username(ptr),(int)damage);
+							if (ptr->status == GESTAT_AUTO)
+								prfmsg(PNPCDEF,username(ptr),(int)damage);
+							else
+								prfmsg(PHITDEF,username(ptr),(int)damage);
 							outprfge(ALWAYS,othusn);
 							}
 						randamage(wptr,othusn); /*assess any random damage */
@@ -1174,9 +1186,15 @@ if (ptr->energy >= HPMINFIR)
 							wptr->cybmine = usrn;
 							wptr->tick = 2;
 							}
-						prfmsg(HPHITM,gechrbuf,username(wptr));
+						if (wptr->status == GESTAT_AUTO)
+							prfmsg(HPHITN,gechrbuf,username(wptr));
+						else
+							prfmsg(HPHITM,gechrbuf,username(wptr));
 						outprfge(ALWAYS,usrn);
-						prfmsg(HPHITU,username(ptr),gechrbuf);
+						if (ptr->status == GESTAT_AUTO)
+							prfmsg(HPNHITU,username(ptr),gechrbuf);
+						else
+							prfmsg(HPHITU,username(ptr),gechrbuf);
 						outprfge(ALWAYS,othusn);
 						wptr->damage += (double)damage;
 						wuptr = warusroff(usrn);
@@ -2280,10 +2298,13 @@ if (sameas(margv[1],"ord"))
 			none = FALSE;
 			prf("\r ");
 			if (warsptr->lock == warsptr->ltorps[i].channel)
-				prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",ptr->shipname);
+				prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",username(ptr));
 			else
-				prf("  \33[1;34m%s\33[1;37m   ",ptr->shipname);
-			prf("Dist: %u",warsptr->ltorps[i].distance);
+				prf("  \33[1;34m%s\33[1;37m   ",username(ptr));
+			if (warsptr->jammer == 0)
+				prf("Dist: %u",warsptr->ltorps[i].distance);
+			else
+				prf("Dist: ?????");
 			}
 		}
 	if (none == TRUE)
@@ -2300,10 +2321,13 @@ if (sameas(margv[1],"ord"))
 			none = FALSE;
 			prf("\r ");
 			if (warsptr->lock == warsptr->lmissl[i].channel)
-				prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",ptr->shipname);
+				prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",username(ptr));
 			else
-				prf("  \33[1;34m%s\33[1;37m   ",ptr->shipname);
-			prf("Dist: %u",warsptr->lmissl[i].distance);
+				prf("  \33[1;34m%s\33[1;37m   ",username(ptr));
+			if (warsptr->jammer == 0)
+				prf("Dist: %u",warsptr->lmissl[i].distance);
+			else
+				prf("Dist: ?????");
 			}
 		}
 	if (none == TRUE)
@@ -2326,10 +2350,13 @@ if (sameas(margv[1],"ord"))
 						none = FALSE;
 						prf("\r ");
 						if (warsptr->lock == zothusn)
-							prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",ptr->shipname);
+							prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",username(ptr));
 						else
-							prf("  \33[1;34m%s\33[1;37m   ",ptr->shipname);
-						prf("Dist: %u",ptr->ltorps[i].distance);
+							prf("  \33[1;34m%s\33[1;37m   ",username(ptr));
+						if (warsptr->jammer == 0)
+							prf("Dist: %u",ptr->ltorps[i].distance);
+						else
+							prf("Dist: ?????");
 						}
 					}
 				}
@@ -2354,10 +2381,14 @@ if (sameas(margv[1],"ord"))
 						none = FALSE;
 						prf("\r ");
 						if (warsptr->lock == zothusn)
-							prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",ptr->shipname);
+							prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",username(ptr));
 						else
-							prf("  \33[1;34m%s\33[1;37m   ",ptr->shipname);
-						prf("Dist: %u",ptr->lmissl[i].distance);
+							prf("  \33[1;34m%s\33[1;37m   ",username(ptr));
+						if (warsptr->jammer == 0)
+							prf("Dist: %u",ptr->lmissl[i].distance);
+						else
+							prf("Dist: ?????");
+
 						}
 				}
 			}
@@ -2378,8 +2409,12 @@ if (sameas(margv[1],"ord"))
 				ddist = cdistance(&warsptr->coord,&mines[i].coord);
 				ddist *= 10000;
 				bearing = (int)(cbearing(&warsptr->coord,&mines[i].coord,warsptr->heading)+.5);
-				prf("%d %d  T:%2d  Br:%4d  Dist: %s",
-					(int)mines[i].coord.xcoord,(int)mines[i].coord.ycoord,mines[i].timer,bearing,spr("%ld",(long)ddist));
+				if (warsptr->jammer == 0)
+					prf("%d %d  T:%2d  Br:%4d  Dist: %s",
+						(int)mines[i].coord.xcoord,(int)mines[i].coord.ycoord,mines[i].timer,bearing,spr("%ld",(long)ddist));
+				else
+					prf("%d %d  T:%2d  Br:????  Dist: ?????",
+						(int)mines[i].coord.xcoord,(int)mines[i].coord.ycoord,mines[i].timer);
 				}
 		if (none == TRUE)
 			prf("none\r");
@@ -2518,10 +2553,12 @@ if (shpnum >= 0)
 		prfmsg(SCAN01,wptr->shipname);
 		prfmsg(DASHES);
 		prfmsg(SCAN01A,shipclass[wptr->shpclass].typename);
-		prfmsg(SCAN02,username(wptr));
-		if (warusroff(shpnum)->teamcode >0)
-			prfmsg(SCAN02A,teamname(wuptr));
-
+		if (wptr->status == GESTAT_USER)
+			{
+			prfmsg(SCAN02,username(wptr));
+			if (warusroff(shpnum)->teamcode >0)
+				prfmsg(SCAN02A,teamname(wuptr));
+			}
 		prfmsg(SCAN03,bearing,heading,spr("%ld",(long)ddistance));
 		setsect(wptr);
 		prfmsg(SCAN03A,gheading,xsect, ysect);
@@ -3290,7 +3327,10 @@ for (i=0; i<MAXY; ++i)
 			}
 		else
 			{
-			prf("     \33[0;36m%s\33[0;31m\r",username(warshpoff(othusn)));
+			if (warsptr->lock == othusn)
+				prf("    \33[0;31m*\33[0;36m%s\33[0;31m*\r",username(warshpoff(othusn)));
+			else
+				prf("     \33[0;36m%s\33[0;31m\r",username(warshpoff(othusn)));
 			shp++;
 			ff = 0;
 			}

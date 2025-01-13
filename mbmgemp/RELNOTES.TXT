@@ -84,6 +84,8 @@ Other stuff:
 * A new ordnance report was added (REP ORD). This will list
   all incoming and outgoing projectiles as well as display
   the mines and decoys you have deployed.
+* The ship you have locked onto will be displayed with red
+  highlights in the range scans and ordnance reports.
 * The Sysop ship was removed. "Hidden" ships might return in
   future versions.
 * A bug that sometimes showed the wrong defaults in the planetary
@@ -113,8 +115,6 @@ Other stuff:
 * A STOP command has been added, which can bring the ship to a
   complete stop even if the helm is damaged. If the helm isn't
   damaged, it's the same as entering WARP 0 or IMPULSE 0.
-* A battle report has been added, which can be shown with the
-  command REPORT BATTLE (or REP BAT).
 * If you accidentally issue the maintenance command while
   maintenance is in progress, you will be notified and not
   charged a second time.

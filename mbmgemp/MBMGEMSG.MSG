@@ -2023,7 +2023,7 @@ EXIWAR2 {***
 } T GE sensors cannot locate message
 
 WARHUP {***
-[1;36mCommander [0;36m%s[1;36m's ship just vanished![1;37m
+[0;36m%s[1;36m's ship just vanished![1;37m
 } T GE ship vanished message
 
 NOSHPS {
@@ -2055,25 +2055,50 @@ DIED {***
 [1;36mThe [0;36m%s[1;36m, commanded by [0;36m%s[1;36m, has been destroyed![1;37m
 } T GE someone got blowed up message
 
+DIEDNPC {***
+[0;36m%s[1;36m has been destroyed![1;37m
+} T GE someone got blowed up message
+
 KILLEDBY {***
-[1;36mCommander [0;36m%s[1;36m's ship was destroyed by [0;36m%s[1;36m![1;37m
+[0;36m%s[1;36m's ship was destroyed by [0;36m%s[1;36m![1;37m
+} T GE someone was blowed up by someone message
+
+KILLDNPC {***
+[0;36m%s[1;36m was destroyed by [0;36m%s[1;36m![1;37m
 } T GE someone was blowed up by someone message
 
 PHITHIM {
-[0;37mThe phasers caused [0;31m%s[0;37m damage to Commander [0;36m%s[0;37m's ship![1;37m
+[0;37mThe phasers caused [0;31m%s[0;37m damage to [0;36m%s[0;37m's ship![1;37m
+} T GE phaser hit someone message
+
+PHITNPC {
+[0;37mThe phasers caused [0;31m%s[0;37m damage to [0;36m%s[0;37m![1;37m
 } T GE phaser hit someone message
 
 PHITYOU {***
-[0;37m[[0;31mWARNING![0;37m] Phaser hit from Commander [0;36m%s[0;37m's ship, caused [0;31m%s[0;37m damage![1;37m
+[0;37m[[0;31mWARNING![0;37m] Phaser hit from [0;36m%s[0;37m's ship, caused [0;31m%s[0;37m damage![1;37m
+} T GE phaser hit you message
+
+PNPCHIT {***
+[0;37m[[0;31mWARNING![0;37m] Phaser hit from [0;36m%s[0;37m, caused [0;31m%s[0;37m damage![1;37m
 } T GE phaser hit you message
 
 PDEFLECT {
-[0;37mThe phasers were deflected by Commander [0;36m%s[0;37m's shields![1;37m
+[0;37mThe phasers were deflected by [0;36m%s[0;37m's ship's shields![1;37m
+} T GE phasers you fired deflected message
+
+PDEFLNPC {
+[0;37mThe phasers were deflected by [0;36m%s[0;37m's shields![1;37m
 } T GE phasers you fired deflected message
 
 PHITDEF {***
-[0;37m[[1;31mCAUTION[0;37m] Phaser hit from ship [0;36m%c[0;37m, Commander [0;36m%s[0;37m's ship,
-magnitude [0;31m%d[0;37m, was deflected by the shields![1;37m
+[0;37m[[1;31mCAUTION[0;37m] Phaser hit from [0;36m%s[0;37m's ship, magnitude [0;31m%d[0;37m,
+was deflected by the shields![1;37m
+} T GE phaser fired at you deflected message
+
+PNPCDEF {***
+[0;37m[[1;31mCAUTION[0;37m] Phaser hit from [0;36m%s[0;37m, magnitude [0;31m%d[0;37m,
+was deflected by the shields![1;37m
 } T GE phaser fired at you deflected message
 
 PHSRUP {***
@@ -2097,7 +2122,7 @@ DEADSTOP {***
 } T GE dead stop message
 
 EMERSTOP {***
-[0;37mEmergency stop initiated![1;37m
+[0;31mEmergency stop initiated![1;37m
 } T GE emergency stop message
 
 NOACCEL {***
@@ -2460,6 +2485,14 @@ MTACC1 {***
 
 MTACC2 {***
 [0;37mSensors indicate our hyper-missile has hit ship [0;36m%c[0;37m, the [0;36m%s[0;37m.[1;37m
+} T GE your missile hit message
+
+MTACC1N {***
+[0;37mSensors indicate our torpedo has hit ship [0;36m%c[0;37m, [0;36m%s[0;37m.[1;37m
+} T GE your torp hit message
+
+MTACC2N {***
+[0;37mSensors indicate our hyper-missile has hit ship [0;36m%c[0;37m, [0;36m%s[0;37m.[1;37m
 } T GE your missile hit message
 
 TORP1 {***
@@ -2935,7 +2968,7 @@ ATTACKF8 {[1;36mYour fighters are being fired upon by planetary troops![1;37m
 
 ATTACK6 {***
 [0;37mIncoming distress message from [1;34m%s[0;37m in star system [1;34m%d %d[0;37m!
-They are under attack from Commander [1;34m%s[0;37m in the [1;34m%s[0;37m
+They are under attack from [1;34m%s[0;37m in the [1;34m%s[0;37m
 and are requesting immediate assistance!
 } T GE distress message to owner message
 
@@ -3341,7 +3374,7 @@ amount of [0;33m%s[1;36m as reparations and fines. Next time, don't lose![1;3
 
 CHGLSR2 {
 [1;36mAccording to galactic treaty you are awarded the sum of [0;33m%s[1;36m as reparations
-and fines from Commander [0;36m%s[1;36m. Congratulations![1;37m
+and fines from [0;36m%s[1;36m. Congratulations![1;37m
 } T GE you get paid because you won message
 
 PHASER0 {
@@ -3353,11 +3386,19 @@ HPFIRED {
 } T GE fired hyperphaser message
 
 HPHITM {
-[0;37mThe hyper-phaser caused [0;31m%s[0;37m damage to Commander [0;36m%s[0;37m's ship![1;37m
+[0;37mThe hyper-phaser caused [0;31m%s[0;37m damage to [0;36m%s[0;37m's ship![1;37m
+} T GE you hit a ship with hyperphaser message
+
+HPHITN {
+[0;37mThe hyper-phaser caused [0;31m%s[0;37m damage to [0;36m%s[0;37m![1;37m
 } T GE you hit a ship with hyperphaser message
 
 HPHITU {***
-[0;37m[[0;31mWARNING![0;37m] Hyper-phaser hit from Commander [0;36m%s[0;37m's ship, caused [0;31m%s[0;37m damage![1;37m
+[0;37m[[0;31mWARNING![0;37m] Hyper-phaser hit from [0;36m%s[0;37m's ship, caused [0;31m%s[0;37m damage![1;37m
+} T GE you got hit with a hyperphaser message
+
+HPNHITU {***
+[0;37m[[0;31mWARNING![0;37m] Hyper-phaser hit from [0;36m%s[0;37m, caused [0;31m%s[0;37m damage![1;37m
 } T GE you got hit with a hyperphaser message
 
 HNOFIRP {
@@ -4003,11 +4044,11 @@ TEAMNOT {
 } T GE not on team message
 
 TEAMNFND {
-[1;36mThat Commander is not currently in the game.[1;37m
+[1;36mThat player is not currently in the game.[1;37m
 } T GE team player not in game message
 
 TEAMNTM {
-[1;36mThat Commander is not currently on your team.[1;37m
+[1;36mThat player is not currently on your team.[1;37m
 } T GE team player no on team message
 
 TEAMKYOU {
@@ -4144,22 +4185,22 @@ The first four messages are general messages displayed
 when the cybertron approaches another player from a distance.
 
 CYB1M1 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Organic beings are the scum of the galaxy, not fit to survive! [1;36m>[1;37m
 } T GE Cyb 1 message 1
 
 CYB1M2 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Cybertrons shall rule the galaxy! [1;36m>[1;37m
 } T GE Cyb 1 message 2
 
 CYB1M3 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Extermination is the only way to deal with organic scum! [1;36m>[1;37m
 } T GE Cyb 1 message 3
 
 CYB1M4 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m By cyborg decree, all organics are doomed to destruction! [1;36m>[1;37m
 } T GE Cyb 1 message 4
 
@@ -4167,22 +4208,22 @@ The next four messages are general messages displayed
 when the cybertron begins to brake to engage a player.
 
 CYB1M5 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You had better run if you know what's good for you! [1;36m>[1;37m
 } T GE Cyb 1 message 5
 
 CYB1M6 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m I could kill you right now if it weren't so unsportsmanlike! [1;36m>[1;37m
 } T GE Cyb 1 message 6
 
 CYB1M7 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are so dumb you make a Toranian pig look like intelligent life. [1;36m>[1;37m
 } T GE Cyb 1 message 7
 
 CYB1M8 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m I will destroy you, organic vermin! [1;36m>[1;37m
 } T GE Cyb 1 message 8
 
@@ -4191,22 +4232,22 @@ to a cybertron but the cyb chooses not to attack for
 any number of reasons.
 
 CYB1M9 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are no match for a Cybertron! [1;36m>[1;37m
 } T GE Cyb 1 message 9
 
 CYB1M10 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Destroying your pathetic vessel would be a waste of time! [1;36m>[1;37m
 } T GE Cyb 1 message 10
 
 CYB1M11 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are not worth wasting a single torpedo on! [1;36m>[1;37m
 } T GE Cyb 1 message 11
 
 CYB1M12 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are mine to toy with, and mine to slay! [1;36m>[1;37m
 } T GE Cyb 1 message 12
 
@@ -4214,22 +4255,22 @@ The next four messages are displayed when a cybertron
 attacks another player.
 
 CYB1M13 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Eat this, you biological misfit! [1;36m>[1;37m
 } T GE Cyb 1 message 13
 
 CYB1M14 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m I'm only getting started, you Gloxanian slugworm! [1;36m>[1;37m
 } T GE Cyb 1 message 14
 
 CYB1M15 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You can't dodge torpedoes forever, you Mongonian mudmole! [1;36m>[1;37m
 } T GE Cyb 1 message 15
 
 CYB1M16 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Give it up! I can keep this up for hours! [1;36m>[1;37m
 } T GE Cyb 1 message 16
 
@@ -4240,22 +4281,22 @@ The first four messages are general messages displayed
 when the cybertron approaches another player from a distance.
 
 CYB2M1 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your puny race will join the Sartens in oblivion! [1;36m>[1;37m
 } T GE Cyb 2 message 1
 
 CYB2M2 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Cybertrons are superior beings! [1;36m>[1;37m
 } T GE Cyb 2 message 2
 
 CYB2M3 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your ship shall be mine! [1;36m>[1;37m
 } T GE Cyb 2 message 3
 
 CYB2M4 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You cannot defeat us! [1;36m>[1;37m
 } T GE Cyb 2 message 4
 
@@ -4263,22 +4304,22 @@ The next four messages are general messages displayed
 when the cybertron begins to brake to engage a player.
 
 CYB2M5 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m This is your last warning. I WILL destroy you! [1;36m>[1;37m
 } T GE Cyb 2 message 5
 
 CYB2M6 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your ship is no match for the Cyber-Destroyer! [1;36m>[1;37m
 } T GE Cyb 2 message 6
 
 CYB2M7 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your computational abilities are inferior to Cybertrons. [1;36m>[1;37m
 } T GE Cyb 2 message 7
 
 CYB2M8 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your pathetic inaction is typical of organic beings. [1;36m>[1;37m
 } T GE Cyb 2 message 8
 
@@ -4287,22 +4328,22 @@ to a cybertron but the cyb chooses not to attack for
 any number of reasons.
 
 CYB2M9 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are no match for a Cybertron! [1;36m>[1;37m
 } T GE Cyb 2 message 9
 
 CYB2M10 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m We will destroy you, organic vermin! [1;36m>[1;37m
 } T GE Cyb 2 message 10
 
 CYB2M11 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your extermination is a certainty! [1;36m>[1;37m
 } T GE Cyb 2 message 11
 
 CYB2M12 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are not worth wasting a single torpedo on! [1;36m>[1;37m
 } T GE Cyb 2 message 12
 
@@ -4310,22 +4351,22 @@ The next four messages are displayed when a cybertron
 attacks another player.
 
 CYB2M13 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Prepare to be destroyed! [1;36m>[1;37m
 } T GE Cyb 2 message 13
 
 CYB2M14 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Cybertrons cannot be stopped! [1;36m>[1;37m
 } T GE Cyb 2 message 14
 
 CYB2M15 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You will never survive this attack! [1;36m>[1;37m
 } T GE Cyb 2 message 15
 
 CYB2M16 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m We shall prevail. You cannot survive! [1;36m>[1;37m
 } T GE Cyb 2 message 16
 
@@ -4336,22 +4377,22 @@ The first four messages are general messages displayed
 when the cybertron approaches another player from a distance.
 
 CYB3M1 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Halt your approach or prepare to be destroyed. [1;36m>[1;37m
 } T GE Cyb 3 message 1
 
 CYB3M2 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Only Cybertrons are permitted in this region of space. [1;36m>[1;37m
 } T GE Cyb 3 message 2
 
 CYB3M3 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are approaching a Cybertron base. Turn around now! [1;36m>[1;37m
 } T GE Cyb 3 message 3
 
 CYB3M4 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Retreat from this area! This is your only warning! [1;36m>[1;37m
 } T GE Cyb 3 message 4
 
@@ -4371,22 +4412,22 @@ to a cybertron but the cyb chooses not to attack for
 any number of reasons.
 
 CYB3M9 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m This sector is off limits to organics! [1;36m>[1;37m
 } T GE Cyb 3 message 9
 
 CYB3M10 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m This Cyber-Base is invincible! [1;36m>[1;37m
 } T GE Cyb 3 message 10
 
 CYB3M11 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Retreat from this sector immediately! [1;36m>[1;37m
 } T GE Cyb 3 message 11
 
 CYB3M12 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Destroying your ship would be a waste of time! [1;36m>[1;37m
 } T GE Cyb 3 message 12
 
@@ -4394,22 +4435,22 @@ The next four messages are displayed when a cybertron
 attacks another player.
 
 CYB3M13 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You have been targeted! [1;36m>[1;37m
 } T GE Cyb 3 message 13
 
 CYB3M14 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Prepare to be destroyed! [1;36m>[1;37m
 } T GE Cyb 3 message 14
 
 CYB3M15 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m This Cyber-Base is invincible! [1;36m>[1;37m
 } T GE Cyb 3 message 15
 
 CYB3M16 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Only a fool would dare attack a Cyber-Base! [1;36m>[1;37m
 } T GE Cyb 3 message 16
 
@@ -4420,22 +4461,22 @@ The first four messages are general messages displayed
 when the cybertron approaches another player from a distance.
 
 CYB4M1 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your puny race will join the Sartens in oblivion! [1;36m>[1;37m
 } T GE Cyb 4 message 1
 
 CYB4M2 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Cybertrons are superior beings! [1;36m>[1;37m
 } T GE Cyb 4 message 2
 
 CYB4M3 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your ship shall be mine! [1;36m>[1;37m
 } T GE Cyb 4 message 3
 
 CYB4M4 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You cannot defeat us! [1;36m>[1;37m
 } T GE Cyb 4 message 4
 
@@ -4443,22 +4484,22 @@ The next four messages are general messages displayed
 when the cybertron begins to brake to engage a player.
 
 CYB4M5 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m This is your last warning. I WILL destroy you! [1;36m>[1;37m
 } T GE Cyb 4 message 5
 
 CYB4M6 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your extermination is a certainty! [1;36m>[1;37m
 } T GE Cyb 4 message 6
 
 CYB4M7 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your computational abilities are inferior to Cybertrons. [1;36m>[1;37m
 } T GE Cyb 4 message 7
 
 CYB4M8 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your pathetic inaction is typical of organic beings. [1;36m>[1;37m
 } T GE Cyb 4 message 8
 
@@ -4467,22 +4508,22 @@ to a cybertron but the cyb chooses not to attack for
 any number of reasons.
 
 CYB4M9 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your puny vessel is no threat to us. [1;36m>[1;37m
 } T GE Cyb 4 message 9
 
 CYB4M10 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m We will destroy you, organic vermin! [1;36m>[1;37m
 } T GE Cyb 4 message 10
 
 CYB4M11 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your ship is no match for the Cyber-Cruiser! [1;36m>[1;37m
 } T GE Cyb 4 message 11
 
 CYB4M12 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Cybertrons shall purge your race from the galaxy! [1;36m>[1;37m
 } T GE Cyb 4 message 12
 
@@ -4490,22 +4531,22 @@ The next four messages are displayed when a cybertron
 attacks another player.
 
 CYB4M13 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Give up! You cannot survive this attack! [1;36m>[1;37m
 } T GE Cyb 4 message 13
 
 CYB4M14 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Cybertrons cannot be stopped! [1;36m>[1;37m
 } T GE Cyb 4 message 14
 
 CYB4M15 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your destruction is a mathematical certainty! [1;36m>[1;37m
 } T GE Cyb 4 message 15
 
 CYB4M16 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m We shall prevail. You cannot survive! [1;36m>[1;37m
 } T GE Cyb 4 message 16
 
@@ -4516,22 +4557,22 @@ The first four messages are general messages displayed
 when the cybertron approaches another player from a distance.
 
 CYB5M1 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your puny race will join the Sartens in oblivion! [1;36m>[1;37m
 } T GE Cyb 5 message 1
 
 CYB5M2 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Cybertrons are superior beings! [1;36m>[1;37m
 } T GE Cyb 5 message 2
 
 CYB5M3 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your ship shall be mine! [1;36m>[1;37m
 } T GE Cyb 5 message 3
 
 CYB5M4 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You cannot defeat us! [1;36m>[1;37m
 } T GE Cyb 5 message 4
 
@@ -4539,22 +4580,22 @@ The next four messages are general messages displayed
 when the cybertron begins to brake to engage a player.
 
 CYB5M5 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m This is your last warning. I WILL destroy you! [1;36m>[1;37m
 } T GE Cyb 5 message 5
 
 CYB5M6 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your ship is no match for the Cyber-Dreadnought! [1;36m>[1;37m
 } T GE Cyb 5 message 6
 
 CYB5M7 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your computational abilities are inferior to Cybertrons. [1;36m>[1;37m
 } T GE Cyb 5 message 7
 
 CYB5M8 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your pathetic inaction is typical of organic beings. [1;36m>[1;37m
 } T GE Cyb 5 message 8
 
@@ -4563,22 +4604,22 @@ to a cybertron but the cyb chooses not to attack for
 any number of reasons.
 
 CYB5M9 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are no match for a Cybertron! [1;36m>[1;37m
 } T GE Cyb 5 message 9
 
 CYB5M10 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m We will destroy you, organic vermin! [1;36m>[1;37m
 } T GE Cyb 5 message 10
 
 CYB5M11 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your extermination is a certainty! [1;36m>[1;37m
 } T GE Cyb 5 message 11
 
 CYB5M12 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Wasting my time destroying your ship would be pointless! [1;36m>[1;37m
 } T GE Cyb 5 message 12
 
@@ -4586,22 +4627,22 @@ The next four messages are displayed when a cybertron
 attacks another player.
 
 CYB5M13 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Prepare to be destroyed! [1;36m>[1;37m
 } T GE Cyb 5 message 13
 
 CYB5M14 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Cybertrons cannot be stopped! [1;36m>[1;37m
 } T GE Cyb 5 message 14
 
 CYB5M15 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your destruction is a mathematical certainty! [1;36m>[1;37m
 } T GE Cyb 5 message 15
 
 CYB5M16 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m We shall prevail. You cannot survive! [1;36m>[1;37m
 } T GE Cyb 5 message 16
 
@@ -4619,22 +4660,22 @@ The first four messages are sent to players that approach
 but are not (yet) considered threats.
 
 DR1M1 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m CAUTION! This vessel transports hazardous material. [1;36m>[1;37m
 } T GE Droid 1 message 1
 
 DR1M2 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m This vessel is protected under Galactic Treaty Gt05-66A7-5847. [1;36m>[1;37m
 } T GE Droid 1 message 2
 
 DR1M3 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m CAUTION! Avoid contamination! Maintain clearance. [1;36m>[1;37m
 } T GE Droid 1 message 3
 
 DR1M4 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Maintain standard approach clearance regulations Gr06-25K6-41D6. [1;36m>[1;37m
 } T GE Droid 1 message 4
 
@@ -4642,22 +4683,22 @@ The next four messages can be sent to players who are
 considered unfriendly by this faction.
 
 DR1M5 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are no friend to the Lydorians! [1;36m>[1;37m
 } T GE Droid 1 message 5
 
 DR1M6 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m This vessel poses no threat to you. Halt your approach! [1;36m>[1;37m
 } T GE Droid 1 message 6
 
 DR1M7 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m We are not carrying anything of value. Move along! [1;36m>[1;37m
 } T GE Droid 1 message 7
 
 DR1M8 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You have been identified as an enemy of the Lydorians! [1;36m>[1;37m
 } T GE Droid 1 message 8
 
@@ -4665,22 +4706,22 @@ The next four messages are sent when a player attacks
 this ship.
 
 DR1M9 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your actions are in violation of Galactic Treaty! Cease and desist! [1;36m>[1;37m
 } T GE Droid 1 message 9
 
 DR1M10 {***
-[0;37mDistress call from the [0;36m%s
+[0;37mDistress call from [0;36m%s
 [1;36m<[1;37m This vessel under an illegal attack. Requesting assistance! [1;36m>[1;37m
 } T GE Droid 1 message 10
 
 DR1M11 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Please spare this vessel! We carry nothing of value! [1;36m>[1;37m
 } T GE Droid 1 message 11
 
 DR1M12 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Stop this pointless aggression at once! [1;36m>[1;37m
 } T GE Droid 1 message 12
 
@@ -4700,22 +4741,22 @@ The first four messages are sent to players that approach
 but are not (yet) considered threats.
 
 DR2M1 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Warning! This ship is transporting goods under Murdonian Imperial Authority. [1;36m>[1;37m
 } T GE Droid 2 message 1
 
 DR2M2 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Warning! Interfering with this vessel is punishable by Murdonian law. [1;36m>[1;37m
 } T GE Droid 2 message 2
 
 DR2M3 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Warning! This vessel is transporting goods under Galactic Treaty. [1;36m>[1;37m
 } T GE Droid 2 message 3
 
 DR2M4 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Maintain standard approach clearance regulations Gr06-25K6-42D6. [1;36m>[1;37m
 } T GE Droid 2 message 4
 
@@ -4723,22 +4764,22 @@ The next four messages can be sent to players who are
 considered unfriendly by this faction.
 
 DR2M5 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Warning! Approaching this vessel will be considered an act of aggression. [1;36m>[1;37m
 } T GE Droid 2 message 5
 
 DR2M6 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Warning! We are prepared to defend this vessel and its passengers! [1;36m>[1;37m
 } T GE Droid 2 message 6
 
 DR2M7 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are wanted for crimes against the Murdonian Imperial Authority! [1;36m>[1;37m
 } T GE Droid 2 message 7
 
 DR2M8 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your presence is unwelcome. Cease your approach at once! [1;36m>[1;37m
 } T GE Droid 2 message 8
 
@@ -4746,22 +4787,22 @@ The next four messages are sent when a player attacks
 this ship.
 
 DR2M9 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m This vessel is carrying hundreds of civilian passengers! [1;36m>[1;37m
 } T GE Droid 2 message 9
 
 DR2M10 {***
-[0;37mDistress call from the [0;36m%s
+[0;37mDistress call from [0;36m%s
 [1;36m<[1;37m Under attack. Requesting assistance from any vessel. [1;36m>[1;37m
 } T GE Droid 2 message 10
 
 DR2M11 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m This is a peaceful transport ship. Your actions are reprehensible! [1;36m>[1;37m
 } T GE Droid 2 message 11
 
 DR2M12 {***
-[0;37mDistress call from the [0;36m%s
+[0;37mDistress call from [0;36m%s
 [1;36m<[1;37m The Murdonian Imperial Defense has been informed of your illegal aggression. [1;36m>[1;37m
 } T GE Droid 2 message 12
 
@@ -4781,22 +4822,22 @@ The first four messages are sent to players that approach
 but are not (yet) considered threats.
 
 DR3M1 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m This survey ship is protected under Galactic Treaty Gt05-66A7-5821. [1;36m>[1;37m
 } T GE Droid 3 message 1
 
 DR3M2 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Disturbing this survey ship is punishable under galactic law. [1;36m>[1;37m
 } T GE Droid 3 message 2
 
 DR3M3 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Maintain standard approach clearance regulations Gr06-25K6-43D2. [1;36m>[1;37m
 } T GE Droid 3 message 3
 
 DR3M4 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m This unmanned vessel is engaged in scientific research. [1;36m>[1;37m
 } T GE Droid 3 message 4
 
@@ -4804,22 +4845,22 @@ The next four messages can be sent to players who are
 considered unfriendly by this faction.
 
 DR3M5 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Warning! This vessel is equipped with auto-defense systems! [1;36m>[1;37m
 } T GE Droid 3 message 5
 
 DR3M6 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You have been identified as a threat to this vessel. [1;36m>[1;37m
 } T GE Droid 3 message 6
 
 DR3M7 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are responsible for the destruction of a research vessel! [1;36m>[1;37m
 } T GE Droid 3 message 7
 
 DR3M8 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m This survey ship is no threat to you. Back off now! [1;36m>[1;37m
 } T GE Droid 3 message 8
 
@@ -4827,22 +4868,22 @@ The next four messages are sent when a player attacks
 this ship.
 
 DR3M9 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m The Vakory High Command has been informed of your illegal aggression. [1;36m>[1;37m
 } T GE Droid 3 message 9
 
 DR3M10 {***
-[0;37mDistress call from the [0;36m%s
+[0;37mDistress call from [0;36m%s
 [1;36m<[1;37m Survey ship under attack. Requesting assistance! [1;36m>[1;37m
 } T GE Droid 3 message 10
 
 DR3M11 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Auto-defense systems activated. Cease and desist this attack! [1;36m>[1;37m
 } T GE Droid 3 message 11
 
 DR3M12 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Destroying this scientific research vessel is pointless! [1;36m>[1;37m
 } T GE Droid 3 message 12
 
@@ -4862,22 +4903,22 @@ The first four messages are sent to players that approach
 but are not (yet) considered threats.
 
 DR4M1 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m This vessel is transporting civilians. We are no threat! [1;36m>[1;37m
 } T GE Droid 4 message 1
 
 DR4M2 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m We are seeking refuge from Cybertron aggression. [1;36m>[1;37m
 } T GE Droid 4 message 2
 
 DR4M3 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m We no longer have any animosity towards your kind. [1;36m>[1;37m
 } T GE Droid 4 message 3
 
 DR4M4 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Cybertrons have decimated our species. We seek peace! [1;36m>[1;37m
 } T GE Droid 4 message 4
 
@@ -4885,22 +4926,22 @@ The next four messages can be sent to players who are
 considered unfriendly by this faction.
 
 DR4M5 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are an enemy of the Sarten Empire! Attack Drones summoned! [1;36m>[1;37m
 } T GE Droid 4 message 5
 
 DR4M6 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m We are prepared to defend ourselves from all aggressors! [1;36m>[1;37m
 } T GE Droid 4 message 6
 
 DR4M7 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are responsible for the destruction of Sarten vessels. [1;36m>[1;37m
 } T GE Droid 4 message 7
 
 DR4M8 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Why do you wish for more destruction? We seek peace! [1;36m>[1;37m
 } T GE Droid 4 message 8
 
@@ -4908,22 +4949,22 @@ The next four messages are sent when a player attacks
 this ship.
 
 DR4M9 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your actions leave us no recourse. [1;36m>[1;37m
 } T GE Droid 4 message 9
 
 DR4M10 {***
-[0;37mDistress call from the [0;36m%s
+[0;37mDistress call from [0;36m%s
 [1;36m<[1;37m Sarten civilian vessel under attack. Requesting assistance! [1;36m>[1;37m
 } T GE Droid 4 message 10
 
 DR4M11 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You have no more honor than a Cybertron! [1;36m>[1;37m
 } T GE Droid 4 message 11
 
 DR4M12 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m The Sarten Empire shall not take this aggression lightly. [1;36m>[1;37m
 } T GE Droid 4 message 12
 
@@ -4943,22 +4984,22 @@ The first four messages are sent to players that approach
 but are not (yet) considered threats.
 
 DR5M1 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m This Sarten vessel is acting in the defense of the Sarten Empire. [1;36m>[1;37m
 } T GE Droid 5 message 1
 
 DR5M2 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Do not interfere with the operation of this vessel. [1;36m>[1;37m
 } T GE Droid 5 message 2
 
 DR5M3 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Cybertrons must be stopped! [1;36m>[1;37m
 } T GE Droid 5 message 3
 
 DR5M4 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Join us in defending the galaxy from Cybertron aggression! [1;36m>[1;37m
 } T GE Droid 5 message 4
 
@@ -4966,22 +5007,22 @@ The next four messages can be sent to players who are
 considered unfriendly by this faction.
 
 DR5M5 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are an enemy of the Sarten Empire! Do not approach! [1;36m>[1;37m
 } T GE Droid 5 message 5
 
 DR5M6 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You were offered peaceful coexistence, and refused! [1;36m>[1;37m
 } T GE Droid 5 message 6
 
 DR5M7 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are responsible for the destruction of Sarten vessels. [1;36m>[1;37m
 } T GE Droid 5 message 7
 
 DR5M8 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your foolishness will be your destruction! [1;36m>[1;37m
 } T GE Droid 5 message 8
 
@@ -4989,22 +5030,22 @@ The next four messages are sent when a player attacks
 this ship.
 
 DR5M9 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your hostile actions will not be tolerated. [1;36m>[1;37m
 } T GE Droid 5 message 9
 
 DR5M10 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You have no more honor than a Cybertron! [1;36m>[1;37m
 } T GE Droid 5 message 10
 
 DR5M11 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m The Sarten Empire has been informed of your actions! [1;36m>[1;37m
 } T GE Droid 5 message 11
 
 DR5M12 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Death is too easy for Traxlyn Scurge like you. [1;36m>[1;37m
 } T GE Droid 5 message 12
 
@@ -5013,22 +5054,22 @@ player as a threat and breaks off to stage a preemptive
 attack.
 
 DR5M13 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You have offended the Sarten Empire -- your destruction is required! [1;36m>[1;37m
 } T GE Droid 5 message 13
 
 DR5M14 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You have been identified as an enemy of the Sarten Empire. [1;36m>[1;37m
 } T GE Droid 5 message 14
 
 DR5M15 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are an enemy of the Sarten Empire! Attack Drones summoned! [1;36m>[1;37m
 } T GE Droid 5 message 15
 
 DR5M16 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your attacks against our vessels will not go unanswered. [1;36m>[1;37m
 } T GE Droid 5 message 16
 
@@ -5039,22 +5080,22 @@ The first four messages are sent to players that approach
 but are not (yet) considered threats.
 
 DR6M1 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Be prepared for anything... stock up on weapons at Zygor! [1;36m>[1;37m
 } T GE Droid 6 message 1
 
 DR6M2 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Ready for a new ship? Check out the selection at Zygor! [1;36m>[1;37m
 } T GE Droid 6 message 2
 
 DR6M3 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Visit Zygor in sector 0 0 for all your galactic needs! [1;36m>[1;37m
 } T GE Droid 6 message 3
 
 DR6M4 {***
-[0;37mBeacon message from the [0;36m%s
+[0;37mBeacon message from [0;36m%s
 [1;36m<[1;37m Need more colonists and food? Visit Tahanian Station today! [1;36m>[1;37m
 } T GE Droid 6 message 4
 
@@ -5062,22 +5103,22 @@ The next four messages can be sent to players who are
 considered unfriendly by this faction.
 
 DR6M5 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You have committed crimes against the Galactic Command! [1;36m>[1;37m
 } T GE Droid 6 message 5
 
 DR6M6 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Your presence is unwelcome. Back off now! [1;36m>[1;37m
 } T GE Droid 6 message 6
 
 DR6M7 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m We are prepared to defend this vessel. [1;36m>[1;37m
 } T GE Droid 6 message 7
 
 DR6M8 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You have been identified as a threat! Do not approach! [1;36m>[1;37m
 } T GE Droid 6 message 8
 
@@ -5085,22 +5126,22 @@ The next four messages are sent when a player attacks
 this ship.
 
 DR6M9 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m You are no longer welcome at Zygor! [1;36m>[1;37m
 } T GE Droid 6 message 9
 
 DR6M10 {***
-[0;37mDistress call from the [0;36m%s
+[0;37mDistress call from [0;36m%s
 [1;36m<[1;37m Zygorian freighter under attack. Requesting assistance. [1;36m>[1;37m
 } T GE Droid 6 message 10
 
 DR6M11 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m An attack on this freighter is an affront to galactic law! [1;36m>[1;37m
 } T GE Droid 6 message 11
 
 DR6M12 {***
-[0;37mHailing message from the [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Cease and desist this attack at once! [1;36m>[1;37m
 } T GE Droid 6 message 12
 

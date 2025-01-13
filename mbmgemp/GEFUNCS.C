@@ -1162,7 +1162,10 @@ if (who >= 0 && who < nships && who != usrn)
 			shipclass[wptr->shpclass].won_func(wptr,who,ptr);
 		}
 
-	prfmsg(KILLEDBY,username(ptr),username(wptr));
+	if (ptr->status == GESTAT_AUTO)
+		prfmsg(KILLDNPC,username(ptr),username(wptr));
+	else
+		prfmsg(KILLEDBY,username(ptr),username(wptr));
 	outwar(FILTER,usrn,0);
 	++(wuptr->kills);
 
@@ -1340,7 +1343,10 @@ if (who >= 0 && who < nships && who != usrn)
 	}
 else
 	{
-	prfmsg(DIED,ptr->shipname,username(ptr));
+	if (shipclass[ptr->shpclass].max_type != CLASSTYPE_USER)
+		prfmsg(DIEDNPC,ptr->shipname,username(ptr));
+	else
+		prfmsg(DIED,ptr->shipname);
 	outwar(ALWAYS,usrn,0);
 	if (shipclass[ptr->shpclass].kill_func != NULL)
 		shipclass[ptr->shpclass].kill_func(ptr,usrn,NULL);
@@ -1849,7 +1855,10 @@ unsigned char channel;
 
 if (channel != 255)
 	{
-	prfmsg(MTACC1+mt,shpltr(channel,usrn),ptr->shipname);
+	if (ptr->status == GESTAT_AUTO)
+		prfmsg(MTACC1N+mt,shpltr(channel,usrn),ptr->shipname);
+	else
+		prfmsg(MTACC1+mt,shpltr(channel,usrn),ptr->shipname);
 	outprfge(ALWAYS,channel);
 	ptr->lastfired = channel;
 	}
