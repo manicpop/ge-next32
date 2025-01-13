@@ -3181,6 +3181,21 @@ REP39 {[1;37mRoster position....... %d
 REP40 {[1;37mCyborg: %d, Cybmine: %d, Cybupdate: %d
 } T GE report 40
 
+REP41 {[1;37mOrdnance report:
+} T GE report 41
+
+REP42 {[1;37mIncoming torpedoes.... } T GE report 42
+
+REP43 {[1;37mIncoming missiles..... } T GE report 43
+
+REP44 {[1;37mOutgoing torpedoes.... } T GE report 44
+
+REP45 {[1;37mOutgoing missiles..... } T GE report 45
+
+REP46 {[1;37mMines deployed........ } T GE report 46
+
+REP47 {[1;37mDecoys deployed....... } T GE report 47
+
 SCAN01 {[0;37m
 Scanning the [1;34m%s[0;37m:
 } T GE scan 01

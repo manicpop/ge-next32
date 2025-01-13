@@ -81,6 +81,9 @@ Please contact with me thoughts and suggestions.
   
 
 Other stuff:
+* A new ordnance report was added (REP ORD). This will list
+  all incoming and outgoing projectiles as well as display
+  the mines and decoys you have deployed.
 * The Sysop ship was removed. "Hidden" ships might return in
   future versions.
 * A bug that sometimes showed the wrong defaults in the planetary
@@ -107,7 +110,14 @@ Other stuff:
   longer part of the equation, bringing it into line with all
   other forms of damage. This should keep freighters from being
   nearly impossible to damage with phasers.
-
+* A STOP command has been added, which can bring the ship to a
+  complete stop even if the helm is damaged. If the helm isn't
+  damaged, it's the same as entering WARP 0 or IMPULSE 0.
+* A battle report has been added, which can be shown with the
+  command REPORT BATTLE (or REP BAT).
+* If you accidentally issue the maintenance command while
+  maintenance is in progress, you will be notified and not
+  charged a second time.
 
 === 0.1.1 === 2024-09-30:
 

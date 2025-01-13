@@ -2073,9 +2073,12 @@ if (freq >= 20000)
 
 void  FUNC cmd_report()
 {
-int             max,pcnt,i;
 
-if (margc != 2 || (!sameas(margv[1],"nav") && !sameas(margv[1],"sys") && !sameas(margv[1],"inv") && !sameas(margv[1],"acc")))
+WARSHP *ptr;
+int	max,pcnt,i,none,zothusn;
+double	ddist;
+
+if (margc != 2 || (!sameas(margv[1],"nav") && !sameas(margv[1],"sys") && !sameas(margv[1],"inv") && !sameas(margv[1],"acc") && !sameas(margv[1],"ord")))
 	{
 	prfmsg(FORMAT,"REPORT");
 	outprfge(ALWAYS,usrnum);
@@ -2263,7 +2266,139 @@ if (sameas(margv[1],"acc"))
 		prfmsg(REP31A,teamname(waruptr));
 		}
 	}
-
+else
+if (sameas(margv[1],"ord"))
+	{
+	prfmsg(REP41);
+	none = TRUE;
+	prfmsg(REP42);
+	for (i=0;i<MAXTORPS;++i)
+		{
+		if (warsptr->ltorps[i].distance != 0 && warsptr->ltorps[i].channel < nships)
+			{
+			ptr=warshpoff(warsptr->ltorps[i].channel);
+			none = FALSE;
+			prf("\r ");
+			if (warsptr->lock == warsptr->ltorps[i].channel)
+				prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",ptr->shipname);
+			else
+				prf("  \33[1;34m%s\33[1;37m   ",ptr->shipname);
+			prf("Dist: %u",warsptr->ltorps[i].distance);
+			}
+		}
+	if (none == TRUE)
+		prf("none\r");
+	else
+		prf("\r");
+	none = TRUE;
+	prfmsg(REP43);
+	for (i=0;i<MAXMISSL;++i)
+		{
+		if (warsptr->lmissl[i].distance != 0 && warsptr->lmissl[i].channel < nships)
+			{
+			ptr=warshpoff(warsptr->lmissl[i].channel);
+			none = FALSE;
+			prf("\r ");
+			if (warsptr->lock == warsptr->lmissl[i].channel)
+				prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",ptr->shipname);
+			else
+				prf("  \33[1;34m%s\33[1;37m   ",ptr->shipname);
+			prf("Dist: %u",warsptr->lmissl[i].distance);
+			}
+		}
+	if (none == TRUE)
+		prf("none\r");
+	else
+		prf("\r");
+	if (shipclass[warsptr->shpclass].max_torps != 0)
+		{
+		none = TRUE;
+		prfmsg(REP44);
+		for (zothusn = 0; zothusn < numships; zothusn++)
+			{
+			if (ingegame(zothusn))
+				{
+				ptr=warshpoff(zothusn);
+				for (i=0;i<MAXTORPS;++i)
+					{
+					if (ptr->ltorps[i].distance != 0 && ptr->ltorps[i].channel == usrnum)
+						{
+						none = FALSE;
+						prf("\r ");
+						if (warsptr->lock == zothusn)
+							prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",ptr->shipname);
+						else
+							prf("  \33[1;34m%s\33[1;37m   ",ptr->shipname);
+						prf("Dist: %u",ptr->ltorps[i].distance);
+						}
+					}
+				}
+			}
+		if (none == TRUE)
+			prf("none\r");
+		else
+			prf("\r");
+		}
+	if (shipclass[warsptr->shpclass].max_missl != 0)
+		{
+		none = TRUE;
+		prfmsg(REP45);
+		for (zothusn = 0; zothusn < numships; zothusn++)
+			{
+			if (ingegame(zothusn))
+				{
+				ptr=warshpoff(zothusn);
+				for (i=0;i<MAXMISSL;++i)
+					if (ptr->lmissl[i].distance != 0 && ptr->lmissl[i].channel == usrnum)
+						{
+						none = FALSE;
+						prf("\r ");
+						if (warsptr->lock == zothusn)
+							prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",ptr->shipname);
+						else
+							prf("  \33[1;34m%s\33[1;37m   ",ptr->shipname);
+						prf("Dist: %u",ptr->lmissl[i].distance);
+						}
+				}
+			}
+		if (none == TRUE)
+			prf("none\r");
+		else
+			prf("\r");
+		}
+	if (shipclass[warsptr->shpclass].has_mine != 0)
+		{
+		none = TRUE;
+		prfmsg(REP46);
+		for (i=0; i<nummines; ++i)
+			if (mines[i].channel == (byte)usrnum)
+				{
+				none = FALSE;
+				prf("\r ");
+				ddist = cdistance(&warsptr->coord,&mines[i].coord);
+				ddist *= 10000;
+				bearing = (int)(cbearing(&warsptr->coord,&mines[i].coord,warsptr->heading)+.5);
+				prf("%d %d  T:%2d  Br:%4d  Dist: %s",
+					(int)mines[i].coord.xcoord,(int)mines[i].coord.ycoord,mines[i].timer,bearing,spr("%ld",(long)ddist));
+				}
+		if (none == TRUE)
+			prf("none\r");
+		else
+			prf("\r");
+		}
+	if (shipclass[warsptr->shpclass].has_decoy != 0)
+		{
+		none = 0;
+		for (i=0; i<10;++i)
+			if (warsptr->decout[i] != 0)
+				++none;
+		prfmsg(REP47);
+		if (none == 0)
+			prf("none\r");
+		else
+			prf("%d\r",none);
+		}
+	}
 prfmsg(DASHES);
 outprfge(ALWAYS,usrnum);
 }

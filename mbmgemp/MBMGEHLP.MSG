@@ -783,14 +783,15 @@ command as follows:
 
 HLPREP {
 [1;36mThe [1;37mREPORT[1;36m command gives you status information on navigation, ship systems,
-inventory, and accounting. Issue the command as follows:
+inventory, accounting, and deployed ordnance. Issue the command as follows:
 
-  [1;37mreport [1;32m[[1;37mnav[1;32m/[1;37msys[1;32m/[1;37minv[1;32m/[1;37macc[1;32m]
+  [1;37mreport [1;32m[[1;37mnav[1;32m/[1;37msys[1;32m/[1;37minv[1;32m/[1;37macc[1;32m/[1;37mord[1;32m]
 
 [1;36mExamples: [1;37mreport nav [1;36m produces a navigational report
           [1;37mreport sys [1;36m produces a systems report
           [1;37mreport inv [1;36m produces an inventory report
           [1;37mrep acc    [1;36m produces an accounting report
+          [1;37mrep ord    [1;36m produces a ordnance report
 [1;37m} T GE help report message
 
 HLPROS {
