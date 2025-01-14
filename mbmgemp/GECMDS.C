@@ -5463,7 +5463,10 @@ shpnum = findshp(margv[1],1);
 if (shpnum >= 0)
 	{
 	warsptr->lock = shpnum;
-	prfmsg(LOCK02, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
+	if (warshpoff(shpnum)->status == GESTAT_USER)
+		prfmsg(LOCK02, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
+	else
+		prfmsg(LOCK02N, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
 	outprfge(FILTER,usrnum);
 	}
 else
