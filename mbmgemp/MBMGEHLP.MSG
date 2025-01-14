@@ -9,7 +9,7 @@ Commands: [1;32mabandon  abort  admin  attack  buy  cloak  cls  decoy  destruct
           flux  freq  help  impulse  jammer  jettison  lock  maintenance  mine
           missile  navigate  new  orbit  phaser  planet  price  rename  report
           roster  rotate  scan  sell  send  set  shield  spy  stop  team
-          torpedo  transfer  warp  zipper
+          torpedo  transfer  warp  who  zipper
 
 [1;36m Topics:  [1;32mbattle  class  communicate  cybertron  galaxy  moving  planets
           scoring  sector  starting  strategy  wormholes
@@ -1131,5 +1131,10 @@ available for the use of sysops, game administrators, or their designees:
 [1;37m  sys assigncybs [1;32m[number][1;36m -- reshuffle Cybs pursuing you based on distance
 [1;37m
 } T GE help sys message 
+
+HLPWHO {
+[1;36mThe [1;37mWHO[1;36m command displays a list of users online.
+[1;37m} T GE help cls message
+
 
 

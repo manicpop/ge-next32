@@ -102,7 +102,7 @@ void	cmd_gehelp(), cmd_cloak(), cmd_impulse(), cmd_phas(), cmd_report(),
 	cmd_rename(), cmd_destruct(), cmd_abort(), cmd_jammer(), cmd_mine(),
 	cmd_abandon(), cmd_zipper(), cmd_lock(), cmd_navigate(), cmd_who(),
 	cmd_displ(), cmd_freq(), cmd_cls(), cmd_data(), cmd_team(), cmd_spy(),
-	cmd_jettison();
+	cmd_jettison(), cmd_stop();
 
 #define GECMDSIZ (sizeof(gecmds)/sizeof(struct cmd))
 
@@ -210,6 +210,7 @@ struct hlpcmd gehlp[] = {
 		{"torpedo",			HLPTOR},
 		{"transfer",			HLPTRA},
 		{"warp",			HLPWAR},
+		{"who",				HLPWHO},
 		{"zipper",			HLPZIP},
 
 /* FYI: The above are commands and below are topics....       Mike       */
@@ -5531,11 +5532,18 @@ outprfge(ALWAYS,usrnum);
 
 void  FUNC cmd_who()
 {
-#ifdef PHARLAP
-prf("ID:%s,%s,%s\r",usaptr->userid,usaptr->usrnam,bturno);
-#else
-prf("ID:%s,%s,%s\r",usaptr->userid,usaptr->usrnam,"NULL");
-#endif
+int zothusn;
+
+WARSHP *wptr;
+
+for (zothusn=0; zothusn < nterms; zothusn++)
+	if (ingegame(zothusn))
+		{
+		wptr=warshpoff(zothusn);
+		if (wptr->status == GESTAT_USER)
+			prf("%s ",username(wptr));
+		}
+prf("\r");
 outprfge(ALWAYS,usrnum);
 }
 
