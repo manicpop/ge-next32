@@ -1196,13 +1196,16 @@ if (ptr->energy >= HPMINFIR)
 						else
 							prfmsg(HPHITU,username(ptr),gechrbuf);
 						outprfge(ALWAYS,othusn);
-						wptr->damage += (double)damage;
-						wuptr = warusroff(usrn);
-						set_dislike(wuptr,shipclass[wptr->shpclass].faction,damage);
-						wptr->lastfired = usrn;
-						wptr->cantexit = FIRETICKS;
-						ptr->cantexit = FIRETICKS;
-						randamage(wptr,othusn); /*assess any random damage */
+						if (damage >= 1)
+							{
+							wptr->damage += (double)damage;
+							wuptr = warusroff(usrn);
+							set_dislike(wuptr,shipclass[wptr->shpclass].faction,damage);
+							wptr->lastfired = usrn;
+							wptr->cantexit = FIRETICKS;
+							ptr->cantexit = FIRETICKS;
+							randamage(wptr,othusn); /*assess any random damage */
+							}
 						}
 					}
 				}
