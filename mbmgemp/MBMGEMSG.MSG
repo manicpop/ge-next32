@@ -2022,9 +2022,9 @@ EXIWAR2 {***
 [0;37mSensors can no longer locate the [0;36m%s[0;37m.[1;37m
 } T GE sensors cannot locate message
 
-WARHUP {***
-[0;36m%s[1;36m's ship just vanished![1;37m
-} T GE ship vanished message
+PEACEOUT {***
+[0;36m%s[1;36m's ship, the [0;36m%s[1;36m, has powered down.[1;37m
+} T GE ship enters game message
 
 NOSHPS {
 [1;36mAll the ships have been assigned, please check back later.[1;37m
@@ -2529,7 +2529,7 @@ SCAN3 {***
 } T GE you are being scanned by unknown ship message
 
 ENTWAR {***
-[1;36mA %s, the [0;36m%s[1;36m, just appeared in this star system![1;37m
+[0;37mThe [0;36m%s[0;37m just appeared in this sector![1;37m
 } T GE ship just appeared message
 
 FIRSTIME {
@@ -2547,7 +2547,8 @@ Type [1;37m?[0;37m if you need assistance.[1;37m
 } T GE welcome user message
 
 ANNOUN {***
-[0;37mA %s, the [0;36m%s[0;37m, has been detected cruising the galaxy.[1;37m
+[1;36mThe %s [0;36m%s[1;36m, commanded by [0;36m%s[1;36m,
+has been detected cruising the galaxy.[1;37m
 } T GE ship enters game message
 
 NOPLNT {

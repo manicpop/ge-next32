@@ -141,18 +141,15 @@ tossingegame();
 void  FUNC tossingegame()
 {
 
-if (warsptr->cloak != 10)
-	{
-	prfmsg(ANNOUN,shipclass[warsptr->shpclass].typename, warsptr->shipname);
-	outwar(FILTER,usrnum,0);
-	}
+prfmsg(ANNOUN,shipclass[warsptr->shpclass].typename, warsptr->shipname, waruptr->userid);
+outwar(FILTER,usrnum,0);
 
 prfmsg(ENTSHP,waruptr->userid);
 outprfge(ALWAYS,usrnum);
 
 if (warsptr->cloak != 10)
 	{
-	prfmsg(ENTWAR, shipclass[warsptr->shpclass].typename, warsptr->shipname);
+	prfmsg(ENTWAR, warsptr->shipname);
 	outsect(FILTER,&warsptr->coord,usrnum,0);
 	}
 

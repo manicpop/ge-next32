@@ -118,6 +118,8 @@ Other stuff:
 * If you accidentally issue the maintenance command while
   maintenance is in progress, you will be notified and not
   charged a second time.
+* There is now an message shown to all users when a player
+  exits.
 
 === 0.1.1 === 2024-09-30:
 
