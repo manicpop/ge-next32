@@ -470,7 +470,7 @@ void  FUNC accel(ptr,usrn)
 WARSHP *ptr;
 int           usrn;
 {
-int i,flag,usage;
+int /*i,flag,*/usage;
 double absol();
 double  accelrate,decelrate;
 
@@ -512,7 +512,7 @@ if (ptr->speed < ptr->speed2b)
 				prfmsg(WARP,gechrbuf);
 				outprfge(FILTER,usrn);
 
-				/* if we passed warp 4-8 kill any missiles */
+				/* if we passed warp 4-8 kill any missiles
 
 				if ((ptr->speed + accelrate)/1000 >= (4 + gernd()%4))
 					{
@@ -530,7 +530,7 @@ if (ptr->speed < ptr->speed2b)
 						prfmsg(MISSL2);
 						outprfge(FILTER,usrn);
 						}
-					}
+					} */
 				}
 			ptr->speed += accelrate;
 			}
@@ -1616,7 +1616,6 @@ WARUSR				*wuptr;
 MISSILE				*mptr;
 TORPEDO				*tptr;
 unsigned			*dptr;
-char				tmpbuf[20];
 double				damfact;
 
 /* flag hyper-phasers ready again */
@@ -1716,37 +1715,23 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 		if (mptr->distance < mislsped)
 			{
 			mptr->distance = 0;
-			/* reduce the energy by the weight of this ship */
+			/* reduce the energy by the damage factor of this ship */
 			damfact = mptr->energy;
-			damfact = ton_fact(ptr,damfact); /* adjust for weight */
+			damfact = ton_fact(ptr,damfact);
 			mptr->energy = damfact;
-
-			if (mptr->energy < 1000)
-				strcpy(tmpbuf,"very small");
-			else
-			if (mptr->energy < 5000)
-				strcpy(tmpbuf,"light");
-			else
-			if (mptr->energy < 20000U)
-				strcpy(tmpbuf,"moderate");
-			else
-			if (mptr->energy < 40000U)
-				strcpy(tmpbuf,"strong");
-			else
-				strcpy(tmpbuf,"devastating");
-
 
 			if (ptr->shieldstat == SHIELDUP)
 				{
 				damfact = damfact/50000.0;
-				damfact = damfact * rndm(.1);
-				ptr->damage += mdammax*damfact;
-				prfmsg(MHIT1,tmpbuf);
+				damfact = mdammax*(damfact * rndm(.1));
+				ptr->damage += damfact;
+				damstr((int)damfact);
+				prfmsg(MHIT1,gechrbuf);
 				outprfge(ALWAYS,usrn);
 				if ((int)mptr->channel < nships)
 					{
 					wuptr = warusroff((int)mptr->channel);
-					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)(mdammax*damfact));
+					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)(damfact));
 					}
 				acctm(ptr,usrn,1,mptr->channel);
 
@@ -1756,16 +1741,16 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 				}
 			else
 				{
-				prfmsg(MHIT2,tmpbuf);
-				outprfge(ALWAYS,usrn);
 				damfact = damfact/50000.0;
-				damfact = damfact * (rndm(.5)+.5);
-				ptr->damage += mdammax*damfact;
+				damfact = mdammax*(damfact * (rndm(.5)+.5));
+				ptr->damage += damfact;
+				damstr((int)damfact);
+				prfmsg(MHIT2,gechrbuf);
 				outprfge(ALWAYS,usrn);
 				if ((int)mptr->channel < nships)
 					{
 					wuptr = warusroff((int)mptr->channel);
-					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)(mdammax*damfact));
+					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)(damfact));
 					}
 				acctm(ptr,usrn,1,mptr->channel);
 				}
@@ -1792,10 +1777,28 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 						}
 					}
 				}
-			if (mptr->distance > 1)  /* missl still here? */
+			if (mptr->distance > 0)  /* missl still here? */
 				{
 				mptr->distance -= mislsped;
-				if (flag == 0)
+				if (mptr->distance > 50000U - (int)(ptr->speed/6.5))
+					{
+					mptr->distance = 0;
+					prfmsg(MISSL2);
+					outprfge(FILTER,usrn);
+					}
+				else
+					{
+					mptr->distance += (int)(ptr->speed/6.5);
+					if (mptr->energy < 1250)
+						{
+						mptr->distance = 0;
+						prfmsg(MISSL2);
+						outprfge(FILTER,usrn);
+						}
+					else
+						mptr->energy -= 1250;	/* decrease energy over time */
+					}
+				if (mptr->distance > 0 && flag == 0)
 					{
 					prfmsg(MISSL1);
 					outprfge(FILTER,usrn);

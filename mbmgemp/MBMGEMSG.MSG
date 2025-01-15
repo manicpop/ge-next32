@@ -298,13 +298,13 @@ missile. The exact formula is...
 damage = (MDAMMAX/100)*(50000/missile power)*
          (random(.5)+.5);
 
-MDAMMAX {Missile Damage Maximum: 25} N 1 100
+MDAMMAX {Missile Damage Maximum: 35} N 1 100
 
 This option controls the speed of a missile. 
 It is the distance the missile goes each "tic"
 which is about 5 seconds.
 
-MISLSPED {Speed of missile: 1212} N 1 10000
+MISLSPED {Speed of missile: 2441} N 1 10000
 
 This value controls the ratio of energy 
 imparted to a missile to the energy extracted
@@ -2471,12 +2471,12 @@ THIT2 {***
 } T GE hit by torp without shields message
 
 MHIT1 {***
-[0;37m[[0;31mWARNING![0;37m] Direct hit by a hyper-missile carrying a [0;31m%s[0;37m charge!
-Shields deflected most of the blast.[1;37m
+[0;37m[[0;31mWARNING![0;37m] Direct hit by a hyper-missile, caused [0;31m%s[0;37m damage!
+Shields deflected some of the blast.[1;37m
 } T GE hit by missile with shields message
 
 MHIT2 {***
-[0;37m[[0;31mWARNING![0;37m] Direct hit by a hyper-missile carrying a [0;31m%s[0;37m charge![1;37m
+[0;37m[[0;31mWARNING![0;37m] Direct hit by a hyper-missile, caused [0;31m%s[0;37m damage![1;37m
 } T GE hit by missile without shields message
 
 MTACC1 {***
