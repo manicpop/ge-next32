@@ -78,7 +78,6 @@ Please contact with me thoughts and suggestions.
   will now show "??.??" for their speed when traveling at
   this speed, then immediately snap into a "normal" speed
   when reaching their destination.
-  
 
 Other stuff:
 * A new ordnance report was added (REP ORD). This will list
@@ -122,6 +121,16 @@ Other stuff:
   exits.
 * A WHO command was added (well, changed) to show a list of
   users online.
+* The way missiles function has been changed. You can no
+  longer "shake off" missiles, but you can outrun them.
+  If you get far enough away from a missile, it will lose
+  its lockon (you can use the new REP ORD to see their
+  distance from you). Also, missiles' energy now decrease
+  over time, so they will eventually run out of energy and
+  sputter out. The speed and maximum damage of missiles
+  have both been increased.
+* When torpedoes or missiles fail to reach their target,
+  the user is now notified.
 
 === 0.1.1 === 2024-09-30:
 

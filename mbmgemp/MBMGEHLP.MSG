@@ -296,8 +296,8 @@ If you have a cloaking system, use it sparingly as it consumes incredible
 amounts of energy; it is most useful in covering a retreat.
 
 If you have incoming torpedoes, you can ditch them easily by making a jump to
-light speed (provided you have warp drive). This does not work for missiles
-though, as they too can go through hyperspace.
+light speed (provided you have warp drive). Missiles, however, can travel
+through hyperspace; you can only shake them off by fleeing at high warp.
 
 Launching decoys does not guarantee that the incoming missiles or torpedoes
 will be destroyed. Launching more decoys than incoming weapons increases the
@@ -643,7 +643,8 @@ This missile guidance system will attempt to lock on the ship prior to firing
 the missile. If a lock is made the missile is launched.
 
 Missiles must be charged from your neutron flux pile, and will drain your
-ship's flux pile by 1/10th of the amount of the charge.
+ship's flux pile by 1/10th of the amount of the charge. A missile's charge
+can be between 2500 and 50000.
 
 Issue the command as follows:
 
@@ -652,7 +653,7 @@ Issue the command as follows:
   ship letter [1;36m= the ship you are firing upon (or [1;37m@[1;36m for the locked on ship)
   [1;32menergy [1;36m= the energy from your neutron flux pile to charge into the missile.
 
-Examples: [1;37mmissile A 100    [1;36mfires a missile at ship A which cause minor (if any)
+Examples: [1;37mmissile A 5000   [1;36mfires a missile at ship A which cause minor (if any)
                    damage, and drains your ship's flux by 10
           [1;37mmissile C 40000  [1;36mfires a missile at ship C which will cause major
                    damage, and drains your ship's flux by 4000

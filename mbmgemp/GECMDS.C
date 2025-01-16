@@ -1401,7 +1401,7 @@ if (margv[2] == NULL || margc < 3)
 
 eng_long = atol(margv[2]);
 
-if (eng_long == 0 || eng_long > 50000L)
+if (eng_long == 0 || eng_long < 2500L || eng_long > 50000L)
 	{
 	prfmsg(FORMAT,"MISSILE");
 	outprfge(ALWAYS,usrnum);
@@ -1436,7 +1436,7 @@ if ( shpnum >= 0)
 		outprfge(ALWAYS,usrnum);
 		return;
 		}
-	misl(warsptr,usrnum,shpnum,energy);
+	misl(warsptr,usrnum,shpnum,energy,eng_flu);
 	}
 else
 	{

@@ -312,7 +312,7 @@ from the flux pod. Default value is 10. A
 missile charge of 50000 consumes 5000 from the
 flux. Set to 1 to get a 1 to 1 ratio.
 
-MISENGFC {Missile Energy usage ratio: 100} N 1 2000
+MISENGFC {Missile Energy usage ratio: 10} N 1 2000
 
 This option controls the maximum damage an Ion
 Cannon can do each shot. It is factored in the 
@@ -2463,16 +2463,17 @@ LOCK5 {
 } T GE no such ship message
 
 THIT1 {***
-[0;37m[[0;31mWARNING![0;37m] Direct hit from a torpedo! Shields deflected some of the blast.[1;37m
+[0;37m[[0;31mWARNING![0;37m] Direct hit by a torpedo, caused [0;31m%s[0;37m damage!
+Shields deflected some of the blast.[1;37m
 } T GE hit by torp with shields message
 
 THIT2 {***
-[0;37m[[0;31mWARNING![0;37m] Direct hit from a torpedo! Damage control has been notified.[1;37m
+[0;37m[[0;31mWARNING![0;37m] Direct hit by a torpedo, caused [0;31m%s[0;37m damage![1;37m
 } T GE hit by torp without shields message
 
 MHIT1 {***
 [0;37m[[0;31mWARNING![0;37m] Direct hit by a hyper-missile, caused [0;31m%s[0;37m damage!
-Shields deflected some of the blast.[1;37m
+Shields deflected most of the blast.[1;37m
 } T GE hit by missile with shields message
 
 MHIT2 {***
@@ -2480,19 +2481,27 @@ MHIT2 {***
 } T GE hit by missile without shields message
 
 MTACC1 {***
-[0;37mSensors indicate our torpedo has hit ship [0;36m%c[0;37m, the [0;36m%s[0;37m.[1;37m
+[0;37mSensors indicate a torpedo has hit ship [0;36m%c[0;37m, the [0;36m%s[0;37m.[1;37m
 } T GE your torp hit message
 
 MTACC2 {***
-[0;37mSensors indicate our hyper-missile has hit ship [0;36m%c[0;37m, the [0;36m%s[0;37m.[1;37m
+[0;37mSensors indicate a hyper-missile has hit ship [0;36m%c[0;37m, the [0;36m%s[0;37m.[1;37m
 } T GE your missile hit message
 
 MTACC1N {***
-[0;37mSensors indicate our torpedo has hit ship [0;36m%c[0;37m, [0;36m%s[0;37m.[1;37m
+[0;37mSensors indicate a torpedo has hit ship [0;36m%c[0;37m, [0;36m%s[0;37m.[1;37m
 } T GE your torp hit message
 
 MTACC2N {***
-[0;37mSensors indicate our hyper-missile has hit ship [0;36m%c[0;37m, [0;36m%s[0;37m.[1;37m
+[0;37mSensors indicate a hyper-missile has hit ship [0;36m%c[0;37m, [0;36m%s[0;37m.[1;37m
+} T GE your missile hit message
+
+MISMISS {***
+[0;37mSensors indicate a hyper-missile fired at ship [0;36m%c[0;37m has been lost![1;37m
+} T GE your missile hit message
+
+TORMISS {***
+[0;37mSensors indicate all torpedoes fired at ship [0;36m%c[0;37m have been lost![1;37m
 } T GE your missile hit message
 
 TORP1 {***

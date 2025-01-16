@@ -511,26 +511,6 @@ if (ptr->speed < ptr->speed2b)
 				sprintf(gechrbuf,"%.2f",(ptr->speed + accelrate)/1000.0);
 				prfmsg(WARP,gechrbuf);
 				outprfge(FILTER,usrn);
-
-				/* if we passed warp 4-8 kill any missiles
-
-				if ((ptr->speed + accelrate)/1000 >= (4 + gernd()%4))
-					{
-					flag = 0;
-					for (i=0;i<MAXMISSL;++i)
-						{
-						if (ptr->lmissl[i].distance > 0)
-							{
-							ptr->lmissl[i].distance = 0;
-							flag = 1;
-							}
-						}
-					if (flag == 1)
-						{
-						prfmsg(MISSL2);
-						outprfge(FILTER,usrn);
-						}
-					} */
 				}
 			ptr->speed += accelrate;
 			}
@@ -618,8 +598,18 @@ if (flag == 1)
 	outsect(FILTER,&(warshpoff(usrn)->coord),usrn,0);
 
 	for(i=0;i<MAXTORPS;++i)
+		{
+		if (ptr->ltorps[i].distance > 0)
+			{
+			if (flag == 1 && ingegame(ptr->ltorps[i].channel) && ptr->ltorps[i].channel < nterms)
+				{
+				prfmsg(TORMISS,shpltr(ptr->ltorps[i].channel,usrn));
+				outprfge(FILTER,ptr->ltorps[i].channel);
+				}
+			flag = 0;
+			}
 		ptr->ltorps[i].distance = 0;
-
+		}
 	for(i=0;i<MAXDECOY;++i)
 		ptr->decout[i] = 0;
 	}
@@ -1647,15 +1637,14 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 					wuptr = warusroff((int)tptr->channel);
 					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
 					}
-				prfmsg(THIT1);
+				damstr((int)damfact);
+				prfmsg(THIT1,gechrbuf);
 				outprfge(ALWAYS,usrn);
 				acctm(ptr,usrn,0,tptr->channel);
 				shieldhit(ptr,usrn,(gernd()%20)+10);
 				}
 			else
 				{
-				prfmsg(THIT2);
-				outprfge(ALWAYS,usrn);
 				damfact = rndm(.5)+.5;
 				damfact = tdammax * damfact;
 
@@ -1667,6 +1656,9 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 					wuptr = warusroff((int)tptr->channel);
 					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
 					}
+				damstr((int)damfact);
+				prfmsg(THIT2,gechrbuf);
+				outprfge(ALWAYS,usrn);
 				acctm(ptr,usrn,0,tptr->channel);
 				}
 			randamage(ptr,usrn); /*assess any random damage */
@@ -1766,7 +1758,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 						{
 						prfmsg(MISDEST);
 						outprfge(FILTER,usrn);
-						if (mptr->channel < nterms)
+						if (ingegame(mptr->channel) && mptr->channel < nterms)
 							{
 							prfmsg(MISDEST2);
 							outprfge(FILTER,mptr->channel);
@@ -1780,23 +1772,22 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 			if (mptr->distance > 0)  /* missl still here? */
 				{
 				mptr->distance -= mislsped;
-				if (mptr->distance > 50000U - (int)(ptr->speed/6.5))
+				if (ptr->speed > 100000.0 || mptr->distance > 50000U - (int)(ptr->speed/6.5) ||
+					mptr->energy <= 1250)
 					{
 					mptr->distance = 0;
 					prfmsg(MISSL2);
 					outprfge(FILTER,usrn);
+					if (ingegame(mptr->channel) && mptr->channel < nterms)
+						{
+						prfmsg(MISMISS,shpltr(mptr->channel,usrn));
+						outprfge(FILTER,mptr->channel);
+						}
 					}
 				else
 					{
 					mptr->distance += (int)(ptr->speed/6.5);
-					if (mptr->energy < 1250)
-						{
-						mptr->distance = 0;
-						prfmsg(MISSL2);
-						outprfge(FILTER,usrn);
-						}
-					else
-						mptr->energy -= 1250;	/* decrease energy over time */
+					mptr->energy -= 1250;	/* decrease energy over time */
 					}
 				if (mptr->distance > 0 && flag == 0)
 					{
