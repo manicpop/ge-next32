@@ -2183,12 +2183,20 @@ if (sameas(margv[1],"sys"))
 		}
 	if (shipclass[warsptr->shpclass].max_phasr != 0)
 		{
-		if (warsptr->phasr > 0)
+		if (warsptr->phasr >= PMINFIRE)
 			{
 			if (warsptr->phasrtype < 10)
 				prfmsg(REP23,warsptr->phasrtype);
 			else
 				prfmsg(REP23S,warsptr->phasrtype);
+			}
+		else
+		if (warsptr->phasr >= 0)
+			{
+			if (warsptr->phasrtype < 10)
+				prfmsg(REP29,warsptr->phasrtype);
+			else
+				prfmsg(REP29S,warsptr->phasrtype);
 			}
 		else
 			{
@@ -5201,15 +5209,25 @@ if (sameas("phasertype",margv[1]) && margc == 3)
 else
 if (sameas("maint",margv[1]))
 	{
-	if (warsptr->cantexit > 0)
+	if (sameas("now",margv[2]))
 		{
-		prfmsg(MAINT9);
-		outprfge(ALWAYS,usrnum);
-		return;
+		warsptr->damage = 0.0;
+		warsptr->repair = 255;
 		}
-	warsptr->damage = 3;
-	warsptr->repair = (unsigned)(warsptr->damage/3.0)+1;
-	prfmsg(MAINT5,warsptr->repair);
+	else
+		{
+		if (warsptr->cantexit > 0)
+			{
+			prfmsg(MAINT9);
+			outprfge(ALWAYS,usrnum);
+			return;
+			}
+		warsptr->repair = (unsigned)(warsptr->damage/3.0)+1;
+		}
+	if (warsptr->repair == 255)
+		prfmsg(MAINT5,0);
+	else
+		prfmsg(MAINT5,warsptr->repair);
 	outprfge(ALWAYS,usrnum);
 	return;
 	}

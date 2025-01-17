@@ -3193,6 +3193,12 @@ REP27 {[1;37mPlanets established... %d
 REP28 {[1;37mCash on hand.......... [0;33m%s[1;37m
 } T GE report 28
 
+REP29 {[1;37mPhasers (Mark-%d)...... [1;33m< charging >[1;37m
+} T GE report 24
+
+REP29S {[1;37mPhasers (Mark-%d)..... [1;33m< charging >[1;37m
+} T GE report 24 short
+
 REP30 {[1;37mScore................. %s
 } T GE report 30
 

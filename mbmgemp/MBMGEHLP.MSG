@@ -1122,7 +1122,7 @@ available for the use of sysops, game administrators, or their designees:
 [1;37m  sys class [1;32m[number][1;36m -- change current ship to specified class number
 [1;37m  sys shieldtype [1;32m[number][1;36m -- change current ship shield to specified class
 [1;37m  sys phasertype [1;32m[number][1;36m -- change current ship phaser to specified class
-[1;37m  sys maint [1;36m -- repair ship quickly without having to orbit a planet
+[1;37m  sys maint [1;32m[[1;37mnow[1;32m][1;36m -- repair ship without having to orbit
 [1;37m  sys unjam [1;36m -- clear jamming
 [1;37m  sys list [1;32m[number][1;36m -- list 50 ships in game beginning with specified number
 [1;37m  sys classlist [1;36m -- show complete list of ship classes, including NPCs

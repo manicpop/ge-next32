@@ -393,7 +393,7 @@ int           usrn;
 {
 if (ptr->repair > 0)
 	{
-	if (ptr->cantexit > 0)
+	if (ptr->cantexit > 0 && ptr->repair != 255)	/* allow for sys maint */
 		{
 		prfmsg(MAINT10);
 		ptr->repair = 0;
@@ -411,12 +411,16 @@ if (ptr->repair > 0)
 		{
 		ptr->repair = 0;
 		ptr->damage = 0.0;
-		ptr->phasr = 100;
+		if (ptr->phasr < 1)
+			ptr->phasr = 0;
 		ptr->tactical = 0;
 		ptr->helm = 0;
+		ptr->cloak = 0;
 		ptr->firecntl = 0;
-		ptr->shieldstat = SHIELDDN;
-		ptr->shield = 0;
+		if (ptr->shieldstat == SHIELDDM)
+			ptr->shieldstat = SHIELDDN;
+		if (ptr->shield < 1)
+			ptr->shield = 0;
 		ptr->topspeed = shipclass[ptr->shpclass].max_warp;
 		prfmsg(MAINT7);
 		outprfge(ALWAYS,usrn);
