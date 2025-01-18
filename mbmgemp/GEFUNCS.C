@@ -807,7 +807,7 @@ if (ptr->speed > 0)
 			}
 		useenergy(ptr,usrn,MOVENGUSE);
 
-		if (ptr->energy < MOVENGMIN)
+		if (fluxstat(ptr,usrn,MOVENGMIN) == 0)
 			{
 			ptr->speed2b = 0;
 			prfmsg(MOVE4);
@@ -1381,13 +1381,14 @@ int           usrn;
 ** Check flux status                                                     **
 **************************************************************************/
 
-void  FUNC fluxstat(ptr,usrn)
+int  FUNC fluxstat(ptr,usrn,energy)
 
-WARSHP *ptr;
-int           usrn;
+WARSHP	*ptr;
+int	usrn;
+unsigned energy;
 {
 
-if (ptr->energy < ENGYMIN)
+if (ptr->energy < energy)
 	{
 	if (ptr->items[I_FLUXPOD] > 0)
 		{
@@ -1395,12 +1396,19 @@ if (ptr->energy < ENGYMIN)
 		--ptr->items[I_FLUXPOD];
 		prfmsg(FLUXLOAD);
 		if (ptr->items[I_FLUXPOD] == 0)
-			{
 			prfmsg(LASTFLUX);
-			}
 		outprfge(ALWAYS,usrn);
+		return(1);
+		}
+	else
+		{
+		prfmsg(NOFLUX);
+		outprfge(ALWAYS,usrn);
+		return(0);
 		}
 	}
+else
+return(1);
 }
 
 
@@ -1416,7 +1424,7 @@ int           usrn;
 
 if (ptr->shieldstat == SHIELDUP)
 	{
-	if (ptr->energy < SHMINPWR)
+	if (ptr->energy < SHENGUSE * ptr->shieldtype)
 		{
 		ptr->shieldstat = SHIELDDN;
 		ptr->shield = 0;
@@ -1718,7 +1726,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 
 			if (ptr->shieldstat == SHIELDUP)
 				{
-				damfact = damfact/50000.0;
+				damfact = damfact/20000.0;
 				damfact = mdammax*(damfact * rndm(.1));
 				ptr->damage += damfact;
 				damstr((int)damfact);
@@ -1737,7 +1745,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 				}
 			else
 				{
-				damfact = damfact/50000.0;
+				damfact = damfact/20000.0;
 				damfact = mdammax*(damfact * (rndm(.5)+.5));
 				ptr->damage += damfact;
 				damstr((int)damfact);
@@ -1777,7 +1785,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 				{
 				mptr->distance -= mislsped;
 				if (ptr->speed > 100000.0 || mptr->distance > 50000U - (int)(ptr->speed/6.5) ||
-					mptr->energy <= 1250)
+					mptr->energy <= 500)
 					{
 					mptr->distance = 0;
 					prfmsg(MISSL2);
@@ -1791,7 +1799,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 				else
 					{
 					mptr->distance += (int)(ptr->speed/6.5);
-					mptr->energy -= 1250;	/* decrease energy over time */
+					mptr->energy -= 500;	/* decrease energy over time */
 					}
 				if (mptr->distance > 0 && flag == 0)
 					{

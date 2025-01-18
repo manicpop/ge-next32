@@ -738,34 +738,26 @@ if (*margv[1] == '@') /* turn absolute */
 	{
 	if (warsptr->helm == 0)
 		{
-		if (useenergy(warsptr,usrnum,ROTENGUSE) == 1)
+		*margv[1] = '+';
+		deg = atoi(margv[1]);
+		if (deg < 360)
 			{
-			*margv[1] = '+';
-			deg = atoi(margv[1]);
-			if (deg < 360)
+			if (deg == warsptr->heading)
 				{
-				if (deg == warsptr->heading)
-					{
-					prfmsg(NOWALRD,deg);
-					}
-				else
-					{
-					prfmsg(NOWTURN,deg);
-					warsptr->head2b   = (double)deg;
-					}
-				outprfge(ALWAYS,usrnum);
+				prfmsg(NOWALRD,deg);
 				}
 			else
 				{
-				prfmsg(NUMOOR,0,359);
-				outprfge(ALWAYS,usrnum);
-				return;
+				prfmsg(NOWTURN,deg);
+				warsptr->head2b   = (double)deg;
 				}
+			outprfge(ALWAYS,usrnum);
 			}
 		else
 			{
-			prfmsg(NOROTPW);
+			prfmsg(NUMOOR,0,359);
 			outprfge(ALWAYS,usrnum);
+			return;
 			}
 		}
 	else
@@ -781,25 +773,17 @@ if (valdegree(margv[1]))
 	{
 	if (warsptr->helm == 0)
 		{
-		if (useenergy(warsptr,usrnum,ROTENGUSE) == 1)
+		if (warsptr->degrees == 0)
 			{
-			if (warsptr->degrees == 0)
-				{
-				prfmsg(NOWALRD,(int)(warsptr->heading+.5));
-				}
-			else
-				{
-				deg = (unsigned)normal(warsptr->heading + (double)warsptr->degrees);
-				prfmsg(NOWTURN,deg);
-				warsptr->head2b   = (double)deg;
-				}
-			outprfge(ALWAYS,usrnum);
+			prfmsg(NOWALRD,(int)(warsptr->heading+.5));
 			}
 		else
 			{
-			prfmsg(NOROTPW);
-			outprfge(ALWAYS,usrnum);
+			deg = (unsigned)normal(warsptr->heading + (double)warsptr->degrees);
+			prfmsg(NOWTURN,deg);
+			warsptr->head2b   = (double)deg;
 			}
+		outprfge(ALWAYS,usrnum);
 		}
 	else
 		{
@@ -819,21 +803,7 @@ if (valdegree(margv[1]))
 
 void  FUNC cmd_flux()
 {
-
-if (warsptr->items[I_FLUXPOD] == 0)
-	{
-	prfmsg(NOFLUX);
-	}
-else
-	{
-	--warsptr->items[I_FLUXPOD];
-	warsptr->energy = ENGYMAX;
-	prfmsg(FLUXLOAD);
-	if (warsptr->items[I_FLUXPOD] == 0)
-		prfmsg(LASTFLUX);
-	}
-outprfge(ALWAYS,usrnum);
-
+fluxstat(warsptr,usrnum,65535U);
 }
 
 /**************************************************************************
@@ -1137,7 +1107,7 @@ unsigned        deg;
 double factor;
 
 
-if (ptr->energy >= HPMINFIR)
+if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 	{
 	if (neutral(&ptr->coord))
 		{
@@ -1354,7 +1324,7 @@ void  FUNC cmd_missl()
 
 int shpnum;
 
-unsigned energy,eng_flu;
+unsigned energy;
 long eng_long;
 
 lockwarn = TRUE;
@@ -1392,27 +1362,27 @@ if (margv[1] == NULL && margc == 3)
 	return;
 	}
 
-if (margv[2] == NULL || margc < 3)
+if (margc < 2)
 	{
 	prfmsg(FORMAT,"MISSILE");
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
 
-eng_long = atol(margv[2]);
+if (margc == 2)
+	eng_long = 5000;
+else
+	eng_long = atol(margv[2]);
 
-if (eng_long == 0 || eng_long < 2500L || eng_long > 50000L)
-	{
-	prfmsg(FORMAT,"MISSILE");
-	outprfge(ALWAYS,usrnum);
-	return;
-	}
+if (eng_long > 20000L)
+	eng_long = 20000L;
+
+if (eng_long < 2000L)
+	eng_long = 2000L;
 
 energy = (unsigned)eng_long;
 
-eng_flu = energy/misengfc;
-
-if (eng_flu > 0 && eng_flu >= (warsptr->energy+MOVENGMIN))
+if (fluxstat(warsptr,usrnum,energy) == 0)
 	{
 	prfmsg(MISSHRT);
 	outprfge(ALWAYS,usrnum);
@@ -1436,7 +1406,7 @@ if ( shpnum >= 0)
 		outprfge(ALWAYS,usrnum);
 		return;
 		}
-	misl(warsptr,usrnum,shpnum,energy,eng_flu);
+	misl(warsptr,usrnum,shpnum,energy,energy);
 	}
 else
 	{
@@ -1466,7 +1436,7 @@ if (lockon(ptr,1,shpnum,usrnum) == 1)
 		wptr=warshpoff(shpnum);
 		if (wptr->lmissl[i].distance == 0)
 			{
-			prfmsg(MFIRE1);
+			prfmsg(MFIRE1,energy);
 			outprfge(FILTER,usrnum);
 			--(ptr->items[I_MISSILE]);
 			ptr->energy -= eng_flu;
@@ -3412,7 +3382,7 @@ if (margc != 2)
 
 if (sameas(margv[1],"up"))
 	{
-	if (warsptr->energy > SHMINPWR)
+	if (fluxstat(warsptr,usrnum,SHENGUSE * warsptr->shieldtype) == 1)
 		{
 		if (warsptr->shieldstat == SHIELDDM)
 			{
@@ -3488,7 +3458,7 @@ if (sameas(margv[1],"on"))
 	else
 	if (warsptr->cloak == 0)
 		{
-		if (warsptr->energy > clenguse)
+		if (fluxstat(warsptr,usrnum,clenguse) == 1)
 			{
 			warsptr->cloak = 1;
 			prfmsg(CLOKON);

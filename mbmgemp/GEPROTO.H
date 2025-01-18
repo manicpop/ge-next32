@@ -133,7 +133,7 @@
 /*     942 */ void FUNC checkdam P((WARSHP *ptr , int usrn ));
 /*    1058 */ void FUNC killem P((WARSHP *ptr , int usrn ));
 /*    1261 */ void FUNC recharge P((WARSHP *ptr , int usrn ));
-/*    1278 */ void FUNC fluxstat P((WARSHP *ptr , int usrn ));
+/*    1278 */ int FUNC fluxstat P((WARSHP *ptr , int usrn , int energy ));
 /*    1305 */ void FUNC shieldstat P((WARSHP *ptr , int usrn ));
 /*    1337 */ void FUNC cloakstat P((WARSHP *ptr , int usrn ));
 /*    1374 */ void FUNC checkmines P((void ));

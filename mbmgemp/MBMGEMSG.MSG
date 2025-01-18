@@ -306,14 +306,6 @@ which is about 5 seconds.
 
 MISLSPED {Speed of missile: 2441} N 1 10000
 
-This value controls the ratio of energy 
-imparted to a missile to the energy extracted
-from the flux pod. Default value is 10. A 
-missile charge of 50000 consumes 5000 from the
-flux. Set to 1 to get a 1 to 1 ratio.
-
-MISENGFC {Missile Energy usage ratio: 10} N 1 2000
-
 This option controls the maximum damage an Ion
 Cannon can do each shot. It is factored in the 
 game by a random multiplier of .5 to 1.0 giving
@@ -2186,10 +2178,6 @@ PHREPR {***
 [1;32mDamage Control reports phasers are now functional![1;37m
 } T GE phasers now functional message
 
-NOROTPW {
-[0;37m[[1;31mERROR[0;37m] There is not enough power in the neutron flux to rotate.[1;37m
-} T GE not enough power to rotate message
-
 NOWTURN {
 [1;33mShip is now turning to [1;37m%u[1;33m degrees.[1;37m
 } T GE rotating message
@@ -2407,7 +2395,7 @@ NOSHIP {
 } T GE no such ship message
 
 TFIRE1 {
-[0;32mTorpedoes fired![1;37m
+[0;32mTorpedo fired![1;37m
 } T GE torpedoes fired message
 
 TFIRE2 {***
@@ -2431,7 +2419,7 @@ NOMISSL {
 } T GE no missiles message
 
 MFIRE1 {
-[0;32mHyper-missile fired![1;37m
+[0;32mHyper-missile charged to %u and fired![1;37m
 } T GE missiles fired message
 
 MFIRE2 {***
@@ -3364,7 +3352,7 @@ ADMIN06 {[0;37mTrade password.............. [1;37m%s
 } T GE admin 06
 
 MISSHRT {
-[0;37m[[1;31mERROR[0;37m] There is not that much energy in the neutron flux pile.[1;37m
+[0;37m[[1;31mERROR[0;37m] There is not enough energy in the neutron flux to charge the missile.[1;37m
 } T GE not enough energy for missile message
 
 KILLGOT1 {***

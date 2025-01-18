@@ -232,7 +232,6 @@ int				gemaxplrs,
 				team_max,
 				fse_state,
 				phatowrp,
-				misengfc,
 				score_bonus,
 				score_f1,
 				score_f2,
@@ -517,8 +516,6 @@ logthis(spr("pltvcash=%ld",pltvcash));
 pltvdiv = lngopt(PLTVDIV,0L,201228378L);
 
 phatowrp = numopt(PHATOWRP,0,100);
-
-misengfc = numopt(MISENGFC,1,2000);
 
 score_bonus = numopt(SCRBONUS,0,32700);
 score_f2 = numopt(SCRFACT,0,32700);
@@ -2087,7 +2084,7 @@ for (zothusn=0 ; zothusn < nships ;zothusn++)
 		setmbk(gemb);
 		if (wptr->status == GESTAT_USER)
 			++cntr;
-		fluxstat(wptr,zothusn);
+		fluxstat(wptr,zothusn,1000);
 		repairship(wptr,zothusn);
 		shieldstat(wptr,zothusn);
 		cloakstat(wptr,zothusn);

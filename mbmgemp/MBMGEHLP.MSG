@@ -643,8 +643,9 @@ This missile guidance system will attempt to lock on the ship prior to firing
 the missile. If a lock is made the missile is launched.
 
 Missiles must be charged from your neutron flux pile, and will drain your
-ship's flux pile by 1/10th of the amount of the charge. A missile's charge
-can be between 2500 and 50000.
+ship's flux pile by the amount of the charge. A missile's charge can be
+between 2000 and 20000; if you don't specify an amount a default of 5000
+is used.
 
 Issue the command as follows:
 
@@ -653,12 +654,12 @@ Issue the command as follows:
   ship letter [1;36m= the ship you are firing upon (or [1;37m@[1;36m for the locked on ship)
   [1;32menergy [1;36m= the energy from your neutron flux pile to charge into the missile.
 
-Examples: [1;37mmissile A 5000   [1;36mfires a missile at ship A which cause minor (if any)
-                   damage, and drains your ship's flux by 10
-          [1;37mmissile C 40000  [1;36mfires a missile at ship C which will cause major
-                   damage, and drains your ship's flux by 4000
-          [1;37mmis @ 10000      [1;36mfires on the ship that a previous [1;37mLOCK[1;36m
-                   command has locked onto, and drains your ship's flux by 1000
+Examples: [1;37mmissile A 2000   [1;36mfires a missile at ship A which cause minor (if any)
+                   damage, and drains your ship's flux by 2000
+          [1;37mmissile C 20000  [1;36mfires a missile at ship C which will cause major
+                   damage, and drains your ship's flux by 20000
+          [1;37mmis @            [1;36mfires on the ship that a previous [1;37mLOCK[1;36m
+                   command has locked onto, and drains your ship's flux by 5000
 [1;37m} T GE help missile message
 
 HLPNAV {

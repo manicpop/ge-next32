@@ -77,15 +77,12 @@
 #define PMINENG 500		/* minimum energy to fire                    */
 #define PHABIAS 2		/* Degrees to bias "spread" to better aim    */
 
-#define HPMINFIR 6000		/* Minimum energy in flux to fire Hyper phasr*/
 #define HPFIRAMT 5000
 #define HPBEAMW 5
 
 #define ENGYMAX 65000U		/* Maximum energy one can have               */
 #define ENGRECHG 1		/* Energy recharge amount / tick             */
-#define ENGYMIN  5000           /* Minimum Energy in FLUX to autoload        */
 
-#define SHMINPWR 200		/* Minimum power fore shields                */
 #define SHENGUSE 100		/* Energy used every tick for shields        */
 #define SHHITENG 1000		/* Energy drained when hit                   */
 #define SHMAXCHG 10		/* Max (full) charge in the shields          */

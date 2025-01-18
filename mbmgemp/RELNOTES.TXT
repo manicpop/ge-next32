@@ -127,10 +127,17 @@ Other stuff:
   its lockon (you can use the new REP ORD to see their
   distance from you). Also, missiles' energy now decrease
   over time, so they will eventually run out of energy and
-  sputter out. The speed and maximum damage of missiles
-  have both been increased.
+  sputter out. Missiles can now be charged between 2000 and
+  20000, drain your ship's flux by that complete amount,
+  and the speed and maximum damage of missiles have both
+  been increased to compensate for these changes. Also,
+  a default of 5000 is now used if you don't specify an
+  amount.
 * When torpedoes or missiles fail to reach their target,
   the user is now notified.
+* Several legacy bugs that allowed a ship's flux pile to
+  roll over and go negative when out of flux pods have
+  been fixed.
 
 === 0.1.1 === 2024-09-30:
 
