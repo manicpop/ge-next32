@@ -3298,7 +3298,7 @@ for (i=0; i<MAXY; ++i)
 		othusn = sptr->ship[shp].shipno;
 		if (ff == 0)
 			{
-			prf("\33[1;37m    %c   %s    %4d    %4d     %s\33[0;31m\r",sptr->ship[shp].letter,spr("%6ld",(long)(sptr->ship[shp].dist)),
+			prf("\33[1;37m     %c   %s    %4d    %4d     %s\33[0;31m\r",sptr->ship[shp].letter,spr("%6ld",(long)(sptr->ship[shp].dist)),
 				sptr->ship[shp].bearing,sptr->ship[shp].heading,showarp(sptr->ship[shp].speed));
 
 			if (!waruptr->options[SCANNAMES])
