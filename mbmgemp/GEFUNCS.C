@@ -1066,10 +1066,8 @@ if (ptr->phasr < 100)
 		{
 		/* If phasers get to minimum fire power tell captain */
 		preload = (double)(ptr->phasrtype * PRELOAD);
-		/* if inteceptor class double phaser recharge speed
-		if (ptr->shpclass == 2)
-			preload *=2; */
-		if ((ptr->phasr < PMINFIRE) && (ptr->phasr + preload >= PMINFIRE))
+		/* If phaser goes from under to 100 in one step, just show one msg */
+		if (ptr->phasr < PMINFIRE && ptr->phasr + preload >= PMINFIRE && ptr->phasr + preload < 100)
 			{
 			prfmsg(PHSRUP);
 			outprfge(ALWAYS,usrn);
