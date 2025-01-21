@@ -143,7 +143,7 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		memcpy(ptr,&tmpshp,sizeof(WARSHP));  /* make is the current ship */
 
 		logthis(spr("GE:INF:Add shp,cls=%d/%d",class,ptr->shpclass));
-		sprintf(ptr->shipname,"%s%u\0",shipclass[class].shipname,usrn*usrn+gernd()%(2*usrn+1));
+		sprintf(ptr->shipname,"%s%u\0",shipclass[class].shipname,usrn*usrn+gernd()%(2*usrn+1)+1000);
 		logthis(spr("  Named: %s",ptr->shipname));
 
 		ptr->coord.xcoord    = rndm((double)univmax*2.0)-(double)univmax;

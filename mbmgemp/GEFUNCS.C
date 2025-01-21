@@ -1545,7 +1545,11 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 								outprfge(FILTER,zothusn);
 								}
 							wptr->damage += (double)damage;
-							wptr->lastfired = (int)mptr->channel;
+							/* don't set lastfired if NPC blows up its own kind or user blows up self */
+							if ((shipclass[wptr->shpclass].faction != shipclass[warshpoff((int)mptr->channel)->shpclass].faction ||
+								shipclass[wptr->shpclass].faction == 0 || shipclass[warshpoff((int)mptr->channel)->shpclass].faction == 0) &&
+								zothusn != (int)mptr->channel)
+								wptr->lastfired = (int)mptr->channel;
 							wuptr = warusroff((int)mptr->channel);
 							set_dislike(wuptr,shipclass[wptr->shpclass].faction,damage);
 							wptr->minesnear = FALSE;

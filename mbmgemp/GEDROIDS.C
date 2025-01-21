@@ -106,7 +106,7 @@ logthis(spr("GE:INF:Adding %s ship - %d",ptr->userid,class));
 initshp(droidname,class);
 
 memcpy(ptr,&tmpshp,sizeof(WARSHP));  /* make is the current ship */
-sprintf(ptr->shipname,"%s%u\0",shipclass[class].shipname,usrn*usrn+gernd()%(2*usrn+1));
+sprintf(ptr->shipname,"%s%u\0",shipclass[class].shipname,usrn*usrn+gernd()%(2*usrn+1)+1000);
 
 ptr->coord.xcoord    = rndm((double)univmax*2.0)-(double)univmax;
 ptr->coord.ycoord    = rndm((double)univmax*2.0)-(double)univmax;

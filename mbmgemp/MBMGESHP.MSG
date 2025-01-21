@@ -3964,7 +3964,7 @@ S24LATK {Lowest class of user ship this ship will pursue: 8} (S24TYPE=CYBORG,DRO
 
 How many class 24 ships should be created (NPCs only)?
 
-S24MAKE {Number of NPCs of this class to make: 5} (S24TYPE=CYBORG,DROID) N 0 255
+S24MAKE {Number of NPCs of this class to make: 4} (S24TYPE=CYBORG,DROID) N 0 255
 
 Toughness level of class 24 (NPCs only)?
 This is a level from 0 to 4.
@@ -4117,7 +4117,7 @@ S25LATK {Lowest class of user ship this ship will pursue: 10} (S25TYPE=CYBORG,DR
 
 How many class 25 ships should be created (NPCs only)?
 
-S25MAKE {Number of NPCs of this class to make: 4} (S25TYPE=CYBORG,DROID) N 0 255
+S25MAKE {Number of NPCs of this class to make: 2} (S25TYPE=CYBORG,DROID) N 0 255
 
 Toughness level of class 25 (NPCs only)?
 This is a level from 0 to 4.
@@ -4935,7 +4935,7 @@ S31NAME {Lydorian Garbage Scow} (S31TYPE#<NONE>) S 29 Class 31 name
 Name of ship of class 31 (NPCs only).
 This will be appended with a numerical identifier.
 
-S31SNAME {NCC Lx4} (S31TYPE=CYBORG,DROID) S 29 Ship 31 name
+S31SNAME {NCC Lx5} (S31TYPE=CYBORG,DROID) S 29 Ship 31 name
 
 Maximum shield type for class 31. 0 for no shields at all.
 For users, ships start with a Mark-1 shield and can purchase
@@ -5035,7 +5035,7 @@ S31LATK {Lowest class of user ship this ship will pursue: 0} (S31TYPE=CYBORG,DRO
 
 How many class 31 ships should be created (NPCs only)?
 
-S31MAKE {Number of NPCs of this class to make: 2} (S31TYPE=CYBORG,DROID) N 0 255
+S31MAKE {Number of NPCs of this class to make: 3} (S31TYPE=CYBORG,DROID) N 0 255
 
 Toughness level of class 31 (NPCs only)?
 This is a level from 0 to 4.
@@ -5088,7 +5088,7 @@ S32NAME {Murdonian Transport} (S32TYPE#<NONE>) S 29 Class 32 name
 Name of ship of class 32 (NPCs only).
 This will be appended with a numerical identifier.
 
-S32SNAME {Trans-Gal #2} (S32TYPE=CYBORG,DROID) S 29 Ship 32 name
+S32SNAME {Trans-Gal #3} (S32TYPE=CYBORG,DROID) S 29 Ship 32 name
 
 Maximum shield type for class 32. 0 for no shields at all.
 For users, ships start with a Mark-1 shield and can purchase
@@ -5188,7 +5188,7 @@ S32LATK {Lowest class of user ship this ship will pursue: 0} (S32TYPE=CYBORG,DRO
 
 How many class 32 ships should be created (NPCs only)?
 
-S32MAKE {Number of NPCs of this class to make: 2} (S32TYPE=CYBORG,DROID) N 0 255
+S32MAKE {Number of NPCs of this class to make: 3} (S32TYPE=CYBORG,DROID) N 0 255
 
 Toughness level of class 32 (NPCs only)?
 This is a level from 0 to 4.
@@ -5241,7 +5241,7 @@ S33NAME {Vakory Survey Drone} (S33TYPE#<NONE>) S 29 Class 33 name
 Name of ship of class 33 (NPCs only).
 This will be appended with a numerical identifier.
 
-S33SNAME {Vakory SD-82} (S33TYPE=CYBORG,DROID) S 29 Ship 33 name
+S33SNAME {Vakory SD-86} (S33TYPE=CYBORG,DROID) S 29 Ship 33 name
 
 Maximum shield type for class 33. 0 for no shields at all.
 For users, ships start with a Mark-1 shield and can purchase
@@ -5494,7 +5494,7 @@ S34LATK {Lowest class of user ship this ship will pursue: 0} (S34TYPE=CYBORG,DRO
 
 How many class 34 ships should be created (NPCs only)?
 
-S34MAKE {Number of NPCs of this class to make: 2} (S34TYPE=CYBORG,DROID) N 0 255
+S34MAKE {Number of NPCs of this class to make: 3} (S34TYPE=CYBORG,DROID) N 0 255
 
 Toughness level of class 34 (NPCs only)?
 This is a level from 0 to 4.
@@ -5542,12 +5542,12 @@ S35TYPE {Class 35 type of ship: DROID} E USER CYBORG DROID <NONE>
 
 Name of class of ship for class 35.
 
-S35NAME {Sarten Attack Drone} (S35TYPE#<NONE>) S 29 Class 35 name
+S35NAME {Sarten Defense Drone} (S35TYPE#<NONE>) S 29 Class 35 name
 
 Name of ship of class 35 (NPCs only).
 This will be appended with a numerical identifier.
 
-S35SNAME {SADx4} (S35TYPE=CYBORG,DROID) S 29 Ship 35 name
+S35SNAME {SDDx2} (S35TYPE=CYBORG,DROID) S 29 Ship 35 name
 
 Maximum shield type for class 35. 0 for no shields at all.
 For users, ships start with a Mark-1 shield and can purchase
@@ -5601,7 +5601,7 @@ Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
 
-S35ACCL {Acceleration rate: 2000} (S35TYPE#<NONE>) N 0 32767
+S35ACCL {Acceleration rate: 500} (S35TYPE#<NONE>) N 0 32767
 
 Maximum warp cruising speed of class 35.
 For user ships, actual top speed is 1.5x this value, but
@@ -5609,7 +5609,7 @@ causes engine damage over time. A value of 0 means impulse
 only. To make a class completely immobile, set SXXACCL to 0
 as well.
 
-S35WARP {Maximum warp cruising speed: 20} (S35TYPE#<NONE>) N 0 255
+S35WARP {Maximum warp cruising speed: 50} (S35TYPE#<NONE>) N 0 255
 
 Maximum cargo capacity of class 35 in tons.
 
@@ -5625,7 +5625,7 @@ S35PNTS {Points awarded: 500} (S35TYPE#<NONE>) N 1 32767
 
 Scanner range of a class 35 ship in subsectors.
 
-S35SRNG {Scanner range: 25000} (S35TYPE#<NONE>) L 1 10000000
+S35SRNG {Scanner range: 100000} (S35TYPE#<NONE>) L 1 10000000
 
 Will Cybertrons fire on a class 35 ship unprovoked?
 If YES, Cybertrons will pursue and fire upon this class.
@@ -5652,7 +5652,7 @@ S35MAKE {Number of NPCs of this class to make: 4} (S35TYPE=CYBORG,DROID) N 0 255
 Toughness level of class 35 (NPCs only)?
 This is a level from 0 to 4.
 
-S35TOUGH {Toughness level: 0} (S35TYPE=CYBORG,DROID) N 0 4
+S35TOUGH {Toughness level: 1} (S35TYPE=CYBORG,DROID) N 0 4
 
 Class 35 damage factor, 100 is normal. 200 is twice as
 resilient, 77 is the minimum.
@@ -5700,7 +5700,7 @@ S36NAME {Galactic Command Freighter} (S36TYPE#<NONE>) S 29 Class 36 name
 Name of ship of class 36 (NPCs only).
 This will be appended with a numerical identifier.
 
-S36SNAME {ZYGx6} (S36TYPE=CYBORG,DROID) S 29 Ship 36 name
+S36SNAME {Zygor-} (S36TYPE=CYBORG,DROID) S 29 Ship 36 name
 
 Maximum shield type for class 36. 0 for no shields at all.
 For users, ships start with a Mark-1 shield and can purchase
@@ -5800,7 +5800,7 @@ S36LATK {Lowest class of user ship this ship will pursue: 0} (S36TYPE=CYBORG,DRO
 
 How many class 36 ships should be created (NPCs only)?
 
-S36MAKE {Number of NPCs of this class to make: 2} (S36TYPE=CYBORG,DROID) N 0 255
+S36MAKE {Number of NPCs of this class to make: 4} (S36TYPE=CYBORG,DROID) N 0 255
 
 Toughness level of class 36 (NPCs only)?
 This is a level from 0 to 4.
