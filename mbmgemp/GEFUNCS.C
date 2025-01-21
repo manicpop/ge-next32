@@ -1160,43 +1160,51 @@ if (who >= 0 && who < nships && who != usrn)
 
 	prfmsg(KILLGOT1,ptr->shipname);
 
-	/* get gold drop first, complete amount */
-	amt = ptr->items[I_GOLD];
-	if (amt > 0)
+	if (shipclass[wptr->shpclass].max_tons <= calcweight(wptr))
 		{
-		if (!chkweight(wptr,I_GOLD,amt))
-			{
-			amt = ((shipclass[wptr->shpclass].max_tons - calcweight(wptr))/((double)weight[I_GOLD]/100.0));
-			full = TRUE;
-			}
-		wptr->items[I_GOLD] += amt;
-		sprintf(gechrbuf2,"%ld",amt);
-		prf(" %s %s",gechrbuf2,item_name[I_GOLD]);
-		comma = TRUE;
+		full = TRUE;
+		prf(" nothing");
 		}
-	/* get the rest except casualties, random amounts */
-	for (i=1;i<NUMITEMS;++i)
+	else
 		{
-		if (full == TRUE)
-			break;
-		if (i != I_MEN && i != I_TROOPS && i != I_SPY && i != I_GOLD)
+		/* get gold drop first, complete amount */
+		amt = ptr->items[I_GOLD];
+		if (amt > 0)
 			{
-			amt = ptr->items[i] / (gernd()%5 +1);
-			/* only collect as much as we can hold */
-			if (amt > 0)
+			if (!chkweight(wptr,I_GOLD,amt))
 				{
-				if (!chkweight(wptr,i,amt))
+				amt = ((shipclass[wptr->shpclass].max_tons - calcweight(wptr))/((double)weight[I_GOLD]/100.0));
+				full = TRUE;
+				}
+			wptr->items[I_GOLD] += amt;
+			sprintf(gechrbuf2,"%ld",amt);
+			prf(" %s %s",gechrbuf2,item_name[I_GOLD]);
+			comma = TRUE;
+			}
+		/* get the rest except casualties, random amounts */
+		for (i=1;i<NUMITEMS;++i)
+			{
+			if (full == TRUE)
+				break;
+			if (i != I_MEN && i != I_TROOPS && i != I_SPY && i != I_GOLD)
+				{
+				amt = ptr->items[i] / (gernd()%5 +1);
+				/* only collect as much as we can hold */
+				if (amt > 0)
 					{
-					amt = ((shipclass[wptr->shpclass].max_tons - calcweight(wptr))/((double)weight[i]/100.0));
-					full = TRUE;
+					if (!chkweight(wptr,i,amt))
+						{
+						amt = ((shipclass[wptr->shpclass].max_tons - calcweight(wptr))/((double)weight[i]/100.0));
+						full = TRUE;
+						}
+					wptr->items[i] += amt;
+					sprintf(gechrbuf2,"%ld",amt);
+					if (comma == TRUE)
+						prf(", %s %s",gechrbuf2,item_name[i]);
+					else
+						prf(" %s %s",gechrbuf2,item_name[i]);
+					comma = TRUE;
 					}
-				wptr->items[i] += amt;
-				sprintf(gechrbuf2,"%ld",amt);
-				if (comma == TRUE)
-					prf(", %s %s",gechrbuf2,item_name[i]);
-				else
-					prf(" %s %s",gechrbuf2,item_name[i]);
-				comma = TRUE;
 				}
 			}
 		}
