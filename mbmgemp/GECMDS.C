@@ -3772,8 +3772,11 @@ if (margc == 3)
 	{
 	if (genearas("tro",margv[2]))
 		{
-		num = atol(margv[1]);
-		if (num > 0 && num <= warsptr->items[I_TROOPS])
+		if (sameas("ALL",margv[1]))
+			num = warsptr->items[I_TROOPS];
+		else
+			num = atol(margv[1]);
+		if (num > 0L && num <= warsptr->items[I_TROOPS])
 			{
 			warsptr->hostile = warsptr->where;
 			warsptr->cantexit = FIRETICKS;
@@ -3801,7 +3804,10 @@ if (margc == 3)
 		{
 		if (shipclass[warsptr->shpclass].max_attk > 0)
 			{
-			num = atol(margv[1]);
+			if (sameas("ALL",margv[1]))
+				num = warsptr->items[I_FIGHTER];
+			else
+				num = atol(margv[1]);
 			if (num > 0 && num <= warsptr->items[I_FIGHTER])
 				{
 				warsptr->hostile = warsptr->where;

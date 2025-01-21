@@ -471,9 +471,10 @@ HLPATT {
 [1;36mThe [1;37mATTACK[1;36m command launches an attack on a planet with either troops or
 fighters. Issue the command as follows:
 
-[1;37m  attack [1;32m[amount] [[1;37mtro[1;32m/[1;37mfig[1;32m]
+[1;37m  attack [1;32m[[1;37mall[1;32m/amount] [[1;37mtro[1;32m/[1;37mfig[1;32m]
 
   [1;32mamount[1;36m = number of troops or fighters to attack with
+           [1;37mall[1;36m to send all onboard
   [1;37mtro[1;36m = send troops
   [1;37mfig[1;36m = send fighters
 

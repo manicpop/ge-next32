@@ -138,6 +138,7 @@ Other stuff:
 * Several legacy bugs that allowed a ship's flux pile to
   roll over and go negative when out of flux pods have
   been fixed.
+* "ALL" now works with the ATTACK command.
 
 === 0.1.1 === 2024-09-30:
 
