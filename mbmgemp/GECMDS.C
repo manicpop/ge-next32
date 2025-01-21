@@ -2276,15 +2276,20 @@ if (sameas(margv[1],"ord"))
 	prfmsg(REP42);
 	for (i=0;i<MAXTORPS;++i)
 		{
-		if (warsptr->ltorps[i].distance != 0 && warsptr->ltorps[i].channel < nships)
+		if (warsptr->ltorps[i].distance != 0)
 			{
-			ptr=warshpoff(warsptr->ltorps[i].channel);
 			none = FALSE;
-			prf("\r ");
-			if (warsptr->lock == warsptr->ltorps[i].channel)
-				prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",username(ptr));
-			else
-				prf("  \33[1;34m%s\33[1;37m   ",username(ptr));
+			if (warsptr->ltorps[i].channel < nships)
+				{
+				ptr=warshpoff(warsptr->ltorps[i].channel);
+				prf("\r ");
+				if (warsptr->lock == warsptr->ltorps[i].channel)
+					prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",username(ptr));
+				else
+					prf("  \33[1;34m%s\33[1;37m   ",username(ptr));
+				}
+			if (warsptr->ltorps[i].channel == 255)
+				prf("\r  (destroyed)   ");
 			if (warsptr->jammer == 0)
 				prf("Dist: %u",warsptr->ltorps[i].distance);
 			else
@@ -2299,15 +2304,20 @@ if (sameas(margv[1],"ord"))
 	prfmsg(REP43);
 	for (i=0;i<MAXMISSL;++i)
 		{
-		if (warsptr->lmissl[i].distance != 0 && warsptr->lmissl[i].channel < nships)
+		if (warsptr->lmissl[i].distance != 0)
 			{
-			ptr=warshpoff(warsptr->lmissl[i].channel);
 			none = FALSE;
-			prf("\r ");
-			if (warsptr->lock == warsptr->lmissl[i].channel)
-				prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",username(ptr));
-			else
-				prf("  \33[1;34m%s\33[1;37m   ",username(ptr));
+			if (warsptr->lmissl[i].channel < nships)
+				{
+				ptr=warshpoff(warsptr->lmissl[i].channel);
+				prf("\r ");
+				if (warsptr->lock == warsptr->lmissl[i].channel)
+					prf(" \33[0;31m*\33[1;34m%s\33[0;31m*\33[1;37m  ",username(ptr));
+				else
+					prf("  \33[1;34m%s\33[1;37m   ",username(ptr));
+				}
+			if (warsptr->lmissl[i].channel == 255)
+				prf("\r  (destroyed)   ");
 			if (warsptr->jammer == 0)
 				prf("Dist: %u",warsptr->lmissl[i].distance);
 			else
