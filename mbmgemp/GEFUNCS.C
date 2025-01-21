@@ -1176,10 +1176,15 @@ if (who >= 0 && who < nships && who != usrn)
 				amt = ((shipclass[wptr->shpclass].max_tons - calcweight(wptr))/((double)weight[I_GOLD]/100.0));
 				full = TRUE;
 				}
-			wptr->items[I_GOLD] += amt;
-			sprintf(gechrbuf2,"%ld",amt);
-			prf(" %s %s",gechrbuf2,item_name[I_GOLD]);
-			comma = TRUE;
+			if (amt <= 0 && full == TRUE)
+				prf(" nothing");
+			else
+				{
+				wptr->items[I_GOLD] += amt;
+				sprintf(gechrbuf2,"%ld",amt);
+				prf(" %s %s",gechrbuf2,item_name[I_GOLD]);
+				comma = TRUE;
+				}
 			}
 		/* get the rest except casualties, random amounts */
 		for (i=1;i<NUMITEMS;++i)
@@ -1197,13 +1202,23 @@ if (who >= 0 && who < nships && who != usrn)
 						amt = ((shipclass[wptr->shpclass].max_tons - calcweight(wptr))/((double)weight[i]/100.0));
 						full = TRUE;
 						}
-					wptr->items[i] += amt;
-					sprintf(gechrbuf2,"%ld",amt);
-					if (comma == TRUE)
-						prf(", %s %s",gechrbuf2,item_name[i]);
+					if (amt <= 0)
+						{
+						if (full == TRUE && comma == FALSE)
+							prf(" nothing");
+						}
 					else
-						prf(" %s %s",gechrbuf2,item_name[i]);
-					comma = TRUE;
+						{
+						wptr->items[i] += amt;
+						sprintf(gechrbuf2,"%ld",amt);
+						if (comma == TRUE)
+							prf(", %s %s",gechrbuf2,item_name[i]);
+						else
+							{
+							prf(" %s %s",gechrbuf2,item_name[i]);
+							comma = TRUE;
+							}
+						}
 					}
 				}
 			}
