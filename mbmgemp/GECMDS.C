@@ -2210,6 +2210,7 @@ if (sameas(margv[1],"sys"))
 		{
 		if (warsptr->topspeed == 0)
 			prfmsg(REP19);
+		else
 		if (warsptr->topspeed != shipclass[warsptr->shpclass].max_warp)
 			prfmsg(REP20,warsptr->topspeed);
 		}
@@ -2217,7 +2218,8 @@ if (sameas(margv[1],"sys"))
 	if (warsptr->repair > 0)
 		prfmsg(REP18A,warsptr->repair);
 
-	prfmsg(REP39,waruptr->rospos);
+	if (waruptr->rospos != 0)
+		prfmsg(REP39,waruptr->rospos);
 
 	}
 else
