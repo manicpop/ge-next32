@@ -980,6 +980,9 @@ WARUSR	*wuptr;
 
 unsigned        deg;
 double factor;
+int hit;
+
+hit = FALSE;
 
 if (ptr->cloak > 0 )
 	{
@@ -1035,6 +1038,7 @@ if (ptr->phasr >=PMINFIRE)
 
 					if (damage >= 1)
 						{
+						hit = TRUE;
 						wptr->lastfired = usrn;
 						wptr->cantexit = FIRETICKS;
 						ptr->cantexit = FIRETICKS;
@@ -1082,8 +1086,8 @@ if (ptr->phasr >=PMINFIRE)
 				}
 			}
 		}
-
-	ptr->phasr = 0;
+	if (hit == TRUE || ptr->status == GESTAT_USER)	/* if npc can't actually do damage, don't fire */
+		ptr->phasr = 0;
 	}
 else
 	{

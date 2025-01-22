@@ -474,21 +474,9 @@ void  FUNC accel(ptr,usrn)
 WARSHP *ptr;
 int           usrn;
 {
-int /*i,flag,*/usage;
+int usage;
 double absol();
 double  accelrate,decelrate;
-
-/*DEBUG*/
-if (ptr->speed >= 1000 && (ptr->where == 0 || ptr->shieldstat == SHIELDUP))
-	{
-	prf("hyperspace bug with usrn %d\r",usrn);
-	outprfge(ALWAYS,0);
-	}
-if (ptr->speed < 1000 && (ptr->where == 1))
-	{
-	prf("impulse bug with usrn %d\r",usrn);
-	outprfge(ALWAYS,0);
-	}
 
 if (ptr->speed < ptr->speed2b)
 	{
@@ -863,7 +851,7 @@ if (ptr->status == GESTAT_USER)
 else
 	{
 	if (ptr->topspeed == 0)
-		ptr->speed2b == 990;
+		ptr->speed2b = 990;
 	else
 		ptr->speed2b = (double)ptr->topspeed*1000.0;	/* head toward 0 0 for the moment */
 	ptr->cybupdate = 20 + gernd()%5;	/* save and pick new heading after a while */
@@ -1449,7 +1437,7 @@ int           usrn;
 
 if (ptr->shieldstat == SHIELDUP)
 	{
-	if (ptr->energy < SHENGUSE * ptr->shieldtype)
+	if (fluxstat(ptr,usrn,SHENGUSE * ptr->shieldtype) == 0)
 		{
 		ptr->shieldstat = SHIELDDN;
 		ptr->shield = 0;
@@ -1481,7 +1469,7 @@ int           usrn;
 
 if (ptr->cloak > 0)
 	{
-	if (ptr->energy < clenguse)
+	if (fluxstat(ptr,usrn,clenguse) == 0)
 		{
 		ptr->cloak = 0;
 		prfmsg(CLOKNOP);
