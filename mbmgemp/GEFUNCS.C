@@ -862,7 +862,11 @@ if (ptr->status == GESTAT_USER)
 	}
 else
 	{
-	ptr->speed2b = (double)ptr->topspeed*1000.0;	/* head toward 0 0 for the moment */
+	if (ptr->topspeed == 0)
+		ptr->speed2b == 990;
+	else
+		ptr->speed2b = (double)ptr->topspeed*1000.0;	/* head toward 0 0 for the moment */
+	ptr->cybupdate = 20 + gernd()%5;	/* save and pick new heading after a while */
 	}
 }
 

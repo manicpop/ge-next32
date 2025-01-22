@@ -309,7 +309,7 @@ if (ptr->jammer == 0)
 							cyb_annoy(ptr,zothusn,20,13,16);
 							if (shipclass[ptr->shpclass].max_missl && (ptr->items[I_MISSILE] > 0) && (gernd()%10 == 0))
 								{
-								misl(ptr,usrn,zothusn,((shipclass[ptr->shpclass].tough_factor+1)*8000),0);
+								misl(ptr,usrn,zothusn,((shipclass[ptr->shpclass].tough_factor+1)*4000),0);
 								}
 							else
 								{

@@ -5247,7 +5247,7 @@ if (sameas("list",margv[1]))
 		if (ptr->status != GESTAT_AVAIL)
 			{
 			setsect(ptr);
-			prf("%3d %-25s %5d %5d %6d %4d %7d %5d\r",i,username(ptr),xsect,ysect,(int)(ptr->damage),(int)(ptr->tick),(int)(ptr->cybmine),(int)(ptr->holdcourse));
+			prf("%3d %-20s %5d %5d %6d %4d %7d %5d %5d\r",i,username(ptr),xsect,ysect,(int)(ptr->damage),(int)(ptr->tick),(int)(ptr->cybmine),(int)(ptr->holdcourse),(int)(ptr->cybupdate));
 			}
 		}
 	outprfge(ALWAYS,usrnum);
