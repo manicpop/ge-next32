@@ -347,7 +347,7 @@ WARSHP {						/* user data blocks         */
 		byte		upgrade;		/*   UNUSED ATM                              */
 		byte		cybupdate;		/*   update cyborg counter                   */
 		byte		tick;			/* Ship Ticker */
-		byte		emulate;		/* permits cybertron emulation */
+		byte		distress;		/* has sent distress message */
 		byte		minesnear;		/* set when mines are near */
 		int		lock;			/* set to the ship we are locked onto*/
 		byte		holdcourse;		/* Hold course ticker */
@@ -530,7 +530,7 @@ SHPKEY	{
 extern
 SHIP	{
 	char		*typename;
-	char		*shipname;
+	char		*npcprefx;
 	unsigned char	max_shlds;
 	unsigned char	max_phasr;
 	unsigned char	max_torps;

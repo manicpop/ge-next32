@@ -287,6 +287,7 @@
 /*      68 */ void FUNC droid_init P((WARSHP *ptr , int usrn , int class ));
 /*     151 */ void FUNC droid_lives P((WARSHP *ptr , int usrn ));
 /*     202 */ void FUNC droid_annoy P((WARSHP *ptr , int usrn , int rnd , int first , int last ));
+/*     202 */ void FUNC droid_distress P((WARSHP *ptr , int usrn ));
 /*     223 */ void FUNC droid_act_1 P((WARSHP *ptr , int usrn ));
 /*     272 */ void FUNC droid_act_2 P((WARSHP *ptr , int usrn ));
 /*     380 */ void FUNC droid_act_3 P((WARSHP *ptr , int usrn ));
@@ -295,7 +296,6 @@
 /*     380 */ void FUNC droid_act_6 P((WARSHP *ptr , int usrn ));
 /*     504 */ void FUNC droid_won P((WARSHP *ptr ));
 /*     512 */ void FUNC droid_died P((WARSHP *ptr ));
-/*     520 */ int FUNC missl_attached P((WARSHP *ptr , int usrn ));
 /*         */ void FUNC droid_check_state P((WARSHP *ptr , int usrn ));
 
 /* geplanet.c */

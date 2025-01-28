@@ -2190,6 +2190,10 @@ NOWTHER {***
 [1;32mHelm reports ship now heading [1;37m%d[1;32m degrees.[1;37m
 } T GE now heading message
 
+NOWTRNP {***
+[1;33mHelm reports ship now heading [1;37m%d[1;33m degrees...[1;37m
+} T GE now heading in progress message
+
 ENGFIRE {
 [1;33mHelm reports engines firing, ship coming to [1;37m%u[1;33m degrees.[1;37m
 } T GE engines firing message
@@ -3371,6 +3375,26 @@ KILLBON {
 [1;36mYou also got %s bonus points for taking out a top player.[1;37m
 } T GE points for top kill message
 
+KILLDIS {
+[1;36mYou also got %s bonus points for rescuing [0;36m%s[1;36m.
+You are now held in high regard by the } T GE points for top kill message
+
+FACNAME0 {users.[1;37m} T name of faction 0
+
+FACNAME1 {Cybertrons.[1;37m} T name of faction 1
+
+FACNAME2 {Sartens.[1;37m} T name of faction 2
+
+FACNAME3 {Lydorians.[1;37m} T name of faction 3
+
+FACNAME4 {Murdonians.[1;37m} T name of faction 4
+
+FACNAME5 {Vakories.[1;37m} T name of faction 5
+
+FACNAME6 {Tryklons.[1;37m} T name of faction 6
+
+FACNAME7 {Zygorians.[1;37m} T name of faction 7
+
 CHGLSR1 {
 [1;36mAccording to galactic treaty, you have been ordered to pay to the winner the
 amount of [0;33m%s[1;36m as reparations and fines. Next time, don't lose![1;37m
@@ -3536,7 +3560,7 @@ ZIPPER3 {***
 } T GE someone else fired a zipper message
 
 NEW1 {
-[1;36mYou must go to Zygor in sector 0 0 to get a new ship.[1;37m
+[1;36mYou must go to Zygor in sector [1;34m0 0[1;36m to get a new ship.[1;37m
 } T GE only buy ships at Zygor message
 
 NEW2 {
@@ -3552,7 +3576,7 @@ NEW4 {
 } T GE not enough money for new ship message
 
 NEW5 {
-[1;36mYou must go to Zygor in sector 0 0 to get new equipment.[1;37m
+[1;36mYou must go to Zygor in sector [1;34m0 0[1;36m to get new equipment.[1;37m
 } T GE only buy equipment at Zygor message
 
 NEW6 {
@@ -3616,7 +3640,7 @@ NEW29 {[1;36mYou will be credited us [0;33m%s[1;36m for the existing used pha
 } T GE phaser credit message
 
 SELL1 {
-[1;36mYou must go to Zygor in sector 0 0 to sell items.[1;37m
+[1;36mYou must go to Zygor in sector [1;34m0 0[1;36m to sell items.[1;37m
 } T GE no selling unless at Zygor message
 
 SELL2 {
@@ -3683,18 +3707,6 @@ SYSNP {
 SYSACY {
 [1;36mClosest Cybertrons assigned..[1;37m
 } GE sysop assign cybs message
-
-SYSFAC {
-[1;36mUsers: %d
-Cybertrons: %d
-Sartens: %d
-Lydorians: %d
-Murdonians: %d
-Vakories: %d
-Zygorians: %d
-Unused: %d
-[1;37m
-} GE sysop faction status
 
 MAIL1 {
    You have no messages waiting...
@@ -4750,7 +4762,7 @@ but are not (yet) considered threats.
 
 DR2M1 {***
 [0;37mBeacon message from [0;36m%s
-[1;36m<[1;37m Warning! This ship is transporting goods under Murdonian Imperial Authority. [1;36m>[1;37m
+[1;36m<[1;37m Warning! This ship is operating under Murdonian Imperial Authority. [1;36m>[1;37m
 } T GE Droid 2 message 1
 
 DR2M2 {***
@@ -5099,7 +5111,7 @@ DR6M2 {***
 
 DR6M3 {***
 [0;37mBeacon message from [0;36m%s
-[1;36m<[1;37m Visit Zygor in sector 0 0 for all your galactic needs! [1;36m>[1;37m
+[1;36m<[1;37m Visit Zygor in sector [1;34m0 0[1;36m for all your galactic needs! [1;36m>[1;37m
 } T GE Droid 6 message 3
 
 DR6M4 {***
@@ -5166,6 +5178,13 @@ DR6M15 {} T GE Droid 6 message 15
 DR6M16 {} T GE Droid 6 message 16
 
 DRLASTM {DO NOT REMOVE THIS MESSAGE!!!!!!} T Droid message end divider
+
+DRDISMSG {***
+[0;37mHyperspace distress message from [0;36m%s
+[1;36m<[1;37m %s under attack by [1;34m%s[1;37m!
+  Requesting immediate assistance to sector [1;34m%d %d[1;37m! [1;36m>[1;37m
+} T GE Droid distress message
+
 
 ENDMARK {ENDMARK} T Endmark - do not remove
 

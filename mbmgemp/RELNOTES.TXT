@@ -24,7 +24,7 @@ Please contact with me thoughts and suggestions.
   "Cybertron IxNNNN" where I is the class of Cybertron (higher
   number, more powerful) and NNNN is identifying number.
 * The Cybertrons now are assigned random shield and phaser classes,
-  up to the maximum specified in the configuration file.
+  between 50 and 100% of the max specified in the configuration file.
 * Cybertrons will pursue other NPCs if their CATK and NATK values
   are set that way (and users are in the game to see it).
 * Faction codes: New to the ship configuration is the faction code.
@@ -78,6 +78,17 @@ Please contact with me thoughts and suggestions.
   will now show "??.??" for their speed when traveling at
   this speed, then immediately snap into a "normal" speed
   when reaching their destination.
+* Some non-Cybertron NPCs will send a distress message if
+  they are being attacked by Cybertrons or users. If you
+  destroy their attacker, you will receive bonus points.
+  They will also remember you helped them and treat you
+  accordingly in the future.
+* While an NPC is in distress, you won't be able to hit it
+  with phasers (unless you're the attacker), so that you
+  don't actually take out the ship you're trying to protect.
+  If you want to attack the ship instead of rescuing it,
+  setting your weapons lock to that ship will override this
+  behavior.
 
 Other stuff:
 * A new ordnance report was added (REP ORD). This will list

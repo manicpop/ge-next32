@@ -122,6 +122,7 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		ptr->shield = 40 + (ptr->shieldtype*10);
 		ptr->phasr = 100;
 		ptr->cybmine = (byte)255;
+		ptr->distress = (byte)255;	/* make sure this isn't 0 */
 		cyb_cruise(ptr);
 		ptr->cybupdate = 100 + gernd()%20;
 		ptr->holdcourse = 0;
@@ -143,22 +144,25 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		memcpy(ptr,&tmpshp,sizeof(WARSHP));  /* make is the current ship */
 
 		logthis(spr("GE:INF:Add shp,cls=%d/%d",class,ptr->shpclass));
-		sprintf(ptr->shipname,"%s%u\0",shipclass[class].shipname,usrn*usrn+gernd()%(2*usrn+1)+1000);
+		sprintf(ptr->shipname,"%s%u\0",shipclass[class].npcprefx,usrn*usrn+gernd()%(2*usrn+1)+1000);
 		logthis(spr("  Named: %s",ptr->shipname));
 
 		ptr->coord.xcoord    = rndm((double)univmax*2.0)-(double)univmax;
 		ptr->coord.ycoord    = rndm((double)univmax*2.0)-(double)univmax;
 
-		if (shipclass[class].max_phasr > 1)
-		        ptr->phasrtype = (gernd()%shipclass[class].max_phasr)+1;
+		/* phaser and shields between 50 and 100% of max */
+		if (shipclass[class].max_phasr > 0)
+			ptr->phasrtype = (shipclass[class].max_phasr / 2) + (gernd() % (shipclass[class].max_phasr / 2 + 1));
 		else
-		        ptr->phasrtype = shipclass[class].max_phasr;
-		if (shipclass[class].max_shlds > 1)
-		        ptr->shieldtype = (gernd()%shipclass[class].max_shlds)+1;
+			ptr->phasrtype = 0;
+
+		if (shipclass[class].max_shlds > 0)
+			ptr->shieldtype = (shipclass[class].max_shlds / 2) + (gernd() % (shipclass[class].max_shlds / 2 + 1));
 		else
-		        ptr->shieldtype = shipclass[class].max_shlds;
+			ptr->shieldtype = 0;
 
 		ptr->cybmine = (byte)255;
+		ptr->distress = (byte)255;
 		ptr->shield = 40 + (ptr->shieldtype*10);
 		ptr->phasr = 100;
 
@@ -309,7 +313,7 @@ if (ptr->jammer == 0)
 							cyb_annoy(ptr,zothusn,20,13,16);
 							if (shipclass[ptr->shpclass].max_missl && (ptr->items[I_MISSILE] > 0) && (gernd()%10 == 0))
 								{
-								misl(ptr,usrn,zothusn,((shipclass[ptr->shpclass].tough_factor+1)*4000),0);
+								misl(ptr,usrn,zothusn,(shipclass[ptr->shpclass].tough_factor+1)*4000,0);
 								}
 							else
 								{
@@ -505,7 +509,7 @@ if (ptr->cybupdate == 1 && ptr->cybmine == 255) /* if cruising around and about 
 	--ptr->cybupdate;
 	return;
 	}
-if (ptr->cybupdate == 0 && ptr->cybmine == 255)
+if (ptr->cybupdate == 0 && (ptr->cybmine == 255 || ptr->cantexit == 0))
 	{
 	wuptr= warusroff(usrn);
 	logthis(spr("GE:DBG:Cyb UUpd %s",wuptr->userid));
@@ -513,6 +517,7 @@ if (ptr->cybupdate == 0 && ptr->cybmine == 255)
 	logthis(spr("GE:DBG:Cyb PUpd %s",ptr->userid));
 	gepdb(GEUPDATE,ptr->userid,ptr->shipno,ptr);
 	ptr->cybupdate = 100 + gernd()%100;
+	ptr->cybmine = 255;	/* keep cyb from endlessly chasing npcs it can't catch */
 	return;
 	}
 ptr->cybupdate = 20; /* if engaged with another ship, update later */
@@ -556,7 +561,7 @@ for (i=0;i<j;++i)
 		lockwarn = FALSE;
 	if (gernd()%10 == 0 && shipclass[ptr->shpclass].max_missl && (ptr->items[I_MISSILE] > 0))
 		{
-		misl(ptr,usrn,zothusn,((shipclass[ptr->shpclass].tough_factor+1)*8000),0);
+		misl(ptr,usrn,zothusn,(shipclass[ptr->shpclass].tough_factor+1)*4000,0);
 		}
 	else
 		{
@@ -578,23 +583,33 @@ if (gernd()%20 == 1 && shipclass[ptr->shpclass].has_zip && shipclass[ptr->shpcla
 		/* get the hell out of here ...then come back */
 		if (shipclass[ptr->shpclass].max_accel > 0)
 			{
-		ptr->speed2b = d_topspeed;
-		ptr->head2b = rndm(359.9);
-		ptr->holdcourse = gernd()%20 + 3;
+			ptr->speed2b = d_topspeed;
+			ptr->head2b = rndm(359.9);
+			ptr->holdcourse = gernd()%20 + 3;
 			}
 		}
 	}
 
-/* if we are in hyperspace and fighting and missiles detected
-	get out of hyperspace and get shields up */
+/* if we are in hyperspace and fighting and missiles detected,
+	decide whether to flee or stop and raise shields */
 
 if (ptr->where == 1)
 	{
 	for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 		{
-		if (mptr->distance > 0)
+		if (mptr->distance > 20000)
 			{
 			ptr->speed2b = d_topspeed;
+			ptr->holdcourse = gernd()%5 + 5;
+			break;
+			}
+		else
+		if (mptr->distance > 0)
+			{
+			if (d_topspeed >= 990)
+				ptr->speed2b = 990;
+			else
+				ptr->speed2b = d_topspeed;
 			ptr->holdcourse = gernd()%5 + 5;
 			break;
 			}
@@ -620,7 +635,7 @@ int   i;
 
 /* send out a decoy */
 for (i=0; i<5;++i)
-	if (ptr->decout[i] == 0)
+	if (ptr->decout[i] == 0 && gernd()%50*(i+1))
 		ptr->decout[i] = DECOYTIME;
 }
 
@@ -695,7 +710,7 @@ else
 	if (!ingegame(zothusn))
 		{
 		ptr->cybmine = (byte)255;
-		ptr->speed2b = rndm(ptr->topspeed)*1000; /* let them cruise */
+		cyb_cruise(ptr);
 		return;
 		}
 
@@ -704,7 +719,7 @@ else
 	if (wptr->cloak == 10)
 		{
 		ptr->holdcourse=gernd()%5+5;
-		ptr->speed2b = rndm(ptr->topspeed)*1000; /* let them cruise */
+		cyb_cruise(ptr); /* let them cruise */
 
 		/* if the guy is cloaked then give up after awhile */
 		if(gernd()%10 == 0)
@@ -829,7 +844,7 @@ else
 		outwar(ALWAYS,usrn,0); */
 		}
 	else
-	if (shipclass[wptr->shpclass].cybs_can_att || wptr->cantexit > 0 || ptr->cantexit > 0)
+	if ((shipclass[wptr->shpclass].cybs_can_att || wptr->cantexit > 0 || ptr->cantexit > 0) && !neutral(&wptr->coord))
 		{
 		if (low_dist > .5)
 			{

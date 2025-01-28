@@ -176,7 +176,6 @@ struct hlpcmd gehlp[] = {
 		{"cls",				HLPCLS},
 		{"decoy",			HLPDEC},
 		{"destruct",			HLPDES},
-		{"flux",			HLPFLU},
 		{"freq",			HLPFRE},
 		{"help",			HLPHEL},
 		{"hyper",			HLPHYP},
@@ -220,17 +219,25 @@ struct hlpcmd gehlp[] = {
 		{"battle3",			HLPBATT3},
 		{"class",			HLPCLS1},
 		{"communicate",			HLPCOMMU},
-		{"cybertron",			HLPCYBER},
+		{"cybertrons",			HLPCYBER},
+		{"distress",			HLPDIST},
+		{"flux",			HLPFLU},
 		{"galaxy",			HLPGALXY},
+		{"lydorians",			HLPLYDO},
+		{"murdonians",			HLPMURD},
 		{"moving",			HLPNAVIG},
 		{"planets",			HLPPLANT},
 		{"planets2",			HLPPLAN2},
 		{"planets3",			HLPPLAN3},
+		{"sartens",			HLPSART},
 		{"scoring",			HLPSCORE},
 		{"sector",			HLPSECTR},
 		{"starting",			HLPSTART},
 		{"strategy",			HLPSTRAT},
+		{"tryklons",			HLPTRYK},
 		{"wormholes",			HLPWORM},
+		{"zygorians",			HLPZYGO},
+
 		{NULL,				0}
 };
 
@@ -1015,7 +1022,7 @@ if (ptr->phasr >=PMINFIRE)
 		if (ingegame(othusn) && (wptr->where != 1 || ptr->phasrtype >= phatowrp))
 			{
 			if (othusn != usrn && !neutral(&wptr->coord) && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
-				|| shipclass[ptr->shpclass].faction == 0))
+				|| shipclass[ptr->shpclass].faction == 0) && (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn))
 				{
 				heading = (unsigned)vector(&ptr->coord,&wptr->coord);
 				if (smallest(heading,deg) < ptr->percent+PHABIAS)
@@ -1039,7 +1046,9 @@ if (ptr->phasr >=PMINFIRE)
 					if (damage >= 1)
 						{
 						hit = TRUE;
-						wptr->lastfired = usrn;
+						/* prioritize user hits over npcs so users get credit */
+						if (wptr->damage < 100 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
+							wptr->lastfired = usrn;
 						wptr->cantexit = FIRETICKS;
 						ptr->cantexit = FIRETICKS;
 						if (wptr->status == GESTAT_AUTO)    /* if cyborg -sickum */
@@ -1132,7 +1141,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 		if (ingegame(othusn) && wptr->where == 1)
 			{
 			if (othusn != usrn && !neutral(&wptr->coord) && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
-                                || shipclass[ptr->shpclass].faction == 0))
+                                || shipclass[ptr->shpclass].faction == 0) && (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn))
 				{
 				heading = (unsigned)vector(&ptr->coord,&wptr->coord);
 				if (smallest(heading,deg) < HPBEAMW)
@@ -1173,10 +1182,12 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 						outprfge(ALWAYS,othusn);
 						if (damage >= 1)
 							{
+							/* prioritize user hits over npcs so users get credit */
+							if (wptr->damage < 100 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
+								wptr->lastfired = usrn;
 							wptr->damage += (double)damage;
 							wuptr = warusroff(usrn);
 							set_dislike(wuptr,shipclass[wptr->shpclass].faction,damage);
-							wptr->lastfired = usrn;
 							wptr->cantexit = FIRETICKS;
 							ptr->cantexit = FIRETICKS;
 							randamage(wptr,othusn); /*assess any random damage */
@@ -5070,7 +5081,11 @@ if ((!syscmds) || (sysonly && !(usrptr->flags&ISYSOP)))
 	}
 if (sameas("factions",margv[1]) && margc == 2)
 	{
-	prfmsg(SYSFAC,waruptr->factions[0],waruptr->factions[1],waruptr->factions[2],waruptr->factions[3],waruptr->factions[4],waruptr->factions[5],waruptr->factions[6],waruptr->factions[7]);
+	for (i=0;i<8;++i)
+		{
+		prfmsg(FACNAME0+i);
+		prf("... %d\r",waruptr->factions[i]);
+		}
 	outprfge(ALWAYS,usrnum);
 	return;
 	}

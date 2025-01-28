@@ -5,14 +5,15 @@ LEVEL6 {}
 HLPINDEX {
 [1;36mHelp is available on the following commands and topics:
 
-Commands: [1;32mabandon  abort  admin  attack  buy  cloak  cls  decoy  destruct  
-          flux  freq  help  impulse  jammer  jettison  lock  maintenance  mine
-          missile  navigate  new  orbit  phaser  planet  price  rename  report
-          roster  rotate  scan  sell  send  set  shield  spy  stop  team
-          torpedo  transfer  warp  who  zipper
+Commands: [1;32mabandon  abort  admin  attack  buy  cloak  cls  decoy  destruct
+          freq  help  impulse  jammer  jettison  lock  maintenance  mine
+          missile  navigate  new  orbit  phaser  planet  price  rename
+          report  roster  rotate  scan  sell  send  set  shield  spy  stop
+          team  torpedo  transfer  warp  who  zipper
 
-[1;36m Topics:  [1;32mbattle  class  communicate  cybertron  galaxy  moving  planets
-          scoring  sector  starting  strategy  wormholes
+[1;36m Topics:  [1;32mbattle  class  communicate  distress  flux  galaxy  moving
+          planets  scoring  sector  starting  strategy  wormholes  
+          Cybertrons  Lydorians  Murdonians  Sartens  Tryklons  Zygorians
 
 [1;36mEnter [1;37mHELP[1;36m followed by any of these commands or topics for more information.[1;37m
 } T GE help list of subjects message
@@ -48,6 +49,7 @@ Further hints are available under other help topics.
 
 HLPGALXY {
 [1;36mTopic: Galaxy
+
 The game takes place in a galaxy with hundreds of thousands of sectors and
 thousands of planets. Each sector is 10000 by 10000 subsectors square. The
 entire navigable galaxy is 600 by 600 sectors numbered from the center of the
@@ -136,6 +138,20 @@ hyperspace communications packet code and transmissions will be sent via
 hyperspace to anyone with the same packet code anywhere in the galaxy.
 [1;37m} T GE help communicate message
 
+HLPDIST {
+[1;36mTopic: Distress signals
+
+Some ships, if attacked, will send a distress signal on a hyperspace frequency
+throughout the galaxy. If you wish (and are in range), you can defend the ship
+in distress by trying to take out its attacker. If you're successful, you will
+earn an additional point bonus and the appreciation of those that you rescued.
+
+Your ship's phasers are programmed to not damage a ship in distress (unless
+you are the one attacking it). This way, you can fire on a ship in the same
+area and not worry about hitting the ship in distress. If you want to
+override this behavior, use the [1;37mLOCK[1;36m command on the ship in distress, you
+can then fire as normal.
+[1;37m} T GE help distress message
 
 HLPNAVIG {
 [1;36mTopic: Moving (Navigating)
@@ -396,6 +412,31 @@ dispatched to intercept you. It is up to you to discover the capabilities of
 these ships.
 [1;37m} T GE help cybertron message
 
+HLPLYDO {
+[1;36mTopic: Lydorians
+(TO DO)
+[1;37m} T GE help Lydorian message
+
+HLPSART {
+[1;36mTopic: Sartens
+(TO DO)
+[1;37m} T GE help Sartens message
+
+HLPTRYK {
+[1;36mTopic: Tryklons
+(TO DO) 
+[1;37m} T GE help Tryklons message
+
+HLPMURD {
+[1;36mTopic: Murdonians
+(TO DO)
+[1;37m} T GE help Murdonians message
+
+HLPZYGO {
+[1;36mTopic: Zygorians
+(TO DO)
+[1;37m} T GE help Zygorians message
+
 HLPSCORE {
 [1;36mTopic: Scoring
 
@@ -546,10 +587,28 @@ the [1;37mABORT[1;36m command.
 [1;37m} T GE help destruct message
 
 HLPFLU {
-[1;36mThe [1;37mFLUX[1;36m command will replace an exhausted flux pod from the energy pool with
-a new one. This command presumes that you want it changed now, and does not
-warn you if there is still a good percentage of power left in the old pod.
-The old pod is jettisoned. Your power is restored to full charge automatically.
+[1;36mTopic: Neutron flux
+
+All ships operate by the power provided by the neutron flux drive. The neutron
+flux is recharged by loading in a new flux pod. Until recently, this was
+occasionally a challenging process, as many ship systems would sometimes
+completely drain the flux before a pod could be replaced. All ships now sold
+at Zygor will now automatically replace flux pods as needed; it is no longer
+necessary to manually switch pods.
+
+If you wish, you can enter [1;37mFLUX[1;36m to replace your current flux pod. This
+command presumes that you want it changed now, and does not warn you if there
+is still a good percentage of power left in the old pod. The old pod is
+jettisoned. Your power is restored to full charge automatically.
+
+Ships are also capable of recharging the flux pile by absorbing the naturally
+occuring background ion radiation of the galaxy, at a rate of 1 unit per
+centock. This means a ship can still travel at warp 1 even if a ship has run
+out of flux pods.
+
+It is your responsibility to make sure that you keep your ship stocked with
+flux pods, because if you run out, it will be a long trip to the nearest base
+at only warp 1 speed.
 [1;37m} T GE help flux message
 
 HLPHEL {
@@ -606,7 +665,8 @@ ship is within scanner range, the fire control systems will remain locked onto
 that specific ship.
 
 Commands like [1;37mMISSILE[1;36m, [1;37mTORPEDO[1;36m, and [1;37mSCAN[1;36m can then be used with [1;37m@[1;36m instead of the
-ship letter.
+ship letter. When you are locked onto a ship, its name will appear highlighted
+in scans and reports.
 
 Issue the command as follows:
 

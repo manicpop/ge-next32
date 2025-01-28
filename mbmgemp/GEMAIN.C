@@ -612,8 +612,8 @@ for (n=0; n<tot_classes; ++n)
 	shipclass[i].typename = stgopt(++classbase);
 	logthis(spr("Loaded class %d - %s",i,shipclass[i].typename));
 
-	shipclass[i].shipname = stgopt(++classbase);
-	logthis(spr("  Shipname %s",shipclass[i].shipname));
+	shipclass[i].npcprefx = stgopt(++classbase);
+	logthis(spr("  NPC prefix %s",shipclass[i].npcprefx));
 
 	shipclass[i].max_shlds = numopt(++classbase,0,19);
 	shipclass[i].max_phasr = numopt(++classbase,0,19);

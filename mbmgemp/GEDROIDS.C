@@ -106,7 +106,7 @@ logthis(spr("GE:INF:Adding %s ship - %d",ptr->userid,class));
 initshp(droidname,class);
 
 memcpy(ptr,&tmpshp,sizeof(WARSHP));  /* make is the current ship */
-sprintf(ptr->shipname,"%s%u\0",shipclass[class].shipname,usrn*usrn+gernd()%(2*usrn+1)+1000);
+sprintf(ptr->shipname,"%s%u\0",shipclass[class].npcprefx,usrn*usrn+gernd()%(2*usrn+1)+1000);
 
 ptr->coord.xcoord    = rndm((double)univmax*2.0)-(double)univmax;
 ptr->coord.ycoord    = rndm((double)univmax*2.0)-(double)univmax;
@@ -171,6 +171,7 @@ else
 	ptr->shieldtype = shipclass[class].max_shlds;
 
 ptr->cybmine = (byte)255;
+ptr->distress = (byte)255;
 
 for (zothusn=0; zothusn<nterms; zothusn++)
 	{
@@ -221,6 +222,15 @@ ptr->tick = 255;
 
 if (ptr->holdcourse > 0)
         --(ptr->holdcourse);
+
+if (ptr->cybupdate > 1)		/* this should only be set on droids if telezip is called */
+	--(ptr->cybupdate);
+else
+if (ptr->cybupdate == 1)
+	{
+	cyb_cruise(ptr);
+	ptr->cybupdate = 0;
+	}
 
 /* save off the topspeed in 1000's */
 /* if no warp, top speed is impulse 99 */
@@ -294,6 +304,22 @@ if ((gernd()%rnd) == 1)
 	}
 }
 
+void FUNC droid_distress(ptr,usrn)
+
+WARSHP	*ptr;
+int	usrn;
+{
+
+if (!ingegame(ptr->distress))
+	ptr->distress = 255;
+if (ptr->distress != ptr->cybmine && ptr->cybmine < nships)
+	{
+	setsect(ptr);
+	prfmsg(DRDISMSG,ptr->shipname,shipclass[ptr->shpclass].typename,username(warshpoff(ptr->cybmine)),xsect,ysect);
+	outwar(ALWAYS,usrn,0);
+	ptr->distress = ptr->cybmine;
+	}
+}
 
 /**************************************************************************
 ** Lydorian Garbage Scow                                                 **
@@ -325,10 +351,13 @@ if (ptr->jammer == 0)
 				{
 				ddist = cdistance(&ptr->coord,&wptr->coord);
 				ddist *= 10000;
-				if (ddist < (double)shipclass[ptr->shpclass].scanrange)
+				if (ddist < (double)shipclass[wptr->shpclass].scanrange)
 					{
 					ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
-					droid_annoy(ptr,zothusn,5,1,4);
+					if (warusroff(zothusn)->factions[shipclass[ptr->shpclass].faction] > 50)
+						droid_annoy(ptr,zothusn,10,5,8);
+					else
+						droid_annoy(ptr,zothusn,10,1,4);
 					}
 				}
 			}
@@ -344,12 +373,13 @@ if (ptr->jammer == 0)
 			/* if still in range, flee */
 			ptr->speed2b = dr_topspeed;
 			ptr->head2b=(double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0) % 360);
-			droid_annoy(ptr,zothusn,20,9,12);
+			droid_annoy(ptr,zothusn,10,9,12);
 			}
 		else
 			{
 			/* phew we're safe */
 			ptr->cybmine = 255;
+			zothusn = ptr->cybmine;
 			cyb_cruise(ptr);
 			}
 		}
@@ -357,6 +387,7 @@ if (ptr->jammer == 0)
 		ptr->cybmine = 255;
 	}
 droid_check_state(ptr,usrn);
+droid_distress(ptr,usrn);
 }
 
 /**************************************************************************
@@ -446,6 +477,7 @@ else
 	ptr->holdcourse = gernd()%20 + 10;
 	}
 droid_check_state(ptr,usrn);
+droid_distress(ptr,usrn);
 }
 
 /**************************************************************************
@@ -550,6 +582,7 @@ else
 	ptr->holdcourse = gernd()%50 + 10;
 	}
 droid_check_state(ptr,usrn);
+droid_distress(ptr,usrn);
 }
 
 /**************************************************************************
@@ -628,6 +661,7 @@ if (ptr->jammer == 0)
 		ptr->cybmine = 255;
 	}
 droid_check_state(ptr,usrn);
+droid_distress(ptr,usrn);
 }
 
 /**************************************************************************
@@ -772,10 +806,10 @@ if (ptr->jammer == 0)
 				{
 				ddist = cdistance(&ptr->coord,&wptr->coord);
 				ddist *= 10000;
-				if (ddist < (double)shipclass[ptr->shpclass].scanrange)
+				if (ddist < (double)shipclass[wptr->shpclass].scanrange)
 					{
 					ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
-					droid_annoy(ptr,zothusn,5,1,4);
+					droid_annoy(ptr,zothusn,20,1,4);
 					}
 				}
 			}
@@ -832,6 +866,7 @@ if (ptr->jammer == 0)
 		ptr->cybmine = 255;
 	}
 droid_check_state(ptr,usrn);
+droid_distress(ptr,usrn);
 }
 
 void   FUNC droid_won(ptr)
@@ -849,26 +884,6 @@ WARSHP   *ptr;
 {
 ptr->status = GESTAT_AVAIL;
 logthis(spr("GE:INF:%s Died!",ptr->userid));
-}
-
-int   FUNC missl_attached(ptr,usrn)
-WARSHP	*ptr;
-int		usrn;
-
-{
-int		i;
-MISSILE  *mptr;
-
-usrn=usrn;
-
-for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
-	{
-	if (mptr->distance > 0)
-		{
-		return(TRUE);
-		}
-	}
-return(FALSE);
 }
 
 void FUNC droid_check_state(ptr,usrn)

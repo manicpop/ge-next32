@@ -244,7 +244,7 @@ tmpshp.status		= 0;
 tmpshp.cybmine		= 0;
 tmpshp.upgrade		= 0;  /*UNUSED ATM*/
 tmpshp.cybupdate	= 0;
-tmpshp.emulate		= 0;
+tmpshp.distress		= 0;
 
 
 tmpshp.shipno = waruptr->topshipno+1;
@@ -460,6 +460,9 @@ if (ptr->heading != ptr->head2b)
 			ptr->heading = normal(ptr->heading - rotamt);
 		else                      /* rotate right */
 			ptr->heading = normal(ptr->heading + rotamt);
+		angle = (int)ptr->heading;
+		prfmsg(NOWTRNP,angle);
+		outprfge(FILTER,usrn);
 		}
 	}
 }
@@ -1025,7 +1028,7 @@ if (ptr->damage >= 100.0)
 	if (ptr->status == GESTAT_AUTO || ptr->userid[0] == '@')
 		ptr->status = GESTAT_AVAIL;
 
-	if (ptr->status == GESTAT_USER || ptr->emulate == 1)
+	if (ptr->status == GESTAT_USER)
 		{
 /*		user[usrn].state = 0;*/
 		user[usrn].substt = 0;
@@ -1117,6 +1120,7 @@ int           usrn;
 {
 WARSHP	*wptr;
 WARUSR	*wuptr;
+WARSHP	*disptr;
 
 unsigned i;
 int     who, comma, full;
@@ -1168,9 +1172,7 @@ if (who >= 0 && who < nships && who != usrn)
 				amt = ((shipclass[wptr->shpclass].max_tons - calcweight(wptr))/((double)weight[I_GOLD]/100.0));
 				full = TRUE;
 				}
-			if (amt <= 0 && full == TRUE)
-				prf(" nothing");
-			else
+			if (amt > 0)
 				{
 				wptr->items[I_GOLD] += amt;
 				sprintf(gechrbuf2,"%ld",amt);
@@ -1194,12 +1196,7 @@ if (who >= 0 && who < nships && who != usrn)
 						amt = ((shipclass[wptr->shpclass].max_tons - calcweight(wptr))/((double)weight[i]/100.0));
 						full = TRUE;
 						}
-					if (amt <= 0)
-						{
-						if (full == TRUE && comma == FALSE)
-							prf(" nothing");
-						}
-					else
+					if (amt > 0)
 						{
 						wptr->items[i] += amt;
 						sprintf(gechrbuf2,"%ld",amt);
@@ -1215,7 +1212,10 @@ if (who >= 0 && who < nships && who != usrn)
 				}
 			}
 		}
-	prf(".\r");
+	if (comma == FALSE)
+		prf(" nothing.\r");
+	else
+		prf(".\r");
 
 	if (full == TRUE)
 		prfmsg(KILLFULL);
@@ -1310,6 +1310,28 @@ if (who >= 0 && who < nships && who != usrn)
 
 	if (wptr->lastfired == usrn)
 		wptr->lastfired = -1;
+
+	/* distress handling */
+	for (i=nterms;i<nships;++i)
+		{
+		if (ingegame(i))
+			{
+			disptr=warshpoff(i);
+			if (disptr->distress == usrn)
+				{
+				amt = (shipclass[disptr->shpclass].max_points)*4;
+				sprintf(gechrbuf,"%ld",amt);
+				prfmsg(KILLDIS,gechrbuf,disptr->shipname);
+				prfmsg(FACNAME0+shipclass[disptr->shpclass].faction);
+				prf("\r");
+				outprfge(ALWAYS,who);
+				wuptr->score += amt;
+				wuptr->klscore += amt;
+				wuptr->factions[shipclass[disptr->shpclass].faction] = 0;
+				disptr->distress = 255;
+				}
+			}
+		}
 
 #ifdef SHOWDOC
 	if (gernd()%RNDDOC == 0)
@@ -1752,7 +1774,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 				if ((int)mptr->channel < nships)
 					{
 					wuptr = warusroff((int)mptr->channel);
-					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)(damfact));
+					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
 					}
 				acctm(ptr,usrn,1,mptr->channel);
 
@@ -1771,7 +1793,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 				if ((int)mptr->channel < nships)
 					{
 					wuptr = warusroff((int)mptr->channel);
-					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)(damfact));
+					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
 					}
 				acctm(ptr,usrn,1,mptr->channel);
 				}
