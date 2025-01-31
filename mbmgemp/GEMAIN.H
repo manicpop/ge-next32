@@ -221,6 +221,19 @@
 #define	FILTER 2
 #define	BLOCK 3
 
+/* Cybertron message types */
+
+#define APPROACH 0
+#define LOATTACK 1
+#define HIATTACK 2
+#define IGNORE 3
+#define NEUTRAL 4
+#define TAUNT 5
+#define CYBTORP 6
+#define FLEE 7
+#define CYBBASEA 8
+#define CYBBASEB 9
+
 /*****************************************************************************/
 /* End of Defines                                                            */
 /*****************************************************************************/

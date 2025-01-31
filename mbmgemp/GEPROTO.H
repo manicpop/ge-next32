@@ -272,7 +272,8 @@
 /*      58 */ void FUNC cyb_init P((WARSHP *ptr , int usrn , int class ));
 /*     168 */ void FUNC cyb_lives P((WARSHP *ptr , int usrn ));
 /*     327 */ int FUNC notclaimed P((WARSHP *ptr , int usrn ));
-/*     349 */ void FUNC cyb_annoy P((WARSHP *ptr , int usrn , int rnd , int first , int last ));
+/*     349 */ void FUNC cyb_annoy P((WARSHP *ptr , int usrn , int msgtype ));
+/*         */ void FUNC cyb_msg P((WARSHP *ptr , int usrn , int msgtype ));
 /*     386 */ int FUNC gebemean P((WARSHP *ptr ));
 /*     409 */ void FUNC db_update P((WARSHP *ptr , int usrn ));
 /*     453 */ void FUNC cyb_attack P((WARSHP *ptr , int usrn , WARSHP *wptr , int zothusn ));

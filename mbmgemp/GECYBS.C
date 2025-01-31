@@ -123,6 +123,7 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		ptr->phasr = 100;
 		ptr->cybmine = (byte)255;
 		ptr->distress = (byte)255;	/* make sure this isn't 0 */
+		ptr->warncntr = (byte)255;
 		cyb_cruise(ptr);
 		ptr->cybupdate = 100 + gernd()%20;
 		ptr->holdcourse = 0;
@@ -163,6 +164,7 @@ if (geudb(GELOOKUP,cybname, waruptr))
 
 		ptr->cybmine = (byte)255;
 		ptr->distress = (byte)255;
+		ptr->warncntr = (byte)255;
 		ptr->shield = 40 + (ptr->shieldtype*10);
 		ptr->phasr = 100;
 
@@ -299,6 +301,9 @@ if (ptr->jammer == 0)
 			if (!neutral(&ptr->coord)
 				&& ddist < (double)shipclass[ptr->shpclass].scanrange)
 				{
+				/* bases don't approach... so send msg when wptr approaches */
+				if (shipclass[ptr->shpclass].max_accel == 0)
+					cyb_annoy(ptr,zothusn,CYBBASEA);
 				/* fire phasers (or maybe even missiles) at the fool */
 
 				if (wptr->where == 1 && gebemean(ptr))
@@ -310,7 +315,7 @@ if (ptr->jammer == 0)
 						{
 						if (ddist < 30000.0)
 							{
-							cyb_annoy(ptr,zothusn,20,13,16);
+							cyb_annoy(ptr,zothusn,HIATTACK);
 							if (shipclass[ptr->shpclass].max_missl && (ptr->items[I_MISSILE] > 0) && (gernd()%10 == 0))
 								{
 								misl(ptr,usrn,zothusn,(shipclass[ptr->shpclass].tough_factor+1)*4000,0);
@@ -330,10 +335,6 @@ if (ptr->jammer == 0)
 								}
 							}
 						}
-					else
-						{
-						cyb_annoy(ptr,zothusn,30,1,4);
-						}
 					}
 				else
 				if (ptr->where == 0 && wptr->where != 1)
@@ -342,18 +343,14 @@ if (ptr->jammer == 0)
 					ptr->percent = 2;
 
 					/* if the guy gets closer then 2000 or is not little guy or has fired */
-					if (ddist < (tooclose + rndm(tooclose))
+					if ((ddist < (tooclose + rndm(tooclose))
 						|| shipclass[wptr->shpclass].cybs_can_att
-						|| wptr->cantexit > 0)
+						|| wptr->cantexit > 0) && !neutral(&wptr->coord))
 						{
 						cyb_attack(ptr,usrn,wptr,zothusn);
-						cyb_annoy(ptr,zothusn,20,13,16);
+						cyb_annoy(ptr,zothusn,LOATTACK);
 						if (shipclass[ptr->shpclass].has_decoy && ptr->items[I_DECOYS] > 0)
 							cyb_lay_decoys(ptr);
-						}
-					else
-						{
-						cyb_annoy(ptr,zothusn,20,9,12);
 						}
 					}
 				}
@@ -432,34 +429,82 @@ return (nc < shipclass[ptr->shpclass].noclaim);
 }
 
 /* ptr to sender , usrn = reciever */
-void  FUNC cyb_annoy(ptr,usrn,rnd,first,last)
-WARSHP   *ptr;
-int      usrn;
-int      rnd;
-int      first;
-int      last;
+void  FUNC cyb_annoy(ptr,usrn,msgtype)
+WARSHP	*ptr;
+int	usrn;
+int	msgtype;
 {
 
-int base;
-int sel;
+/* skip NPCs entirely */
+if (usrn >= nterms)
+	return;
 
-if ((gernd()%rnd) == 1)
+/* if base is targeting user, don't show approach msg */
+if (usrn == ptr->cybmine && msgtype == CYBBASEA)
+	return;
+
+/* these messages can be called on users that aren't being targeted */
+/* bypass logic, use simple random, and don't change warncntr */
+if (usrn != ptr->cybmine)
 	{
-	base = CYBBASEM;
-	base += (ptr->shpclass - cyb_class)*16;
+	if ((msgtype == LOATTACK || msgtype == HIATTACK || msgtype == CYBBASEA) && gernd()%50 == 0)
+		cyb_msg(ptr,usrn,msgtype);
+	return;
+	}
 
-	first = first+base;
-	last = last+base;
-	sel = first+gernd()%(last-first+1);
+/* let some of these through on occasion */
+if ((msgtype == NEUTRAL || msgtype == IGNORE || msgtype == TAUNT) && gernd()%200 == 0)
+	ptr->warncntr = 255;
 
-	if (sel < CYBLASTM)
-		{
-		prfmsg(sel,ptr->shipname);
+/* otherwise don't do the same message twice in a row */
+if (ptr->warncntr == msgtype)
+	return;
 
-		outprfge(FILTER,usrn);
-		}
-	sprintf(gechrbuf,"cyb_ann shnm=<%s> usrn=%d base=%d frst=%d lst=%d sel=%d",ptr->shipname,usrn, base, first, last, sel);
-	logthis(gechrbuf);
+/* don't do these after each other */
+if ((ptr->warncntr == LOATTACK || ptr->warncntr == CYBTORP || ptr->warncntr == TAUNT)
+	&& (msgtype == LOATTACK || msgtype == CYBTORP || msgtype == TAUNT))
+	return;
+
+/* add in and increase likelihood of base battle messages */
+if ((msgtype == LOATTACK || msgtype == HIATTACK) && shipclass[ptr->shpclass].max_accel == 0 && gernd()%2 == 0)
+	msgtype = CYBBASEB;
+
+/* if you're fleeing, be quiet after flee message */
+if (ptr->holdcourse > 0)
+	return;
+
+/* if you've fled, and you're returning, don't reannounce */
+if (ptr->warncntr == FLEE && msgtype == APPROACH)
+	{
+	ptr->warncntr = APPROACH;
+	return;
+	}
+
+/* remember which message type was called last (even if it doesn't necessarily get displayed) */
+ptr->warncntr = msgtype;
+
+/* show some messages always, the rest sometimes */
+if (msgtype == FLEE || msgtype == APPROACH || msgtype == CYBBASEA || gernd()%4 == 0)
+	cyb_msg(ptr,usrn,msgtype);
+
+}
+
+void FUNC cyb_msg(ptr,usrn,msgtype)
+WARSHP	*ptr;
+int usrn;
+int msgtype;
+
+{
+int base, sel;
+
+base = CYBBASEM + (msgtype*4);
+
+sel = base+(gernd()%4)+1;
+
+if (sel < CYBLASTM)
+	{
+	prfmsg(sel,ptr->shipname);
+	outprfge(FILTER,usrn);
 	}
 }
 
@@ -566,7 +611,10 @@ for (i=0;i<j;++i)
 	else
 		{
 		if (shipclass[ptr->shpclass].max_torps && (ptr->items[I_TORPEDO] > 0))
+			{
+			cyb_annoy(ptr,zothusn,CYBTORP);
 			torp(ptr,usrn,zothusn);
+			}
 		}
 	}
 
@@ -597,8 +645,9 @@ if (ptr->where == 1)
 	{
 	for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 		{
-		if (mptr->distance > 20000)
+		if (mptr->distance > 20000 && d_topspeed/6.5 > mislsped && gernd()%2 == 0)
 			{
+			ptr->warncntr = FLEE;	/* don't send APPROACH again after returning from this */
 			ptr->speed2b = d_topspeed;
 			ptr->holdcourse = gernd()%5 + 5;
 			break;
@@ -635,7 +684,7 @@ int   i;
 
 /* send out a decoy */
 for (i=0; i<5;++i)
-	if (ptr->decout[i] == 0 && gernd()%50*(i+1))
+	if (ptr->decout[i] == 0 && gernd()%100*(i+1))
 		ptr->decout[i] = DECOYTIME;
 }
 
@@ -644,12 +693,12 @@ for (i=0; i<5;++i)
 **************************************************************************/
 
 void  FUNC cyb_check_damage(ptr,usrn)
-WARSHP   *ptr;
-int      usrn;
+WARSHP	*ptr;
+int	usrn;
 
 {
 
-if (ptr->cybmine < 255 && ptr->damage > CYB_MINDAM && (gernd()%10 == 0))
+if (ptr->cybmine < nships && ptr->damage > CYB_MINDAM && (gernd()%10 == 0))
 	{
 	if (shipclass[ptr->shpclass].has_mine
 		&& ptr->items[I_MINE] > 0
@@ -664,6 +713,8 @@ if (ptr->cybmine < 255 && ptr->damage > CYB_MINDAM && (gernd()%10 == 0))
 	ptr->speed2b = d_topspeed;
 	ptr->head2b = rndm(359.9);
 	ptr->holdcourse = gernd()%10 + 5;
+	if (ptr->cybmine < nterms && ingegame(ptr->cybmine))
+		cyb_annoy(ptr,ptr->cybmine,FLEE);
 	}
 }
 
@@ -807,7 +858,8 @@ else
 		prf("***\r%s, MID, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
 			spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
 		outwar(ALWAYS,usrn,0); */
-		cyb_annoy(ptr,low_ship,60,1,4);
+		if (low_dist*10000 < shipclass[wptr->shpclass].scanrange)
+			cyb_annoy(ptr,low_ship,APPROACH);
 		}
 	else
 	if (low_dist >= 3)
@@ -824,6 +876,8 @@ else
 		prf("***\r%s, SHORT, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
 			spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
 		outwar(ALWAYS,usrn,0); */
+		if (low_dist*10000 < shipclass[wptr->shpclass].scanrange)
+			cyb_annoy(ptr,low_ship,APPROACH);
 		}
 	else
 	if (wptr->where == 1)
@@ -833,6 +887,19 @@ else
 			ptr->speed2b = d_topspeed;
 			ptr->speed = ptr->speed2b;
 			}
+		/* if following and not shooting first, slow down */
+		if (shipclass[wptr->shpclass].cybs_can_att == 0 && ptr->cantexit == 0 && wptr->cantexit == 0 && low_dist < 1)
+			{
+			if (wptr->speed * .5 > d_topspeed)
+				ptr->speed2b = d_topspeed;
+			else
+				{
+				ptr->speed2b = ((int)(wptr->speed * .5)/1000)*1000;
+				if (ptr->speed2b == 0)
+					ptr->speed2b = 990;
+				}
+			}
+		else
 		if (wptr->speed * 1.25 >= d_topspeed)
 		    ptr->speed2b = d_topspeed;
 		else
@@ -848,47 +915,39 @@ else
 		{
 		if (low_dist > .5)
 			{
+			ptr->speed2b = 990.0;
 			if (cyb_fast(ptr))
-				{
-				ptr->speed2b = 990.0;
 				ptr->speed = ptr->speed2b;
-				}
-			else
-				ptr->speed2b = 990.0;
 			ptr->head2b = vector(&ptr->coord,&(wptr->coord));
 			}
 		else
 			{
+			ptr->speed2b = ((int)(rndm(350.0)+150.0)/10)*10;
 			if (cyb_fast(ptr))
-				{
-				ptr->speed2b = ((int)(rndm(350.0)+150.0)/10)*10;
 				ptr->speed = ptr->speed2b;
-				}
-			else
-				ptr->speed2b = ((int)(rndm(350.0)+150.0)/10)*10;
 			ptr->head2b = rndm(359.9);
 			}
+		cyb_annoy(ptr,low_ship,TAUNT);
 		/* DEBUG
 		prf("***\r%s, IMPULSE, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
 			spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
 		outwar(ALWAYS,usrn,0); */
-		cyb_annoy(ptr,low_ship,30,5,8);
 		}
 	else
 		{
 		/* back off if not going to shoot first */
+		ptr->speed2b = ((int)(rndm(750.0)+150.0)/10)*10;
 		if (cyb_fast(ptr))
-			{
-			ptr->speed2b = ((int)(rndm(750.0)+150.0)/10)*10;
 			ptr->speed = ptr->speed2b;
-			}
-		else
-			ptr->speed2b = ((int)(rndm(750.0)+150.0)/10)*10;
 		if (low_dist < 1.5)
 			ptr->head2b=(double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0) % 360);
 		else
 			ptr->head2b = vector(&ptr->coord,&(wptr->coord));
-		cyb_annoy(ptr,low_ship,30,9,12);
+		if (shipclass[wptr->shpclass].cybs_can_att == 0)
+			cyb_annoy(ptr,low_ship,IGNORE);
+		else
+		if (neutral(&wptr->coord))
+			cyb_annoy(ptr,low_ship,NEUTRAL);
 		}
 	/* make sure speed jumps won't leave us in a weird state */
 	/* avoid fractional warp values */

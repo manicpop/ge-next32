@@ -4195,476 +4195,230 @@ End report
 CYBBASEM {DO NOT REMOVE THIS MESSAGE!!!!!!} T Cyb message beginning divider
 
 The following are sets of annoyance messages for 
-each class of Cybertron. There are 16 messages per
-class.
+each type of Cybertron behavior. There are four messages
+for each behavior.
 
 **********************************************************************
-Cyber-Interceptor
 
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
+APPROACH
+
+CYB0M1 {***
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m Organic beings are the scum of the galaxy, not fit to survive! [1;36m>[1;37m
+} T GE Cyb 0 message 1
+
+CYB0M2 {***
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m Your puny race will join the Sartens in oblivion! [1;36m>[1;37m
+} T GE Cyb 0 message 2
+
+CYB0M3 {***
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m Extermination is the only way to deal with organic scum! [1;36m>[1;37m
+} T GE Cyb 0 message 3
+
+CYB0M4 {***
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m By cyborg decree, all organics are doomed to destruction! [1;36m>[1;37m
+} T GE Cyb 0 message 4
+
+LOATTACK
 
 CYB1M1 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Organic beings are the scum of the galaxy, not fit to survive! [1;36m>[1;37m
+[1;36m<[1;37m You had better run if you know what's good for you! [1;36m>[1;37m
 } T GE Cyb 1 message 1
 
 CYB1M2 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Cybertrons shall rule the galaxy! [1;36m>[1;37m
+[1;36m<[1;37m I could kill you right now if it weren't so unsportsmanlike! [1;36m>[1;37m
 } T GE Cyb 1 message 2
 
 CYB1M3 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Extermination is the only way to deal with organic scum! [1;36m>[1;37m
+[1;36m<[1;37m Give it up! I can keep this up for hours! [1;36m>[1;37m
 } T GE Cyb 1 message 3
 
 CYB1M4 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m By cyborg decree, all organics are doomed to destruction! [1;36m>[1;37m
+[1;36m<[1;37m I will destroy you, organic vermin! [1;36m>[1;37m
 } T GE Cyb 1 message 4
 
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYB1M5 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You had better run if you know what's good for you! [1;36m>[1;37m
-} T GE Cyb 1 message 5
-
-CYB1M6 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m I could kill you right now if it weren't so unsportsmanlike! [1;36m>[1;37m
-} T GE Cyb 1 message 6
-
-CYB1M7 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You are so dumb you make a Toranian pig look like intelligent life. [1;36m>[1;37m
-} T GE Cyb 1 message 7
-
-CYB1M8 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m I will destroy you, organic vermin! [1;36m>[1;37m
-} T GE Cyb 1 message 8
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYB1M9 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You are no match for a Cybertron! [1;36m>[1;37m
-} T GE Cyb 1 message 9
-
-CYB1M10 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Destroying your pathetic vessel would be a waste of time! [1;36m>[1;37m
-} T GE Cyb 1 message 10
-
-CYB1M11 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You are not worth wasting a single torpedo on! [1;36m>[1;37m
-} T GE Cyb 1 message 11
-
-CYB1M12 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You are mine to toy with, and mine to slay! [1;36m>[1;37m
-} T GE Cyb 1 message 12
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYB1M13 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Eat this, you biological misfit! [1;36m>[1;37m
-} T GE Cyb 1 message 13
-
-CYB1M14 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m I'm only getting started, you Gloxanian slugworm! [1;36m>[1;37m
-} T GE Cyb 1 message 14
-
-CYB1M15 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You can't dodge torpedoes forever, you Mongonian mudmole! [1;36m>[1;37m
-} T GE Cyb 1 message 15
-
-CYB1M16 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Give it up! I can keep this up for hours! [1;36m>[1;37m
-} T GE Cyb 1 message 16
-
-**********************************************************************
-Cyber-Destroyer
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
+HIATTACK
 
 CYB2M1 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your puny race will join the Sartens in oblivion! [1;36m>[1;37m
+[1;36m<[1;37m Your ship shall be mine! [1;36m>[1;37m
 } T GE Cyb 2 message 1
 
 CYB2M2 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Cybertrons are superior beings! [1;36m>[1;37m
+[1;36m<[1;37m Eat this, you biological misfit! [1;36m>[1;37m
 } T GE Cyb 2 message 2
 
 CYB2M3 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your ship shall be mine! [1;36m>[1;37m
+[1;36m<[1;37m Your extermination is a mathematical certainty! [1;36m>[1;37m
 } T GE Cyb 2 message 3
 
 CYB2M4 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You cannot defeat us! [1;36m>[1;37m
+[1;36m<[1;37m You will never survive this attack! [1;36m>[1;37m
 } T GE Cyb 2 message 4
 
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYB2M5 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m This is your last warning. I WILL destroy you! [1;36m>[1;37m
-} T GE Cyb 2 message 5
-
-CYB2M6 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your ship is no match for the Cyber-Destroyer! [1;36m>[1;37m
-} T GE Cyb 2 message 6
-
-CYB2M7 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your computational abilities are inferior to Cybertrons. [1;36m>[1;37m
-} T GE Cyb 2 message 7
-
-CYB2M8 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your pathetic inaction is typical of organic beings. [1;36m>[1;37m
-} T GE Cyb 2 message 8
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYB2M9 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You are no match for a Cybertron! [1;36m>[1;37m
-} T GE Cyb 2 message 9
-
-CYB2M10 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m We will destroy you, organic vermin! [1;36m>[1;37m
-} T GE Cyb 2 message 10
-
-CYB2M11 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your extermination is a certainty! [1;36m>[1;37m
-} T GE Cyb 2 message 11
-
-CYB2M12 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You are not worth wasting a single torpedo on! [1;36m>[1;37m
-} T GE Cyb 2 message 12
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYB2M13 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Prepare to be destroyed! [1;36m>[1;37m
-} T GE Cyb 2 message 13
-
-CYB2M14 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Cybertrons cannot be stopped! [1;36m>[1;37m
-} T GE Cyb 2 message 14
-
-CYB2M15 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You will never survive this attack! [1;36m>[1;37m
-} T GE Cyb 2 message 15
-
-CYB2M16 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m We shall prevail. You cannot survive! [1;36m>[1;37m
-} T GE Cyb 2 message 16
-
-**********************************************************************
-Cyber-Base
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
+IGNORE
 
 CYB3M1 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Halt your approach or prepare to be destroyed. [1;36m>[1;37m
+[1;36m<[1;37m Your ship is no match for a Cybertron! [1;36m>[1;37m
 } T GE Cyb 3 message 1
 
 CYB3M2 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Only Cybertrons are permitted in this region of space. [1;36m>[1;37m
+[1;36m<[1;37m You are not worth wasting a single torpedo on! [1;36m>[1;37m
 } T GE Cyb 3 message 2
 
 CYB3M3 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You are approaching a Cybertron base. Turn around now! [1;36m>[1;37m
+[1;36m<[1;37m You are mine to toy with, and mine to slay! [1;36m>[1;37m
 } T GE Cyb 3 message 3
 
 CYB3M4 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Retreat from this area! This is your only warning! [1;36m>[1;37m
+[1;36m<[1;37m Destroying your pathetic vessel would be a waste of time! [1;36m>[1;37m
 } T GE Cyb 3 message 4
 
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYB3M5 {} T GE Cyb 3 message 5
-
-CYB3M6 {} T GE Cyb 3 message 6
-
-CYB3M7 {} T GE Cyb 3 message 7
-
-CYB3M8 {} T GE Cyb 3 message 8
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYB3M9 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m This sector is off limits to organics! [1;36m>[1;37m
-} T GE Cyb 3 message 9
-
-CYB3M10 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m This Cyber-Base is invincible! [1;36m>[1;37m
-} T GE Cyb 3 message 10
-
-CYB3M11 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Retreat from this sector immediately! [1;36m>[1;37m
-} T GE Cyb 3 message 11
-
-CYB3M12 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Destroying your ship would be a waste of time! [1;36m>[1;37m
-} T GE Cyb 3 message 12
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYB3M13 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You have been targeted! [1;36m>[1;37m
-} T GE Cyb 3 message 13
-
-CYB3M14 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Prepare to be destroyed! [1;36m>[1;37m
-} T GE Cyb 3 message 14
-
-CYB3M15 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m This Cyber-Base is invincible! [1;36m>[1;37m
-} T GE Cyb 3 message 15
-
-CYB3M16 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Only a fool would dare attack a Cyber-Base! [1;36m>[1;37m
-} T GE Cyb 3 message 16
-
-**********************************************************************
-Cyber-Cruiser
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
+NEUTRAL
 
 CYB4M1 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your puny race will join the Sartens in oblivion! [1;36m>[1;37m
+[1;36m<[1;37m Stop hiding and face your fate! [1;36m>[1;37m
 } T GE Cyb 4 message 1
 
 CYB4M2 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Cybertrons are superior beings! [1;36m>[1;37m
+[1;36m<[1;37m Cybertrons cannot be stopped! [1;36m>[1;37m
 } T GE Cyb 4 message 2
 
 CYB4M3 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your ship shall be mine! [1;36m>[1;37m
+[1;36m<[1;37m You can't hide in the neutral zone forever! [1;36m>[1;37m
 } T GE Cyb 4 message 3
 
 CYB4M4 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You cannot defeat us! [1;36m>[1;37m
+[1;36m<[1;37m Are you too frightened to leave the neutral zone? [1;36m>[1;37m
 } T GE Cyb 4 message 4
 
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
-
-CYB4M5 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m This is your last warning. I WILL destroy you! [1;36m>[1;37m
-} T GE Cyb 4 message 5
-
-CYB4M6 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your extermination is a certainty! [1;36m>[1;37m
-} T GE Cyb 4 message 6
-
-CYB4M7 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your computational abilities are inferior to Cybertrons. [1;36m>[1;37m
-} T GE Cyb 4 message 7
-
-CYB4M8 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your pathetic inaction is typical of organic beings. [1;36m>[1;37m
-} T GE Cyb 4 message 8
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYB4M9 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your puny vessel is no threat to us. [1;36m>[1;37m
-} T GE Cyb 4 message 9
-
-CYB4M10 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m We will destroy you, organic vermin! [1;36m>[1;37m
-} T GE Cyb 4 message 10
-
-CYB4M11 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your ship is no match for the Cyber-Cruiser! [1;36m>[1;37m
-} T GE Cyb 4 message 11
-
-CYB4M12 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Cybertrons shall purge your race from the galaxy! [1;36m>[1;37m
-} T GE Cyb 4 message 12
-
-The next four messages are displayed when a cybertron 
-attacks another player.
-
-CYB4M13 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Give up! You cannot survive this attack! [1;36m>[1;37m
-} T GE Cyb 4 message 13
-
-CYB4M14 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Cybertrons cannot be stopped! [1;36m>[1;37m
-} T GE Cyb 4 message 14
-
-CYB4M15 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your destruction is a mathematical certainty! [1;36m>[1;37m
-} T GE Cyb 4 message 15
-
-CYB4M16 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m We shall prevail. You cannot survive! [1;36m>[1;37m
-} T GE Cyb 4 message 16
-
-**********************************************************************
-Cyber-Dreadnought
-
-The first four messages are general messages displayed 
-when the cybertron approaches another player from a distance.
+TAUNT
 
 CYB5M1 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your puny race will join the Sartens in oblivion! [1;36m>[1;37m
+[1;36m<[1;37m You are so dumb you make a Toranian pig look like intelligent life. [1;36m>[1;37m
 } T GE Cyb 5 message 1
 
 CYB5M2 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Cybertrons are superior beings! [1;36m>[1;37m
+[1;36m<[1;37m Prepare to be destroyed! [1;36m>[1;37m
 } T GE Cyb 5 message 2
 
 CYB5M3 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your ship shall be mine! [1;36m>[1;37m
+[1;36m<[1;37m Your computational abilities are inferior to Cybertrons. [1;36m>[1;37m
 } T GE Cyb 5 message 3
 
 CYB5M4 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You cannot defeat us! [1;36m>[1;37m
+[1;36m<[1;37m Cybertrons shall rule the galaxy! [1;36m>[1;37m
 } T GE Cyb 5 message 4
 
-The next four messages are general messages displayed 
-when the cybertron begins to brake to engage a player.
+CYBTORP
 
-CYB5M5 {***
+CYB6M1 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m This is your last warning. I WILL destroy you! [1;36m>[1;37m
-} T GE Cyb 5 message 5
+[1;36m<[1;37m You cannot defeat us! [1;36m>[1;37m
+} T GE Cyb 6 message 1
 
-CYB5M6 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your ship is no match for the Cyber-Dreadnought! [1;36m>[1;37m
-} T GE Cyb 5 message 6
-
-CYB5M7 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your computational abilities are inferior to Cybertrons. [1;36m>[1;37m
-} T GE Cyb 5 message 7
-
-CYB5M8 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your pathetic inaction is typical of organic beings. [1;36m>[1;37m
-} T GE Cyb 5 message 8
-
-The next four messages are displayed when a player is 
-to a cybertron but the cyb chooses not to attack for
-any number of reasons.
-
-CYB5M9 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You are no match for a Cybertron! [1;36m>[1;37m
-} T GE Cyb 5 message 9
-
-CYB5M10 {***
+CYB6M2 {***
 [0;37mHailing message from [0;36m%s
 [1;36m<[1;37m We will destroy you, organic vermin! [1;36m>[1;37m
-} T GE Cyb 5 message 10
+} T GE Cyb 6 message 2
 
-CYB5M11 {***
+CYB6M3 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your extermination is a certainty! [1;36m>[1;37m
-} T GE Cyb 5 message 11
+[1;36m<[1;37m You can't dodge torpedoes forever, you Mongonian mudmole! [1;36m>[1;37m
+} T GE Cyb 6 message 3
 
-CYB5M12 {***
+CYB6M4 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Wasting my time destroying your ship would be pointless! [1;36m>[1;37m
-} T GE Cyb 5 message 12
+[1;36m<[1;37m Suck on this torpedo, you Gloxanian slugworm! [1;36m>[1;37m
+} T GE Cyb 6 message 4
 
-The next four messages are displayed when a cybertron 
-attacks another player.
+FLEE
 
-CYB5M13 {***
+CYB7M1 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Prepare to be destroyed! [1;36m>[1;37m
-} T GE Cyb 5 message 13
+[1;36m<[1;37m Your pathetic resistance only delays the inevitable! [1;36m>[1;37m
+} T GE Cyb 7 message 1
 
-CYB5M14 {***
+CYB7M2 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Cybertrons cannot be stopped! [1;36m>[1;37m
-} T GE Cyb 5 message 14
+[1;36m<[1;37m Next time you won't be so lucky! [1;36m>[1;37m
+} T GE Cyb 7 message 2
 
-CYB5M15 {***
+CYB7M3 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your destruction is a mathematical certainty! [1;36m>[1;37m
-} T GE Cyb 5 message 15
+[1;36m<[1;37m I shall be back for you later, vermin! [1;36m>[1;37m
+} T GE Cyb 7 message 3
 
-CYB5M16 {***
+CYB7M4 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m We shall prevail. You cannot survive! [1;36m>[1;37m
-} T GE Cyb 5 message 16
+[1;36m<[1;37m We will prevail. You cannot survive! [1;36m>[1;37m
+} T GE Cyb 7 message 4
+
+CYBBASEA
+
+CYB8M1 {***
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m Halt your approach or prepare to be destroyed. [1;36m>[1;37m
+} T GE Cyb 8 message 1
+
+CYB8M2 {***
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m Only Cybertrons are permitted in this region of space. [1;36m>[1;37m
+} T GE Cyb 8 message 2
+
+CYB8M3 {***
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m You are approaching a Cybertron base. Turn around now! [1;36m>[1;37m
+} T GE Cyb 8 message 3
+
+CYB8M4 {***
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m Retreat from this area! This is your only warning! [1;36m>[1;37m
+} T GE Cyb 8 message 4
+
+CYBBASEB
+
+CYB9M1 {***
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m This sector is off limits to organics! [1;36m>[1;37m
+} T GE Cyb 9 message 1
+
+CYB9M2 {***
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m This Cyber-Base is invincible! [1;36m>[1;37m
+} T GE Cyb 9 message 2
+
+CYB9M3 {***
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m Only a fool would dare attack a Cyber-Base! [1;36m>[1;37m
+} T GE Cyb 9 message 3
+
+CYB9M4 {***
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m Turn around and leave this area while you still can! [1;36m>[1;37m
+} T GE Cyb 9 message 4
 
 CYBLASTM {DO NOT REMOVE THIS MESSAGE!!!!!!} T Cyb message end divider
 

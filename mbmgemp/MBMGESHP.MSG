@@ -5468,7 +5468,7 @@ S34PRIC {Price of ship: 1} (S34TYPE=USER) L 1 2000000000
 
 Points awarded for destroying a class 34 ship.
 
-S34PNTS {Points awarded: 500} (S34TYPE#<NONE>) N 1 32767
+S34PNTS {Points awarded: 200} (S34TYPE#<NONE>) N 1 32767
 
 Scanner range of a class 34 ship in subsectors.
 
@@ -5621,7 +5621,7 @@ S35PRIC {Price of ship: 1} (S35TYPE=USER) L 1 2000000000
 
 Points awarded for destroying a class 35 ship.
 
-S35PNTS {Points awarded: 500} (S35TYPE#<NONE>) N 1 32767
+S35PNTS {Points awarded: 100} (S35TYPE#<NONE>) N 1 32767
 
 Scanner range of a class 35 ship in subsectors.
 
@@ -5774,7 +5774,7 @@ S36PRIC {Price of ship: 1} (S36TYPE=USER) L 1 2000000000
 
 Points awarded for destroying a class 36 ship.
 
-S36PNTS {Points awarded: 2000} (S36TYPE#<NONE>) N 1 32767
+S36PNTS {Points awarded: 500} (S36TYPE#<NONE>) N 1 32767
 
 Scanner range of a class 36 ship in subsectors.
 
