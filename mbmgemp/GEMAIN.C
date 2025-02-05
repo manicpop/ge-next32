@@ -238,7 +238,8 @@ int				gemaxplrs,
 				chgloser,
 				univwrap,
 				maxplanets,
-				meneat;
+				meneat,
+				cattkd;
 
 char				*opttxt,
 				optchr;
@@ -398,6 +399,7 @@ maxplanets	= numopt(MAXPLSE,1,9);
 teambonus	= numopt(TEAMBONU,0,32000)*100L;
 team_max	= numopt(TEAMMAX,0,32000);
 meneat		= ynopt(MENEAT);
+cattkd		= numopt(CATTKD,0,10);
 
 profon		= ynopt(PROFON);
 logflag		= ynopt(LOGFLG);

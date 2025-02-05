@@ -310,13 +310,13 @@ WARSHP	*ptr;
 int	usrn;
 {
 
-if (!ingegame(ptr->distress))
+if (ptr->distress > nships || !ingegame(ptr->distress))
 	ptr->distress = 255;
 if (ptr->distress != ptr->cybmine && ptr->cybmine < nships)
 	{
 	setsect(ptr);
 	prfmsg(DRDISMSG,ptr->shipname,shipclass[ptr->shpclass].typename,username(warshpoff(ptr->cybmine)),xsect,ysect);
-	outwar(ALWAYS,usrn,0);
+	outwar(FILTER,usrn,0);
 	ptr->distress = ptr->cybmine;
 	}
 }
@@ -379,7 +379,7 @@ if (ptr->jammer == 0)
 			{
 			/* phew we're safe */
 			ptr->cybmine = 255;
-			zothusn = ptr->cybmine;
+			ptr->distress = 255;
 			cyb_cruise(ptr);
 			}
 		}
@@ -465,6 +465,7 @@ if (ptr->jammer == 0)
 			{
 			/* phew we're safe */
 			ptr->cybmine = 255;
+			ptr->distress = 255;
 			cyb_cruise(ptr);
 			}
 		}
@@ -570,6 +571,7 @@ if (ptr->jammer == 0)
 			{
 			/* phew we're safe */
 			ptr->cybmine = 255;
+			ptr->distress = 255;
 			cyb_cruise(ptr);
 			}
 		}
@@ -633,6 +635,8 @@ if (ptr->jammer == 0)
 			ptr->head2b = vector(&ptr->coord,&(wptr->coord));
 			ptr->speed2b = dr_topspeed;
 			}
+		ddist = cdistance(&ptr->coord,&wptr->coord);
+		ddist *= 10000;
 		if (ddist < 30000)
 			{
 			ptr->degrees = (int)(cbearing(&ptr->coord,&wptr->coord,ptr->heading)+.5);
@@ -654,6 +658,7 @@ if (ptr->jammer == 0)
 			{
 			/* phew we're safe */
 			ptr->cybmine = 255;
+			ptr->distress = 255;
 			cyb_cruise(ptr);
 			}
 		}
@@ -824,6 +829,8 @@ if (ptr->jammer == 0)
 			ptr->speed2b = 990.0;
 		else
 			ptr->speed2b = dr_topspeed;
+		ddist = cdistance(&ptr->coord,&wptr->coord);
+		ddist *= 10000;
 		if (ddist < 30000)
 			{
 			ptr->degrees = (int)(cbearing(&ptr->coord,&wptr->coord,ptr->heading)+.5);
@@ -859,6 +866,7 @@ if (ptr->jammer == 0)
 			{
 			/* phew we're safe */
 			ptr->cybmine = 255;
+			ptr->distress = 255;
 			cyb_cruise(ptr);
 			}
 		}

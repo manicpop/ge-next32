@@ -96,6 +96,7 @@ Other stuff:
   the mines and decoys you have deployed.
 * The ship you have locked onto will be displayed with red
   highlights in the range scans and ordnance reports.
+* Ships in distress will have green highlights.
 * The Sysop ship was removed. "Hidden" ships might return in
   future versions.
 * A bug that sometimes showed the wrong defaults in the planetary
@@ -150,6 +151,13 @@ Other stuff:
   roll over and go negative when out of flux pods have
   been fixed.
 * "ALL" now works with the ATTACK command.
+* Firing a phaser and not hitting anyone, getting hit by
+  phaser with 0 damage, unsuccessfully attempting to fire
+  torpedoes or missiles, or being the target of such an
+  unsuccessful attempt will not set your "can't exit"
+  timer.
+* If torpedoes or missiles are locked onto you, this
+  WILL set your "can't exit" timer.
 
 === 0.1.1 === 2024-09-30:
 

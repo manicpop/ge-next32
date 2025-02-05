@@ -1674,6 +1674,7 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 	{
 	if (tptr->distance > 1)
 		{
+		ptr->cantexit = FIRETICKS;
 		if (tptr->distance <= torpsped)
 			{
 			tptr->distance = 0;
@@ -1755,6 +1756,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 	{
 	if (mptr->distance > 0)
 		{
+		ptr->cantexit = FIRETICKS;
 		if (mptr->distance < mislsped)
 			{
 			mptr->distance = 0;

@@ -255,6 +255,8 @@ WARSHP	*wptr;
 int	zothusn;
 int	i;
 
+MISSILE  *mptr;
+
 double	ddist;
 
 
@@ -309,11 +311,10 @@ if (ptr->jammer == 0)
 				if (wptr->where == 1 && gebemean(ptr))
 					{
 					if (ddist < (tooclose+rndm(tooclose))
-						|| shipclass[wptr->shpclass].cybs_can_att
 						|| wptr->cantexit > 0
 						|| ptr->cantexit > 0)
 						{
-						if (ddist < 30000.0)
+						if (ddist < 30000.0 && (ptr->cybmine == zothusn || cyb_pick_fight(zothusn,0)))
 							{
 							cyb_annoy(ptr,zothusn,HIATTACK);
 							if (shipclass[ptr->shpclass].max_missl && (ptr->items[I_MISSILE] > 0) && (gernd()%10 == 0))
@@ -347,10 +348,13 @@ if (ptr->jammer == 0)
 						|| shipclass[wptr->shpclass].cybs_can_att
 						|| wptr->cantexit > 0) && !neutral(&wptr->coord))
 						{
-						cyb_attack(ptr,usrn,wptr,zothusn);
-						cyb_annoy(ptr,zothusn,LOATTACK);
-						if (shipclass[ptr->shpclass].has_decoy && ptr->items[I_DECOYS] > 0)
-							cyb_lay_decoys(ptr);
+						if (ddist < 30000.0 && (ptr->cybmine == zothusn || cyb_pick_fight(zothusn,0)))
+							{
+							cyb_attack(ptr,usrn,wptr,zothusn);
+							cyb_annoy(ptr,zothusn,LOATTACK);
+							if (shipclass[ptr->shpclass].has_decoy && ptr->items[I_DECOYS] > 0)
+								cyb_lay_decoys(ptr);
+							}
 						}
 					}
 				}
@@ -369,6 +373,8 @@ else
 			&& gernd()%5 == 0)
 			laymine(ptr,usrn,10);
 
+		if (ptr->speed < 1000 && d_topspeed >= 1000)
+			ptr->speed = 0;
 		ptr->speed2b = d_topspeed;
 		ptr->holdcourse = gernd()%7 + 2;
 		}
@@ -389,8 +395,41 @@ geshocst(0,spr("GE:cm %d",(int)ptr->cybmine)); */
 /* check for jammer */
 if (ptr->jammer > 0 && shipclass[ptr->shpclass].max_accel > 0)
 	{
+	if (ptr->speed < 1000 && d_topspeed >= 1000)
+		ptr->speed = 0;
 	ptr->speed2b = d_topspeed;
 	ptr->holdcourse = gernd()%10 + 5;
+	}
+else
+/* if we are in hyperspace and fighting and missiles detected,
+	decide whether to flee or stop and raise shields */
+if (ptr->where == 1)
+	{
+	for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
+		{
+		if (mptr->distance > 20000 && d_topspeed/6.5 > mislsped && gernd()%2 == 0)
+			{
+			ptr->warncntr = FLEE;	/* don't send APPROACH again after returning from this */
+			ptr->speed2b = d_topspeed;
+			ptr->holdcourse = gernd()%5 + 5;
+			break;
+			}
+		else
+		if (mptr->distance > 0)
+			{
+			if (d_topspeed >= 990)
+				ptr->speed2b = 990;
+			else
+				ptr->speed2b = d_topspeed;
+			ptr->holdcourse = gernd()%5 + 5;
+			break;
+			}
+		}
+	}
+else
+	{
+	if (ptr->shieldstat != SHIELDDM)
+		shieldup(ptr,usrn);
 	}
 
 if (ptr->tick == 255)
@@ -548,13 +587,15 @@ if (ptr->cybupdate > 1)
 	--ptr->cybupdate;
 	return;
 	}
-if (ptr->cybupdate == 1 && ptr->cybmine == 255) /* if cruising around and about to update, change speed/direction */
+/* if cruising around and about to update, change speed/direction */
+if (ptr->cybupdate == 1 && (ptr->cybmine >= nships || (warshpoff(ptr->cybmine)->status == GESTAT_AUTO && ptr->cantexit == 0)))
 	{
+	ptr->cybmine = 255;	/* keep cyb from endlessly chasing npcs it can't catch */
 	cyb_cruise(ptr);
 	--ptr->cybupdate;
 	return;
 	}
-if (ptr->cybupdate == 0 && (ptr->cybmine == 255 || ptr->cantexit == 0))
+if (ptr->cybupdate == 0)
 	{
 	wuptr= warusroff(usrn);
 	logthis(spr("GE:DBG:Cyb UUpd %s",wuptr->userid));
@@ -562,7 +603,6 @@ if (ptr->cybupdate == 0 && (ptr->cybmine == 255 || ptr->cantexit == 0))
 	logthis(spr("GE:DBG:Cyb PUpd %s",ptr->userid));
 	gepdb(GEUPDATE,ptr->userid,ptr->shipno,ptr);
 	ptr->cybupdate = 100 + gernd()%100;
-	ptr->cybmine = 255;	/* keep cyb from endlessly chasing npcs it can't catch */
 	return;
 	}
 ptr->cybupdate = 20; /* if engaged with another ship, update later */
@@ -582,7 +622,6 @@ int      zothusn;	/* users ship number*/
 {
 
 
-MISSILE  *mptr;
 int i,j;
 
 wptr = wptr; /* eliminates warning*/
@@ -631,43 +670,13 @@ if (gernd()%20 == 1 && shipclass[ptr->shpclass].has_zip && shipclass[ptr->shpcla
 		/* get the hell out of here ...then come back */
 		if (shipclass[ptr->shpclass].max_accel > 0)
 			{
+			if (ptr->speed < 1000 && d_topspeed >= 1000)
+				ptr->speed = 0;
 			ptr->speed2b = d_topspeed;
 			ptr->head2b = rndm(359.9);
 			ptr->holdcourse = gernd()%20 + 3;
 			}
 		}
-	}
-
-/* if we are in hyperspace and fighting and missiles detected,
-	decide whether to flee or stop and raise shields */
-
-if (ptr->where == 1)
-	{
-	for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
-		{
-		if (mptr->distance > 20000 && d_topspeed/6.5 > mislsped && gernd()%2 == 0)
-			{
-			ptr->warncntr = FLEE;	/* don't send APPROACH again after returning from this */
-			ptr->speed2b = d_topspeed;
-			ptr->holdcourse = gernd()%5 + 5;
-			break;
-			}
-		else
-		if (mptr->distance > 0)
-			{
-			if (d_topspeed >= 990)
-				ptr->speed2b = 990;
-			else
-				ptr->speed2b = d_topspeed;
-			ptr->holdcourse = gernd()%5 + 5;
-			break;
-			}
-		}
-	}
-else
-	{
-	if (ptr->shieldstat != SHIELDDM)
-		shieldup(ptr,usrn);
 	}
 }
 
@@ -683,9 +692,13 @@ WARSHP   *ptr;
 int   i;
 
 /* send out a decoy */
-for (i=0; i<5;++i)
-	if (ptr->decout[i] == 0 && gernd()%100*(i+1))
+for (i=0; i<3;++i)
+	if (ptr->decout[i] == 0 && gernd()%(100*(i+1)) == 0 && ptr->items[I_DECOYS] > 0)
+		{
+		--ptr->items[I_DECOYS];
 		ptr->decout[i] = DECOYTIME;
+		return;
+		}
 }
 
 /**************************************************************************
@@ -710,6 +723,8 @@ if (ptr->cybmine < nships && ptr->damage > CYB_MINDAM && (gernd()%10 == 0))
 		&& gernd()%100 == 0)
 		jam(ptr,usrn);
 
+	if (ptr->speed < 1000 && d_topspeed >= 1000)
+		ptr->speed = 0;
 	ptr->speed2b = d_topspeed;
 	ptr->head2b = rndm(359.9);
 	ptr->holdcourse = gernd()%10 + 5;
@@ -736,11 +751,9 @@ double	ddist;
 double	low_dist = 999999999.0;
 int	low_ship;
 int	lta; /* lowest to attack */
-int	usersin;
 
 low_dist = 999999999.0;
 low_ship = -1;
-usersin = FALSE;
 
 /* if cyborg not seeking - countdown */
 
@@ -783,18 +796,6 @@ else
 	low_dist = cdistance(&ptr->coord,&(wptr->coord));
 	}
 
-/* don't pick new fights with NPCs if no users are playing */
-for (zothusn=0; zothusn < nterms; zothusn++)
-	{
-	wptr=warshpoff(zothusn);
-	if (ingegame(zothusn) && wptr->status == GESTAT_USER)
-		{
-		usersin = TRUE;
-		break;
-		}
-	}
-
-
 if (ptr->cybmine == (byte)255)
 	{
 	lta = shipclass[ptr->shpclass].lowest_to_attk-1;
@@ -806,11 +807,8 @@ if (ptr->cybmine == (byte)255)
 		if (ingegame(zothusn) && wptr->cloak != 10 &&
 			(shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction))
 			{
-			/* if high enough class to attack, not already claimed, and user or attackable NPC */
-			if (lta <= wptr->shpclass && notclaimed(wptr,zothusn)
-				&& (wptr->status == GESTAT_USER ||
-				(wptr->status == GESTAT_AUTO && shipclass[wptr->shpclass].cybs_can_att &&
-					usersin == TRUE && gernd()%3000 == 0)))
+			/* if high enough class to attack and not already claimed */
+			if (lta <= wptr->shpclass && notclaimed(wptr,zothusn) && cyb_pick_fight(zothusn,1))
 				{
 				/* figure out who is closest */
 				ddist = cdistance(&ptr->coord,&wptr->coord);
@@ -1023,4 +1021,65 @@ else
 	}
 if (shipclass[ptr->shpclass].max_accel > 0)	/* if ya can't move, ya can't rotate */
 	ptr->head2b = rndm(359.9);
+}
+
+/**************************************************************************
+/* don't pick new fights with NPCs if no users are playing               **
+/* allow msg-configurable frequency of cyb-on-droid attacks              **
+**************************************************************************/
+
+int FUNC cyb_pick_fight(usrn,call)
+int usrn, call;
+
+{
+int zothusn, usersin, nc;
+
+WARSHP *wptr;
+
+usersin = FALSE;
+nc = 0;
+
+/* users always */
+if (usrn < nterms)
+	return(TRUE);
+
+/* cyb vs droid can be turned off */
+if (cattkd <= 0)
+	return(FALSE);
+
+/* is anyone actually playing */
+for (zothusn=0; zothusn < nterms; zothusn++)
+	if (ingegame(zothusn) && warshpoff(zothusn)->status == GESTAT_USER)
+		{
+		usersin = TRUE;
+		break;
+		}
+
+/* don't attack npc if no users around to see it */
+if (usersin == FALSE)
+	return(FALSE);
+
+/* you want mayhem? you asked for it */
+if (cattkd >=10)
+	return(TRUE);
+
+/* limit total amount of cybs pursuing droids to cattkd */
+for (zothusn=nterms ; zothusn < nships ;zothusn++)
+	{
+	wptr=warshpoff(zothusn);
+	if (wptr->status == GESTAT_AUTO && shipclass[wptr->shpclass].max_type == CLASSTYPE_CYBORG && wptr->cybmine >= nterms && wptr->cybmine < nships)
+		++nc;
+	}
+if (nc >= cattkd)
+	return(FALSE);
+
+/* random encounter */
+if (call == 0)
+	return(TRUE);
+
+/* picks on a 500x scale of 500 to 4500 */
+if (call == 1 && gernd()%((10-cattkd)*500) == 0)
+	return(TRUE);
+
+return(FALSE);
 }

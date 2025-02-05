@@ -148,7 +148,8 @@ extern  int		gemaxplrs,
 			chgloser,
 			univwrap,
 			maxplanets,
-			meneat;
+			meneat,
+			cattkd;
 
 extern	char		*opttxt,
 			optchr;

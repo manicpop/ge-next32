@@ -406,6 +406,13 @@ use the behavior from Galactic Empire 3.2e.
 
 MENEAT {Do men eat? YES} B
 
+This option controls how often NPCs attack each other
+on a scale of 0 to 10. 0 means never, 10 means non-stop.
+Default is 5. Cybs will only attack non-Cyb NPCs with
+their CATK and NATK values set as such.
+
+CATTKD {Likelihood of Cybs attacking droids? 5} N 0 10
+
 This option controls how many days mail messages
 are queued before deletion.
 

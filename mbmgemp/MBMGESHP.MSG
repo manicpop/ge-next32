@@ -3822,7 +3822,7 @@ Class 23 damage factor, 100 is normal. 200 is twice as
 resilient, 77 is the minimum.
 Damage = damage / (SnnDAMF / 100)
 
-S23DAMF {Damage effect factor: 900} (S23TYPE#<NONE>) N 77 32767
+S23DAMF {Damage effect factor: 500} (S23TYPE#<NONE>) N 77 32767
 
 Class 23 faction code.
 0 for user ships. 1 for Cybertrons.
@@ -4117,7 +4117,7 @@ S25LATK {Lowest class of user ship this ship will pursue: 10} (S25TYPE=CYBORG,DR
 
 How many class 25 ships should be created (NPCs only)?
 
-S25MAKE {Number of NPCs of this class to make: 2} (S25TYPE=CYBORG,DROID) N 0 255
+S25MAKE {Number of NPCs of this class to make: 1} (S25TYPE=CYBORG,DROID) N 0 255
 
 Toughness level of class 25 (NPCs only)?
 This is a level from 0 to 4.
@@ -5634,7 +5634,7 @@ For USER ships, Cybertrons will pursue this class but not
 fire on unprovoked.
 For DROID ships, Cybertrons will ignore this class.
 
-S35CATK {Cybs will fire on this ship: YES} (S35TYPE=USER,DROID) B
+S35CATK {Cybs will fire on this ship: NO} (S35TYPE=USER,DROID) B
 
 How many Cybertrons will pursue a class 35 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
@@ -5647,7 +5647,7 @@ S35LATK {Lowest class of user ship this ship will pursue: 0} (S35TYPE=CYBORG,DRO
 
 How many class 35 ships should be created (NPCs only)?
 
-S35MAKE {Number of NPCs of this class to make: 4} (S35TYPE=CYBORG,DROID) N 0 255
+S35MAKE {Number of NPCs of this class to make: 2} (S35TYPE=CYBORG,DROID) N 0 255
 
 Toughness level of class 35 (NPCs only)?
 This is a level from 0 to 4.

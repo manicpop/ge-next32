@@ -987,9 +987,6 @@ WARUSR	*wuptr;
 
 unsigned        deg;
 double factor;
-int hit;
-
-hit = FALSE;
 
 if (ptr->cloak > 0 )
 	{
@@ -1015,7 +1012,6 @@ if (ptr->phasr >=PMINFIRE)
 	deg = (unsigned)normal(ptr->heading + (double)ptr->degrees);
 	prfmsg(PFIRED,(int)ptr->phasr,ptr->percent);
 	outprfge(FILTER,usrn);
-	ptr->cantexit = FIRETICKS;
 	for (othusn=0 ; othusn < nships ; othusn++)
 		{
 		wptr=warshpoff(othusn);
@@ -1042,15 +1038,18 @@ if (ptr->phasr >=PMINFIRE)
 					/* sysop phaser */
 					if (ptr->phasrtype == 20)
 						damage = 101;
-
+					/* if user, fire always */
+					if (ptr->status == GESTAT_USER)
+						ptr->phasr = 0;
 					if (damage >= 1)
 						{
-						hit = TRUE;
 						/* prioritize user hits over npcs so users get credit */
 						if (wptr->damage < 100 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
 							wptr->lastfired = usrn;
 						wptr->cantexit = FIRETICKS;
 						ptr->cantexit = FIRETICKS;
+						/* if npc, only fire if actually doing damage */
+						ptr->phasr = 0;
 						if (wptr->status == GESTAT_AUTO)    /* if cyborg -sickum */
 							{
 							wptr->cybmine = usrn;
@@ -1069,7 +1068,12 @@ if (ptr->phasr >=PMINFIRE)
 							else
 								prfmsg(PHITYOU,username(ptr),gechrbuf);
 							outprfge(ALWAYS,othusn);
-							wptr->damage += (double)damage;
+							/* cap npc-on-npc phasers so big ships don't get one shot kills */
+							if (ptr->status == GESTAT_AUTO && wptr->status == GESTAT_AUTO &&
+								damage >= ((shipclass[ptr->shpclass].tough_factor+1)*5+5))
+								wptr->damage += (double)((shipclass[ptr->shpclass].tough_factor+1)*5+(gernd()%5)+1);
+							else
+								wptr->damage += (double)damage;
 							wuptr = warusroff(usrn);
 							set_dislike(wuptr,shipclass[wptr->shpclass].faction,damage);
 							}
@@ -1095,8 +1099,6 @@ if (ptr->phasr >=PMINFIRE)
 				}
 			}
 		}
-	if (hit == TRUE || ptr->status == GESTAT_USER)	/* if npc can't actually do damage, don't fire */
-		ptr->phasr = 0;
 	}
 else
 	{
@@ -1134,7 +1136,6 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 	outprfge(FILTER,usrn);
 	ptr->energy -= HPFIRAMT;
 	ptr->hypha = 1;
-	ptr->cantexit = FIRETICKS;
 	for (othusn=0 ; othusn < nships ; othusn++)
 		{
 		wptr=warshpoff(othusn);
@@ -1165,11 +1166,6 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 
 						damstr(damage);
 
-						if (wptr->status == GESTAT_AUTO)    /* if cyborg -sickum */
-							{
-							wptr->cybmine = usrn;
-							wptr->tick = 2;
-							}
 						if (wptr->status == GESTAT_AUTO)
 							prfmsg(HPHITN,gechrbuf,username(wptr));
 						else
@@ -1185,9 +1181,19 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 							/* prioritize user hits over npcs so users get credit */
 							if (wptr->damage < 100 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
 								wptr->lastfired = usrn;
-							wptr->damage += (double)damage;
+							/* cap npc-on-npc phasers so big ships don't get one shot kills */
+							if (ptr->status == GESTAT_AUTO && wptr->status == GESTAT_AUTO &&
+								damage >= ((shipclass[ptr->shpclass].tough_factor+1)*5+5))
+								wptr->damage += (double)((shipclass[ptr->shpclass].tough_factor+1)*5+(gernd()%5)+1);
+							else
+								wptr->damage += (double)damage;
 							wuptr = warusroff(usrn);
 							set_dislike(wuptr,shipclass[wptr->shpclass].faction,damage);
+							if (wptr->status == GESTAT_AUTO)    /* if cyborg -sickum */
+								{
+								wptr->cybmine = usrn;
+								wptr->tick = 2;
+								}
 							wptr->cantexit = FIRETICKS;
 							ptr->cantexit = FIRETICKS;
 							randamage(wptr,othusn); /*assess any random damage */
@@ -1321,6 +1327,8 @@ if (lockon(ptr,0,shpnum,usrn) == 1)
 			wptr->ltorps[i].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
 			wptr->ltorps[i].distance += 20;
 			wptr->ltorps[i].channel  = (unsigned char)usrn;
+			wptr->cantexit = FIRETICKS;
+			ptr->cantexit = FIRETICKS;
 			return;
 			}
 		}
@@ -1461,6 +1469,8 @@ if (lockon(ptr,1,shpnum,usrnum) == 1)
 			wptr->lmissl[i].distance += 20;
 			wptr->lmissl[i].channel  = (unsigned char)usrnum;
 			wptr->lmissl[i].energy   = energy;
+			wptr->cantexit = FIRETICKS;
+			ptr->cantexit = FIRETICKS;
 			return;
 			}
 		}
@@ -1536,8 +1546,6 @@ if (wptr->cloak < 10 && (dist*10000.0) < (double)shipclass[warsptr->shpclass].sc
 			outprfge(FILTER,ship);
 			}
 		lockwarn = TRUE;
-		wptr->cantexit = FIRETICKS;
-		ptr->cantexit = FIRETICKS;
 		return(1);
 		}
 	else
@@ -1550,8 +1558,6 @@ if (wptr->cloak < 10 && (dist*10000.0) < (double)shipclass[warsptr->shpclass].sc
 			outprfge(FILTER,ship);
 			}
 		lockwarn = TRUE;
-		wptr->cantexit = FIRETICKS;
-		ptr->cantexit = FIRETICKS;
 		return(0);
 		}
 	}
@@ -3336,8 +3342,11 @@ for (i=0; i<MAXY; ++i)
 			}
 		else
 			{
-			if (warsptr->lock == othusn)
+			if (warsptr->lock == othusn)	/* locked, red highlights */
 				prf("    \33[0;31m*\33[0;36m%s\33[0;31m*\r",username(warshpoff(othusn)));
+			else
+			if (warshpoff(othusn)->distress != 255)		/* distress, green highlights */
+				prf("    \33[1;32m*\33[0;36m%s\33[1;32m*\33[0;31m\r",username(warshpoff(othusn)));
 			else
 				prf("     \33[0;36m%s\33[0;31m\r",username(warshpoff(othusn)));
 			shp++;
