@@ -995,6 +995,13 @@ if (ptr->cloak > 0 )
 	return;
 	}
 
+if (ptr->damage >= 100)
+	{
+	prfmsg(FRCTER);
+	outprfge(ALWAYS,usrn);
+	return;
+	}
+
 if (ptr->shieldstat == SHIELDUP)
 	{
 	shielddn(ptr,usrn);
@@ -1050,10 +1057,11 @@ if (ptr->phasr >=PMINFIRE)
 						ptr->cantexit = FIRETICKS;
 						/* if npc, only fire if actually doing damage */
 						ptr->phasr = 0;
-						if (wptr->status == GESTAT_AUTO)    /* if cyborg -sickum */
+						if (wptr->status == GESTAT_AUTO)    /* if npc... */
 							{
-							wptr->cybmine = usrn;
-							wptr->tick = 2;
+							wptr->cybmine = usrn;	/* engage user */
+							wptr->tick = 2;		/* do it fast */
+							wptr->warncntr = 255;	/* reset annoy msg tracking */
 							}
 						if (wptr->shieldstat != SHIELDUP)
 							{
@@ -1122,6 +1130,13 @@ unsigned        deg;
 double factor;
 
 
+if (ptr->damage >= 100)
+	{
+	prfmsg(FRCTER);
+	outprfge(ALWAYS,usrn);
+	return;
+	}
+
 if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 	{
 	if (neutral(&ptr->coord))
@@ -1189,10 +1204,11 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 								wptr->damage += (double)damage;
 							wuptr = warusroff(usrn);
 							set_dislike(wuptr,shipclass[wptr->shpclass].faction,damage);
-							if (wptr->status == GESTAT_AUTO)    /* if cyborg -sickum */
+							if (wptr->status == GESTAT_AUTO)    /* if npc... */
 								{
-								wptr->cybmine = usrn;
-								wptr->tick = 2;
+								wptr->cybmine = usrn;	/* engage user */
+								wptr->tick = 2;		/* do it fast */
+								wptr->warncntr = 255;	/* reset annoy msg tracking */
 								}
 							wptr->cantexit = FIRETICKS;
 							ptr->cantexit = FIRETICKS;
@@ -1311,6 +1327,13 @@ int             shpnum;
 WARSHP  *wptr;
 
 int             i;
+
+if (ptr->damage >= 100)
+	{
+	prfmsg(FRCTER);
+	outprfge(ALWAYS,usrn);
+	return;
+	}
 
 if (lockon(ptr,0,shpnum,usrn) == 1)
 	{
@@ -1452,6 +1475,13 @@ unsigned energy, eng_flu;
 WARSHP *wptr;
 int i;
 
+if (ptr->damage >= 100)
+	{
+	prfmsg(FRCTER);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
 if (lockon(ptr,1,shpnum,usrnum) == 1)
         {
 	for (i=0; i<MAXMISSL;++i)
@@ -1513,10 +1543,11 @@ if  (neutral(&(wptr->coord)))
 dist = cdistance(&ptr->coord,&(wptr->coord));
 if (wptr->cloak < 10 && (dist*10000.0) < (double)shipclass[warsptr->shpclass].scanrange)
 	{
-	if (wptr->status == GESTAT_AUTO)
+	if (wptr->status == GESTAT_AUTO)    /* if npc... */
 		{
-		wptr->cybmine = usrn;
-		wptr->tick = 2;
+		wptr->cybmine = usrn;	/* engage user */
+		wptr->tick = 2;		/* do it fast */
+		wptr->warncntr = 255;	/* reset annoy msg tracking */
 		}
 
 	speed = ptr->speed + wptr->speed;
@@ -1850,8 +1881,11 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 			}
 		}
 	}
-prfmsg(ZIPPER3,warshpoff(usrn)->shipname);
-outsect(FILTER,&ptr->coord,usrn,0);
+if (ptr->status == GESTAT_AUTO)
+	prfmsg(ZIPPER3N,ptr->shipname);
+else
+	prfmsg(ZIPPER3,ptr->shipname);
+outrange(FILTER,&ptr->coord);
 --ptr->items[I_ZIPPERS];
 ptr->cantexit = FIRETICKS;
 }
@@ -2565,7 +2599,10 @@ if (shpnum >= 0)
 		gheading = (int) (wptr->heading+.5);
 
 		speed  = ((unsigned)(wptr->speed  +.5));
-		prfmsg(SCAN01,wptr->shipname);
+		if (wptr->status == GESTAT_AUTO)
+			prfmsg(SCAN01N,wptr->shipname);
+		else
+			prfmsg(SCAN01,wptr->shipname);
 		prfmsg(DASHES);
 		prfmsg(SCAN01A,shipclass[wptr->shpclass].typename);
 		if (wptr->status == GESTAT_USER)
@@ -5275,7 +5312,7 @@ if (sameas("list",margv[1]))
 		if (ptr->status != GESTAT_AVAIL)
 			{
 			setsect(ptr);
-			prf("%3d %-20s %5d %5d %6d %4d %7d %5d %5d\r",i,username(ptr),xsect,ysect,(int)(ptr->damage),(int)(ptr->tick),(int)(ptr->cybmine),(int)(ptr->holdcourse),(int)(ptr->cybupdate));
+			prf("%3d %-20s %5d %5d %6d %4d %7d %5d %5d %4d\r",i,username(ptr),xsect,ysect,(int)(ptr->damage),(int)(ptr->tick),(int)(ptr->cybmine),(int)(ptr->holdcourse),(int)(ptr->cybupdate),(int)(ptr->lastfired));
 			}
 		}
 	outprfge(ALWAYS,usrnum);

@@ -5013,7 +5013,7 @@ S31PNTS {Points awarded: 5} (S31TYPE#<NONE>) N 1 32767
 
 Scanner range of a class 31 ship in subsectors.
 
-S31SRNG {Scanner range: 25000} (S31TYPE#<NONE>) L 1 10000000
+S31SRNG {Scanner range: 20000} (S31TYPE#<NONE>) L 1 10000000
 
 Will Cybertrons fire on a class 31 ship unprovoked?
 If YES, Cybertrons will pursue and fire upon this class.
@@ -5554,14 +5554,14 @@ For users, ships start with a Mark-1 shield and can purchase
 up to this value. For NPCs, this will be a random value
 between 1 and this class.
 
-S35SHLD {Maximum shield type: 3} (S35TYPE#<NONE>) N 0 19
+S35SHLD {Maximum shield type: 6} (S35TYPE#<NONE>) N 0 19
 
 Maximum phaser type for class 35. 0 for no phasers at all.
 For users, ships start with a Mark-1 phaser and can purchase
 up to this value. For NPCs, this will be a random value
 between 1 and this class.
 
-S35PHSR {Maximum phaser type: 5} (S35TYPE#<NONE>) N 0 19
+S35PHSR {Maximum phaser type: 10} (S35TYPE#<NONE>) N 0 19
 
 Torpedo capability for class 35.
 
@@ -5643,7 +5643,7 @@ S35NATK {Number of Cybs to pursue this ship: 1} (S35TYPE=USER,DROID) N 0 255
 
 Lowest class of user ship a class 35 Cybertron will pursue?
 
-S35LATK {Lowest class of user ship this ship will pursue: 0} (S35TYPE=CYBORG,DROID) N 0 50
+S35LATK {Lowest class of user ship this ship will pursue: 8} (S35TYPE=CYBORG,DROID) N 0 50
 
 How many class 35 ships should be created (NPCs only)?
 

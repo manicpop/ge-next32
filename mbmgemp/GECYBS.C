@@ -486,13 +486,14 @@ if (usrn == ptr->cybmine && msgtype == CYBBASEA)
 /* bypass logic, use simple random, and don't change warncntr */
 if (usrn != ptr->cybmine)
 	{
-	if ((msgtype == LOATTACK || msgtype == HIATTACK || msgtype == CYBBASEA) && gernd()%50 == 0)
+	if (((msgtype == LOATTACK || msgtype == HIATTACK) && gernd()%15 == 0) ||
+		((msgtype == CYBBASEA || msgtype == CYBTORP) && gernd()%10 == 0))
 		cyb_msg(ptr,usrn,msgtype);
 	return;
 	}
 
 /* let some of these through on occasion */
-if ((msgtype == NEUTRAL || msgtype == IGNORE || msgtype == TAUNT) && gernd()%200 == 0)
+if ((msgtype == NEUTRAL || msgtype == IGNORE || msgtype == TAUNT) && gernd()%100 == 0)
 	ptr->warncntr = 255;
 
 /* otherwise don't do the same message twice in a row */
@@ -624,8 +625,6 @@ int      zothusn;	/* users ship number*/
 
 int i,j;
 
-wptr = wptr; /* eliminates warning*/
-
 if (ptr->phasr >= PMINFIRE && gebemean(ptr))
 	{
 	ptr->degrees = (int)(cbearing(&ptr->coord,&wptr->coord,ptr->heading)+.5);
@@ -658,14 +657,14 @@ for (i=0;i<j;++i)
 	}
 
 /* launch Zippers if needed */
-if (gernd()%20 == 1 && shipclass[ptr->shpclass].has_zip && shipclass[ptr->shpclass].max_accel > 0)
+if (gernd()%10 == 0 && shipclass[ptr->shpclass].has_zip && shipclass[ptr->shpclass].max_accel > 0)
 	{
-	if (ptr->minesnear == TRUE)
+	if (wptr->minesnear == TRUE)
 		{
 		if (gernd()%3 == 1 && ptr->items[I_ZIPPERS] > 0)
 			{
 			zip(ptr,usrn);
-			ptr->minesnear = FALSE;
+			wptr->minesnear = FALSE;
 			}
 		/* get the hell out of here ...then come back */
 		if (shipclass[ptr->shpclass].max_accel > 0)
@@ -803,20 +802,19 @@ if (ptr->cybmine == (byte)255)
 	for (zothusn=0 ; zothusn < nships ; zothusn++)
 		{
 		wptr=warshpoff(zothusn);
-		/* if playing, and not cloaked, and not same faction, go getem */
-		if (ingegame(zothusn) && wptr->cloak != 10 &&
-			(shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction))
+		/* if playing, and not cloaked, and not same faction */
+		if (ingegame(zothusn) && wptr->cloak != 10 && shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction &&
+			/* and high enough class to attack, and not already claimed, and passes npc throttle */
+			lta <= wptr->shpclass && notclaimed(wptr,zothusn) && cyb_pick_fight(zothusn,1) &&
+			/* and if a user or a droid that we target */
+			(wptr->status == GESTAT_USER || shipclass[wptr->shpclass].cybs_can_att))
 			{
-			/* if high enough class to attack and not already claimed */
-			if (lta <= wptr->shpclass && notclaimed(wptr,zothusn) && cyb_pick_fight(zothusn,1))
+			/* figure out who is closest */
+			ddist = cdistance(&ptr->coord,&wptr->coord);
+			if (ddist < low_dist)
 				{
-				/* figure out who is closest */
-				ddist = cdistance(&ptr->coord,&wptr->coord);
-				if (ddist < low_dist)
-					{
-					low_dist = ddist;
-					low_ship = zothusn;
-					}
+				low_dist = ddist;
+				low_ship = zothusn;
 				}
 			}
 		}
@@ -1016,9 +1014,11 @@ if (ptr->topspeed == 0)
 		ptr->speed2b = 0;
 	}
 else
-	{
-	ptr->speed2b = (gernd()%(ptr->topspeed)+1)*1000;
-	}
+if (ptr->topspeed >= 10) /* don't go faster than warp 10 if cruising */
+	ptr->speed2b = ((gernd()%10)+1)*1000;
+else
+	ptr->speed2b = ((gernd()%ptr->topspeed)+1)*1000;
+
 if (shipclass[ptr->shpclass].max_accel > 0)	/* if ya can't move, ya can't rotate */
 	ptr->head2b = rndm(359.9);
 }

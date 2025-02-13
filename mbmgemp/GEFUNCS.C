@@ -244,8 +244,8 @@ tmpshp.status		= 0;
 tmpshp.cybmine		= 0;
 tmpshp.upgrade		= 0;  /*UNUSED ATM*/
 tmpshp.cybupdate	= 0;
-tmpshp.distress		= 0;
-
+tmpshp.distress		= 255;
+tmpshp.lock		= -1;
 
 tmpshp.shipno = waruptr->topshipno+1;
 
@@ -589,7 +589,10 @@ if (flag == 1)
 
 	ptr->where = 1;
 
-	prfmsg(HYPERIN2,ptr->shipname);
+	if (ptr->status == GESTAT_AUTO)
+		prfmsg(HYPERINN,ptr->shipname);
+	else
+		prfmsg(HYPERIN2,ptr->shipname);
 	outsect(FILTER,&(warshpoff(usrn)->coord),usrn,0);
 
 	for(i=0;i<MAXTORPS;++i)
@@ -610,7 +613,10 @@ if (flag == 1)
 	}
 else
 	{
-	prfmsg(HYPEROUT,ptr->shipname);
+	if (ptr->status == GESTAT_AUTO)
+		prfmsg(HYPEROU2,ptr->shipname);
+	else
+		prfmsg(HYPEROUT,ptr->shipname);
 	outprfge(FILTER,usrn);
 
 	ptr->where = 0;
@@ -727,12 +733,18 @@ if (ptr->speed > 0)
 		outprfge(FILTER,usrn);
 		if (ptr->speed < 21000.0)
 			{
-			prfmsg(MOVE2,ptr->shipname);
+			if (ptr->status == GESTAT_AUTO)
+				prfmsg(MOVE2N,ptr->shipname);
+			else
+				prfmsg(MOVE2,ptr->shipname);
 			outsect(FILTER,&oldsect,usrn,0);
 			}
 		if (ptr->speed < 21000.0)
 			{
-			prfmsg(MOVE3,ptr->shipname);
+			if (ptr->status == GESTAT_AUTO)
+				prfmsg(MOVE3N,ptr->shipname);
+			else
+				prfmsg(MOVE3,ptr->shipname);
 			outsect(FILTER,&newsect,usrn,0);
 			}
 		ptr->hostile = 0;
@@ -1154,7 +1166,10 @@ if (who >= 0 && who < nships && who != usrn)
 	outwar(FILTER,usrn,0);
 	++(wuptr->kills);
 
-	prfmsg(KILLGOT1,ptr->shipname);
+	if (ptr->status == GESTAT_AUTO)
+		prfmsg(KILLGOTN,ptr->shipname);
+	else
+		prfmsg(KILLGOT1,ptr->shipname);
 
 	if (shipclass[wptr->shpclass].max_tons <= calcweight(wptr))
 		{
@@ -1600,9 +1615,8 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 								{
 								prfmsg(MINE6,bearing,udist);
 								outprfge(FILTER,zothusn);
-								if (wptr->status == GESTAT_AUTO)
-									wptr->minesnear = TRUE;
 								}
+							wptr->minesnear = TRUE;
 							}
 						}
 					else

@@ -2389,11 +2389,19 @@ HYPERIN2 {***
 [0;37mSensors detect the [0;36m%s[0;37m has gone to hyperspace![1;37m
 } T GE someone else entering hyperspace message
 
+HYPERINN {***
+[0;37mSensors detect [0;36m%s[0;37m has gone to hyperspace![1;37m
+} T GE someone else entering hyperspace message
+
 HYPEROUT {***
 [1;35mHelm reports the [0;36m%s[1;35m is leaving hyperspace.[1;37m
 } T GE leaving hyperspace message
 
 HYPEROU2 {***
+[0;37mSensors detect [0;36m%s[0;37m coming out of hyperspace.[1;37m
+} T GE someone else leaving hyperspace message
+
+HYPEROUN {***
 [0;37mSensors detect the [0;36m%s[0;37m coming out of hyperspace.[1;37m
 } T GE someone else leaving hyperspace message
 
@@ -3248,6 +3256,10 @@ SCAN01 {[0;37m
 Scanning the [1;34m%s[0;37m:
 } T GE scan 01
 
+SCAN01N {[0;37m
+Scanning [1;34m%s[0;37m:
+} T GE scan 01
+
 SCAN01A {[0;37mShip class: %s
 } T GE scan 01A
 
@@ -3370,6 +3382,10 @@ KILLGOT1 {***
 [1;36mYou have destroyed the [0;36m%s[1;36m. All usable flotsam have been retrieved.
 You have retrieved[1;37m} T GE you destroyed a ship message
 
+KILLGOTN {***
+[1;36mYou have destroyed [0;36m%s[1;36m. All usable flotsam have been retrieved.
+You have retrieved[1;37m} T GE you destroyed a ship message
+
 KILLFULL {
 [1;36mYour ship is now full; no more items could be collected.[1;37m
 } T GE no more room for spoils message
@@ -3452,8 +3468,16 @@ MOVE2 {***
 [0;37mSensors indicate the [0;36m%s[0;37m has left this sector.[1;37m
 } T GE someone else left your sector message
 
+MOVE2N {***
+[0;37mSensors indicate [0;36m%s[0;37m has left this sector.[1;37m
+} T GE someone else left your sector message
+
 MOVE3 {***
 [0;37mSensors indicate the [0;36m%s[0;37m has entered this sector.[1;37m
+} T GE someone else entered your sector message
+
+MOVE3N {***
+[0;37mSensors indicate [0;36m%s[0;37m has entered this sector.[1;37m
 } T GE someone else entered your sector message
 
 MOVE4 {***
@@ -3564,6 +3588,10 @@ ZIPPER2 {
 
 ZIPPER3 {***
 [0;37m[[1;31mCAUTION[0;37m] Sensors detect the [0;36m%s[0;37m just launched a zipper.[1;37m
+} T GE someone else fired a zipper message
+
+ZIPPER3N {***
+[0;37m[[1;31mCAUTION[0;37m] Sensors detect [0;36m%s[0;37m just launched a zipper.[1;37m
 } T GE someone else fired a zipper message
 
 NEW1 {
@@ -3692,7 +3720,7 @@ SYSCLS {
 } T GE sysop change ship class message
 
 SYSLST {
-[1;36mChn Name                 Xsect Ysect Damage Tick Cybmine HoldC CybUp[1;37m
+[1;36mChn Name                 Xsect Ysect Damage Tick Cybmine HoldC CybUp   LF[1;37m
 } T GE sysop ship list message
 
 SYSCLL {
@@ -4216,7 +4244,7 @@ CYB0M1 {***
 
 CYB0M2 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your puny race will join the Sartens in oblivion! [1;36m>[1;37m
+[1;36m<[1;37m Your pitiful species will join the Sartens in oblivion! [1;36m>[1;37m
 } T GE Cyb 0 message 2
 
 CYB0M3 {***
@@ -4336,7 +4364,7 @@ CYB5M3 {***
 
 CYB5M4 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Cybertrons shall rule the galaxy! [1;36m>[1;37m
+[1;36m<[1;37m Death is too easy for Traxlyn Scurge like you. [1;36m>[1;37m
 } T GE Cyb 5 message 4
 
 CYBTORP
@@ -4492,8 +4520,8 @@ DR1M9 {***
 } T GE Droid 1 message 9
 
 DR1M10 {***
-[0;37mDistress call from [0;36m%s
-[1;36m<[1;37m This vessel under an illegal attack. Requesting assistance! [1;36m>[1;37m
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m We are not your enemy. Cease fire immediately! [1;36m>[1;37m
 } T GE Droid 1 message 10
 
 DR1M11 {***
@@ -4505,15 +4533,6 @@ DR1M12 {***
 [0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Stop this pointless aggression at once! [1;36m>[1;37m
 } T GE Droid 1 message 12
-
-These four messages are sent when a ship identifies a
-player as a threat and breaks off to stage a preemptive
-attack.
-
-DR1M13 {} T GE Droid 1 message 13
-DR1M14 {} T GE Droid 1 message 14
-DR1M15 {} T GE Droid 1 message 15
-DR1M16 {} T GE Droid 1 message 16
 
 **********************************************************************
 Murdonian Transport
@@ -4573,8 +4592,8 @@ DR2M9 {***
 } T GE Droid 2 message 9
 
 DR2M10 {***
-[0;37mDistress call from [0;36m%s
-[1;36m<[1;37m Under attack. Requesting assistance from any vessel. [1;36m>[1;37m
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m We are authorized to destroy your vessel to protect our passengers. [1;36m>[1;37m
 } T GE Droid 2 message 10
 
 DR2M11 {***
@@ -4586,15 +4605,6 @@ DR2M12 {***
 [0;37mDistress call from [0;36m%s
 [1;36m<[1;37m The Murdonian Imperial Defense has been informed of your illegal aggression. [1;36m>[1;37m
 } T GE Droid 2 message 12
-
-These four messages are sent when a ship identifies a
-player as a threat and breaks off to stage a preemptive
-attack.
-
-DR2M13 {} T GE Droid 2 message 13
-DR2M14 {} T GE Droid 2 message 14
-DR2M15 {} T GE Droid 2 message 15
-DR2M16 {} T GE Droid 2 message 16
 
 **********************************************************************
 Vakory Survey Drone
@@ -4637,7 +4647,7 @@ DR3M6 {***
 
 DR3M7 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You are responsible for the destruction of a research vessel! [1;36m>[1;37m
+[1;36m<[1;37m You are responsible for attacking a research vessel! [1;36m>[1;37m
 } T GE Droid 3 message 7
 
 DR3M8 {***
@@ -4654,8 +4664,8 @@ DR3M9 {***
 } T GE Droid 3 message 9
 
 DR3M10 {***
-[0;37mDistress call from [0;36m%s
-[1;36m<[1;37m Survey ship under attack. Requesting assistance! [1;36m>[1;37m
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m This survey ship is no threat to you. Stop firing at once! [1;36m>[1;37m
 } T GE Droid 3 message 10
 
 DR3M11 {***
@@ -4667,15 +4677,6 @@ DR3M12 {***
 [0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Destroying this scientific research vessel is pointless! [1;36m>[1;37m
 } T GE Droid 3 message 12
-
-These four messages are sent when a ship identifies a
-player as a threat and breaks off to stage a preemptive
-attack.
-
-DR3M13 {} T GE Droid 3 message 13
-DR3M14 {} T GE Droid 3 message 14
-DR3M15 {} T GE Droid 3 message 15
-DR3M16 {} T GE Droid 3 message 16
 
 **********************************************************************
 Sarten Civil Transport
@@ -4708,7 +4709,7 @@ considered unfriendly by this faction.
 
 DR4M5 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You are an enemy of the Sarten Empire! Attack Drones summoned! [1;36m>[1;37m
+[1;36m<[1;37m You are an enemy of the Sarten Empire! [1;36m>[1;37m
 } T GE Droid 4 message 5
 
 DR4M6 {***
@@ -4718,7 +4719,7 @@ DR4M6 {***
 
 DR4M7 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You are responsible for the destruction of Sarten vessels. [1;36m>[1;37m
+[1;36m<[1;37m You are responsible for attacks on Sarten vessels. [1;36m>[1;37m
 } T GE Droid 4 message 7
 
 DR4M8 {***
@@ -4731,12 +4732,12 @@ this ship.
 
 DR4M9 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your actions leave us no recourse. [1;36m>[1;37m
+[1;36m<[1;37m The Sarten Empire has been informed of your actions! [1;36m>[1;37m
 } T GE Droid 4 message 9
 
 DR4M10 {***
-[0;37mDistress call from [0;36m%s
-[1;36m<[1;37m Sarten civilian vessel under attack. Requesting assistance! [1;36m>[1;37m
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m Stop this unprovoked attack or we will summon defense drones. [1;36m>[1;37m
 } T GE Droid 4 message 10
 
 DR4M11 {***
@@ -4748,15 +4749,6 @@ DR4M12 {***
 [0;37mHailing message from [0;36m%s
 [1;36m<[1;37m The Sarten Empire shall not take this aggression lightly. [1;36m>[1;37m
 } T GE Droid 4 message 12
-
-These four messages are sent when a ship identifies a
-player as a threat and breaks off to stage a preemptive
-attack.
-
-DR4M13 {} T GE Droid 4 message 13
-DR4M14 {} T GE Droid 4 message 14
-DR4M15 {} T GE Droid 4 message 15
-DR4M16 {} T GE Droid 4 message 16
 
 **********************************************************************
 Sarten Attack Drone
@@ -4789,17 +4781,17 @@ considered unfriendly by this faction.
 
 DR5M5 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You are an enemy of the Sarten Empire! Do not approach! [1;36m>[1;37m
+[1;36m<[1;37m You are an enemy of the Sarten Empire! [1;36m>[1;37m
 } T GE Droid 5 message 5
 
 DR5M6 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You were offered peaceful coexistence, and refused! [1;36m>[1;37m
+[1;36m<[1;37m You are responsible for attacks on Sarten vessels. [1;36m>[1;37m
 } T GE Droid 5 message 6
 
 DR5M7 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You are responsible for the destruction of Sarten vessels. [1;36m>[1;37m
+[1;36m<[1;37m We are prepared to defend ourselves from all aggressors! [1;36m>[1;37m
 } T GE Droid 5 message 7
 
 DR5M8 {***
@@ -4812,7 +4804,7 @@ this ship.
 
 DR5M9 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your hostile actions will not be tolerated. [1;36m>[1;37m
+[1;36m<[1;37m You are responsible for attacks on Sarten vessels. [1;36m>[1;37m
 } T GE Droid 5 message 9
 
 DR5M10 {***
@@ -4822,37 +4814,13 @@ DR5M10 {***
 
 DR5M11 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m The Sarten Empire has been informed of your actions! [1;36m>[1;37m
+[1;36m<[1;37m You were offered peaceful coexistence, and refused! [1;36m>[1;37m
 } T GE Droid 5 message 11
 
 DR5M12 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Death is too easy for Traxlyn Scurge like you. [1;36m>[1;37m
+[1;36m<[1;37m Your actions leave us no recourse. [1;36m>[1;37m
 } T GE Droid 5 message 12
-
-These four messages are sent when a ship identifies a
-player as a threat and breaks off to stage a preemptive
-attack.
-
-DR5M13 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You have offended the Sarten Empire -- your destruction is required! [1;36m>[1;37m
-} T GE Droid 5 message 13
-
-DR5M14 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You have been identified as an enemy of the Sarten Empire. [1;36m>[1;37m
-} T GE Droid 5 message 14
-
-DR5M15 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m You are an enemy of the Sarten Empire! Attack Drones summoned! [1;36m>[1;37m
-} T GE Droid 5 message 15
-
-DR5M16 {***
-[0;37mHailing message from [0;36m%s
-[1;36m<[1;37m Your attacks against our vessels will not go unanswered. [1;36m>[1;37m
-} T GE Droid 5 message 16
 
 **********************************************************************
 Galactic Command Freighter
@@ -4912,8 +4880,8 @@ DR6M9 {***
 } T GE Droid 6 message 9
 
 DR6M10 {***
-[0;37mDistress call from [0;36m%s
-[1;36m<[1;37m Zygorian freighter under attack. Requesting assistance. [1;36m>[1;37m
+[0;37mHailing message from [0;36m%s
+[1;36m<[1;37m This unprovoked attack will not go unanswered! [1;36m>[1;37m
 } T GE Droid 6 message 10
 
 DR6M11 {***
@@ -4925,18 +4893,6 @@ DR6M12 {***
 [0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Cease and desist this attack at once! [1;36m>[1;37m
 } T GE Droid 6 message 12
-
-These four messages are sent when a ship identifies a
-player as a threat and breaks off to stage a preemptive
-attack.
-
-DR6M13 {} T GE Droid 6 message 13
-
-DR6M14 {} T GE Droid 6 message 14
-
-DR6M15 {} T GE Droid 6 message 15
-
-DR6M16 {} T GE Droid 6 message 16
 
 DRLASTM {DO NOT REMOVE THIS MESSAGE!!!!!!} T Droid message end divider
 
