@@ -4840,7 +4840,7 @@ DR6M2 {***
 
 DR6M3 {***
 [0;37mBeacon message from [0;36m%s
-[1;36m<[1;37m Visit Zygor in sector [1;34m0 0[1;36m for all your galactic needs! [1;36m>[1;37m
+[1;36m<[1;37m Visit Zygor in sector [1;34m0 0[1;37m for all your galactic needs! [1;36m>[1;37m
 } T GE Droid 6 message 3
 
 DR6M4 {***

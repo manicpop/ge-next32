@@ -2086,7 +2086,6 @@ for (zothusn=0 ; zothusn < nships ;zothusn++)
 		setmbk(gemb);
 		if (wptr->status == GESTAT_USER)
 			++cntr;
-		fluxstat(wptr,zothusn,1000);
 		repairship(wptr,zothusn);
 		shieldstat(wptr,zothusn);
 		cloakstat(wptr,zothusn);
