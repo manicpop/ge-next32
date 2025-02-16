@@ -239,7 +239,8 @@ int				gemaxplrs,
 				univwrap,
 				maxplanets,
 				meneat,
-				cattkd;
+				cattkd,
+				gcnum;
 
 char				*opttxt,
 				optchr;
@@ -400,6 +401,7 @@ teambonus	= numopt(TEAMBONU,0,32000)*100L;
 team_max	= numopt(TEAMMAX,0,32000);
 meneat		= ynopt(MENEAT);
 cattkd		= numopt(CATTKD,0,10);
+gcnum		= numopt(GCNUM,0,8);
 
 profon		= ynopt(PROFON);
 logflag		= ynopt(LOGFLG);
@@ -961,6 +963,11 @@ if (qlobtv(0))
 		tmpusr.score = 0;
 		tmpusr.plscore = 0;
 		tmpusr.population = 0;
+		for (i=0; i<8; ++i)
+			if (tmpusr.factions[i] > 40)
+				tmpusr.factions[i] = tmpusr.factions[i]-40;
+			else
+				tmpusr.factions[i] = 0;
 		updbtv(&tmpusr);
 		gcrbtv(&tmpusr,0);   /* thank you BTRIEVE 5.00b */
 		} while (qnxbtv());

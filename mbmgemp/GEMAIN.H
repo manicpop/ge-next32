@@ -64,9 +64,6 @@
 #define NEUTRAL_X		0
 #define NEUTRAL_Y		0
 
-#define ROTENGUSE 30		/* Energy used to rotate                     */
-#define ROTAMT 20		/* Amount of degres rotation each tick       */
-
 #define ACCENGAMT 120		/* Acceleration energy usage                 */
 #define MOVENGMIN 3000
 #define MOVENGUSE 10

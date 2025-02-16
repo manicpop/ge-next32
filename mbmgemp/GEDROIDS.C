@@ -313,7 +313,7 @@ base = DRBASEM + ((ptr->shpclass - dr_class)*12);
 
 sel = base+(gernd()%4)+1;
 
-fightnum = (shipclass[ptr->shpclass].tough_factor+1)*10;	/* compensate for tougher npcs going faster */
+fightnum = (shipclass[ptr->shpclass].tough_factor+1)*5;		/* compensate for tougher npcs going faster */
 
 /* display friend or foe msg if not engaged with that user */
 if (sel < DRLASTM)
@@ -462,15 +462,15 @@ if (ptr->jammer == 0)
 			/* hail users in area */
 			if (ingegame(zothusn) && wptr->status == GESTAT_USER && wptr->cloak != 10)
 				{
-				around = TRUE;
 				ddist = cdistance(&ptr->coord,&wptr->coord);
 				ddist *= 10000;
 				if (ddist < (double)shipclass[wptr->shpclass].scanrange && ddist < (double)shipclass[ptr->shpclass].scanrange)
 					{
+					around = TRUE;
 					if (ptr->holdcourse == 0)
 						{
 						ptr->speed2b = ((gernd()%85)+15)*10;
-						ptr->holdcourse = gernd()%30 + 10;
+						ptr->holdcourse = gernd()%15 + 5;
 						}
 					ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
 					droid_annoy(ptr,zothusn);
@@ -590,7 +590,7 @@ if (ptr->jammer == 0)
 					ptr->speed2b = (double)(ptr->topspeed * 1000);
 					ptr->head2b = (double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0 + (rand() % 51 - 25)) % 360);
 					}
-				ptr->holdcourse = gernd()%30 + 20;
+				ptr->holdcourse = gernd()%20 + 10;
 				}
 			droid_annoy(ptr,zothusn);
 			if (ddist < 30000 && !neutral(&ptr->coord))

@@ -5352,7 +5352,7 @@ Class 33 damage factor, 100 is normal. 200 is twice as
 resilient, 77 is the minimum.
 Damage = damage / (SnnDAMF / 100)
 
-S33DAMF {Damage effect factor: 80} (S33TYPE#<NONE>) N 77 32767
+S33DAMF {Damage effect factor: 100} (S33TYPE#<NONE>) N 77 32767
 
 Class 33 faction code.
 0 for user ships. 1 for Cybertrons.
@@ -5505,7 +5505,7 @@ Class 34 damage factor, 100 is normal. 200 is twice as
 resilient, 77 is the minimum.
 Damage = damage / (SnnDAMF / 100)
 
-S34DAMF {Damage effect factor: 150} (S34TYPE#<NONE>) N 77 32767
+S34DAMF {Damage effect factor: 175} (S34TYPE#<NONE>) N 77 32767
 
 Class 34 faction code.
 0 for user ships. 1 for Cybertrons.
@@ -5658,7 +5658,7 @@ Class 35 damage factor, 100 is normal. 200 is twice as
 resilient, 77 is the minimum.
 Damage = damage / (SnnDAMF / 100)
 
-S35DAMF {Damage effect factor: 200} (S35TYPE#<NONE>) N 77 32767
+S35DAMF {Damage effect factor: 225} (S35TYPE#<NONE>) N 77 32767
 
 Class 35 faction code.
 0 for user ships. 1 for Cybertrons.
@@ -5811,7 +5811,7 @@ Class 36 damage factor, 100 is normal. 200 is twice as
 resilient, 77 is the minimum.
 Damage = damage / (SnnDAMF / 100)
 
-S36DAMF {Damage effect factor: 300} (S36TYPE#<NONE>) N 77 32767
+S36DAMF {Damage effect factor: 400} (S36TYPE#<NONE>) N 77 32767
 
 Class 36 faction code.
 0 for user ships. 1 for Cybertrons.

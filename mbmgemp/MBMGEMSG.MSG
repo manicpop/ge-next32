@@ -498,6 +498,14 @@ members to be selective on who they let join the team.
 
 TEAMMAX {Maximum members on a team: 10} N 0 32000
 
+This is the faction number of the planets in the neutral
+zone. If you attack ships of this faction, you will
+not be allowed to conduct business in the neutral zone
+for a few days. If you want to disable this behavior,
+set to 8. The default is 7.
+
+GCNUM {Faction number of neutral zone: 7} N 0 8
+
 This option specifies the number of planets in the neutral
 zone (sector 0 0). 
 
@@ -3492,6 +3500,12 @@ ZAPHIM2 {***
 [0;37mHailing message from the Enforcer Planet
 [1;36m<[1;37m This sector is a neutral zone; any hostilities will be dealt with severely! [1;36m>[1;37m
 } T GE you are in the neutral zone message
+
+NOZYG {***
+[0;37mHailing message from the Enforcer Planet
+[1;36m<[1;37m You have committed crimes against the Galactic Command!
+  You are banned from doing business in this sector for %d days. [1;36m>[1;37m
+} T GE you are unwelcome in the neutral zone message
 
 PLAMSG1 {
 [1;36mPlanet Name         sector planet[1;37m

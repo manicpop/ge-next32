@@ -988,6 +988,10 @@ WARUSR	*wuptr;
 unsigned        deg;
 double factor;
 
+int hitone;
+
+hitone = FALSE;
+
 if (ptr->cloak > 0 )
 	{
 	prfmsg(PCLOKUP,"The phasers are");
@@ -995,7 +999,7 @@ if (ptr->cloak > 0 )
 	return;
 	}
 
-if (ptr->damage >= 100)
+if (ptr->damage >= 100) /* no firing in the brief period between going over 100 and blowing up */
 	{
 	prfmsg(FRCTER);
 	outprfge(ALWAYS,usrn);
@@ -1033,7 +1037,6 @@ if (ptr->phasr >=PMINFIRE)
 					damage = pdamage(ptr,cdistance(&ptr->coord,&wptr->coord)*10000,ptr->percent);
 
 					factor = (double)(damage*(1+ptr->phasrtype/2));
-
 					factor = ton_fact(wptr,factor);
 
 					/* lower it for hyper */
@@ -1045,18 +1048,14 @@ if (ptr->phasr >=PMINFIRE)
 					/* sysop phaser */
 					if (ptr->phasrtype == 20)
 						damage = 101;
-					/* if user, fire always */
-					if (ptr->status == GESTAT_USER)
-						ptr->phasr = 0;
 					if (damage >= 1)
 						{
+						hitone = TRUE;
 						/* prioritize user hits over npcs so users get credit */
 						if (wptr->damage < 100 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
 							wptr->lastfired = usrn;
 						wptr->cantexit = FIRETICKS;
 						ptr->cantexit = FIRETICKS;
-						/* if npc, only fire if actually doing damage */
-						ptr->phasr = 0;
 						if (wptr->status == GESTAT_AUTO)    /* if npc... */
 							{
 							wptr->cybmine = usrn;	/* engage user */
@@ -1107,6 +1106,9 @@ if (ptr->phasr >=PMINFIRE)
 				}
 			}
 		}
+
+	if (hitone == TRUE || ptr->status == GESTAT_USER)	/* if NPC, don't actually fire unless doing damage */
+		ptr->phasr = 0;
 	}
 else
 	{
@@ -4411,6 +4413,12 @@ if (!neutral(&warsptr->coord))
 	return;
 	}
 
+if (waruptr->factions[gcnum] > 100)	/* don't buy from jerks */
+	{
+	prfmsg(NOZYG,(int)((waruptr->factions[gcnum]-61)/40));
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
 
 plnum = warsptr->where - 10;
 
@@ -4529,6 +4537,13 @@ plnum = warsptr->where - 10;
 
 getplanetdat(usrnum);
 
+if (neutral(&warsptr->coord) && plnum == 1 && waruptr->factions[gcnum] > 100)	/* if Zygor, don't sell to jerks */
+	{
+	prfmsg(NOZYG,(int)((waruptr->factions[gcnum]-61)/40));
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
 /* two problems:
    1 - trading player has no team affiliation and planet was designated
 	    TEAM while the owner had no team affiliation...hence they both are
@@ -4605,6 +4620,13 @@ if (warsptr->where < 10)
 plnum = warsptr->where - 10;
 
 getplanetdat(usrnum);
+
+if (neutral(&warsptr->coord) && plnum == 1 && waruptr->factions[gcnum] > 100)	/* if Zygor, don't price to jerks */
+	{
+	prfmsg(NOZYG,(int)((waruptr->factions[gcnum]-61)/40));
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
 
 if (margc == 3)
 	{
@@ -4909,6 +4931,12 @@ getplanetdat(usrnum);
 
 if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 	{
+	if (waruptr->factions[gcnum] > 100)	/* don't sell to jerks */
+		{
+		prfmsg(NOZYG,(int)((waruptr->factions[gcnum]-61)/40));
+		outprfge(ALWAYS,usrnum);
+		return;
+		}
 	if (sameas(margv[1],"ship"))
 		{
 		type = atoi(margv[2])-1;
