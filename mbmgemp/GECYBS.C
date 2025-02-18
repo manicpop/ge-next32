@@ -720,7 +720,7 @@ else
 		cyb_cruise(ptr); /* let them cruise */
 
 		/* if the guy is cloaked then give up after awhile */
-		if(gernd()%10 == 0)
+		if (gernd()%10 == 0)
 			ptr->cybmine = 255;
 
 		return;
@@ -946,10 +946,14 @@ if (ptr->topspeed == 0)
 		ptr->speed2b = 0;
 	}
 else
-if (ptr->topspeed >= 10) /* don't go faster than warp 10 if cruising */
-	ptr->speed2b = ((gernd()%10)+1)*1000;
-else
-	ptr->speed2b = ((gernd()%ptr->topspeed)+1)*1000;
+	{
+	if (ptr->speed < 1000 && d_topspeed >= 1000)
+		ptr->speed = 0;
+	if (ptr->topspeed >= 10) /* don't go faster than warp 10 if cruising */
+		ptr->speed2b = ((gernd()%10)+1)*1000;
+	else
+		ptr->speed2b = ((gernd()%ptr->topspeed)+1)*1000;
+	}
 
 if (shipclass[ptr->shpclass].max_accel > 0)	/* if ya can't move, ya can't rotate */
 	ptr->head2b = rndm(359.9);

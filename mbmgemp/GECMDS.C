@@ -3565,6 +3565,7 @@ if (sameas(margv[1],"off"))
 	if (warsptr->cloak > 0)
 		{
 		warsptr->cloak = 0;
+		assign_cybs(usrnum,1);	/* don't pull far away cybs if close ones around */
 		prfmsg(CLOKOFF);
 		outprfge(FILTER,usrnum);
 		prfmsg(CLOK2);
@@ -5458,7 +5459,7 @@ if (sameas("orbit",margv[1]) && (margc == 3))
 else
 if (sameas("assigncybs",margv[1]) && margc == 2)
         {
-        assign_cybs(usrnum);
+        assign_cybs(usrnum,0);
         return;
         }
 else

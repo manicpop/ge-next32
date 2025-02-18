@@ -172,7 +172,7 @@
 /*    2620 */ WARSHP *FUNC warshpoff P((int usrn ));
 /*    2632 */ double FUNC ton_fact P((WARSHP *ptr , double damfact ));
 /*    2645 */ char *FUNC showarp P((double speed ));
-/*         */ void FUNC assign_cybs P((int usrnum ));
+/*         */ void FUNC assign_cybs P((int usrnum , int call));
 /*         */ int FUNC cyb_fast P((WARSHP *ptr ));
 /*         */ void FUNC set_dislike P((WARUSR *wuptr , int facnum, int dislike ));
 

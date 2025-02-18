@@ -158,7 +158,7 @@ prfmsg(WELCOM,waruptr->userid);
 outprfge(ALWAYS,usrnum);
 usrptr->substt = FIGHTSUB;
 warsptr->status = GESTAT_USER;
-assign_cybs(usrnum);
+assign_cybs(usrnum,0);
 }
 
 /**************************************************************************
@@ -937,7 +937,7 @@ for (i=0; i<MAXPLANETS;++i)
 					ptr->damage+= 5.5;
 					outprfge(ALWAYS,usrn);
 					cleartm(usrn);	/* clear the tors and missiles */
-					assign_cybs(usrn); /* clear current cyb pursuits and pick closest new ones */
+					assign_cybs(usrn,0); /* clear current cyb pursuits and pick closest new ones */
 					}
 				}
 			}
@@ -2887,8 +2887,8 @@ return(warpbuf);
 
 /* assign closest cybs to ship entering game or going through wormhole */
 
-void FUNC assign_cybs(usrnum)
-int usrnum;
+void FUNC assign_cybs(usrnum,call)
+int usrnum, call;
 
 {
 
@@ -2902,18 +2902,27 @@ double	ddist;
 double	low_dist = 999999999.0;
 int	low_ship;
 int	lta; /* lowest to attack */
-int	i, cybpick;
+int	i, cybpick, claims;
 
-/* clear all current cyb pursuits */
+claims = 0;
+
+/* call 0 = clear all current cyb pursuits */
+/* call 1 = count all current cyb pursuits */
 for (zothusn=nterms; zothusn < nships; ++zothusn)
 	{
 	ptr = warshpoff(zothusn);
 	if (ptr->status == GESTAT_AUTO && shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG && ptr->cybmine == usrnum)
-		ptr->cybmine = 255;
+		{
+		if (call == 0)
+			ptr->cybmine = 255;
+		else
+			++claims;
+		}
 	}
 
 wptr = warshpoff(usrnum);
-cybpick = shipclass[wptr->shpclass].noclaim;
+/* if we're not clearing, only claim enough to fill claims */
+cybpick = shipclass[wptr->shpclass].noclaim-claims;
 
 for (i=0; i < cybpick; ++i)
 	{
