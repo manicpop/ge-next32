@@ -642,25 +642,28 @@ int	usrn;
 
 {
 
-if (ptr->cybmine < nships && ptr->damage > CYB_MINDAM && (gernd()%10 == 0))
+if (ptr->cybmine < nships && ptr->damage > CYB_MINDAM && ((gernd()%10 == 0) || ptr->holdcourse > 0))
 	{
 	if (shipclass[ptr->shpclass].has_mine
 		&& ptr->items[I_MINE] > 0
-		&& gernd()%5 == 0)
+		&& gernd()%8 == 0)
 		laymine(ptr,usrn,10);
 
 	if (shipclass[ptr->shpclass].has_jam
 		&& ptr->items[I_JAMMERS] > 0
-		&& gernd()%20 == 0)
+		&& gernd()%40 == 0)
 		jam(ptr,usrn);
 
-	if (ptr->speed < 1000 && d_topspeed >= 1000)
-		ptr->speed = 0;
-	ptr->speed2b = d_topspeed;
-	ptr->head2b = rndm(359.9);
-	if (ptr->cybmine < nterms && ingegame(ptr->cybmine))
-		cyb_annoy(ptr,ptr->cybmine,FLEE);
-	ptr->holdcourse = gernd()%10 + 5;
+	if (ptr->holdcourse == 0)
+		{
+		if (ptr->speed < 1000 && d_topspeed >= 1000)
+			ptr->speed = 0;
+		ptr->speed2b = d_topspeed;
+		ptr->head2b = rndm(359.9);
+		if (ptr->cybmine < nterms && ingegame(ptr->cybmine))
+			cyb_annoy(ptr,ptr->cybmine,FLEE);
+		ptr->holdcourse = gernd()%10 + 5;
+		}
 	}
 }
 

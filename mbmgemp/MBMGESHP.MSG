@@ -5472,7 +5472,7 @@ S34PNTS {Points awarded: 200} (S34TYPE#<NONE>) N 1 32767
 
 Scanner range of a class 34 ship in subsectors.
 
-S34SRNG {Scanner range: 15000} (S34TYPE#<NONE>) L 1 10000000
+S34SRNG {Scanner range: 50000} (S34TYPE#<NONE>) L 1 10000000
 
 Will Cybertrons fire on a class 34 ship unprovoked?
 If YES, Cybertrons will pursue and fire upon this class.
