@@ -956,7 +956,7 @@ causes engine damage over time. A value of 0 means impulse
 only. To make a class completely immobile, set SXXACCL to 0
 as well.
 
-S06WARP {Maximum warp cruising speed: 10} (S06TYPE#<NONE>) N 0 255
+S06WARP {Maximum warp cruising speed: 20} (S06TYPE#<NONE>) N 0 255
 
 Maximum cargo capacity of class 06 in tons.
 

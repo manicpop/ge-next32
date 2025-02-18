@@ -4390,7 +4390,7 @@ CYB6M1 {***
 
 CYB6M2 {***
 [0;37mHailing message from [0;36m%s
-[1;36m<[1;37m We will destroy you, organic vermin! [1;36m>[1;37m
+[1;36m<[1;37m Your defeat is a mathematical certainty! [1;36m>[1;37m
 } T GE Cyb 6 message 2
 
 CYB6M3 {***
