@@ -121,10 +121,8 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		ptr->status = GESTAT_AUTO;
 		ptr->shield = 40 + (ptr->shieldtype*10);
 		ptr->phasr = 100;
-		ptr->cybmine = (byte)255;
-		ptr->distress = (byte)255;	/* make sure this isn't 0 */
 		ptr->warncntr = (byte)255;
-		cyb_cruise(ptr);
+		cyb_cruise(ptr,0);
 		ptr->cybupdate = 100 + gernd()%20;
 		ptr->holdcourse = 0;
 		ptr->tick = CYBTICKTIME + gernd()%(CYBTICKTIME*5);
@@ -285,11 +283,7 @@ db_update(ptr,usrn);
 
 /* still moving at pursuit speed, but no longer pursuing */
 if (cyb_fast(ptr) && ptr->cybmine == 255)
-	{
-	ptr->speed2b = 0.0;
-	ptr->speed = ptr->speed2b;
-	cyb_cruise(ptr);
-	}
+	cyb_cruise(ptr,0);
 
 /* am I being jammed ? */
 if (ptr->jammer == 0)
@@ -359,10 +353,7 @@ else
 		away.... might as well mine the area */
 		if (shipclass[ptr->shpclass].has_mine && ptr->items[I_MINE] > 0 && gernd()%5 == 0)
 			laymine(ptr,usrn,10);
-		if (ptr->speed < 1000 && d_topspeed >= 1000)
-			ptr->speed = 0;
-		ptr->speed2b = d_topspeed;
-		ptr->holdcourse = gernd()%7 + 2;
+		cyb_cruise(ptr,2);
 		}
 	}
 
@@ -539,8 +530,7 @@ if (ptr->cybupdate > 1)
 /* if cruising around and about to update, change speed/direction */
 if (ptr->cybupdate == 1 && (ptr->cybmine >= nships || (warshpoff(ptr->cybmine)->status == GESTAT_AUTO && ptr->cantexit == 0)))
 	{
-	ptr->cybmine = 255;	/* keep cyb from endlessly chasing npcs it can't catch */
-	cyb_cruise(ptr);
+	cyb_cruise(ptr,0);	/* keep cyb from endlessly chasing npcs it can't catch */
 	--ptr->cybupdate;
 	return;
 	}
@@ -603,11 +593,7 @@ if (gernd()%10 == 0 && shipclass[ptr->shpclass].has_zip && ptr->items[I_ZIPPERS]
 	zip(ptr,usrn);
 	wptr->minesnear = FALSE;
 	/* get the hell out of here ...then come back */
-	if (ptr->speed < 1000 && d_topspeed >= 1000)
-		ptr->speed = 0;		/* no fractionals */
-	ptr->speed2b = d_topspeed;
-	ptr->head2b = rndm(359.9);
-	ptr->holdcourse = gernd()%20 + 3;
+	cyb_cruise(ptr,3);
 	}
 }
 
@@ -656,13 +642,9 @@ if (ptr->cybmine < nships && ptr->damage > CYB_MINDAM && ((gernd()%10 == 0) || p
 
 	if (ptr->holdcourse == 0)
 		{
-		if (ptr->speed < 1000 && d_topspeed >= 1000)
-			ptr->speed = 0;
-		ptr->speed2b = d_topspeed;
-		ptr->head2b = rndm(359.9);
+		cyb_cruise(ptr,2);
 		if (ptr->cybmine < nterms && ingegame(ptr->cybmine))
 			cyb_annoy(ptr,ptr->cybmine,FLEE);
-		ptr->holdcourse = gernd()%10 + 5;
 		}
 	}
 }
@@ -707,8 +689,7 @@ else
 	{
 	if (!ingegame(zothusn))
 		{
-		ptr->cybmine = (byte)255;
-		cyb_cruise(ptr);
+		cyb_cruise(ptr,0);
 		return;
 		}
 
@@ -717,7 +698,8 @@ else
 	if (wptr->cloak == 10)
 		{
 		ptr->holdcourse=gernd()%5+5;
-		cyb_cruise(ptr); /* let them cruise */
+		cyb_cruise(ptr,1); /* let them cruise */
+		ptr->cybmine = zothusn;
 
 		/* if the guy is cloaked then give up after awhile */
 		if (gernd()%10 == 0)
@@ -913,8 +895,7 @@ WARSHP   *wptr;			/* ptr to ship cyber killed */
 {
 usrn = usrn;
 wptr = wptr;
-ptr->cybmine = (byte)255;
-cyb_cruise(ptr);
+cyb_cruise(ptr,0);
 ptr->cybupdate = 0;
 }
 
@@ -934,29 +915,63 @@ ptr->status = GESTAT_AVAIL;
 ** Set random speed and heading if cruising                              **
 **************************************************************************/
 
-void FUNC cyb_cruise(ptr)
+void FUNC cyb_cruise(ptr,call)
 WARSHP *ptr;
+int call;
 
 {
+
+/* 0 = drop pursuits and random, 1 = random, 2 = top speed short hold,
+3 = top speed long hold, 4 top speed no hold */
+
+if (call == 0)
+	{
+	ptr->cybmine = (byte)255;
+	ptr->distress = (byte)255;
+	}
+
+if (shipclass[ptr->shpclass].max_accel == 0)	/* bases don't do any of the below */
+	return;
+
+if (call < 2)
+	ptr->head2b = rndm(359.9);
+
 if (ptr->topspeed == 0)
 	{
-	if (shipclass[ptr->shpclass].max_accel > 0) /* impulse only */
-		ptr->speed2b = ((gernd()%99)+1)*10;
+	if (call > 1)
+		ptr->speed2b = 990;
 	else
-		ptr->speed2b = 0;
+		ptr->speed2b = ((gernd()%99)+1)*10;
 	}
 else
 	{
-	if (ptr->speed < 1000 && d_topspeed >= 1000)
-		ptr->speed = 0;
-	if (ptr->topspeed >= 10) /* don't go faster than warp 10 if cruising */
-		ptr->speed2b = ((gernd()%10)+1)*1000;
-	else
-		ptr->speed2b = ((gernd()%ptr->topspeed)+1)*1000;
+	if (ptr->speed < 1000)	/* no fractional warp speeds */
+		{
+		ptr->speed2b = 0.0;
+		ptr->speed = ptr->speed2b;
+		}
+	if (cyb_fast(ptr))
+		{
+		ptr->speed2b = (double)ptr->topspeed*1000;
+		ptr->speed = ptr->speed2b;
+		}
+	if (call > 1)
+		{
+		ptr->speed2b = (double)ptr->topspeed*1000;
+		}
+	if (call < 2)
+		{
+		if (ptr->topspeed >= 10) /* don't go faster than warp 10 if cruising */
+			ptr->speed2b = ((gernd()%10)+1)*1000;
+		else
+			ptr->speed2b = ((gernd()%ptr->topspeed)+1)*1000;
+		}
 	}
 
-if (shipclass[ptr->shpclass].max_accel > 0)	/* if ya can't move, ya can't rotate */
-	ptr->head2b = rndm(359.9);
+if (call == 2)
+	ptr->holdcourse = gernd()%8 + 4;
+if (call == 3)
+	ptr->holdcourse = gernd()%15 + 10;
 }
 
 /**************************************************************************
@@ -1013,8 +1028,8 @@ if (nc >= cattkd)
 if (call == 0)
 	return(TRUE);
 
-/* picks on a 500x scale of 500 to 4500 */
-if (call == 1 && gernd()%((10-cattkd)*500) == 0)
+/* picks on a 600x scale of 600 to 5400 */
+if (call == 1 && gernd()%((10-cattkd)*600) == 0)
 	return(TRUE);
 
 return(FALSE);

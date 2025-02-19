@@ -5035,7 +5035,7 @@ S31LATK {Lowest class of user ship this ship will pursue: 0} (S31TYPE=CYBORG,DRO
 
 How many class 31 ships should be created (NPCs only)?
 
-S31MAKE {Number of NPCs of this class to make: 3} (S31TYPE=CYBORG,DROID) N 0 255
+S31MAKE {Number of NPCs of this class to make: 2} (S31TYPE=CYBORG,DROID) N 0 255
 
 Toughness level of class 31 (NPCs only)?
 This is a level from 0 to 4.

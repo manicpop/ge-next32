@@ -4737,7 +4737,7 @@ DR4M7 {***
 } T GE Droid 4 message 7
 
 DR4M8 {***
-[0;37mBeacon message from [0;36m%s
+[0;37mHailing message from [0;36m%s
 [1;36m<[1;37m Why do you wish for more destruction? We seek peace! [1;36m>[1;37m
 } T GE Droid 4 message 8
 
