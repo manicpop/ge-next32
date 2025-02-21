@@ -182,7 +182,7 @@ else
 cyb_cruise(ptr,0);
 ptr->holdcourse = 0;
 ptr->status = GESTAT_AUTO;
-ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
+ptr->tick = (CYBTICKTIME + gernd()%CYBTICKTIME)*5;
 
 if (shipclass[class].max_phasr > 1)
 	ptr->phasrtype = (gernd()%shipclass[class].max_phasr)+1;
@@ -314,7 +314,7 @@ base = DRBASEM + ((ptr->shpclass - dr_class)*12);
 
 if (ptr->cybmine == 255)
 	{
-	if (gernd()%(10+shipclass[ptr->shpclass].tough_factor))	/* tougher npcs have fewer ticks */
+	if (gernd()%(10+shipclass[ptr->shpclass].tough_factor) == 0)	/* tougher npcs have fewer ticks */
 		{
 		if (ptr->warncntr == 0)
 			ptr->warncntr = (gernd()%4)+1;

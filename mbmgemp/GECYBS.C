@@ -215,7 +215,7 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		ptr->holdcourse = 0;
 
 		ptr->status = GESTAT_AUTO;
-		ptr->tick = CYBTICKTIME + gernd()%CYBTICKTIME;
+		ptr->tick = CYBTICKTIME + gernd()%(CYBTICKTIME*5);
 
 		ptr->cybupdate = 1;
 
@@ -311,8 +311,9 @@ if (ptr->jammer == 0)
 
 			ddist = cdistance(&ptr->coord,&wptr->coord);
 			ddist *= 10000;
-			ptr->tick = CYBTICKTIME + gernd()%(5-shipclass[ptr->shpclass].tough_factor);
-
+			/* if a user is around, pay more attention */
+			if (ddist < (double)shipclass[ptr->shpclass].scanrange && wptr->status == GESTAT_USER)
+				ptr->tick = CYBTICKTIME + gernd()%(5-shipclass[ptr->shpclass].tough_factor);
 			if (!neutral(&ptr->coord) && ddist < (double)shipclass[ptr->shpclass].scanrange)
 				{
 				/* bases don't approach... so send msg when wptr approaches */
