@@ -5499,7 +5499,7 @@ S34MAKE {Number of NPCs of this class to make: 3} (S34TYPE=CYBORG,DROID) N 0 255
 Toughness level of class 34 (NPCs only)?
 This is a level from 0 to 4.
 
-S34TOUGH {Toughness level: 0} (S34TYPE=CYBORG,DROID) N 0 4
+S34TOUGH {Toughness level: 1} (S34TYPE=CYBORG,DROID) N 0 4
 
 Class 34 damage factor, 100 is normal. 200 is twice as
 resilient, 77 is the minimum.
@@ -5625,7 +5625,7 @@ S35PNTS {Points awarded: 100} (S35TYPE#<NONE>) N 1 32767
 
 Scanner range of a class 35 ship in subsectors.
 
-S35SRNG {Scanner range: 100000} (S35TYPE#<NONE>) L 1 10000000
+S35SRNG {Scanner range: 250000} (S35TYPE#<NONE>) L 1 10000000
 
 Will Cybertrons fire on a class 35 ship unprovoked?
 If YES, Cybertrons will pursue and fire upon this class.
@@ -5652,7 +5652,7 @@ S35MAKE {Number of NPCs of this class to make: 2} (S35TYPE=CYBORG,DROID) N 0 255
 Toughness level of class 35 (NPCs only)?
 This is a level from 0 to 4.
 
-S35TOUGH {Toughness level: 1} (S35TYPE=CYBORG,DROID) N 0 4
+S35TOUGH {Toughness level: 2} (S35TYPE=CYBORG,DROID) N 0 4
 
 Class 35 damage factor, 100 is normal. 200 is twice as
 resilient, 77 is the minimum.
@@ -5778,7 +5778,7 @@ S36PNTS {Points awarded: 500} (S36TYPE#<NONE>) N 1 32767
 
 Scanner range of a class 36 ship in subsectors.
 
-S36SRNG {Scanner range: 300000} (S36TYPE#<NONE>) L 1 10000000
+S36SRNG {Scanner range: 150000} (S36TYPE#<NONE>) L 1 10000000
 
 Will Cybertrons fire on a class 36 ship unprovoked?
 If YES, Cybertrons will pursue and fire upon this class.

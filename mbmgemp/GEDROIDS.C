@@ -108,19 +108,19 @@ initshp(droidname,class);
 memcpy(ptr,&tmpshp,sizeof(WARSHP));  /* make is the current ship */
 sprintf(ptr->shipname,"%s%u\0",shipclass[class].npcprefx,usrn*usrn+gernd()%(2*usrn+1)+1000);
 
-if (shipclass[ptr->shpclass].loadout == 1 && univmax > 30)   /* Garbage Scows stay close to 0 0 */
+if (shipclass[ptr->shpclass].loadout == 1 && univmax > 40)   /* Garbage Scows stay close to 0 0 */
 	{
 	ptr->coord.xcoord    = rndm(79.9)-39.8;
         ptr->coord.ycoord    = rndm(79.9)-39.8;
 	}
 else
-if (shipclass[ptr->shpclass].loadout == 4 && univmax > 50)   /* SCTs, a little more room */
+if (shipclass[ptr->shpclass].loadout == 4 && univmax > 60)   /* SCTs, a little more room */
 	{
 	ptr->coord.xcoord    = rndm(119.9)-59.8;
         ptr->coord.ycoord    = rndm(199.9)-59.8;
 	}
 else
-if (shipclass[ptr->shpclass].loadout == 5)   /* SDDs, halfway between neut and barrier */
+if (shipclass[ptr->shpclass].loadout == 5 && univmax > 30)   /* SDDs, halfway between neut and barrier */
 	{
 	ptr->coord.xcoord    = ((double)univmax/2.0)+(rndm(29.9)-14.8);
 	if (gernd()%2 == 0)
@@ -193,7 +193,7 @@ if (shipclass[class].max_shlds > 1)
 else
 	ptr->shieldtype = shipclass[class].max_shlds;
 
-ptr->warncntr = (byte)255;
+ptr->warncntr = 0;
 
 for (zothusn=0; zothusn<nterms; zothusn++)
 	{
@@ -310,39 +310,47 @@ if (usrn >= nterms)
 
 base = DRBASEM + ((ptr->shpclass - dr_class)*12);
 
-sel = base+(gernd()%4)+1;
-
 /* display friend or foe msg if not engaged with that user */
-if (sel < DRLASTM)
+
+if (ptr->cybmine == 255)
 	{
-	if (usrn != ptr->cybmine)
+	if (gernd()%(10+shipclass[ptr->shpclass].tough_factor))	/* tougher npcs have fewer ticks */
 		{
-		if (gernd()%12 == 0)
+		if (ptr->warncntr == 0)
+			ptr->warncntr = (gernd()%4)+1;
+		if (ptr->warncntr > 4)	/* cycle through msgs instead of rnd pick */
+			ptr->warncntr = 1;
+		sel = base + ptr->warncntr;
+		if (sel+4 >= DRLASTM)
 			{
-			if (warusroff(usrn)->factions[shipclass[ptr->shpclass].faction] > 50)
-				prfmsg(sel+4,ptr->shipname);
-			else
-				prfmsg(sel,ptr->shipname);
-			outprfge(FILTER,usrn);
+		        geshocst(0,"GE:BAD DROID MSG FF");
+			logthis(spr("droid_annoy:bad msg ff usrn [%d]",usrn));
+			return;
 			}
-		}
-	else
-		{
-		/* if engaged, show fight msg first time (255) and every so many times */
-		if (ptr->warncntr > 12+(shipclass[ptr->shpclass].tough_factor*2))	/* adjust for tougher ships going faster */
-			ptr->warncntr = 0;
-		if (ptr->warncntr == 0 && ptr->damage < 100)
-			{
-			prfmsg(sel+8,ptr->shipname);
-			outprfge(FILTER,usrn);
-			}
+		if (warusroff(usrn)->factions[shipclass[ptr->shpclass].faction] > 50)
+			prfmsg(sel+4,ptr->shipname);
+		else
+			prfmsg(sel,ptr->shipname);
+		outprfge(FILTER,usrn);
 		++ptr->warncntr;
 		}
 	}
 else
 	{
-        geshocst(0,"GE:BAD DROID MSG");
-        logthis(spr("droid_annoy:bad msg usrn [%d]",usrn));
+	sel = base+(gernd()%4)+9;
+	if (sel >= DRLASTM)
+		{
+	        geshocst(0,"GE:BAD DROID MSG BTL");
+		logthis(spr("droid_annoy:bad msg btl usrn [%d]",usrn));
+		return;
+		}
+	/* if engaged, show message every time hit (255) */
+	if (ptr->warncntr == 255 && ptr->damage < 100)
+		{
+		prfmsg(sel,ptr->shipname);
+		outprfge(FILTER,usrn);
+		ptr->warncntr = 0;
+		}
 	}
 }
 
@@ -484,6 +492,8 @@ if (ptr->jammer == 0)
 		ddist *= 10000;
 		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && wptr->cloak != 10) || ptr->cantexit > 0)
 			{
+			if (wptr->cloak != 10)
+				droid_annoy(ptr,zothusn);
 			/* if still in range, flee and attack */
 			if (ptr->damage > 50)
 				cyb_cruise(ptr,4);
@@ -492,10 +502,7 @@ if (ptr->jammer == 0)
 			if (wptr->cloak == 10)
 				ptr->head2b = rndm(359.9);
 			else
-				{
 				ptr->head2b = (double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0 + (rand() % 51 - 25)) % 360);
-				droid_annoy(ptr,zothusn);
-				}
 			if (ddist < 30000)
 				droid_phaser(ptr,usrn,wptr);
 			}
@@ -557,6 +564,8 @@ if (ptr->jammer == 0)
 		ddist *= 10000;
 		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && wptr->cloak != 10) || ptr->cantexit > 0)
 			{
+			if (wptr->cloak != 10)
+				droid_annoy(ptr,zothusn);
 			if (ptr->holdcourse == 0)
 				{
 				if (ptr->damage < 67)
@@ -575,7 +584,6 @@ if (ptr->jammer == 0)
 				}
 			if (ddist < 30000 && !neutral(&ptr->coord) && wptr->cloak != 10)
 				{
-				droid_annoy(ptr,zothusn);
 				droid_phaser(ptr,usrn,wptr);
 				droid_torp(ptr,usrn,wptr,zothusn);
 				if (ptr->items[I_JAMMERS] > 0 && shipclass[ptr->shpclass].has_jam && !neutral(&ptr->coord) && ptr->holdcourse == 1)
@@ -640,15 +648,14 @@ if (ptr->jammer == 0)
 		ddist *= 10000;
 		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && wptr->cloak != 10) || ptr->cantexit > 0)
 			{
+			if (wptr->cloak != 10)
+				droid_annoy(ptr,zothusn);
 			if (ptr->holdcourse == 0)
 				{
 				if (wptr->cloak == 10)
 					ptr->head2b = rndm(359.9);
 				else
-					{
-					droid_annoy(ptr,zothusn);
 					ptr->head2b = (double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0 + (rand() % 51 - 25)) % 360);
-					}
 				if (gernd()%2 == 0)
 					cyb_cruise(ptr,4);
 				else
@@ -702,7 +709,7 @@ if (ptr->jammer == 0)
 	{
 	if (ptr->cybmine == 255)
 		{
-		if (cattkd > 0 && (cattkd >= 10 || gernd()%((10-cattkd)*500) == 0))	/* should we go after cybs */
+		if (cattkd > 0 && (cattkd >= 10 || gernd()%((10-cattkd)*600) == 0))	/* should we go after cybs */
 			pickcyb = nships;	/* sure, why not */
 		else
 			pickcyb = nterms;	/* only go after users we don't like, if any */
@@ -716,7 +723,10 @@ if (ptr->jammer == 0)
 				/* hail any users if close */
 				if (zothusn < nterms && wptr->status == GESTAT_USER && ddist < (double)shipclass[wptr->shpclass].scanrange &&
 					ddist < (double)shipclass[ptr->shpclass].scanrange && wptr->cloak != 10)
+					{
+					ptr->tick = CYBTICKTIME + gernd()%(5-shipclass[ptr->shpclass].tough_factor);
 					droid_annoy(ptr,zothusn);
+					}
 				if ((shipclass[wptr->shpclass].max_type == CLASSTYPE_CYBORG && wptr->cybmine == 255) ||
 					(wptr->status == GESTAT_USER && wptr->cloak != 10 && lta <= wptr->shpclass &&
 					warusroff(zothusn)->factions[shipclass[ptr->shpclass].faction] > 50 &&
@@ -870,6 +880,8 @@ if (ptr->jammer == 0)
 		ddist *= 10000;
 		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && wptr->cloak != 10) || ptr->cantexit > 0)
 			{
+			if (wptr->cloak != 10)
+				droid_annoy(ptr,zothusn);
 			if (ptr->holdcourse == 0)
 				{
 				if (wptr->cloak == 10)
@@ -884,7 +896,6 @@ if (ptr->jammer == 0)
 				}
 			if (ddist < 30000 && !neutral(&ptr->coord) && wptr->cloak != 10)
 				{
-				droid_annoy(ptr,zothusn);
 				droid_phaser(ptr,usrn,wptr);
 				droid_torp(ptr,usrn,wptr,zothusn);
 				if (ptr->where == 0 && ptr->items[I_DECOYS] > 0 && shipclass[ptr->shpclass].has_decoy)

@@ -4765,7 +4765,7 @@ DR4M12 {***
 } T GE Droid 4 message 12
 
 **********************************************************************
-Sarten Attack Drone
+Sarten Defense Drone
 
 The first four messages are sent to players that approach
 but are not (yet) considered threats.

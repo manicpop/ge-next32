@@ -231,10 +231,10 @@ struct hlpcmd gehlp[] = {
 		{"planets3",			HLPPLAN3},
 		{"sartens",			HLPSART},
 		{"scoring",			HLPSCORE},
-		{"sector",			HLPSECTR},
 		{"starting",			HLPSTART},
 		{"strategy",			HLPSTRAT},
 		{"tryklons",			HLPTRYK},
+		{"vakories",			HLPVAKO},
 		{"wormholes",			HLPWORM},
 		{"zygorians",			HLPZYGO},
 

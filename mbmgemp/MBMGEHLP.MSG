@@ -12,8 +12,8 @@ Commands: [1;32mabandon  abort  admin  attack  buy  cloak  cls  decoy  destruct
           team  torpedo  transfer  warp  who  zipper
 
 [1;36m Topics:  [1;32mbattle  class  communicate  distress  flux  galaxy  moving
-          planets  scoring  sector  starting  strategy  wormholes  
-          Cybertrons  Lydorians  Murdonians  Sartens  Tryklons  Zygorians
+          planets  scoring  starting  strategy  wormholes  Cybertrons
+          Lydorians  Murdonians  Sartens  Tryklons  Vakories  Zygorians
 
 [1;36mEnter [1;37mHELP[1;36m followed by any of these commands or topics for more information.[1;37m
 } T GE help list of subjects message
@@ -96,32 +96,6 @@ left to bottom right as follows:
        +------------------------------+
 } T GE help galaxy message
 
-
-HLPSECTR {
-[1;36mTopic: Sector 
-
-In each sector there may be between 0 and 9 planetary bodies. Each planet has
-various environmental and resource qualities. The best planet has very good
-resources and a very good environment.
-
-Sector 0 0 is governed by the Galactic Command and is a declared neutral zone.
-This policy is maintained by the Enforcer Planet. A single hostile action by
-any player in this sector will be met with a swift and preemptive strike from
-the Galactic Command's top secret weapons base on the Enforcer Planet.
-
-Sector 0 0 also has the first planet Zygor, the leaders in state-of-the-art
-weapons and ship hardware. Zygor manufactures the various ships and the weapons
-they carry. It is also home of the Galactic Monetary Reserve Fund, the only
-duly authorized financial institution in the galaxy.
-
-Planet number two in Sector 0 0 is Tahanian Station, a embarking station for
-colonists and mercenary soldiers. This is where you can find colonists eager
-to find a new planet to live (and work) on, and purchase food supplies.
-
-Once out of Sector 0 0 it is a free for all, and you have to decide how to
-best defend yourself and your planets.
-[1;37m} T GE help sector message
-
 HLPCOMMU {
 [1;36mTopic: Communications
 
@@ -148,9 +122,9 @@ earn an additional point bonus and the appreciation of those that you rescued.
 
 Your ship's phasers are programmed to not damage a ship in distress (unless
 you are the one attacking it). This way, you can fire on a ship in the same
-area and not worry about hitting the ship in distress. If you want to
-override this behavior, use the [1;37mLOCK[1;36m command on the ship in distress, you
-can then fire as normal.
+area and not worry about hitting the ship in distress. If you want to override
+this behavior, use the [1;37mLOCK[1;36m command on the ship in distress, you can then fire
+as normal.
 [1;37m} T GE help distress message
 
 HLPNAVIG {
@@ -383,25 +357,29 @@ from the planet before attempting to attack with troops. Once the fighters are
 eliminated, you can begin attacking with troops.
 
 After each wave, some fighters or troops may return to your ship if they are
-not all eliminated in the attack. If you wish to send them back, you can do so.
-Remember, you will not take a planet so long as 1 fighter or 1 squad of troops
-(5) exists on the planet.
+not all eliminated in the attack. If you wish to send them back, you can do
+so. Remember, you will not take a planet so long as 1 fighter or 1 squad of
+troops (5) exists on the planet.
 [1;37m} T GE help battle 3 message
 
 HLPCYBER {
 [1;36mTopic: Cybertrons
 
-Cybertrons are a race of automatons which are bent on the destruction of all
-organic life from the universe. They command a class of ship manufactured
+Cybertrons are a race of automatons which command a class of ship manufactured
 specifically for them, also called the Cybertron. Both pilot and ship function
 as a single fighting unit, and they can be quite deadly.
+
+Cybertrons have made massive improvements to their ships in the past few
+decades, leading them to turn against the Sartens, with whom they once shared
+an uneasy alliance. Cybertrons are now bent on the destruction of all organic
+life from the galaxy, including the Sartens, Murdonians, and (presumably) you.
 
 All Cybertrons are equipped with a pursuit capability to identify
 non-Cybertron ships throughout the galaxy, and are capability of traversing
 the galaxy in mere moments to reach a ship, at speeds far beyond warp as
-currently understood. All attempts by the Galactic Command to reverse
-engineer this technology have so far failed. A scan of a Cybertron ship
-traveling at this pursuit speed will display "??.??" for speed.
+currently understood. All attempts by the Galactic Command to reverse engineer
+this technology have so far failed. A scan of a Cybertron ship traveling at
+this pursuit speed will display "??.??" for speed.
 
 The least powerful Cybertron is a Cybertron Interceptor, which can be
 identified by its "1x" marking. The top cruising speed of a Cybertron
@@ -410,31 +388,132 @@ torpedo systems. As you destroy Cybertrons and upgrade to more powerful ships,
 you will find additional, more powerful classes of Cybertrons will be
 dispatched to intercept you. It is up to you to discover the capabilities of
 these ships.
-[1;37m} T GE help cybertron message
+[1;37m} T GE help Cybertron message
 
 HLPLYDO {
 [1;36mTopic: Lydorians
-(TO DO)
+
+Eight hundred years ago, the Lydorians and the Sartens fought a war that
+nearly brought both powers to mutual destruction. However, when the Sartens
+finally developed faster-than-light travel, the war effectively ended. The
+Lydorians were offered a treaty with the Sartens ending all hostilities as
+long as the Lydorians agreed to never develop hyperspace technology of their
+own. Facing certain defeat, the Lydorians reluctantly agreed.
+
+Today, this treaty is still in effect and the Lydorians have adopted a
+pacifist, isolationist lifestyle. Some Lydorians operate garbage scows that
+don't require warp drive, most choose not to interact with the rest of the
+galaxy at all.
+
+During the Cybertron-Sarten War, the Lydorians developed the Planetary
+Transport vessel, capable of evacuating entire populations of planets out of
+the path of destruction. When hostilities died down, the government of Lydoria
+sold the design specifications to the Galactic Command. The Planetary
+Transport is sold at Zygor today.
 [1;37m} T GE help Lydorian message
+
+HLPMURD {
+[1;36mTopic: Murdonians
+
+The Murdonians are one of the few powers in the galaxy to never get caught up
+in full-scale war or galactic conquest. After acquiring warp capability
+several hundred years ago, the Murdonian government eventually spun off their
+space program into the Trans-Gal Corporation, serving the transportation
+needs of the entire galaxy.
+
+Today, the Trans-Gal Corporation moves tens of thousands of people and
+hundreds of thousands of tons of equipment throughout the galaxy every day.
+While the Murdonians possess no military force of their own, Trans-Gal vessels
+are capable of self-defense to protect their passengers and cargo from
+Cybertrons and other marauders.
+[1;37m} T GE help Murdonians message
 
 HLPSART {
 [1;36mTopic: Sartens
-(TO DO)
+
+Once a proud warrior race, and the dominant military power in the galaxy, the
+Sarten Empire is in ruins after the Cybertron-Sarten War of 3274. 
+
+In the past thirty years, Cybertrons have greatly upgraded their fleet with
+newer, more powerful ships, and quickly outclassed even the most powerful
+Sarten Obliterators. The delicate balance of power that led the Sartens to
+thrive even after the rise of the Cybertrons quickly deteroriated.
+
+Sartens are now focused on transporting what remains of their kind out of the
+path of Cybertron destruction. Most of their fleet is now comprised of
+transport vessels, which will not attack anyone except for in self-defense.
+They also control a handful of defense drones which will seek out Cybertrons
+and anyone else who has threatened what remains of their empire.
+
+While no longer a threat to the galaxy at large, many ship commanders have not
+forgotten the terror that Sartens have wrought in the past. Whether you wish
+to attack, ignore, or defend the Sartens is up to you, but be advised that
+they will respond in kind.
 [1;37m} T GE help Sartens message
 
 HLPTRYK {
 [1;36mTopic: Tryklons
-(TO DO) 
+
+The Tryklons are a nomadic species, and whether they are real or simply a
+legend had been debated for many years. Several ship commanders have reported
+approaching a unknown vessel, but being quickly thrown off course by an
+unknown force, and returning to find no trace of the ship.
+
+In 3277, a Vakory Survey Drone captured what are believed to be the first
+visual scans of a Tryklon ship ever recorded. However, the drone mysteriously
+vanished after transmitting its findings to the Vakory High Command.
+
+Legend says the Tryklons were the first spacefaring race in the galaxy,
+possess unknown and powerful technology, and are responsible for seeding the
+galaxy with the wormholes that are commonly used today. However, Zygorian
+scientists dismiss these claims.
+
+One of the wormholes in the neutral zone was named the Tryklon Portal in honor
+of these legends.
 [1;37m} T GE help Tryklons message
 
-HLPMURD {
-[1;36mTopic: Murdonians
-(TO DO)
-[1;37m} T GE help Murdonians message
+HLPVAKO {
+[1;36mTopic: Vakories
+
+One hundred years ago, the Vakories believed they were alone in the galaxy,
+until their fledgling space program led them to discover Sarten vessels in
+a neighboring sector. Fearing hostility, the Vakories developed unmanned
+research vessels to help them understand the giant galaxy that they now
+understood they inhabited.
+
+Today, the Vakory Survey Drone program is considered the leading scientific
+research program in the galaxy. Vakory Survey Drones map the galaxy, study
+spatial phenomena, and share their findings with Zygorian scientists and
+the galaxy at large.
+
+To this day, no Vakory citizen has ever left their home planet.
+[1;37m} T GE help Vakories message
 
 HLPZYGO {
 [1;36mTopic: Zygorians
-(TO DO)
+
+Zygor, in the heart of the galaxy, sector [1;34m0 0[1;36m, is the home of Zygorian people,
+and also home to the headquarters of the Galactic Command, recognized as the
+only interplanetary legal authority in the galaxy.
+
+Zygor is also the leader in state-of-the-art weapons and ship hardware. Zygor
+manufactures the various ships and the weapons they carry. It is also home of
+the Galactic Monetary Reserve Fund, the only duly authorized financial
+institution in the galaxy.
+
+In 3250, the Galactic Command established the neutral zone, a perimeter
+around sector 0 0 inside which no hostility is permitted. This policy is
+maintained by the Enforcer Planet, home to a secret base capable of
+nullifying any weapons fire detected within the sector.
+
+While at Zygor, ship commanders may buy and sell goods, purchase new ships
+and upgrades, and get their ships repaired. Also in the neutral zone is
+Tahanian Station, a embarking station for colonists and mercenary soldiers,
+where you can find men, troops, and food for your own planets.
+
+Galactic Command Freighters are dispatched from Zygor to bring supplies
+to planets throughout the galaxy. Any hostility towards these ships may
+result in your being banned from conducting business in the neutral zone.
 [1;37m} T GE help Zygorians message
 
 HLPSCORE {

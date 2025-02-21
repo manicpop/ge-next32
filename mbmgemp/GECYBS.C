@@ -146,8 +146,20 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		sprintf(ptr->shipname,"%s%u\0",shipclass[class].npcprefx,usrn*usrn+gernd()%(2*usrn+1)+1000);
 		logthis(spr("  Named: %s",ptr->shipname));
 
-		ptr->coord.xcoord    = rndm((double)univmax*2.0)-(double)univmax;
-		ptr->coord.ycoord    = rndm((double)univmax*2.0)-(double)univmax;
+		if (shipclass[ptr->shpclass].max_accel == 0 && univmax > 100)   /* make sure bases aren't too close to 0 0 */
+			{
+			ptr->coord.xcoord    = rndm((double)univmax-60)+50.0;
+			if (gernd()%2 == 0)
+				ptr->coord.xcoord *= -1.0;
+			ptr->coord.ycoord    = rndm((double)univmax-60)+50.0;
+			if (gernd()%2 == 0)
+				ptr->coord.ycoord *= -1.0;
+			}
+		else
+			{
+			ptr->coord.xcoord    = rndm((double)univmax*2.0)-(double)univmax;
+			ptr->coord.ycoord    = rndm((double)univmax*2.0)-(double)univmax;
+			}
 
 		/* phaser and shields between 50 and 100% of max */
 		if (shipclass[class].max_phasr > 0)
