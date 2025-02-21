@@ -302,38 +302,36 @@ WARSHP   *ptr;
 int      usrn;
 {
 
-int base, sel;
+int base, sel, interval;
 
 /* skip NPCs entirely */
 if (usrn >= nterms)
         return;
 
 base = DRBASEM + ((ptr->shpclass - dr_class)*12);
+interval = 10+shipclass[ptr->shpclass].tough_factor;	/* tougher npcs have fewer ticks */
 
 /* display friend or foe msg if not engaged with that user */
 
 if (ptr->cybmine == 255)
 	{
-	if (gernd()%(10+shipclass[ptr->shpclass].tough_factor) == 0)	/* tougher npcs have fewer ticks */
+	if (ptr->warncntr == 0)			/* if starting fresh or coming back from cybmine set */
+		ptr->warncntr = interval;
+	if (ptr->warncntr > interval*4)		/* cycle through msgs instead of rnd pick */
+		ptr->warncntr = 1;
+	if (ptr->warncntr%interval == 0)
+		sel = base + (ptr->warncntr/interval);
+	if (sel+4 >= DRLASTM)
 		{
-		if (ptr->warncntr == 0)
-			ptr->warncntr = (gernd()%4)+1;
-		if (ptr->warncntr > 4)	/* cycle through msgs instead of rnd pick */
-			ptr->warncntr = 1;
-		sel = base + ptr->warncntr;
-		if (sel+4 >= DRLASTM)
-			{
-		        geshocst(0,"GE:BAD DROID MSG FF");
-			logthis(spr("droid_annoy:bad msg ff usrn [%d]",usrn));
-			return;
-			}
-		if (warusroff(usrn)->factions[shipclass[ptr->shpclass].faction] > 50)
-			prfmsg(sel+4,ptr->shipname);
-		else
-			prfmsg(sel,ptr->shipname);
-		outprfge(FILTER,usrn);
-		++ptr->warncntr;
+	        geshocst(0,"GE:BAD DROID MSG FF");
+		logthis(spr("droid_annoy:bad msg ff usrn [%d]",usrn));
+		return;
 		}
+	if (warusroff(usrn)->factions[shipclass[ptr->shpclass].faction] > 50)
+		prfmsg(sel+4,ptr->shipname);
+	else
+		prfmsg(sel,ptr->shipname);
+	outprfge(FILTER,usrn);
 	}
 else
 	{
@@ -408,6 +406,7 @@ if (ptr->jammer == 0)
 					}
 				}
 			}
+		++ptr->warncntr;
 		}
 	if (ptr->cybmine < nships && ingegame(ptr->cybmine))
 		{
@@ -468,7 +467,7 @@ if (ptr->jammer == 0)
 				ddist *= 10000;
 				if (ddist < (double)shipclass[wptr->shpclass].scanrange && ddist < (double)shipclass[ptr->shpclass].scanrange)
 					{
-					around = TRUE;
+					around = TRUE;	/* if user around but not hostile go to impulse */
 					if (ptr->holdcourse == 0)
 						{
 						ptr->speed2b = ((gernd()%85)+15)*10;
@@ -479,6 +478,7 @@ if (ptr->jammer == 0)
 					}
 				}
 			}
+		++ptr->warncntr;
 		/* get back to it if no one's around */
 		if (around == FALSE && ptr->holdcourse == 0)
 			cyb_cruise(ptr,0);
@@ -555,6 +555,7 @@ if (ptr->jammer == 0)
 					}
 				}
 			}
+		++ptr->warncntr;
 		}
 	if (ptr->cybmine < nships && ingegame(ptr->cybmine))
 		{
@@ -639,6 +640,7 @@ if (ptr->jammer == 0)
 					}
 				}
 			}
+		++ptr->warncntr;
 		}
 	if (ptr->cybmine < nships && ingegame(ptr->cybmine))
 		{
@@ -740,6 +742,7 @@ if (ptr->jammer == 0)
 					}
 				}
 			}
+		++ptr->warncntr;
 		if (low_ship >= 0 && low_ship < nships)
 			ptr->cybmine = low_ship;
 		}
@@ -871,6 +874,7 @@ if (ptr->jammer == 0)
 					}
 				}
 			}
+		++ptr->warncntr;
 		}
 	if (ptr->cybmine < nships && ingegame(ptr->cybmine))
 		{

@@ -722,7 +722,7 @@ if (warsptr->helm < 0 && warsptr->speed > 0)
 else
 	prfmsg(ENGFIRE,(unsigned)warsptr->head2b);
 
-outprfge(ALWAYS,0);
+outprfge(ALWAYS,usrnum);
 warsptr->speed2b = 0;
 }
 
