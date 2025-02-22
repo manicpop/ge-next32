@@ -320,8 +320,9 @@ if (ptr->jammer == 0)
 				if (shipclass[ptr->shpclass].max_accel == 0 && ddist < (double)shipclass[wptr->shpclass].scanrange)
 					cyb_annoy(ptr,zothusn,CYBBASEA);
 				if (ddist < 30000.0 && !neutral(&wptr->coord) &&
-					(ptr->cybmine == zothusn || (shipclass[wptr->shpclass].cybs_can_att && cyb_pick_fight(zothusn,0)) ||
-					((ddist < (tooclose+rndm(tooclose)) || ptr->cantexit > 0 || wptr->cantexit > 0) && wptr->status == GESTAT_USER)))
+					(ptr->cybmine == zothusn || (shipclass[wptr->shpclass].cybs_can_att && cyb_pick_fight(zothusn,0)
+					&& (wptr->freq[1] == 0 || wptr->freq[1] > 6)) || ((ddist < (tooclose+rndm(tooclose)) ||
+					ptr->cantexit > 0 || wptr->cantexit > 0) && wptr->status == GESTAT_USER)))
 						{
 						if (wptr->where == 1)
 							{

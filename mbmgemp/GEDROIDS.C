@@ -148,18 +148,7 @@ if(shipclass[ptr->shpclass].loadout == 2)  /* Murdonian Transport */
 	}
 else
 if(shipclass[ptr->shpclass].loadout == 6)  /* Galactic Command Freighter */
-	{
-	ptr->items[I_MISSILE] = (gernd()%50)+10;
-	ptr->items[I_TORPEDO] = (gernd()%50)+10;
-	ptr->items[I_IONCANNON] = (gernd()%20)+10;
-	ptr->items[I_FIGHTER] = (gernd()%100)+20;
-	ptr->items[I_FLUXPOD] = (gernd()%40)+10;
-	ptr->items[I_DECOYS] = (gernd()%100)+10;
-	ptr->items[I_JAMMERS] = (gernd()%100)+10;
-	ptr->items[I_ZIPPERS] = (gernd()%100)+10;
-	ptr->items[I_MINE] = (gernd()%100)+10;
-	ptr->items[I_GOLD] = (gernd()%cyb_gold)+1000;
-	}
+	droid_zyg_loadout(ptr);
 else
 	{
 	ptr->items[I_FLUXPOD] = (gernd()%10)+10;
@@ -310,6 +299,7 @@ if (usrn >= nterms)
 
 base = DRBASEM + ((ptr->shpclass - dr_class)*12);
 interval = 10+shipclass[ptr->shpclass].tough_factor;	/* tougher npcs have fewer ticks */
+sel = 0;
 
 /* display friend or foe msg if not engaged with that user */
 
@@ -321,17 +311,20 @@ if (ptr->cybmine == 255)
 		ptr->warncntr = 1;
 	if (ptr->warncntr%interval == 0)
 		sel = base + (ptr->warncntr/interval);
-	if (sel+4 >= DRLASTM)
+	if (sel != 0)
 		{
-	        geshocst(0,"GE:BAD DROID MSG FF");
-		logthis(spr("droid_annoy:bad msg ff usrn [%d]",usrn));
-		return;
+		if (sel+4 >= DRLASTM)
+			{
+			geshocst(0,"GE:BAD DROID MSG FF");
+			logthis(spr("droid_annoy:bad msg ff usrn [%d]",usrn));
+			return;
+			}
+		if (warusroff(usrn)->factions[shipclass[ptr->shpclass].faction] > 50)
+			prfmsg(sel+4,ptr->shipname);
+		else
+			prfmsg(sel,ptr->shipname);
+		outprfge(FILTER,usrn);
 		}
-	if (warusroff(usrn)->factions[shipclass[ptr->shpclass].faction] > 50)
-		prfmsg(sel+4,ptr->shipname);
-	else
-		prfmsg(sel,ptr->shipname);
-	outprfge(FILTER,usrn);
 	}
 else
 	{
@@ -849,15 +842,40 @@ int           usrn;
 {
 
 WARSHP   *wptr;
-int      zothusn;
+int      zothusn, setship;
+COORD	neutsect;
 
 double   ddist;
+
+setship = TRUE;
+
+neutsect.xcoord = 0.50001;
+neutsect.ycoord = 0.50001;
 
 /* am I being jammed ? */
 if (ptr->jammer == 0)
 	{
 	if (ptr->cybmine == 255)
 		{
+		/* one ship should be traveling to/from neutral zone */
+		/* for now, we'll toss this in freq[1] because i don't feel like making something new */
+		for (zothusn = nterms; zothusn < nships ; zothusn++)	/* are any GCFs already doing it */
+			{
+			wptr=warshpoff(zothusn);
+			if (ingegame(zothusn) && wptr->status == GESTAT_AUTO && shipclass[wptr->shpclass].loadout ==
+				shipclass[ptr->shpclass].loadout && wptr->freq[1] != 0)
+				{
+				setship = FALSE;
+				break;
+				}
+			}
+		if (ptr->freq[1] == 8)	/* if i just did it, put me at the back of the line */
+			{
+			ptr->freq[1] = 0;
+			ptr->tick = CYBTICKTIME*10;
+			}
+		if (setship == TRUE)	/* ok it's me */
+			ptr->freq[1] = 1;
 		/* look at user ships only */
 		for (zothusn=0 ; zothusn < nterms ; zothusn++)
 			{
@@ -870,11 +888,67 @@ if (ptr->jammer == 0)
 				if (ddist < (double)shipclass[wptr->shpclass].scanrange && ddist < (double)shipclass[ptr->shpclass].scanrange)
 					{
 					ptr->tick = CYBTICKTIME + gernd()%(5-shipclass[ptr->shpclass].tough_factor);
-					droid_annoy(ptr,zothusn);
+					if (!neutral(&wptr->coord))	/* don't advertise Zygor if user is already there */
+						droid_annoy(ptr,zothusn);
 					}
 				}
 			}
 		++ptr->warncntr;
+		if (ptr->freq[1] != 0)
+			{
+			if (ptr->freq[1] == 1 || (neutral(&ptr->coord) && ptr->freq[1] < 6))	/* go to Zygor */
+				{
+				ptr->head2b = normal(vector(&(ptr->coord),&neutsect));
+				if (cdistance(&ptr->coord,&neutsect) > 1.5)
+					cyb_cruise(ptr,4);
+				else
+				if (cdistance(&ptr->coord,&neutsect) > .1)
+					ptr->speed2b = 990;
+				else
+				if (cdistance(&ptr->coord,&neutsect) > .025)
+					ptr->speed2b = 250;
+				else
+				if (ptr->freq[1] == 1)
+					{
+					ptr->speed2b = 0;
+					ptr->speed = ptr->speed2b;
+					if (ptr->damage > 3.0)		/* do maintenance and stay until done */
+						ptr->damage -= 3.0;
+					else
+						{
+						ptr->freq[1] = 2;
+						ptr->damage = 0.0;
+						}
+					}
+				else
+				if (ptr->freq[1] > 1 || ptr->freq[1] < 5)	/* hang out a little longer */
+					++ptr->freq[1];
+				if (ptr->freq[1] == 5)
+					{
+					droid_zyg_loadout(ptr);		/* reset ship contents */
+					ptr->head2b = rndm(359.9);
+					cyb_cruise(ptr,4);
+					ptr->freq[1] = 6;
+					}
+				}
+			else
+			if (ptr->freq[1] == 6 && cdistance(&ptr->coord,&neutsect) > 15)		/* get a little distance */
+				ptr->freq[1] = 7;
+			else
+			if (ptr->freq[1] == 7)	/* go the other way for a bit then let another ship do it */
+				{
+				if (cdistance(&ptr->coord,&neutsect) < univmax/3)
+					{
+					ptr->head2b = normal(vector(&(ptr->coord),&neutsect)+180);
+					cyb_cruise(ptr,4);
+					}
+				else
+					{
+					cyb_cruise(ptr,1);
+					ptr->freq[1] = 8;	/* done */
+					}
+				}
+			}
 		}
 	if (ptr->cybmine < nships && ingegame(ptr->cybmine))
 		{
@@ -1019,4 +1093,20 @@ if (ptr->where == 0 && wptr->where == 0 && shipclass[ptr->shpclass].max_torps &&
 			torp(ptr,usrn,zothusn);
 		}
 	}
+}
+
+void FUNC droid_zyg_loadout(ptr)
+WARSHP *ptr;
+
+{
+ptr->items[I_MISSILE] = (gernd()%50)+10;
+ptr->items[I_TORPEDO] = (gernd()%50)+10;
+ptr->items[I_IONCANNON] = (gernd()%20)+10;
+ptr->items[I_FIGHTER] = (gernd()%100)+20;
+ptr->items[I_FLUXPOD] = (gernd()%40)+10;
+ptr->items[I_DECOYS] = (gernd()%100)+10;
+ptr->items[I_JAMMERS] = (gernd()%100)+10;
+ptr->items[I_ZIPPERS] = (gernd()%100)+10;
+ptr->items[I_MINE] = (gernd()%100)+10;
+ptr->items[I_GOLD] = (gernd()%cyb_gold)+1000;
 }

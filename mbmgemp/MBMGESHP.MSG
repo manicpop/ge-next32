@@ -5188,7 +5188,7 @@ S32LATK {Lowest class of user ship this ship will pursue: 0} (S32TYPE=CYBORG,DRO
 
 How many class 32 ships should be created (NPCs only)?
 
-S32MAKE {Number of NPCs of this class to make: 3} (S32TYPE=CYBORG,DROID) N 0 255
+S32MAKE {Number of NPCs of this class to make: 4} (S32TYPE=CYBORG,DROID) N 0 255
 
 Toughness level of class 32 (NPCs only)?
 This is a level from 0 to 4.

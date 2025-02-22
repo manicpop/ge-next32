@@ -301,6 +301,7 @@
 /*         */ int FUNC notclaimed_d P((int drtype , int usrn ));
 /*         */ void FUNC droid_phaser P((WARSHP *ptr , int usrn , WARSHP *wptr ));
 /*         */ void FUNC droid_torp P((WARSHP *ptr , int usrn , WARSHP *wptr , int zothusn ));
+/*         */ void FUNC droid_zyg_loadout P((WARSHP *ptr ));
 
 
 /* geplanet.c */
