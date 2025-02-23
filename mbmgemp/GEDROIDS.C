@@ -874,7 +874,7 @@ if (ptr->jammer == 0)
 			ptr->freq[1] = 0;
 			ptr->tick = CYBTICKTIME*10;
 			}
-		if (setship == TRUE)	/* ok it's me */
+		if (setship == TRUE || ptr->damage > 50)	/* if i'm picked, or if i'm damaged, go to Zygor */
 			ptr->freq[1] = 1;
 		/* look at user ships only */
 		for (zothusn=0 ; zothusn < nterms ; zothusn++)

@@ -319,10 +319,16 @@ if (ptr->jammer == 0)
 				/* bases don't approach... so send msg when wptr approaches */
 				if (shipclass[ptr->shpclass].max_accel == 0 && ddist < (double)shipclass[wptr->shpclass].scanrange)
 					cyb_annoy(ptr,zothusn,CYBBASEA);
+				/* in range, and target not in neutral zone, AND... */
 				if (ddist < 30000.0 && !neutral(&wptr->coord) &&
-					(ptr->cybmine == zothusn || (shipclass[wptr->shpclass].cybs_can_att && cyb_pick_fight(zothusn,0)
-					&& (wptr->freq[1] == 0 || wptr->freq[1] > 6)) || ((ddist < (tooclose+rndm(tooclose)) ||
-					ptr->cantexit > 0 || wptr->cantexit > 0) && wptr->status == GESTAT_USER)))
+					/* if target is NPC, and target is already targeting me or it's traveling to neutral zone... */
+					((wptr->status == GESTAT_AUTO && (wptr->cybmine == usrn || ((wptr->freq[1] == 0 || wptr->freq[1] > 6)
+					/* ...and is attackable class and i've already targeted it or decide to do so */
+					&& (shipclass[wptr->shpclass].cybs_can_att && (ptr->cybmine == zothusn || cyb_pick_fight(zothusn,0)))))) ||
+					/* if target is user, and attackable class... */
+					(wptr->status == GESTAT_USER && (shipclass[wptr->shpclass].cybs_can_att ||
+					/* ...or i've fired recently or my target has fired recently or gets too close to me */
+					 ptr->cantexit > 0 || wptr->cantexit > 0 || ddist < (tooclose+rndm(tooclose))))))
 						{
 						if (wptr->where == 1)
 							{

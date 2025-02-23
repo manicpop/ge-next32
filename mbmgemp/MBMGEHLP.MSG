@@ -173,9 +173,8 @@ factor rates the hospitality of the planet and how difficult it will be for a
 colony to survive. A rating of good, or very good, will insure that the
 majority of their efforts go toward producing goods and not simply surviving.
 
-Once you have claimed a planet, you need to establish a population on
-it. This is done with the [1;37mTRANSFER[1;36m command to shuttle items from your
-ship to the planet.
+Once you have claimed a planet, you need to establish a population on it. This
+is done with the [1;37mTRANSFER[1;36m command to shuttle items from your ship to a planet.
 
 Type [1;37mHELP PLANETS2[1;36m for more information on planets.
 [1;37m} T GE help planets message
@@ -476,15 +475,15 @@ HLPVAKO {
 [1;36mTopic: Vakories
 
 One hundred years ago, the Vakories believed they were alone in the galaxy,
-until their fledgling space program led them to discover Sarten vessels in
-a neighboring sector. Fearing hostility, the Vakories developed unmanned
+until their fledgling space program led them to discover Sarten vessels in a
+neighboring sector. Fearing hostility, the Vakories developed unmanned
 research vessels to help them understand the giant galaxy that they now
 understood they inhabited.
 
 Today, the Vakory Survey Drone program is considered the leading scientific
 research program in the galaxy. Vakory Survey Drones map the galaxy, study
-spatial phenomena, and share their findings with Zygorian scientists and
-the galaxy at large.
+spatial phenomena, and share their findings with Zygorian scientists and the
+galaxy at large.
 
 To this day, no Vakory citizen has ever left their home planet.
 [1;37m} T GE help Vakories message
@@ -501,19 +500,19 @@ manufactures the various ships and the weapons they carry. It is also home of
 the Galactic Monetary Reserve Fund, the only duly authorized financial
 institution in the galaxy.
 
-In 3250, the Galactic Command established the neutral zone, a perimeter
-around sector 0 0 inside which no hostility is permitted. This policy is
-maintained by the Enforcer Planet, home to a secret base capable of
-nullifying any weapons fire detected within the sector.
+In 3250, the Galactic Command established the neutral zone, a perimeter around
+sector 0 0 inside which no hostility is permitted. This policy is maintained
+by the Enforcer Planet, home to a secret base capable of nullifying any
+weapons fire detected within the sector.
 
 While at Zygor, ship commanders may buy and sell goods, purchase new ships
 and upgrades, and get their ships repaired. Also in the neutral zone is
 Tahanian Station, a embarking station for colonists and mercenary soldiers,
 where you can find men, troops, and food for your own planets.
 
-Galactic Command Freighters are dispatched from Zygor to bring supplies
-to planets throughout the galaxy. Any hostility towards these ships may
-result in your being banned from conducting business in the neutral zone.
+Galactic Command Freighters are dispatched from Zygor to bring supplies to
+planets throughout the galaxy. Any hostility towards these ships may result in
+your being banned from conducting business in the neutral zone.
 [1;37m} T GE help Zygorians message
 
 HLPSCORE {
@@ -660,9 +659,9 @@ interception.
 [1;37m} T GE help decoy message
 
 HLPDES {
-[1;36mThe [1;37mDESTRUCT[1;36m command will begin a self-destruct countdown timer that,
-when it reaches zero, will destroy your ship. The countdown can be aborted with
-the [1;37mABORT[1;36m command.
+[1;36mThe [1;37mDESTRUCT[1;36m command will begin a self-destruct countdown timer that, when it
+reaches zero, will destroy your ship. The countdown can be aborted with the
+[1;37mABORT[1;36m command.
 [1;37m} T GE help destruct message
 
 HLPFLU {
@@ -675,10 +674,10 @@ completely drain the flux before a pod could be replaced. All ships now sold
 at Zygor will now automatically replace flux pods as needed; it is no longer
 necessary to manually switch pods.
 
-If you wish, you can enter [1;37mFLUX[1;36m to replace your current flux pod. This
-command presumes that you want it changed now, and does not warn you if there
-is still a good percentage of power left in the old pod. The old pod is
-jettisoned. Your power is restored to full charge automatically.
+If you wish, you can enter [1;37mFLUX[1;36m to replace your current flux pod. This command
+presumes that you want it changed now, and does not warn you if there is still
+a good percentage of power left in the old pod. The old pod is jettisoned.
+Your power is restored to full charge automatically.
 
 Ships are also capable of recharging the flux pile by absorbing the naturally
 occuring background ion radiation of the galaxy, at a rate of 1 unit per
@@ -692,8 +691,8 @@ at only warp 1 speed.
 
 HLPHEL {
 [1;36mThe [1;37mHELP[1;36m command will display a vast amount of information on Galactic Empire.
-Type [1;37mhelp[1;36m for a list of subjects, and [1;37mhelp [1;32m[subject][1;36m for information on
-that subject.
+Type [1;37mhelp[1;36m for a list of subjects, and [1;37mhelp [1;32m[subject][1;36m for information on that
+subject.
 [1;37m} T GE help help message
 
 HLPHYP {
@@ -798,13 +797,13 @@ Examples: [1;37mmissile A 2000   [1;36mfires a missile at ship A which cause m
                    damage, and drains your ship's flux by 2000
           [1;37mmissile C 20000  [1;36mfires a missile at ship C which will cause major
                    damage, and drains your ship's flux by 20000
-          [1;37mmis @            [1;36mfires on the ship that a previous [1;37mLOCK[1;36m
-                   command has locked onto, and drains your ship's flux by 5000
+          [1;37mmis @            [1;36mfires on the ship that a previous [1;37mLOCK[1;36m command has
+                   locked onto, and drains your ship's flux by 5000
 [1;37m} T GE help missile message
 
 HLPNAV {
-[1;36mThe [1;37mNAVIGATE[1;36m command will display the bearing and distance to the center
-of the sector you specify. Issue the command as follows:
+[1;36mThe [1;37mNAVIGATE[1;36m command will display the bearing and distance to the center of the
+sector you specify. Issue the command as follows:
 
   [1;37mnavigate [1;32m[sector]
 [1;37m} T GE help navigate message
@@ -850,9 +849,9 @@ Mark-19......200.0m             Mark-19......180.0m
 [1;37m} T GE help newprice message
 
 HLPORB {
-[1;36mThe [1;37mORBIT[1;36m command is used to orbit a given planet. You must be
-traveling at impulse or at a dead stop. If you are traveling at impulse,
-issuing the command will stop the impulse engines.
+[1;36mThe [1;37mORBIT[1;36m command is used to orbit a given planet. You must be traveling at
+impulse or at a dead stop. If you are traveling at impulse, issuing the
+command will stop the impulse engines.
 
 Issue the command as follows:
 
@@ -1192,8 +1191,8 @@ Team founder commands are:
       password [1;32mpppppppppp[1;36m, and with the team name [1;32m[team name][1;36m.
 [1;37m   team kick [1;32mssssssssss [user name]
 [1;36m      permits a team member with the founder password to kick another team
-      member off the team. If you don't also change the password the
-      kicked player can simply rejoin.
+      member off the team. If you don't also change the password the kicked
+      player can simply rejoin.
 [1;37m   team newpass [1;32mssssssssss pppppppppp
 [1;36m      permits a team member with the founder password to assign a new member
       password [1;32mpppppppppp[1;36m.

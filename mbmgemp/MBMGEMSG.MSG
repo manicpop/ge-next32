@@ -1932,8 +1932,8 @@ MENUG2 {
 
 
 COINFO {
-GE-Next is an updated version of Galactic Empire, copyright M.B.
-Murdock and Associates.
+GE-Next is an updated version of Galactic Empire, copyright M.B. Murdock and
+Associates.
 
 https://manicpop.org/ge-next/
 https://github.com/manicpop/ge-next/
@@ -1967,25 +1967,23 @@ space navigation, 447 years since neutron flux warp technology was perfected
 by the ship builders of Zygor, and 35 years since the creation of the neutral
 zone in the center of the galaxy by Zygor's Galactic Command.
 
-Since the neutral zone was established and became the de facto marketplace
-of the galaxy, ambitious individuals with piloting skills and some business
-sense have traveled to Zygor to begin building their empires. Many of the
-planets outside the neutral zone are ideal for establishing colonies and
-producing goods.
+Since the neutral zone was established and became the de facto marketplace of
+the galaxy, ambitious individuals with piloting skills and business sense have
+traveled to Zygor to begin building their empires. Many of the planets outside
+the neutral zone are ideal for establishing colonies and producing goods.
 
-The Zygorians will provide you with a small ship to begin your quest, but
-it is up to you to procure the additional ships, weapons, colonists, and
-supplies that you will need to build your empire. You can seek to establish
-friendly relations with other ship commanders, or attempt to defeat them
-in both ship-to-ship and planetary battles. A poorly defended colony can
-be easily overrun and taken over by a commander eager to expand their
-own empire at your expense.
+The Zygorians will provide you with a small ship to begin your quest, but it
+is up to you to procure the additional ships, weapons, colonists, and supplies
+that you will need to build your empire. You can seek to establish friendly
+relations with other ship commanders, or attempt to defeat them in both ship-
+to-ship and planetary battles. A poorly defended colony can be easily overrun
+and taken over by a commander eager to expand their own empire at your expense.
 
-Beware the dreaded Cybertrons, cybernetic automatons determined to destroy
-all organic life in the galaxy. Since the Cybertron-Sarten War of 3274
-decimated the Sarten Empire, the Cybertrons have greatly expanded their
-power and reach. Cybertrons have no interest in planetary colonization
-or diplomacy, your only option is to evade or destroy them.
+Beware the dreaded Cybertrons, cybernetic automatons determined to destroy all
+organic life in the galaxy. Since the Cybertron-Sarten War of 3274 decimated
+the Sarten Empire, the Cybertrons have greatly expanded their power and reach.
+Cybertrons have no interest in planetary colonization or diplomacy, your only
+option is to evade or destroy them.
 
 Good luck!} T GE EXPLAIN text
 
@@ -3609,7 +3607,7 @@ ZIPPER3N {***
 } T GE someone else fired a zipper message
 
 NEW1 {
-[1;36mYou must go to Zygor in sector [1;34m0 0[1;36m to get a new ship.[1;37m
+[1;36mYou must go to Zygor in sector [1;34m0 0[1;36m to get new equipment.[1;37m
 } T GE only buy ships at Zygor message
 
 NEW2 {
