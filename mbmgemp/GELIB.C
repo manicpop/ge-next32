@@ -59,32 +59,6 @@
 #include "geglobal.h"
 
 /**************************************************************************
-** Verify system
-**************************************************************************/
-
-void c4angle()
-
-{
-
-extern BTVFILE *accbb;
-char  nm1[7] = {"XGrlep"};
-char  nm2[UIDSIZ];      /*BJ CHANGED TO REFLECT UIDSIZ */
-static int hap;
-if (hap != 1)
-	{
-	setbtv(accbb);
-	strncpy(nm2,"abcerr",UIDSIZ);
-	nm2[0] = nm1[1];
-	nm2[1] = nm1[3];
-	nm2[2] = nm1[5];
-	if (qeqbtv(nm2,0))
-		catastro("GE SYSTEM FAULT");
-	else
-		hap = 1;
-	}
-}
-
-/**************************************************************************
 ** Determine the smallest of two complementary angles                    **
 **************************************************************************/
 
@@ -332,7 +306,6 @@ return (value*(180/PI));
 double absol(value)
 double value;
 {
-c4angle();
 if (value < 0)
 	value = value * -1;
 
