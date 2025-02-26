@@ -57,7 +57,7 @@
 #include "gemain.h"
 
 
-#define  GECYBS   1
+#define GECYBS 1
 
 #include "geglobal.h"
 
@@ -73,8 +73,8 @@ double	d_topspeed;
 ** Cyborg functions                                                      **
 **************************************************************************/
 
-void  FUNC cyb_init(ptr, usrn, class)
-WARSHP *ptr;
+void FUNC cyb_init(ptr, usrn, class)
+WARSHP	*ptr;
 int	usrn;
 int	class;
 
@@ -140,25 +140,25 @@ if (geudb(GELOOKUP,cybname, waruptr))
 
 		initshp(cybname,class);
 		gepdb(GEADD,tmpshp.userid,tmpshp.shipno,&tmpshp);
-		memcpy(ptr,&tmpshp,sizeof(WARSHP));  /* make is the current ship */
+		memcpy(ptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
 
 		logthis(spr("GE:INF:Add shp,cls=%d/%d",class,ptr->shpclass));
 		sprintf(ptr->shipname,"%s%u\0",shipclass[class].npcprefx,usrn*usrn+gernd()%(2*usrn+1)+1000);
 		logthis(spr("  Named: %s",ptr->shipname));
 
-		if (shipclass[ptr->shpclass].max_accel == 0 && univmax > 100)   /* make sure bases aren't too close to 0 0 */
+		if (shipclass[ptr->shpclass].max_accel == 0 && univmax > 100)	/* make sure bases aren't too close to 0 0 */
 			{
-			ptr->coord.xcoord    = rndm((double)univmax-60)+50.0;
+			ptr->coord.xcoord = rndm((double)univmax-60)+50.0;
 			if (gernd()%2 == 0)
 				ptr->coord.xcoord *= -1.0;
-			ptr->coord.ycoord    = rndm((double)univmax-60)+50.0;
+			ptr->coord.ycoord = rndm((double)univmax-60)+50.0;
 			if (gernd()%2 == 0)
 				ptr->coord.ycoord *= -1.0;
 			}
 		else
 			{
-			ptr->coord.xcoord    = rndm((double)univmax*2.0)-(double)univmax;
-			ptr->coord.ycoord    = rndm((double)univmax*2.0)-(double)univmax;
+			ptr->coord.xcoord = rndm((double)univmax*2.0)-(double)univmax;
+			ptr->coord.ycoord = rndm((double)univmax*2.0)-(double)univmax;
 			}
 
 		/* phaser and shields between 50 and 100% of max */
@@ -254,10 +254,10 @@ else
 }
 
 
-void  FUNC cyb_lives(ptr,usrn)
+void FUNC cyb_lives(ptr,usrn)
 
-WARSHP *ptr;
-int           usrn;
+WARSHP	*ptr;
+int	usrn;
 {
 
 
@@ -265,7 +265,7 @@ WARSHP	*wptr;
 int	zothusn;
 int	i;
 
-MISSILE  *mptr;
+MISSILE	*mptr;
 
 double	ddist;
 
@@ -431,11 +431,11 @@ if (ptr->tick == 255)
 /* look if another cyborg (or cyborgs) has this ship claimed */
 
 int FUNC notclaimed(ptr,usrn)
-WARSHP   *ptr;
-int   usrn;
+WARSHP	*ptr;
+int	usrn;
 {
-WARSHP   *wptr;
-int zothusn,nc;
+WARSHP	*wptr;
+int	zothusn,nc;
 
 nc=0;
 for (zothusn=nterms ; zothusn < nships ;zothusn++)
@@ -452,7 +452,7 @@ return (nc < shipclass[ptr->shpclass].noclaim);
 }
 
 /* ptr to sender , usrn = reciever */
-void  FUNC cyb_annoy(ptr,usrn,msgtype)
+void FUNC cyb_annoy(ptr,usrn,msgtype)
 WARSHP	*ptr;
 int	usrn;
 int	msgtype;
@@ -534,10 +534,10 @@ if (sel < CYBLASTM)
 
 /* countdown to database update */
 
-void  FUNC db_update(ptr,usrn)
+void FUNC db_update(ptr,usrn)
 
-WARSHP   *ptr;
-int      usrn;
+WARSHP	*ptr;
+int	usrn;
 
 {
 WARUSR	*wuptr;
@@ -571,12 +571,12 @@ ptr->cybupdate = 20; /* if engaged with another ship, update later */
 ** Attack the other player                                               **
 **************************************************************************/
 
-void  FUNC cyb_attack(ptr,usrn,wptr,zothusn)
+void FUNC cyb_attack(ptr,usrn,wptr,zothusn)
 
-WARSHP   *ptr;    /* ptr to cyb ship*/
-int      usrn;    /* cybs ship number*/
-WARSHP   *wptr;   /* ptr to users ship*/
-int      zothusn;	/* users ship number*/
+WARSHP	*ptr;    /* ptr to cyb ship*/
+int	usrn;    /* cybs ship number*/
+WARSHP	*wptr;   /* ptr to users ship*/
+int	zothusn;	/* users ship number*/
 
 {
 
@@ -621,12 +621,12 @@ if (gernd()%10 == 0 && shipclass[ptr->shpclass].has_zip && ptr->items[I_ZIPPERS]
 ** Lay down some decoys                                                  **
 **************************************************************************/
 
-void  FUNC cyb_lay_decoys(ptr)
-WARSHP   *ptr;
+void FUNC cyb_lay_decoys(ptr)
+WARSHP	*ptr;
 
 {
 
-int   i;
+int	i;
 
 /* send out a decoy */
 for (i=0; i<3;++i)
@@ -642,7 +642,7 @@ for (i=0; i<3;++i)
 ** if hunting, and badly damaged dump mines, jam, and boogie             **
 **************************************************************************/
 
-void  FUNC cyb_check_damage(ptr,usrn)
+void FUNC cyb_check_damage(ptr,usrn)
 WARSHP	*ptr;
 int	usrn;
 
@@ -673,14 +673,14 @@ if (ptr->cybmine < nships && ptr->damage > CYB_MINDAM && ((gernd()%10 == 0) || p
 ** Check lockon status                                                   **
 **************************************************************************/
 
-void  FUNC cyb_check_lockon(ptr,usrn)
-WARSHP   *ptr;
-int      usrn;
+void FUNC cyb_check_lockon(ptr,usrn)
+WARSHP	*ptr;
+int	usrn;
 
 {
 
-WARSHP   *wptr;
-int      zothusn;
+WARSHP	*wptr;
+int	zothusn;
 
 double	ddist;
 
@@ -831,9 +831,9 @@ else
 			}
 		else
 		if (wptr->speed * 1.25 >= d_topspeed)
-		    ptr->speed2b = d_topspeed;
+			ptr->speed2b = d_topspeed;
 		else
-		    ptr->speed2b = ((int)(wptr->speed * 1.25)/1000)*1000;
+			ptr->speed2b = ((int)(wptr->speed * 1.25)/1000)*1000;
 		ptr->head2b = vector(&ptr->coord,&(wptr->coord));
 		/* DEBUG
 		prf("***\r%s, CLOSE, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
@@ -907,10 +907,10 @@ else
 	}
 }
 
-void   FUNC cyb_won(ptr,usrn,wptr)
+void FUNC cyb_won(ptr,usrn,wptr)
 WARSHP	*ptr;				/* ptr to Cyber who won */
-int		usrn;				/* usernum of cyber who won */
-WARSHP   *wptr;			/* ptr to ship cyber killed */
+int	usrn;				/* usernum of cyber who won */
+WARSHP	*wptr;				/* ptr to ship cyber killed */
 
 {
 usrn = usrn;
@@ -919,10 +919,10 @@ cyb_cruise(ptr,0);
 ptr->cybupdate = 0;
 }
 
-void   FUNC cyb_died(ptr,usrn,wptr)
+void FUNC cyb_died(ptr,usrn,wptr)
 WARSHP	*ptr;				/* ptr to Cyber who died */
-int		usrn;				/* usernum of cyber who died */
-WARSHP   *wptr;			/* ptr to ship who killed cyber*/
+int	usrn;				/* usernum of cyber who died */
+WARSHP	*wptr;				/* ptr to ship who killed cyber*/
 
 
 {

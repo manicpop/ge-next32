@@ -33,8 +33,8 @@
   * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA            *
   *************************************************************************/
 
-#define TRUE            1
-#define FALSE           0
+#define TRUE 1
+#define FALSE 0
 
 /* if this is the trainer version this define needs to be made */
 /*
@@ -61,8 +61,8 @@
 /* do so with caution and consideration                                    */
 /***************************************************************************/
 
-#define NEUTRAL_X		0
-#define NEUTRAL_Y		0
+#define NEUTRAL_X 0
+#define NEUTRAL_Y 0
 
 #define ACCENGAMT 120		/* Acceleration energy usage                 */
 #define MOVENGMIN 3000
@@ -296,8 +296,8 @@ WARUSR {						/* user data blocks                       */
 extern
 
 
-WARSHP {						/* user data blocks         */
-		char		userid[UIDSIZ];		/* userid of player                          */
+WARSHP {						/*   user data blocks                        */
+		char		userid[UIDSIZ];		/*   userid of player                        */
 		int		shipno;			/*   Ship id number                          */
 		char		shipname[35];		/*   Ship name                               */
 /*32*/
@@ -335,7 +335,7 @@ WARSHP {						/* user data blocks         */
 /*133*/
 		TORPEDO		ltorps[MAXTORPS];	/*   Locked on torpedoes                     */
 /*142*/
-		MISSILE		lmissl[MAXMISSL];	/*   Locked on missiles                       */
+		MISSILE		lmissl[MAXMISSL];	/*   Locked on missiles                      */
 /*157*/
 		unsigned	decout[MAXDECOY];	/*   decoys out                              */
 /*177*/
@@ -356,15 +356,15 @@ WARSHP {						/* user data blocks         */
 		byte		cybmine;		/*   I have found me a ship to seek          */
 		byte		upgrade;		/*   UNUSED ATM                              */
 		byte		cybupdate;		/*   update cyborg counter                   */
-		byte		tick;			/* Ship Ticker */
-		byte		distress;		/* has sent distress message */
-		byte		minesnear;		/* set when mines are near */
-		int		lock;			/* set to the ship we are locked onto*/
-		byte		holdcourse;		/* Hold course ticker */
+		byte		tick;			/*   Ship Ticker                             */
+		byte		distress;		/*   has sent distress message               */
+		byte		minesnear;		/*   set when mines are near                 */
+		int		lock;			/*   set to the ship we are locked onto      */
+		byte		holdcourse;		/*   Hold course ticker                      */
 		int		topspeed;
 		byte		warncntr;
 /*256 ---------------------v  */
-		char		filler[512-266-UIDSIZ];	/*   fill to 512 BJ added 20 for name   */
+		char		filler[512-266-UIDSIZ];	/*   fill to 512 BJ added 20 for name        */
 };
 
 /*
@@ -406,35 +406,35 @@ extern
 GALSECT	{					/* star system data record              */
 	int	xsect;				/* sector x coord                       */
 	int	ysect;				/* sector y coord                       */
-	int	plnum;				/* always 0 */
-	int	type;				/* type of sector */
+	int	plnum;				/* always 0                             */
+	int	type;				/* type of sector                       */
 
-	int	numplan;			/* number of planetary objects */
+	int	numplan;			/* number of planetary objects          */
 	PLNTCOORD	ptab[MAXPLANETS];
-	char	filler[512-10-(sizeof(PLNTCOORD)*MAXPLANETS)];		/* fill to 250*/
+	char	filler[512-10-(sizeof(PLNTCOORD)*MAXPLANETS)];		/* fill to 250  */
 };
 
 #define GALPLNT struct _galplnt
 
 extern
-GALPLNT {					/* star system data record               */
+GALPLNT {					/* star system data record              */
 	int	xsect;				/* sector x coord                       */
 	int	ysect;				/* sector y coord                       */
-	int	plnum;				/* planet number */
-	int	type;				/* type of sector */
+	int	plnum;				/* planet number                        */
+	int	type;				/* type of sector                       */
 	COORD	coord;
 	char	userid[UIDSIZ];
 	char	name[20];
-	char	enviorn;			/* environment factor      */
-	char	resource;			/* resources              */
-	unsigned long cash;			/* cash on hand       */
-	unsigned long debt;			/* unused                  */
-	unsigned long tax;			/* amount of tax collected             */
-	int	taxrate;			/* rate to tax population              */
-	char	warnings;			/* warnings to intruders               */
-	char	password[10];			/* password for alliance               */
-	char	lastattack[UIDSIZ];		/* userid of last attacker             */
-	ITEM	items[NUMITEMS];		/* 195 */
+	char	enviorn;			/* environment factor                   */
+	char	resource;			/* resources                            */
+	unsigned long cash;			/* cash on hand                         */
+	unsigned long debt;			/* unused                               */
+	unsigned long tax;			/* amount of tax collected              */
+	int	taxrate;			/* rate to tax population               */
+	char	warnings;			/* warnings to intruders                */
+	char	password[10];			/* password for alliance                */
+	char	lastattack[UIDSIZ];		/* userid of last attacker              */
+	ITEM	items[NUMITEMS];		/* 195                                  */
 	char	beacon[BEACONMSGSZ];
 	char	spyowner[UIDSIZ];
 	int	technology;
@@ -446,26 +446,26 @@ GALPLNT {					/* star system data record               */
 #define GALWORM struct galworm
 
 extern
-GALWORM {					/* star system data record               */
+GALWORM {					/* star system data record              */
 	int	xsect;				/* sector x coord                       */
 	int	ysect;				/* sector y coord                       */
-	int	plnum;				/* planet number */
-	int	type;				/* type of sector */
+	int	plnum;				/* planet number                        */
+	int	type;				/* type of sector                       */
 	COORD	coord;
-	int	visible;			/* is the wormhole visible flag */
+	int	visible;			/* is the wormhole visible flag         */
 	COORD	destination;
 	char	name[20];
-	char	filler[512-30-(sizeof(COORD)*2)];	/* fill to 250*/
+	char	filler[512-30-(sizeof(COORD)*2)];	/* fill to 250                  */
 };
 
 
 #define PKEY struct _pkey
 
 extern
-PKEY {						/* star system data record key   */
+PKEY {						/* star system data record key          */
 	int	xsect;				/* sector x coord                       */
 	int	ysect;				/* sector y coord                       */
-	int	plnum;				/* always 0 */
+	int	plnum;				/* always 0                             */
 };
 
 #define WORMTAB	struct _wormtab
@@ -505,7 +505,7 @@ MAIL    {
 	long	long1;
 	long	long2;
 	long	long3;
-	char	filler[253-200-UIDSIZ];			/* fill to 256 BJ added 20 for name*/
+	char	filler[253-200-UIDSIZ];		/* fill to 256 BJ added 20 for name     */
 	};
 
 #define MAILSTAT struct _mailstat
@@ -520,11 +520,11 @@ MAILSTAT	{
 		char	name1[25];
 		int	int1;
 		int	int2;
-	unsigned long	cash;				/* cash on hand                  */
-	unsigned long	debt;				/* unused                      */
-	unsigned long	tax;				/* amount of tax collected             */
+	unsigned long	cash;				/* cash on hand                 */
+	unsigned long	debt;				/* unused                       */
+	unsigned long	tax;				/* amount of tax collected      */
 	unsigned long	itemqty[NUMITEMS];
-	char	filler[253-97-(UIDSIZ)-(sizeof(long)*NUMITEMS)];	/* fill to 250 BJ changed size for name*/
+	char	filler[253-97-(UIDSIZ)-(sizeof(long)*NUMITEMS)];	/* fill to 250 BJ changed size for name */
 		};
 
 #define SHPKEY struct _shpkey
@@ -535,7 +535,7 @@ SHPKEY	{
 	int	shipno;
 	};
 
-#define SHIP    struct _ship
+#define SHIP struct _ship
 
 extern
 SHIP	{

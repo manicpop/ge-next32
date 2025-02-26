@@ -59,7 +59,7 @@
 #include "gemain.h"
 
 
-#define  GEPLANET 1
+#define GEPLANET 1
 
 #include "geglobal.h"
 
@@ -70,7 +70,7 @@ int	wormnum;
 
 
 
-void	 FUNC check_spy()
+void FUNC check_spy()
 
 {
 int	spycnt,odds,i,j;
@@ -176,7 +176,7 @@ if	(plptr->spyowner[0] != 0)
 }
 
 
-void  FUNC multiply()
+void FUNC multiply()
 {
 
 
@@ -382,8 +382,8 @@ if (!sameas(plptr->userid,"**Free**"))
 ** look up sector. If not fnd make one... xsect and ysect are used       **
 **************************************************************************/
 
-int  FUNC getsector(sect)
-COORD    *sect;
+int FUNC getsector(sect)
+COORD	*sect;
 {
 int	i;
 
@@ -422,12 +422,12 @@ if (xgetsector(sect,FALSE))
 			worm.xsect = pkey.xsect;
 			worm.ysect = pkey.ysect;
 			worm.plnum = sector.numplan+1;
-			worm.coord.xcoord =  wormtab[i].coord.xcoord;
-			worm.coord.ycoord =  wormtab[i].coord.ycoord;
+			worm.coord.xcoord = wormtab[i].coord.xcoord;
+			worm.coord.ycoord = wormtab[i].coord.ycoord;
 			worm.visible = 1;
-			worm.destination.xcoord    = wormtab[i].dest.xcoord;
-			worm.destination.ycoord    = wormtab[i].dest.ycoord;
-			worm.type   =  PLTYPE_WORM;
+			worm.destination.xcoord = wormtab[i].dest.xcoord;
+			worm.destination.ycoord = wormtab[i].dest.ycoord;
+			worm.type = PLTYPE_WORM;
 
 		logthis("GE:DBG:Getsector-add dest worm record");
 			/* write the database record */
@@ -450,15 +450,15 @@ if (xgetsector(sect,FALSE))
 return(0);
 }
 
-int  FUNC xgetsector(sect,wormy)
-COORD    *sect;
-int		wormy;
+int FUNC xgetsector(sect,wormy)
+COORD	*sect;
+int	wormy;
 {
 
-int   p,i,k,j;
+int	p,i,k,j;
 
-double   ddist;
-byte     tooclose;
+double	ddist;
+byte	tooclose;
 
 /* Build the integer key for lookup */
 
@@ -476,7 +476,7 @@ if (!gesdb(GEGET,&pkey,&sector))
 	sector.xsect = pkey.xsect;
 	sector.ysect = pkey.ysect;
 	sector.plnum = 0;
-	sector.type  = SECTYPE_NORMAL;
+	sector.type = SECTYPE_NORMAL;
 
 	/* figure out how many planets this sector has */
 	if (gernd()%plodds == 0)
@@ -484,7 +484,7 @@ if (!gesdb(GEGET,&pkey,&sector))
 	else
 		p = 0;
 
-   logthis(spr("GE: Ins sect X:%d Y:%d Pl:%d",
+	logthis(spr("GE: Ins sect X:%d Y:%d Pl:%d",
 		pkey.xsect,pkey.ysect,p));
 
 	/* Figure out where they are */
@@ -550,8 +550,8 @@ if (!gesdb(GEGET,&pkey,&sector))
 			/* place it and check distance to other planets */
 			do
 				{
-				sector.ptab[i].coord.xcoord   = (((double)pkey.xsect)+rndm(0.800))+.1;
-				sector.ptab[i].coord.ycoord   = (((double)pkey.ysect)+rndm(0.800))+.1;
+				sector.ptab[i].coord.xcoord = (((double)pkey.xsect)+rndm(0.800))+.1;
+				sector.ptab[i].coord.ycoord = (((double)pkey.ysect)+rndm(0.800))+.1;
 				tooclose = FALSE;
 				for (j=0;j<i;++j)
 					{
@@ -583,9 +583,9 @@ if (!gesdb(GEGET,&pkey,&sector))
 				planet.ysect = pkey.ysect;
 
 				planet.plnum = i+1;
-				planet.coord.xcoord =  sector.ptab[i].coord.xcoord;
-				planet.coord.ycoord =  sector.ptab[i].coord.ycoord;
-				planet.type   =  sector.ptab[i].type;
+				planet.coord.xcoord = sector.ptab[i].coord.xcoord;
+				planet.coord.ycoord = sector.ptab[i].coord.ycoord;
+				planet.type = sector.ptab[i].type;
 				planet.userid[0] = 0;
 				planet.name[0] = 0;
 				planet.enviorn = (char)(rndm(3.999));
@@ -634,12 +634,12 @@ if (!gesdb(GEGET,&pkey,&sector))
 				worm.xsect = pkey.xsect;
 				worm.ysect = pkey.ysect;
 				worm.plnum = i+1;
-				worm.coord.xcoord =  sector.ptab[i].coord.xcoord;
-				worm.coord.ycoord =  sector.ptab[i].coord.ycoord;
+				worm.coord.xcoord = sector.ptab[i].coord.xcoord;
+				worm.coord.ycoord = sector.ptab[i].coord.ycoord;
 				worm.visible = 1;
-				worm.destination.xcoord    = rndm((double)univmax*2)-(double)univmax;
-				worm.destination.ycoord    = rndm((double)univmax*2)-(double)univmax;
-				worm.type   =  sector.ptab[i].type;
+				worm.destination.xcoord = rndm((double)univmax*2)-(double)univmax;
+				worm.destination.ycoord = rndm((double)univmax*2)-(double)univmax;
+				worm.type = sector.ptab[i].type;
 
 				logthis("GE:DBG:Getsector-add worm record");
 				/* write the database record */
@@ -660,7 +660,7 @@ if (wormnum >0)
 return(FALSE);
 }
 
-void	 FUNC build_plan_1(idx)
+void FUNC build_plan_1(idx)
 int	idx;
 {
 
@@ -725,7 +725,7 @@ planet.type = PLTYPE_PLNT;
 logthis("Zygor build first time");
 }
 
-void	 FUNC build_plan_2(idx)
+void FUNC build_plan_2(idx)
 int	idx;
 {
 
@@ -766,7 +766,7 @@ logthis("T-Station build first time");
 
 }
 
-void	 FUNC build_other(idx)
+void FUNC build_other(idx)
 int	idx;
 {
 
@@ -795,7 +795,7 @@ logthis("Other build first time");
 
 }
 
-void	 FUNC build_worm(idx)
+void FUNC build_worm(idx)
 int	idx;
 {
 
@@ -812,14 +812,14 @@ worm.xsect = pkey.xsect;
 worm.ysect = pkey.ysect;
 worm.plnum = pkey.plnum;
 
-worm.coord.xcoord =  sector.ptab[idx].coord.xcoord;
-worm.coord.ycoord =  sector.ptab[idx].coord.ycoord;
+worm.coord.xcoord = sector.ptab[idx].coord.xcoord;
+worm.coord.ycoord = sector.ptab[idx].coord.ycoord;
 
 worm.type = PLTYPE_WORM;
 
 worm.visible = 1;
-worm.destination.xcoord    = rndm((double)univmax*2)-(double)univmax;
-worm.destination.ycoord    = rndm((double)univmax*2)-(double)univmax;
+worm.destination.xcoord = rndm((double)univmax*2)-(double)univmax;
+worm.destination.ycoord = rndm((double)univmax*2)-(double)univmax;
 
 
 logthis("GE:DBG:Getsector-add worm record");
@@ -841,9 +841,9 @@ logthis("Worm build first time");
 ** look up planet.                                                       **
 **************************************************************************/
 
-int  FUNC getplanet(sect,plnt)
-COORD    *sect;
-int      plnt;
+int FUNC getplanet(sect,plnt)
+COORD	*sect;
+int	plnt;
 {
 
 pkey.xsect = coord1(sect->xcoord);
@@ -852,7 +852,7 @@ pkey.plnum = plnt;
 
 if (!gesdb(GEGET,&pkey,(GALSECT *)&planet))
 	{
-   geshocst(0,spr("GE: ERROR Missing Pl Sect X:%d Y:%d",xsect,ysect));
+	geshocst(0,spr("GE: ERROR Missing Pl Sect X:%d Y:%d",xsect,ysect));
 	}
 return(0);
 }
@@ -862,8 +862,8 @@ return(0);
 ** is this players ship in the neutral zone ?                            **
 **************************************************************************/
 
-int    FUNC neutral(coord)
-COORD *coord;
+int FUNC neutral(coord)
+COORD	*coord;
 {
 xsect=coord1(coord->xcoord);
 ysect=coord1(coord->ycoord);

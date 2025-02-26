@@ -57,7 +57,7 @@
 #include "gemain.h"
 
 
-#define  GEDROIDS   1
+#define GEDROIDS 1
 
 #include "geglobal.h"
 
@@ -70,17 +70,17 @@ double	dr_topspeed;
 ** Droid Init Function                                                   **
 **************************************************************************/
 
-void  FUNC droid_init(ptr, usrn, class)
-WARSHP *ptr;
-int   usrn;
-int   class;
+void FUNC droid_init(ptr, usrn, class)
+WARSHP	*ptr;
+int	usrn;
+int	class;
 
 {
 
-WARSHP *wptr;
+WARSHP	*wptr;
 
-int zothusn;
-double ddist;
+int	zothusn;
+double	ddist;
 
 if (usrn < 0 || usrn >= nships)
 	{
@@ -88,7 +88,7 @@ if (usrn < 0 || usrn >= nships)
 	return;
 	}
 
-strncpy(droidname,"@Droid-",UIDSIZ);/* Bj Added name here */
+strncpy(droidname,"@Droid-",UIDSIZ);	/* Bj Added name here */
 sprintf(&droidname[7],"%d",usrn);
 
 waruptr = warusroff(usrn);
@@ -98,44 +98,44 @@ logthis(spr("GE:INF:Adding %s user",droidname));
 
 initusr(droidname);
 
-memcpy(waruptr,&tmpusr,sizeof(WARUSR));  /* make it the current user */
+memcpy(waruptr,&tmpusr,sizeof(WARUSR));	/* make it the current user */
 
 /* make me a Ship */
 logthis(spr("GE:INF:Adding %s ship - %d",ptr->userid,class));
 
 initshp(droidname,class);
 
-memcpy(ptr,&tmpshp,sizeof(WARSHP));  /* make is the current ship */
+memcpy(ptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
 sprintf(ptr->shipname,"%s%u\0",shipclass[class].npcprefx,usrn*usrn+gernd()%(2*usrn+1)+1000);
 
-if (shipclass[ptr->shpclass].loadout == 1 && univmax > 40)   /* Garbage Scows stay close to 0 0 */
+if (shipclass[ptr->shpclass].loadout == 1 && univmax > 40)	/* Garbage Scows stay close to 0 0 */
 	{
-	ptr->coord.xcoord    = rndm(79.9)-39.8;
-        ptr->coord.ycoord    = rndm(79.9)-39.8;
+	ptr->coord.xcoord = rndm(79.9)-39.8;
+        ptr->coord.ycoord = rndm(79.9)-39.8;
 	}
 else
-if (shipclass[ptr->shpclass].loadout == 4 && univmax > 60)   /* SCTs, a little more room */
+if (shipclass[ptr->shpclass].loadout == 4 && univmax > 60)	/* SCTs, a little more room */
 	{
-	ptr->coord.xcoord    = rndm(119.9)-59.8;
-        ptr->coord.ycoord    = rndm(199.9)-59.8;
+	ptr->coord.xcoord = rndm(119.9)-59.8;
+        ptr->coord.ycoord = rndm(199.9)-59.8;
 	}
 else
-if (shipclass[ptr->shpclass].loadout == 5 && univmax > 30)   /* SDDs, halfway between neut and barrier */
+if (shipclass[ptr->shpclass].loadout == 5 && univmax > 30)	/* SDDs, halfway between neut and barrier */
 	{
-	ptr->coord.xcoord    = ((double)univmax/2.0)+(rndm(29.9)-14.8);
+	ptr->coord.xcoord = ((double)univmax/2.0)+(rndm(29.9)-14.8);
 	if (gernd()%2 == 0)
 		ptr->coord.xcoord *= -1.0;
-        ptr->coord.ycoord    = ((double)univmax/2.0)+(rndm(29.9)-14.8);
+        ptr->coord.ycoord = ((double)univmax/2.0)+(rndm(29.9)-14.8);
 	if (gernd()%2 == 0)
 		ptr->coord.ycoord *= -1.0;
 	}
 else
 	{
-	ptr->coord.xcoord    = rndm((double)univmax*2.0)-(double)univmax;
-	ptr->coord.ycoord    = rndm((double)univmax*2.0)-(double)univmax;
+	ptr->coord.xcoord = rndm((double)univmax*2.0)-(double)univmax;
+	ptr->coord.ycoord = rndm((double)univmax*2.0)-(double)univmax;
 	}
 
-if(shipclass[ptr->shpclass].loadout == 2)  /* Murdonian Transport */
+if(shipclass[ptr->shpclass].loadout == 2)	/* Murdonian Transport */
 	{
 	ptr->items[I_MISSILE] = (gernd()%20)+10;
 	ptr->items[I_TORPEDO] = (gernd()%20)+10;
@@ -147,7 +147,7 @@ if(shipclass[ptr->shpclass].loadout == 2)  /* Murdonian Transport */
 	ptr->items[I_GOLD] = (gernd()%500)+100;
 	}
 else
-if(shipclass[ptr->shpclass].loadout == 6)  /* Galactic Command Freighter */
+if(shipclass[ptr->shpclass].loadout == 6)	/* Galactic Command Freighter */
 	droid_zyg_loadout(ptr);
 else
 	{
@@ -164,7 +164,7 @@ else
 		ptr->items[I_MINE] = (gernd()%20)+10;
 	if (shipclass[ptr->shpclass].has_zip)
 		ptr->items[I_ZIPPERS] = (gernd()%20)+10;
-	if (shipclass[ptr->shpclass].loadout == 4)  /* Sarten Civil Transport */
+	if (shipclass[ptr->shpclass].loadout == 4)	/* Sarten Civil Transport */
 		ptr->items[I_GOLD] = (gernd()%200)+100;
 	}
 
@@ -211,10 +211,10 @@ for (zothusn=0; zothusn<nterms; zothusn++)
 ** Droid Lives Function                                                  **
 **************************************************************************/
 
-void  FUNC droid_lives(ptr,usrn)
+void FUNC droid_lives(ptr,usrn)
 
-WARSHP *ptr;
-int           usrn;
+WARSHP	*ptr;
+int	usrn;
 {
 
 if (usrn < 0 || usrn >= nships)
@@ -232,7 +232,7 @@ logthis(spr("GE:%s Lives",droidname)); */
 ptr->tick = 255;
 
 if (ptr->holdcourse > 0)
-        --(ptr->holdcourse);
+	--(ptr->holdcourse);
 
 if (ptr->cybmine != 255)
 	ptr->cybupdate = 0;
@@ -248,36 +248,36 @@ if (ptr->cybupdate == 1)
 /* save off the topspeed in 1000's */
 /* if no warp, top speed is impulse 99 */
 if (ptr->topspeed == 0 && shipclass[ptr->shpclass].max_accel > 0)
-        dr_topspeed = 990;
+	dr_topspeed = 990;
 else
-        dr_topspeed = (double)ptr->topspeed*1000.0;
+	dr_topspeed = (double)ptr->topspeed*1000.0;
 
 if(shipclass[ptr->shpclass].loadout == 2)
-	droid_act_2(ptr,usrn);    /* Murdonian Transport */
+	droid_act_2(ptr,usrn);	/* Murdonian Transport */
 else
 if(shipclass[ptr->shpclass].loadout == 3)
-	droid_act_3(ptr,usrn);    /* Vakory Survey Drone */
+	droid_act_3(ptr,usrn);	/* Vakory Survey Drone */
 else
 if(shipclass[ptr->shpclass].loadout == 4)
-	droid_act_4(ptr,usrn);    /* Sarten Civil Transport */
+	droid_act_4(ptr,usrn);	/* Sarten Civil Transport */
 else
 if(shipclass[ptr->shpclass].loadout == 5)
-	droid_act_5(ptr,usrn);    /* Sarten Defense Drone */
+	droid_act_5(ptr,usrn);	/* Sarten Defense Drone */
 else
 if(shipclass[ptr->shpclass].loadout == 6)
-	droid_act_6(ptr,usrn);    /* Galactic Command Freighter */
+	droid_act_6(ptr,usrn);	/* Galactic Command Freighter */
 else
-	droid_act_1(ptr,usrn);    /* Lydorian Garbage Scow */
+	droid_act_1(ptr,usrn);	/* Lydorian Garbage Scow */
 
 ptr->energy = 50000L;
 
 
 if (ptr->tick == 255)
 	{
-	if (ptr->cybmine == 255)        /* if just cruising around don't get back to me for some time */
+	if (ptr->cybmine == 255)	/* if just cruising around don't get back to me for some time */
 		ptr->tick = (CYBTICKTIME + gernd()%CYBTICKTIME)*5;
 	else
-	if (ptr->cybmine >= nterms)     /* if going after a fellow NPC, medium speed */
+	if (ptr->cybmine >= nterms)	/* if going after a fellow NPC, medium speed */
 		ptr->tick = (CYBTICKTIME + gernd()%CYBTICKTIME)*3 - shipclass[ptr->shpclass].tough_factor;
 	else
 		ptr->tick = CYBTICKTIME + gernd()%(5-shipclass[ptr->shpclass].tough_factor);
@@ -286,16 +286,16 @@ if (ptr->tick == 255)
 
 
 /* ptr to sender , usrn = reciever */
-void  FUNC droid_annoy(ptr,usrn)
-WARSHP   *ptr;
-int      usrn;
+void FUNC droid_annoy(ptr,usrn)
+WARSHP	*ptr;
+int	usrn;
 {
 
 int base, sel, interval;
 
 /* skip NPCs entirely */
 if (usrn >= nterms)
-        return;
+	return;
 
 base = DRBASEM + ((ptr->shpclass - dr_class)*12);
 interval = 10+shipclass[ptr->shpclass].tough_factor;	/* tougher npcs have fewer ticks */
@@ -331,7 +331,7 @@ else
 	sel = base+(gernd()%4)+9;
 	if (sel >= DRLASTM)
 		{
-	        geshocst(0,"GE:BAD DROID MSG BTL");
+		geshocst(0,"GE:BAD DROID MSG BTL");
 		logthis(spr("droid_annoy:bad msg btl usrn [%d]",usrn));
 		return;
 		}
@@ -367,7 +367,7 @@ if (ptr->distress != ptr->cybmine && ptr->cybmine < nships && ptr->damage < 100)
 ** Impulse only, no phasers, no projectiles                              **
 **************************************************************************/
 
-void  FUNC droid_act_1(ptr,usrn)
+void FUNC droid_act_1(ptr,usrn)
 
 WARSHP	*ptr;
 int	usrn;
@@ -431,7 +431,7 @@ droid_distress(ptr,usrn);
 ** Warp, phasers, no projectiles                                         **
 **************************************************************************/
 
-void  FUNC droid_act_2(ptr,usrn)
+void FUNC droid_act_2(ptr,usrn)
 
 WARSHP	*ptr;
 int	usrn;
@@ -516,7 +516,7 @@ droid_distress(ptr,usrn);
 ** Warp, phasers, torps, jammers, mines                                  **
 **************************************************************************/
 
-void  FUNC droid_act_3(ptr,usrn)
+void FUNC droid_act_3(ptr,usrn)
 
 WARSHP	*ptr;
 int	usrn;
@@ -601,16 +601,16 @@ droid_distress(ptr,usrn);
 ** Warp, phasers, decoys, jammers                                        **
 **************************************************************************/
 
-void  FUNC droid_act_4(ptr,usrn)
+void FUNC droid_act_4(ptr,usrn)
 
-WARSHP *ptr;
-int           usrn;
+WARSHP	*ptr;
+int	usrn;
 {
 
-WARSHP   *wptr;
-int      zothusn;
+WARSHP	*wptr;
+int	zothusn;
 
-double   ddist;
+double	ddist;
 
 /* am I being jammed ? */
 if (ptr->jammer == 0)
@@ -683,7 +683,7 @@ droid_distress(ptr,usrn);
 ** Warp, phasers, torps, mines, zippers                                  **
 **************************************************************************/
 
-void  FUNC droid_act_5(ptr,usrn)
+void FUNC droid_act_5(ptr,usrn)
 
 WARSHP	*ptr;
 int	usrn;
@@ -818,8 +818,8 @@ if (ptr->jammer == 0)
 			}
 		if (ptr->items[I_ZIPPERS] > 0 && shipclass[ptr->shpclass].has_zip && wptr->minesnear == TRUE && gernd()%3 == 0)
 			{
-                        zip(ptr,usrn);
-                        wptr->minesnear = FALSE;
+			zip(ptr,usrn);
+			wptr->minesnear = FALSE;
 			}
 		}
 	else
@@ -835,17 +835,17 @@ droid_check_state(ptr,usrn);
 ** Warp, phasers, torps, decoys, jammers, zippers                        **
 **************************************************************************/
 
-void  FUNC droid_act_6(ptr,usrn)
+void FUNC droid_act_6(ptr,usrn)
 
-WARSHP *ptr;
-int           usrn;
+WARSHP	*ptr;
+int	usrn;
 {
 
-WARSHP   *wptr;
-int      zothusn, setship;
+WARSHP	*wptr;
+int	zothusn, setship;
 COORD	neutsect;
 
-double   ddist;
+double	ddist;
 
 setship = TRUE;
 
@@ -982,8 +982,8 @@ if (ptr->jammer == 0)
 					jam(ptr,usrn);
 				if (ptr->items[I_ZIPPERS] > 0 && shipclass[ptr->shpclass].has_zip && wptr->minesnear == TRUE && gernd()%3 == 0)
 					{
-		                        zip(ptr,usrn);
-		                        wptr->minesnear = FALSE;
+					zip(ptr,usrn);
+					wptr->minesnear = FALSE;
 					}
 				}
 			}
@@ -999,16 +999,16 @@ droid_check_state(ptr,usrn);
 droid_distress(ptr,usrn);
 }
 
-void   FUNC droid_won(ptr)
-WARSHP   *ptr;
+void FUNC droid_won(ptr)
+WARSHP	*ptr;
 
 {
 cyb_cruise(ptr,0);
 }
 
 
-void   FUNC droid_died(ptr)
-WARSHP   *ptr;
+void FUNC droid_died(ptr)
+WARSHP	*ptr;
 
 {
 ptr->status = GESTAT_AVAIL;
@@ -1016,8 +1016,8 @@ logthis(spr("GE:INF:%s Died!",ptr->userid));
 }
 
 void FUNC droid_check_state(ptr,usrn)
-WARSHP *ptr;
-int usrn;
+WARSHP	*ptr;
+int	usrn;
 
 {
 if (ptr->speed < 1000.0)
@@ -1043,18 +1043,18 @@ WARSHP	*wptr;
 int	zothusn;
 
 for (zothusn=nterms ; zothusn < nships ;zothusn++)
-        {
-        wptr=warshpoff(zothusn);
-        if (wptr->status == GESTAT_AUTO && shipclass[wptr->shpclass].loadout == drtype && wptr->cybmine == (byte)usrn)
-                return(FALSE);
-        }
+	{
+	wptr=warshpoff(zothusn);
+	if (wptr->status == GESTAT_AUTO && shipclass[wptr->shpclass].loadout == drtype && wptr->cybmine == (byte)usrn)
+		return(FALSE);
+	}
 return(TRUE);
 }
 
 void FUNC droid_phaser(ptr,usrn,wptr)
-WARSHP *ptr;
-int usrn;
-WARSHP *wptr;
+WARSHP	*ptr;
+int	usrn;
+WARSHP	*wptr;
 
 {
 if (!neutral(&ptr->coord) && !neutral(&wptr->coord) && wptr->cloak != 10 && gernd()%(4-(shipclass[ptr->shpclass].tough_factor/2)) == 0)
@@ -1073,10 +1073,10 @@ if (!neutral(&ptr->coord) && !neutral(&wptr->coord) && wptr->cloak != 10 && gern
 }
 
 void FUNC droid_torp(ptr,usrn,wptr,zothusn)
-WARSHP *ptr;
-int usrn;
-WARSHP *wptr;
-int zothusn;
+WARSHP	*ptr;
+int	usrn;
+WARSHP	*wptr;
+int	zothusn;
 
 {
 
@@ -1096,7 +1096,7 @@ if (ptr->where == 0 && wptr->where == 0 && shipclass[ptr->shpclass].max_torps &&
 }
 
 void FUNC droid_zyg_loadout(ptr)
-WARSHP *ptr;
+WARSHP	*ptr;
 
 {
 ptr->items[I_MISSILE] = (gernd()%50)+10;

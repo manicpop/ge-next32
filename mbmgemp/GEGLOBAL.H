@@ -37,76 +37,76 @@
 
 #ifndef GEMAIN
 
-extern  int		gestt;
+extern	int		gestt;
 
-extern  BTVFILE		*gebb1,  /* GEship.dat   */
-			*gebb2,  /* GEplanet.dat */
-			*gebb4,  /* GEmail.dat   */
-			*gebb5;  /* GEuser.dat   */
+extern	BTVFILE		*gebb1,		/* GEship.dat */
+			*gebb2,		/* GEplanet.dat */
+			*gebb4,		/* GEmail.dat */
+			*gebb5;		/* GEuser.dat */
 
-extern  FILE		*gemb, *gehlpmb, *geshmb;
-extern  FILE		*opnmsg();
+extern	FILE		*gemb, *gehlpmb, *geshmb;
+extern	FILE		*opnmsg();
 
-extern  int		numwar;                 /* number of users in game  */
+extern	int		numwar;		/* number of users in game */
 
-extern  WARSHP		tmpshp;  /* used to temporarly set up a new ship */
-extern  WARSHP		*warshp,*warsptr;
-extern  WARUSR		*warusr,*waruptr;
-extern  int		warusr_ecl,warshp_ecl;
-extern  WARUSR		tmpusr;
+extern	WARSHP		tmpshp;		/* used to temporarly set up a new ship */
+extern	WARSHP		*warshp,*warsptr;
+extern	WARUSR		*warusr,*waruptr;
+extern	int		warusr_ecl,warshp_ecl;
+extern	WARUSR		tmpusr;
 
-extern  GALSECT		sector,*sptr1;
+extern	GALSECT		sector,*sptr1;
 
-extern  GALPLNT		planet;
+extern	GALPLNT		planet;
 
-extern  GALWORM		worm;
+extern	GALWORM		worm;
 
-extern  PLANETAB	*ptab;
+extern	PLANETAB	*ptab;
 
-extern  char		map[MAXY][MAXX+1];          /* global scan map array */
-extern  char		mapc[MAXY][MAXX+1];          /* global scan map array color map */
+extern	char		map[MAXY][MAXX+1];		/* global scan map array */
+extern	char		mapc[MAXY][MAXX+1];		/* global scan map array color map */
 
-extern  MINE		*mines;       /* place to stuff mines */
+extern	MINE		*mines;				/* place to stuff mines */
 
 
-extern  MAIL		mail;
-extern  MAILSTAT	tmpstat;
+extern	MAIL		mail;
+extern	MAILSTAT	tmpstat;
 
-extern  BEACONTAB	*beacon;
+extern	BEACONTAB	*beacon;
 
-extern  struct message *gemsg;
+extern	struct message *gemsg;
 
-extern  int		nships;
-extern  int		heading;
-extern  unsigned	speed;
-extern  int		lockwarn;
-extern  int		xsect,ysect;
-extern  unsigned	xcord,ycord, coord2();
-extern  PKEY		pkey;
-extern  unsigned	distance;
-extern  double		ddistance;
-extern  int		bearing;
-extern  unsigned	energy;
-extern  unsigned	damage;
-extern  char		*gechrbuf,*gechrbuf2,*gechrbuf3;
-extern  char		*warpbuf;
-extern  int		sectnum,plnum;
-extern  GALPLNT		*plptr;
-extern  ITEM		*titems;
-extern  TEAM		*teamtab;
+extern	int		nships;
+extern	int		heading;
+extern	unsigned	speed;
+extern	int		lockwarn;
+extern	int		xsect,ysect;
+extern	unsigned	xcord,ycord, coord2();
+extern	PKEY		pkey;
+extern	unsigned	distance;
+extern	double		ddistance;
+extern	int		bearing;
+extern	unsigned	energy;
+extern	unsigned	damage;
+extern	char		*gechrbuf,*gechrbuf2,*gechrbuf3;
+extern	char		*warpbuf;
+extern	int		sectnum,plnum;
+extern	GALPLNT		*plptr;
+extern	ITEM		*titems;
+extern	TEAM		*teamtab;
 
-extern  int		su;
-extern  int		tmp_usrnum;
+extern	int		su;
+extern	int		tmp_usrnum;
 
-extern  unsigned	plantime;
+extern	unsigned	plantime;
 
-extern  long		max_plrec,
+extern	long		max_plrec,
 			teambonus,
 			pltvcash,
 			pltvdiv,
 			startcash;
 
-extern  int		gemaxplrs,
+extern	int		gemaxplrs,
 			gefreebies,
 			gemaxlist,
 			maxships,
@@ -174,31 +174,31 @@ extern	double		tor_fact,
 			plattrt2,
 			plattrt3;
 
-extern  long		plantock;
+extern	long		plantock;
 
-#ifdef  TESTDRIVE
-extern  int		endtd,
+#ifdef	TESTDRIVE
+extern	int		endtd,
 			nowtd,
 			lefttd;
 #endif
 
-extern  SHPKEY		shpkey;
-extern  MAILKEY		mailkey;
+extern	SHPKEY		shpkey;
+extern	MAILKEY		mailkey;
 
-extern  SHIP		*shipclass;
+extern	SHIP		*shipclass;
 
-extern  S00		*s00;
-extern  int		s00plnum;
+extern	S00		*s00;
+extern	int		s00plnum;
 
-extern  SCANTAB		*scantab;
+extern	SCANTAB		*scantab;
 
-extern  long		shieldprice[TOPSHIELD];
-extern  long		phaserprice[TOPPHASOR];
-extern  unsigned	baseprice[NUMITEMS];
-extern  double		maxpl[NUMITEMS];
-extern  long		weight[NUMITEMS];
-extern  long		value[NUMITEMS];
-extern  long		manhours[NUMITEMS];
+extern	long		shieldprice[TOPSHIELD];
+extern	long		phaserprice[TOPPHASOR];
+extern	unsigned	baseprice[NUMITEMS];
+extern	double		maxpl[NUMITEMS];
+extern	long		weight[NUMITEMS];
+extern	long		value[NUMITEMS];
+extern	long		manhours[NUMITEMS];
 
 #endif
 
@@ -206,8 +206,8 @@ extern  long		manhours[NUMITEMS];
 
 #ifndef GECMDS
 
-extern  char		*kwrd[NUMITEMS];
-extern  char		*item_name[NUMITEMS];
+extern	char		*kwrd[NUMITEMS];
+extern	char		*item_name[NUMITEMS];
 
 #endif
 
@@ -224,8 +224,8 @@ extern  char		*item_name[NUMITEMS];
 /* GECYBS Global Defs ****************************************************/
 
 #ifndef GECYBS
-extern  char		*cybname;
-extern  int		cybhaltflg;
+extern	char		*cybname;
+extern	int		cybhaltflg;
 #endif
 
 #ifdef PHARLAP
@@ -233,43 +233,43 @@ extern  int		cybhaltflg;
 /* MAJORBBS Global Defs **************************************** */
 
 extern
-struct usracc	*usracc, 	/* user accounting block array               */
-		*usacptr;	/* user accounting block pointer for usrnum  */
+struct	usracc	*usracc, 	/* user accounting block array */
+		*usacptr;	/* user accounting block pointer for usrnum */
 extern
-int		usrnum;		/* global user-number (channel) in effect    */
+int		usrnum;		/* global user-number (channel) in effect */
 
 extern
-struct	user	*usrptr, 	/* global pointer to user data in effect     */
-		*user;		/* user volatile-data structure array        */
+struct	user	*usrptr, 	/* global pointer to user data in effect */
+		*user;		/* user volatile-data structure array */
 extern
-char		input[INPSIZ],	/* raw user input data buffer                */
-     		*margv[INPSIZ/2];	/* array of ptrs to word starts, a la argv[] */
+char		input[INPSIZ],	/* raw user input data buffer */
+		*margv[INPSIZ/2];	/* array of ptrs to word starts, a la argv[] */
 
 extern
-int	margc,			/* number of words in margv[], a la argc     */
+int	margc,			/* number of words in margv[], a la argc */
 	status;			/* raw status from btusts, where appropriate */
 
 
 extern
-struct module *module[NMODS];	/* module access block pointer table         */
+struct	module *module[NMODS];	/* module access block pointer table */
 
 
 extern
-int inplen,			/* overall raw input string length           */
-    pfnlvl;			/* profanity level of current input (0-3)    */
+int	inplen,			/* overall raw input string length */
+	pfnlvl;			/* profanity level of current input (0-3) */
 
 extern
-char prfbuf[];			/* 2K buffer used by prfutl, used for staging*/
+char	prfbuf[];			/* 2K buffer used by prfutl, used for staging*/
 
 extern
-struct sysvbl sv;		/* sys-variables record instance for updates */
+struct	sysvbl sv;		/* sys-variables record instance for updates */
 
-char *curtim(),*curdat();	/* time and date formatter routines          */
+char	*curtim(),*curdat();	/* time and date formatter routines */
 
 
-extern int othusn;
-extern struct user *othusp;   /* gen purp other-user user structure ptr    */
-extern struct usracc *othuap; /* gen purp other-user accounting data ptr   */
+extern int	othusn;
+extern struct	user *othusp;	/* gen purp other-user user structure ptr */
+extern struct	usracc *othuap;	/* gen purp other-user accounting data ptr */
 
 #endif
 

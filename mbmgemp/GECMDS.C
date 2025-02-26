@@ -56,9 +56,9 @@
 
 #include "gemain.h"
 
-#define GECMDS  1
+#define GECMDS 1
 
-#include        "geglobal.h"
+#include "geglobal.h"
 
 /* LOCAL GLOBAL DEFS *****************************************************/
 
@@ -106,9 +106,9 @@ void	cmd_gehelp(), cmd_cloak(), cmd_impulse(), cmd_phas(), cmd_report(),
 
 #define GECMDSIZ (sizeof(gecmds)/sizeof(struct cmd))
 
-struct  cmd     gecmds[]={
-		/*    command     function    0=payers only */
-		/*    -------     ----------- ------------- */
+struct	cmd	gecmds[]={
+		/*	command	function	0=payers only */
+		/*	-------	----------- 	------------- */
 			{"?",	cmd_gehelp,	1},
 			{"aba",	cmd_abandon,	0},
 			{"abo",	cmd_abort,	1},
@@ -163,7 +163,7 @@ struct  cmd     gecmds[]={
 
 struct hlpcmd	{
 		char *command;
-		int  helptxt;
+		int helptxt;
 		};
 
 struct hlpcmd gehlp[] = {
@@ -242,10 +242,10 @@ struct hlpcmd gehlp[] = {
 };
 
 
-struct cmd * FUNC gesearch(ptr,tab,len)
-char    *ptr;
-struct cmd tab[];
-int     len;
+struct	cmd * FUNC gesearch(ptr,tab,len)
+char	*ptr;
+struct	cmd tab[];
+int	len;
 
 {
 
@@ -270,10 +270,10 @@ int     len;
 }
 
 
-void  FUNC gwar()
+void FUNC gwar()
 {
-struct cmd *cmdptr;
-char    *mv0ptr;
+struct	cmd *cmdptr;
+char	*mv0ptr;
 
 if (margc == 0)
 	{
@@ -342,7 +342,7 @@ else
 ** Blank line was input response                                         **
 **************************************************************************/
 
-void  FUNC warnop()
+void FUNC warnop()
 {
 prfmsg(FORHELP);
 outprfge(ALWAYS,usrnum);
@@ -350,9 +350,9 @@ outprfge(ALWAYS,usrnum);
 
 
 
-void  FUNC cmd_gehelp()
+void FUNC cmd_gehelp()
 {
-int     ndx,i;
+int	ndx,i;
 
 char	gechrbuf4[20], gechrbuf5[20], gechrbuf6[20], gechrbuf7[20];
 
@@ -506,7 +506,7 @@ outprfge(ALWAYS,usrnum);
 ** Fire engines on impulse                                               **
 **************************************************************************/
 
-void  FUNC cmd_impulse()
+void FUNC cmd_impulse()
 {
 unsigned deg;
 int	zothusn;
@@ -568,7 +568,7 @@ if (valpcnt(margv[1],0,99))
 		outprfge(ALWAYS,usrnum);
 		warsptr->speed2b = 1000.0 * ((double)warsptr->percent/100.0);
 		if (deg != warsptr->head2b)
-			warsptr->head2b   = (double)deg;
+			warsptr->head2b = (double)deg;
 		/* if I am cloaked tell the closer ones */
 		if (warsptr->cloak == 10 && warsptr->speed2b > (rndm(200.0)+10.0))
 			{
@@ -608,7 +608,7 @@ if (valpcnt(margv[1],0,99))
 ** Fire engines on warp drive                                            **
 **************************************************************************/
 
-void  FUNC cmd_warp()
+void FUNC cmd_warp()
 {
 unsigned deg;
 int	speed,topspeed;
@@ -699,7 +699,7 @@ else
 			warsptr->speed = 0.0;	/* no fractional warp speeds */
 		warsptr->speed2b = 1000.0 * (float)speed;
 		if (deg != warsptr->head2b)
-			warsptr->head2b   = (double)deg;
+			warsptr->head2b = (double)deg;
 		}
 	else
 		{
@@ -730,7 +730,7 @@ warsptr->speed2b = 0;
 ** Rotate ship                                                           **
 **************************************************************************/
 
-void  FUNC cmd_rotate()
+void FUNC cmd_rotate()
 {
 unsigned deg;
 
@@ -756,7 +756,7 @@ if (*margv[1] == '@') /* turn absolute */
 			else
 				{
 				prfmsg(NOWTURN,deg);
-				warsptr->head2b   = (double)deg;
+				warsptr->head2b = (double)deg;
 				}
 			outprfge(ALWAYS,usrnum);
 			}
@@ -788,7 +788,7 @@ if (valdegree(margv[1]))
 			{
 			deg = (unsigned)normal(warsptr->heading + (double)warsptr->degrees);
 			prfmsg(NOWTURN,deg);
-			warsptr->head2b   = (double)deg;
+			warsptr->head2b = (double)deg;
 			}
 		outprfge(ALWAYS,usrnum);
 		}
@@ -808,7 +808,7 @@ if (valdegree(margv[1]))
 ** Recharge engines                                                      **
 **************************************************************************/
 
-void  FUNC cmd_flux()
+void FUNC cmd_flux()
 {
 fluxstat(warsptr,usrnum,65535U);
 }
@@ -817,7 +817,7 @@ fluxstat(warsptr,usrnum,65535U);
 ** Orbit a planet                                                        **
 **************************************************************************/
 
-void  FUNC cmd_orbit()
+void FUNC cmd_orbit()
 
 {
 int got_plt;
@@ -895,7 +895,7 @@ outprfge(ALWAYS,usrnum);
 ** Fire phasers                                                          **
 **************************************************************************/
 
-void  FUNC cmd_phas()
+void FUNC cmd_phas()
 
 {
 
@@ -979,13 +979,13 @@ else
 }
 
 void FUNC firep(ptr,usrn)
-WARSHP  *ptr;
-int             usrn;
+WARSHP	*ptr;
+int	usrn;
 {
-WARSHP  *wptr;
+WARSHP	*wptr;
 WARUSR	*wuptr;
 
-unsigned        deg;
+unsigned deg;
 double factor;
 
 int hitone;
@@ -1056,7 +1056,7 @@ if (ptr->phasr >=PMINFIRE)
 							wptr->lastfired = usrn;
 						wptr->cantexit = FIRETICKS;
 						ptr->cantexit = FIRETICKS;
-						if (wptr->status == GESTAT_AUTO)    /* if npc... */
+						if (wptr->status == GESTAT_AUTO)	/* if npc... */
 							{
 							wptr->cybmine = usrn;	/* engage user */
 							wptr->tick = 2;		/* do it fast */
@@ -1123,12 +1123,12 @@ if (ptr->shieldstat == SHIELDUP)
 
 
 void FUNC firehp(ptr,usrn)
-WARSHP  *ptr;
-int             usrn;
+WARSHP	*ptr;
+int	usrn;
 {
-WARSHP  *wptr;
+WARSHP	*wptr;
 WARUSR	*wuptr;
-unsigned        deg;
+unsigned deg;
 double factor;
 
 
@@ -1159,7 +1159,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 		if (ingegame(othusn) && wptr->where == 1)
 			{
 			if (othusn != usrn && !neutral(&wptr->coord) && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
-                                || shipclass[ptr->shpclass].faction == 0) && (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn))
+				|| shipclass[ptr->shpclass].faction == 0) && (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn))
 				{
 				heading = (unsigned)vector(&ptr->coord,&wptr->coord);
 				if (smallest(heading,deg) < HPBEAMW)
@@ -1206,7 +1206,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 								wptr->damage += (double)damage;
 							wuptr = warusroff(usrn);
 							set_dislike(wuptr,shipclass[wptr->shpclass].faction,damage);
-							if (wptr->status == GESTAT_AUTO)    /* if npc... */
+							if (wptr->status == GESTAT_AUTO)	/* if npc... */
 								{
 								wptr->cybmine = usrn;	/* engage user */
 								wptr->tick = 2;		/* do it fast */
@@ -1234,11 +1234,11 @@ else
 ** Fire torpedoes                                                        **
 **************************************************************************/
 
-void  FUNC cmd_torp()
+void FUNC cmd_torp()
 
 {
 
-int     shpnum;
+int shpnum;
 
 lockwarn = TRUE;
 
@@ -1321,14 +1321,14 @@ if (warsptr->shieldstat == SHIELDUP)
 }
 
 void FUNC torp(ptr,usrn,shpnum)
-WARSHP  *ptr;
-int             usrn;
-int             shpnum;
+WARSHP	*ptr;
+int	usrn;
+int	shpnum;
 
 {
-WARSHP  *wptr;
+WARSHP	*wptr;
 
-int             i;
+int	i;
 
 if (ptr->damage >= 100)
 	{
@@ -1351,7 +1351,7 @@ if (lockon(ptr,0,shpnum,usrn) == 1)
 			outprfge(FILTER,shpnum);
 			wptr->ltorps[i].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
 			wptr->ltorps[i].distance += 20;
-			wptr->ltorps[i].channel  = (unsigned char)usrn;
+			wptr->ltorps[i].channel = (unsigned char)usrn;
 			wptr->cantexit = FIRETICKS;
 			ptr->cantexit = FIRETICKS;
 			return;
@@ -1366,7 +1366,7 @@ if (lockon(ptr,0,shpnum,usrn) == 1)
 ** Fire missile                                                          **
 **************************************************************************/
 
-void  FUNC cmd_missl()
+void FUNC cmd_missl()
 
 {
 
@@ -1485,7 +1485,7 @@ if (ptr->damage >= 100)
 	}
 
 if (lockon(ptr,1,shpnum,usrnum) == 1)
-        {
+	{
 	for (i=0; i<MAXMISSL;++i)
 		{
 		wptr=warshpoff(shpnum);
@@ -1499,8 +1499,8 @@ if (lockon(ptr,1,shpnum,usrnum) == 1)
 			outprfge(FILTER,shpnum);
 			wptr->lmissl[i].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
 			wptr->lmissl[i].distance += 20;
-			wptr->lmissl[i].channel  = (unsigned char)usrnum;
-			wptr->lmissl[i].energy   = energy;
+			wptr->lmissl[i].channel = (unsigned char)usrnum;
+			wptr->lmissl[i].energy = energy;
 			wptr->cantexit = FIRETICKS;
 			ptr->cantexit = FIRETICKS;
 			return;
@@ -1512,10 +1512,10 @@ if (lockon(ptr,1,shpnum,usrnum) == 1)
 }
 
 int FUNC lockon(ptr,type,ship,usrn)
-WARSHP  *ptr;
-int     type,ship,usrn;
+WARSHP	*ptr;
+int	type,ship,usrn;
 {
-WARSHP  *wptr;
+WARSHP	*wptr;
 
 double dist,speed,fact=0.0;
 
@@ -1535,7 +1535,7 @@ if (warsptr->jammer > 0)
 
 wptr= warshpoff(ship);
 
-if  (neutral(&(wptr->coord)))
+if (neutral(&(wptr->coord)))
 	{
 	prfmsg(FCNONO);
 	outprfge(ALWAYS,usrn);
@@ -1545,7 +1545,7 @@ if  (neutral(&(wptr->coord)))
 dist = cdistance(&ptr->coord,&(wptr->coord));
 if (wptr->cloak < 10 && (dist*10000.0) < (double)shipclass[warsptr->shpclass].scanrange)
 	{
-	if (wptr->status == GESTAT_AUTO)    /* if npc... */
+	if (wptr->status == GESTAT_AUTO)	/* if npc... */
 		{
 		wptr->cybmine = usrn;	/* engage user */
 		wptr->tick = 2;		/* do it fast */
@@ -1603,12 +1603,12 @@ else
 }
 
 int FUNC findshp(ptr,type)
-char    *ptr;
-int     type; /* 0 = this sector only, 1 = everywhere */
+char	*ptr;
+int	type; /* 0 = this sector only, 1 = everywhere */
 {
-char    letter;
-int     shpnum,i;
-double  dist;
+char	letter;
+int	shpnum,i;
+double	dist;
 WARSHP	*wptr;
 shpnum = -1;
 if (ptr[0] == '@')
@@ -1696,8 +1696,8 @@ return(-1);
 /* firing in sector NEUTRAL is a big no-no */
 
 void FUNC zaphim(ptr,usrn)
-WARSHP  *ptr;
-int             usrn;
+WARSHP *ptr;
+int usrn;
 {
 damstr(se100dam);
 prfmsg(ZAPHIM1,gechrbuf);
@@ -1709,11 +1709,11 @@ ptr->damage += se100dam;
 ** Fire decoys                                                           **
 **************************************************************************/
 
-void  FUNC cmd_decoy()
+void FUNC cmd_decoy()
 
 {
 
-int     i;
+int i;
 
 
 if (!shipclass[warsptr->shpclass].has_decoy)
@@ -1764,7 +1764,7 @@ outprfge(FILTER,usrnum);
 ** Launch Jammer                                                         **
 **************************************************************************/
 
-void  FUNC cmd_jammer()
+void FUNC cmd_jammer()
 
 {
 
@@ -1796,12 +1796,12 @@ jam(warsptr,usrnum);
 }
 
 void FUNC jam(ptr,usrn)
-WARSHP  *ptr;
-int     usrn;
+WARSHP	*ptr;
+int	usrn;
 {
-WARSHP *wptr;
-int     zothusn;
-double ddist;
+WARSHP	*wptr;
+int	zothusn;
+double	ddist;
 
 usrn = usrn;
 for (zothusn=0; zothusn < nships ; zothusn++)
@@ -1809,7 +1809,7 @@ for (zothusn=0; zothusn < nships ; zothusn++)
 	wptr=warshpoff(zothusn);
 	ddist = cdistance(&ptr->coord,&wptr->coord);
 	ddist *= 10000;
-	if (ingegame(zothusn)   && ddist < (double)shipclass[warsptr->shpclass].scanrange)
+	if (ingegame(zothusn) && ddist < (double)shipclass[warsptr->shpclass].scanrange)
 		{
 		ddist = 1.0-(ddist/(double)shipclass[warsptr->shpclass].scanrange);
 		if (ddist < 0)
@@ -1829,7 +1829,7 @@ ptr->cantexit = FIRETICKS;
 ** Launch Zipper                                                         **
 **************************************************************************/
 
-void  FUNC cmd_zipper()
+void FUNC cmd_zipper()
 
 {
 
@@ -1861,15 +1861,14 @@ zip(warsptr,usrnum);
 }
 
 void FUNC zip(ptr,usrn)
-WARSHP  *ptr;
-int     usrn;
+WARSHP	*ptr;
+int	usrn;
 {
-MINE            *mptr;
-int i;
-double ddist;
+MINE	*mptr;
+int	i;
+double	ddist;
 
 usrn = usrn;
-
 
 for (i=0,mptr = mines; i<nummines;++mptr,++i)
 	{
@@ -1896,10 +1895,10 @@ ptr->cantexit = FIRETICKS;
 ** Launch Mine                                                           **
 **************************************************************************/
 
-void  FUNC cmd_mine()
+void FUNC cmd_mine()
 
 {
-int     i;
+int i;
 
 if (!shipclass[warsptr->shpclass].has_mine)
 	{
@@ -1959,10 +1958,10 @@ outprfge(FILTER,usrnum);
 
 /* split out so that cyb's can lay mines too */
 
-int     FUNC laymine(ptr,usrn,timer)
-WARSHP  *ptr;
-int             usrn;
-int     timer;
+int FUNC laymine(ptr,usrn,timer)
+WARSHP	*ptr;
+int	usrn;
+int	timer;
 {
 int i,cnt;
 
@@ -1999,7 +1998,7 @@ return(0);
 ** Send a message to all                                                 **
 **************************************************************************/
 
-void  FUNC cmd_send()
+void FUNC cmd_send()
 {
 char letter;
 
@@ -2059,9 +2058,9 @@ outprfge(FILTER,usrnum);
 ** Set Com Freq                                                          **
 **************************************************************************/
 
-void  FUNC cmd_freq()
+void FUNC cmd_freq()
 {
-unsigned        freq;
+unsigned freq;
 char letter;
 
 if (margc < 3)
@@ -2120,10 +2119,10 @@ if (freq >= 20000)
 ** Generate ships report                                                 **
 **************************************************************************/
 
-void  FUNC cmd_report()
+void FUNC cmd_report()
 {
 
-WARSHP *ptr;
+WARSHP	*ptr;
 int	max,pcnt,i,none,zothusn;
 double	ddist;
 
@@ -2136,8 +2135,8 @@ if (margc != 2 || (!sameas(margv[1],"nav") && !sameas(margv[1],"sys") && !sameas
 
 energy = (unsigned)warsptr->energy +.5;
 damage = (unsigned)warsptr->damage +.5;
-speed  = ((unsigned)warsptr->speed  +.5);
-heading  = (int)(warsptr->heading+.5);
+speed = ((unsigned)warsptr->speed  +.5);
+heading = (int)(warsptr->heading+.5);
 
 prfmsg(REP01,shipclass[warsptr->shpclass].typename,warsptr->shipname);
 prfmsg(DASHES);
@@ -2169,7 +2168,7 @@ if (sameas(margv[1],"nav"))
 
 	setsect(warsptr);
 
-	prfmsg(REP32,  xsect,ysect,xcord,ycord);
+	prfmsg(REP32,xsect,ysect,xcord,ycord);
 	if (warsptr->status == GESTAT_AUTO)
 		{
 		prfmsg(REP40,warsptr->status,warsptr->cybmine,warsptr->cybupdate);
@@ -2246,7 +2245,7 @@ if (sameas(margv[1],"sys"))
 			prfmsg(REP13);
 		}
 
-	damage   = (unsigned) (warsptr->damage+.5);
+	damage = (unsigned)(warsptr->damage+.5);
 	damstr(damage);
 
 	prfmsg(REP14,gechrbuf);
@@ -2517,7 +2516,7 @@ else
 ** Scan Command                                                          **
 **************************************************************************/
 
-void  FUNC cmd_scan()
+void FUNC cmd_scan()
 {
 
 if (warsptr->tactical != 0)
@@ -2569,10 +2568,10 @@ else
 void FUNC scan_sh()
 
 {
-int shpnum,gheading;
-WARSHP  *wptr;
+int	shpnum,gheading;
+WARSHP	*wptr;
 WARUSR	*wuptr;
-char            ltr;
+char	ltr;
 
 if (margc != 3)
 	{
@@ -2597,10 +2596,10 @@ if (shpnum >= 0)
 	if (ddistance < shipclass[warsptr->shpclass].scanrange)
 		{
 		bearing = (int)(cbearing(&warsptr->coord,&wptr->coord,warsptr->heading)+.5);
-		heading  = (int) (cbearing(&wptr->coord,&warsptr->coord,wptr->heading)+.5);
+		heading = (int) (cbearing(&wptr->coord,&warsptr->coord,wptr->heading)+.5);
 		gheading = (int) (wptr->heading+.5);
 
-		speed  = ((unsigned)(wptr->speed  +.5));
+		speed = ((unsigned)(wptr->speed+.5));
 		if (wptr->status == GESTAT_AUTO)
 			prfmsg(SCAN01N,wptr->shipname);
 		else
@@ -2620,7 +2619,7 @@ if (shpnum >= 0)
 
 		if (warsptr->where != 1 && wptr->where != 1)
 			{
-			damage   = (unsigned) (wptr->damage+.5);
+			damage = (unsigned) (wptr->damage+.5);
 			damstr(damage);
 			prfmsg(SCAN05,gechrbuf);
 
@@ -2861,15 +2860,15 @@ else
 void FUNC scan_ra()
 
 {
-int x,y;
+int	x,y;
 
-double  xf,yf,x1,y1,range,xfactor,yfactor;
+double	xf,yf,x1,y1,range,xfactor,yfactor;
 
 
-int             i;
+int	i;
 
-WARSHP  *wptr;
-MINE            *mptr;
+WARSHP	*wptr;
+MINE	*mptr;
 
 if (margc != 3)
 	{
@@ -2905,7 +2904,7 @@ xfactor = range/(((double)MAXX)-1.0);
 
 for (i=0,mptr = mines; i<nummines;++mptr,++i)
 	{
-	if (mptr->channel != 255)  /* if a live mine */
+	if (mptr->channel != 255)	/* if a live mine */
 		{
 		xf = (((double)MAXX)/2.0)+(((mptr->coord.xcoord) - x1)/xfactor);
 		yf = (((double)MAXY)/2.0)+(((mptr->coord.ycoord) - y1)/yfactor);
@@ -2958,8 +2957,8 @@ void FUNC scan_se()
 
 {
 unsigned i,x,y;
-WARSHP  *wptr;
-MINE            *mptr;
+WARSHP	*wptr;
+MINE	*mptr;
 
 if (waruptr->options[SCANHOME])
 	ansifunc(CLEAR);
@@ -2977,7 +2976,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 	x = coord1(mptr->coord.xcoord);
 	y = coord1(mptr->coord.ycoord);
 
-	if (mptr->channel != 255 && (x==xsect && y==ysect))  /* if a live mine */
+	if (mptr->channel != 255 && (x==xsect && y==ysect))	/* if a live mine */
 		{
 		x = coord2(mptr->coord.xcoord) +50;
 		y = coord2(mptr->coord.ycoord) +50;
@@ -3019,9 +3018,9 @@ void FUNC scan_lo()
 {
 int x,y;
 
-double  xf,yf,x1,y1,range,xfactor,yfactor;
+double xf,yf,x1,y1,range,xfactor,yfactor;
 
-WARSHP  *wptr;
+WARSHP	*wptr;
 
 if (margc != 2)
 	{
@@ -3098,12 +3097,12 @@ outprfge(ALWAYS,usrnum);
 }
 
 void FUNC update_scantab(ptr, usrn)
-WARSHP  *ptr;
-int             usrn;
+WARSHP	*ptr;
+int	usrn;
 {
-int     i,j;
-WARSHP  *wptr;
-SCANTAB tmp;
+int	i,j;
+WARSHP	*wptr;
+SCANTAB	tmp;
 
 char	lettab[300];
 
@@ -3187,8 +3186,8 @@ for (i=0;i<NOSCANTAB;++i)
 		j = tmp.ship[i].shipno;
 		wptr=warshpoff(j);
 		tmp.ship[i].bearing = (int)(cbearing(&ptr->coord,&(wptr->coord),ptr->heading)+.5);
-		tmp.ship[i].heading  = (int) (cbearing(&(wptr->coord),&ptr->coord,wptr->heading)+.5);
-		tmp.ship[i].speed  = wptr->speed;
+		tmp.ship[i].heading = (int)(cbearing(&(wptr->coord),&ptr->coord,wptr->heading)+.5);
+		tmp.ship[i].speed = wptr->speed;
 		}
 	}
 
@@ -3219,7 +3218,7 @@ for (i=0;i<NOSCANTAB;++i)
 
 for (i=0;i<NOSCANTAB;++i)
 	{
-	if (ptr->ship[i].flag == 1 &&  ptr->ship[i].letter != 0)
+	if (ptr->ship[i].flag == 1 && ptr->ship[i].letter != 0)
 		{
 		for (j=0;j<LETSIZE;++j)
 			{
@@ -3236,7 +3235,7 @@ for (i=0;i<NOSCANTAB;++i)
 
 for (i=0;i<NOSCANTAB;++i)
 	{
-	if (ptr->ship[i].flag == 1 &&  ptr->ship[i].letter == 0)
+	if (ptr->ship[i].flag == 1 && ptr->ship[i].letter == 0)
 		{
 		for (j=0;j<LETSIZE;++j)
 			{
@@ -3311,7 +3310,7 @@ for (i=0; i<MAXY; ++i)
 		else
 			{
 			if (map[i][j] == ' ')
-				prf(" ");               /* prevent excessive color codes */
+				prf(" ");	/* prevent excessive color codes */
 			else
 				prf("\33[1;37m%c\33[0;31m",map[i][j]);
 			}
@@ -3405,10 +3404,10 @@ prf("\33[1;37m");
 
 
 unsigned FUNC coord2(dcoord)
-double dcoord;
+double	dcoord;
 {
-double d1,d2;
-int     d3;
+double	d1,d2;
+int	d3;
 
 d2 =modf(1+modf(dcoord, &d1),&d1);
 d3 = (d2 * SSMAX);
@@ -3430,7 +3429,7 @@ return ((int)floor(dcoord));
 ** Take the shields up or down                                           **
 **************************************************************************/
 
-void  FUNC cmd_shields()
+void FUNC cmd_shields()
 
 {
 
@@ -3497,7 +3496,7 @@ else
 ** Turn cloaking on and off                                              **
 **************************************************************************/
 
-void  FUNC cmd_cloak()
+void FUNC cmd_cloak()
 
 {
 
@@ -3581,7 +3580,7 @@ outprfge(ALWAYS,usrnum);
 ** Transfer goods down                                                   **
 **************************************************************************/
 
-void  FUNC cmd_transfer()
+void FUNC cmd_transfer()
 {
 
 int i;
@@ -3617,7 +3616,7 @@ outprfge(ALWAYS,usrnum);
 }
 
 void trans_down(item)
-int     item;
+int	item;
 
 {
 unsigned long amt;
@@ -3661,7 +3660,7 @@ else
 }
 
 void trans_up(item)
-int     item;
+int	item;
 
 {
 unsigned long amt;
@@ -3722,7 +3721,7 @@ else
 ** abandon a colony                                                      **
 **************************************************************************/
 
-void  FUNC cmd_abandon()
+void FUNC cmd_abandon()
 
 {
 
@@ -3764,7 +3763,7 @@ else
 ** establish a colony or administer it                                   **
 **************************************************************************/
 
-void  FUNC cmd_admin()
+void FUNC cmd_admin()
 
 {
 
@@ -3809,7 +3808,7 @@ else
 ** Attack Command                                                        **
 **************************************************************************/
 
-void  FUNC cmd_attack()
+void FUNC cmd_attack()
 
 {
 
@@ -3961,7 +3960,7 @@ if (plptr->items[I_FIGHTER].qty > 1)
 	{
 	prfmsg(ATTACKM7);
 	i = ((unsigned long)(gernd()%35))+9L;
-	kill1 =  i * (plptr->items[I_FIGHTER].qty);
+	kill1 = i * (plptr->items[I_FIGHTER].qty);
 	if (kill1 > left1)
 		kill1 = left1;
 	sprintf(gechrbuf,"%ld",kill1);
@@ -3969,12 +3968,12 @@ if (plptr->items[I_FIGHTER].qty > 1)
 	}
 
 /* this specifies the number of troops killed by ground troops */
-r = rndm(plattrt1)+.25;  /*.766*/
+r = rndm(plattrt1)+.25;	/*.766*/
 kill1 += (unsigned long)((double)left2 * r);
 
 if (ratio > 2L)
 	{
-	r = rndm(plattrt2)+.1;   /* .344 */
+	r = rndm(plattrt2)+.1;	/* .344 */
 	kill2 = (unsigned long)((double)left1 * r);
 	}
 else
@@ -4146,7 +4145,7 @@ if (left2 > 0L)
 	{
 	/* this specifies the planet fighters kill ratio -
 	   at least 20% and as much as 120.0% */
-	r = rndm(plattrf2)+.2;  /* 1.0 */
+	r = rndm(plattrf2)+.2;	/* 1.0 */
 	kill1 += (unsigned long)((double)left2 * r);
 
 	/* if the ratio of attacker to attackee is at least 1 to 2 (2%)
@@ -4155,7 +4154,7 @@ if (left2 > 0L)
 
 	if (ratio > 1)
 		{
-		r = rndm(plattrf3)+.2;  /* .551 */
+		r = rndm(plattrf3)+.2;	/* .551 */
 		kill2 = (unsigned long)((double)left1 * r);
 		}
 	else
@@ -4250,7 +4249,7 @@ gesdb(GEUPDATE,&pkey,(GALSECT *)&planet);
 return (won);
 }
 
-void FUNC call_4_help(int	send_spy_mail, int won)
+void FUNC call_4_help(int send_spy_mail, int won)
 
 {
 if (instat(plptr->userid,gestt) && othusp->substt >= FIGHTSUB)
@@ -4306,7 +4305,7 @@ warsptr->hostile = 0;
 ** Roster Command                                                        **
 **************************************************************************/
 
-void  FUNC cmd_geroster()
+void FUNC cmd_geroster()
 
 {
 
@@ -4355,7 +4354,7 @@ else
 ** Planet command                                                        **
 **************************************************************************/
 
-void  FUNC cmd_planet()
+void FUNC cmd_planet()
 
 {
 setbtv(gebb2);
@@ -4395,7 +4394,7 @@ else
 ** Sell goods                                                            **
 **************************************************************************/
 
-void  FUNC cmd_sell()
+void FUNC cmd_sell()
 {
 
 int i;
@@ -4446,7 +4445,7 @@ outprfge(ALWAYS,usrnum);
 }
 
 void FUNC sell(item)
-int     item;
+int	item;
 
 {
 unsigned long amt;
@@ -4522,7 +4521,7 @@ else
 ** Buy goods                                                             **
 **************************************************************************/
 
-void  FUNC cmd_buy()
+void FUNC cmd_buy()
 {
 
 int i;
@@ -4606,7 +4605,7 @@ outprfge(ALWAYS,usrnum);
 ** Price goods                                                           **
 **************************************************************************/
 
-void  FUNC cmd_price()
+void FUNC cmd_price()
 {
 
 int i;
@@ -4801,7 +4800,7 @@ unsigned item;
 unsigned long amt;
 
 {
-long    tot;
+long tot;
 
 if (sameas(plptr->userid, warsptr->userid))
 	tot = ((long)baseprice[item])*amt;
@@ -4817,7 +4816,7 @@ return(tot);
 ** Maintenance and repair                                                **
 **************************************************************************/
 
-void  FUNC cmd_maint()
+void FUNC cmd_maint()
 {
 
 unsigned price;
@@ -4834,7 +4833,7 @@ plnum = warsptr->where - 10;
 
 getplanetdat(usrnum);
 
-if (!sameas(plptr->password,"none")     && margc < 2)
+if (!sameas(plptr->password,"none") && margc < 2)
 	{
 	prfmsg(MAINT2);
 	outprfge(ALWAYS,usrnum);
@@ -4906,10 +4905,10 @@ outprfge(ALWAYS,usrnum);
 ** New ship or goods command                                             **
 **************************************************************************/
 
-void  FUNC cmd_new()
+void FUNC cmd_new()
 {
 
-int     type,ctype;
+int	type,ctype;
 long	delta,credit,fee;
 
 if (margc != 3)
@@ -5135,7 +5134,7 @@ outprfge(ALWAYS,usrnum);
 **************************************************************************/
 
 
-void  FUNC cmd_sysop()
+void FUNC cmd_sysop()
 {
 
 int i,j;
@@ -5458,10 +5457,10 @@ if (sameas("orbit",margv[1]) && (margc == 3))
 	}
 else
 if (sameas("assigncybs",margv[1]) && margc == 2)
-        {
-        assign_cybs(usrnum,0);
-        return;
-        }
+	{
+	assign_cybs(usrnum,0);
+	return;
+	}
 else
 
 prfmsg(FORMAT,"SYS");
@@ -5472,7 +5471,7 @@ outprfge(ALWAYS,usrnum);
 ** Rename the ship command..                                             **
 **************************************************************************/
 
-void  FUNC cmd_rename()
+void FUNC cmd_rename()
 {
 
 if (margc >= 2)
@@ -5495,7 +5494,7 @@ outprfge(ALWAYS,usrnum);
 ** Self Destruct                                                         **
 **************************************************************************/
 
-void  FUNC cmd_destruct()
+void FUNC cmd_destruct()
 {
 if (!neutral(&warsptr->coord))
 	{
@@ -5514,7 +5513,7 @@ outprfge(ALWAYS,usrnum);
 ** Abort Self Destruct                                                   **
 **************************************************************************/
 
-void  FUNC cmd_abort()
+void FUNC cmd_abort()
 {
 if (warsptr->destruct > (byte)0)
 	{
@@ -5538,10 +5537,10 @@ outprfge(ALWAYS,usrnum);
 ** Lock command...                                                       **
 **************************************************************************/
 
-void  FUNC cmd_lock()
+void FUNC cmd_lock()
 {
 
-int     shpnum;
+int	shpnum;
 
 if (margc == 1)
 	{
@@ -5582,10 +5581,10 @@ else
 ** navigate command...                                                   **
 **************************************************************************/
 
-void  FUNC cmd_navigate()
+void FUNC cmd_navigate()
 {
-COORD tmp;
-int     x,y;
+COORD	tmp;
+int	x,y;
 double	bear;
 
 if (margc != 3)
@@ -5633,7 +5632,7 @@ outprfge(ALWAYS,usrnum);
 ** who command...                                                        **
 **************************************************************************/
 
-void  FUNC cmd_who()
+void FUNC cmd_who()
 {
 int zothusn;
 
@@ -5655,7 +5654,7 @@ outprfge(ALWAYS,usrnum);
 ** Set Command                                                           **
 **************************************************************************/
 
-void  FUNC cmd_set()
+void FUNC cmd_set()
 
 {
 
@@ -5741,7 +5740,7 @@ return;
 **   Add logic to remove a teamcode that has no members at cleanup       **
 **************************************************************************/
 
-void  FUNC cmd_team()
+void FUNC cmd_team()
 
 
 {
@@ -6287,14 +6286,14 @@ for (i=0;i<MAXTEAMS;++i)
 return(&badteamname[0]);
 }
 
-void  FUNC cmd_clear()
+void FUNC cmd_clear()
 
 {
 ansifunc(CLEAR);
 outprfge(ALWAYS,usrnum);
 }
 
-void  FUNC ansifunc(int func)
+void FUNC ansifunc(int func)
 {
 switch (func)
 	{
@@ -6304,7 +6303,7 @@ switch (func)
 	}
 }
 
-void	 FUNC cmd_data()
+void FUNC cmd_data()
 {
 
 int i,j;
@@ -6421,11 +6420,11 @@ outprfge(ALWAYS,usrnum);
 void FUNC scan_data1()
 
 {
-SCANTAB *sptr;
-WARSHP  *wptr;
-int i,j;
+SCANTAB	*sptr;
+WARSHP	*wptr;
+int	i,j;
 
-char    mask[] = {" %c %d %d %d %d %s %d %d %s %d/%s\r"};
+char	mask[] = {" %c %d %d %d %d %s %d %d %s %d/%s\r"};
 
 
 prf("DataScan: Range: %s\r",spr("%6ld",shipclass[warsptr->shpclass].scanrange));
@@ -6513,7 +6512,7 @@ return (dotbuf);
 ** Spy Command                                                           **
 **************************************************************************/
 
-void  FUNC cmd_spy()
+void FUNC cmd_spy()
 
 {
 
@@ -6566,7 +6565,7 @@ outprfge(ALWAYS,usrnum);
 ** Jettison Command                                                      **
 **************************************************************************/
 
-void  FUNC cmd_jettison()
+void FUNC cmd_jettison()
 
 {
 int i;
@@ -6587,8 +6586,8 @@ prfmsg(FORMAT,"JETTISON");
 outprfge(ALWAYS,usrnum);
 }
 
-void  FUNC jettison(item)
-int     item;
+void FUNC jettison(item)
+int	item;
 
 {
 unsigned long amt;

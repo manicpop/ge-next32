@@ -234,9 +234,9 @@ side to side.
 
 UNIVWRAP {Does the Galaxy wrap around? NO} B
 
-This value controls how large the GEPLANET.DAT data file
+This value controls how large the MBMGEPLT.DAT data file
 will grow to. Each time a sector is "terraformed" the 
-GEPLANET.DAT database grows by the following formula; 
+MBMGEPLT.DAT database grows by the following formula; 
 space added = (number planets * 512) + 512
 
 In order to prevent your disk from filling up you can
@@ -245,7 +245,7 @@ Kbytes. When the maximum is reached no more planets will be
 created. Note: a 32,767 database will hold 65,535 planets
 and sectors. That should keep most players busy for awhile.
 
-MAXPLREC {Max size of GEPLANET.DAT in Kbytes: 32767} N 10 32767
+MAXPLREC {Max size of MBMGEPLT.DAT in Kbytes: 32767} N 10 32767
 
 This option controls the range of the Torpedo Lock-on
 function. It functions as a divisor to reduce the effective

@@ -26,8 +26,8 @@
   *************************************************************************/
 
 #define MESSAGE_H
-#define HSTSIZ   57
-#define TPCSIZ   51
+#define HSTSIZ 57
+#define TPCSIZ 51
 
 struct message {
     long msgno;

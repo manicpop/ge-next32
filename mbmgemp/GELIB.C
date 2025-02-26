@@ -62,8 +62,8 @@
 ** Determine the smallest of two complementary angles                    **
 **************************************************************************/
 
-unsigned  smallest(a1,a2)
-unsigned  a1,a2;
+unsigned smallest(a1,a2)
+unsigned a1,a2;
 
 {
 int a;
@@ -82,7 +82,7 @@ else
 **************************************************************************/
 
 double rndm(mod)
-double  mod;
+double mod;
 {
 
 static randmax = (double)RAND_MAX;
@@ -101,26 +101,26 @@ return(rand());
 ** Calculate ship bearing between two objects                            **
 **************************************************************************/
 
-double  cbearing(ptr1, ptr2, heading)
-COORD *ptr1,*ptr2;
-double heading;
+double cbearing(ptr1, ptr2, heading)
+COORD	*ptr1,*ptr2;
+double	heading;
 {
-double   vector(), absol(), normal();
-double   b;
+double	vector(), absol(), normal();
+double	b;
 
-	ptr1->xcoord += .000001;
-	ptr1->ycoord += .000001;
+ptr1->xcoord += .000001;
+ptr1->ycoord += .000001;
 
-	b =  vector(ptr1,ptr2);
+b =  vector(ptr1,ptr2);
 /*	sprintf(gechrbuf,"vector = %f",b);
 	logthis(gechrbuf);*/
 
-	b =  normal(360 - heading + b);
+b =  normal(360 - heading + b);
 /*	sprintf(gechrbuf,"normal = %f",b);
 	logthis(gechrbuf);*/
 
-	if (b > 180)
-		b = b-360;
+if (b > 180)
+	b = b-360;
 /*	sprintf(gechrbuf,"+-180 = %f",b);
 	logthis(gechrbuf);*/
 return (b);
@@ -132,12 +132,9 @@ return (b);
 **************************************************************************/
 
 double cdistance(ptr1,ptr2)
-COORD *ptr1,*ptr2;
+COORD	*ptr1,*ptr2;
 {
-double a, b, c;
-
-
-
+double	a, b, c;
 
 b = (ptr1->xcoord - ptr2->xcoord);
 
@@ -146,7 +143,6 @@ c = (ptr1->ycoord - ptr2->ycoord);
 b = absol(b);
 
 c = absol(c);
-
 
 a = sqrt((b*b) + (c*c));
 
@@ -158,11 +154,11 @@ return (a);
 **************************************************************************/
 
 double vector(ptr1,ptr2)
-COORD *ptr1, *ptr2;
+COORD	*ptr1, *ptr2;
 
 {
-double   a;
-double   angleb(),anglec(),normal();
+double	a;
+double	angleb(),anglec(),normal();
 
 if (ptr1->xcoord >= ptr2->xcoord && ptr1->ycoord <= ptr2->ycoord)
 	{
@@ -201,11 +197,11 @@ return(99999L);
 **************************************************************************/
 
 double angleb (ptr1, ptr2)
-COORD *ptr1, *ptr2;
+COORD	*ptr1, *ptr2;
 
 {
 
-double   da,db,dc, angle;
+double	da,db,dc,angle;
 
 da = cdistance(ptr1, ptr2);
 dc = absol(ptr1->xcoord - ptr2->xcoord);
@@ -231,13 +227,11 @@ return (angle);
 **************************************************************************/
 
 double anglec (ptr1, ptr2)
-COORD *ptr1, *ptr2;
+COORD	*ptr1, *ptr2;
 
 {
 
-double   da,db,dc, angle;
-
-
+double	da,db,dc,angle;
 
 da = cdistance(ptr1, ptr2);
 dc = absol(ptr1->xcoord - ptr2->xcoord);
@@ -263,7 +257,7 @@ return (angle);
 **************************************************************************/
 
 double normal (angle)
-double   angle;
+double	angle;
 {
 
 
