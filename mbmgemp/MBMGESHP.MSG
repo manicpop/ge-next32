@@ -5639,7 +5639,7 @@ S35CATK {Cybs will fire on this ship: NO} (S35TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 35 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S35NATK {Number of Cybs to pursue this ship: 1} (S35TYPE=USER,DROID) N 0 255
+S35NATK {Number of Cybs to pursue this ship: 0} (S35TYPE=USER,DROID) N 0 255
 
 Lowest class of user ship a class 35 Cybertron will pursue?
 
