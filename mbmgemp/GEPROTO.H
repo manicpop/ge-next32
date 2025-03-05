@@ -268,18 +268,19 @@
 /* gecybs.c */
 /*      76 */ void FUNC cyb_init P((WARSHP *ptr , int usrn , int class ));
 /*     257 */ void FUNC cyb_lives P((WARSHP *ptr , int usrn ));
-/*     433 */ int FUNC notclaimed P((WARSHP *ptr , int usrn ));
-/*     455 */ void FUNC cyb_annoy P((WARSHP *ptr , int usrn , int msgtype ));
-/*     516 */ void FUNC cyb_msg P((WARSHP *ptr , int usrn , int msgtype ));
-/*     537 */ void FUNC db_update P((WARSHP *ptr , int usrn ));
-/*     574 */ void FUNC cyb_attack P((WARSHP *ptr , int usrn , WARSHP *wptr , int zothusn ));
-/*     624 */ void FUNC cyb_lay_decoys P((WARSHP *ptr ));
-/*     645 */ void FUNC cyb_check_damage P((WARSHP *ptr , int usrn ));
-/*     676 */ void FUNC cyb_check_lockon P((WARSHP *ptr , int usrn ));
-/*     910 */ void FUNC cyb_won P((WARSHP *ptr , int usrn , WARSHP *wptr ));
-/*     922 */ void FUNC cyb_died P((WARSHP *ptr , int usrn , WARSHP *wptr ));
-/*     938 */ void FUNC cyb_cruise P((WARSHP *ptr , int call ));
-/*    1002 */ int FUNC cyb_pick_fight P((int usrn , int call ));
+/*     398 */ int FUNC notclaimed P((WARSHP *ptr , int usrn ));
+/*     420 */ void FUNC cyb_annoy P((WARSHP *ptr , int usrn , int msgtype ));
+/*     481 */ void FUNC cyb_msg P((WARSHP *ptr , int usrn , int msgtype ));
+/*     502 */ void FUNC db_update P((WARSHP *ptr , int usrn ));
+/*     539 */ void FUNC cyb_attack P((WARSHP *ptr , int usrn , WARSHP *wptr , int zothusn ));
+/*     589 */ void FUNC cyb_lay_decoys P((WARSHP *ptr ));
+/*     610 */ void FUNC cyb_check_damage P((WARSHP *ptr , int usrn ));
+/*     641 */ void FUNC cyb_check_lockon P((WARSHP *ptr , int usrn ));
+/*     875 */ void FUNC cyb_won P((WARSHP *ptr , int usrn , WARSHP *wptr ));
+/*     887 */ void FUNC cyb_died P((WARSHP *ptr , int usrn , WARSHP *wptr ));
+/*     903 */ void FUNC cyb_cruise P((WARSHP *ptr , int call ));
+/*     967 */ int FUNC cyb_pick_fight P((int usrn , int call ));
+/*    1023 */ void FUNC cyb_check_misl P((WARSHP *ptr ));
 
 /* gedroids.c */
 /*      73 */ void FUNC droid_init P((WARSHP *ptr , int usrn , int class ));

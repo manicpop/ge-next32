@@ -411,7 +411,7 @@ if (ptr->jammer == 0)
 			{
 			/* if still in range, flee */
 			ptr->speed2b = dr_topspeed;
-			ptr->head2b=(double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0) % 360);
+			ptr->head2b = normal(vector(&ptr->coord,&wptr->coord) + 180.0);
 			droid_annoy(ptr,zothusn);
 			}
 		else
@@ -495,7 +495,7 @@ if (ptr->jammer == 0)
 			if (wptr->cloak == 10)
 				ptr->head2b = rndm(359.9);
 			else
-				ptr->head2b = (double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0 + (rand() % 51 - 25)) % 360);
+				ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + 180.0 + (rand() % 51 - 25));
 			if (ddist < 30000)
 				droid_phaser(ptr,usrn,wptr);
 			}
@@ -573,7 +573,7 @@ if (ptr->jammer == 0)
 				if (wptr->cloak == 10)
 					ptr->head2b = rndm(359.9);
 				else
-					ptr->head2b = (double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0 + (rand() % 51 - 25)) % 360);
+					ptr->head2b = normal(vector(&ptr->coord, &(wptr->coord)) + 180.0 + (rand() % 51 - 25));
 				ptr->holdcourse = gernd()%15 + 10;
 				}
 			if (ddist < 30000 && !neutral(&ptr->coord) && wptr->cloak != 10)
@@ -650,7 +650,7 @@ if (ptr->jammer == 0)
 				if (wptr->cloak == 10)
 					ptr->head2b = rndm(359.9);
 				else
-					ptr->head2b = (double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0 + (rand() % 51 - 25)) % 360);
+					ptr->head2b = normal(vector(&ptr->coord, &(wptr->coord)) + 180.0 + (rand() % 51 - 25));
 				if (gernd()%2 == 0)
 					cyb_cruise(ptr,4);
 				else
@@ -789,12 +789,12 @@ if (ptr->jammer == 0)
 			else
 			if (ddist > 5000.0)
 				{
-				ptr->head2b = (double)((int)(vector(&ptr->coord, &(wptr->coord)) + (rand() % 51 - 25)) % 360);
+				ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + (rand() % 51 - 25));
 				ptr->speed2b = 990.0;
 				}
 			else
 				{
-				ptr->head2b = (double)((int)(vector(&ptr->coord, &(wptr->coord)) + (rand() % 51 - 25) + 180) % 360);
+				ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + (rand() % 51 - 25) + 180);
 				ptr->speed2b = ((int)(rndm(350.0)+150.0)/10)*10;
 				}
 			}
@@ -808,7 +808,7 @@ if (ptr->jammer == 0)
 			{
 			laymine(ptr,usrn,10);
 			ptr->holdcourse = 10;
-			ptr->head2b=(double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0) % 360);
+			ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + 180.0);
 			if (ptr->speed < 1000 && dr_topspeed >= 1000)
 				{
 				ptr->speed2b = 0.0;
@@ -898,7 +898,7 @@ if (ptr->jammer == 0)
 			{
 			if (ptr->freq[1] == 1 || (neutral(&ptr->coord) && ptr->freq[1] < 6))	/* go to Zygor */
 				{
-				ptr->head2b = normal(vector(&(ptr->coord),&neutsect));
+				ptr->head2b = normal(vector(&ptr->coord,&neutsect));
 				if (cdistance(&ptr->coord,&neutsect) > 1.5)
 					cyb_cruise(ptr,4);
 				else
@@ -939,7 +939,7 @@ if (ptr->jammer == 0)
 				{
 				if (cdistance(&ptr->coord,&neutsect) < univmax/3)
 					{
-					ptr->head2b = normal(vector(&(ptr->coord),&neutsect)+180);
+					ptr->head2b = normal(vector(&ptr->coord,&neutsect) + 180.0);
 					cyb_cruise(ptr,4);
 					}
 				else
@@ -965,7 +965,7 @@ if (ptr->jammer == 0)
 				if (wptr->cloak == 10)
 					ptr->head2b = rndm(359.9);
 				else
-					ptr->head2b = (double)((int)(vector(&ptr->coord, &(wptr->coord)) + (rand() % 71 - 35) + 180) % 360);
+					ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + (rand() % 71 - 35) + 180);
 				if (ptr->damage < 33)
 					ptr->speed2b = 990.0;
 				else

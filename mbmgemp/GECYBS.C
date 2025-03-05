@@ -263,9 +263,6 @@ int	usrn;
 
 WARSHP	*wptr;
 int	zothusn;
-int	i;
-
-MISSILE	*mptr;
 
 double	ddist;
 
@@ -273,9 +270,7 @@ double	ddist;
 if (!sameas(ptr->userid,warusroff(usrn)->userid))
 	geshocst(0,"GE:ERR:Cyb Names !=");
 
-i = usrn;
-
-sprintf(&cybname[7],"%d",i);
+sprintf(&cybname[7],"%d",usrn);
 
 logthis(spr("@cyb_lives %s",cybname));
 
@@ -380,41 +375,11 @@ else
 if (shipclass[ptr->shpclass].max_accel > 0)
 	{
 	cyb_check_damage(ptr,usrn);
+	cyb_check_misl(ptr);
 	cyb_check_lockon(ptr,usrn);
 	}
 
 ptr->energy = 50000L;
-
-/* if we are in hyperspace and fighting and missiles detected,
-	decide whether to flee or stop and raise shields */
-if (ptr->where == 1)
-	{
-	for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
-		{
-		if (mptr->distance > 20000 && d_topspeed/6.5 > mislsped && gernd()%2 == 0)
-			{
-			ptr->warncntr = FLEE;	/* don't send APPROACH again after returning from this */
-			ptr->speed2b = d_topspeed;
-			ptr->holdcourse = gernd()%5 + 5;
-			break;
-			}
-		else
-		if (mptr->distance > 0)
-			{
-			if (d_topspeed >= 990)
-				ptr->speed2b = 990;
-			else
-				ptr->speed2b = d_topspeed;
-			ptr->holdcourse = gernd()%5 + 5;
-			break;
-			}
-		}
-	}
-else
-	{
-	if (ptr->shieldstat != SHIELDDM)
-		shieldup(ptr,usrn);
-	}
 
 if (ptr->tick == 255)
 	{
@@ -870,9 +835,9 @@ else
 		if (cyb_fast(ptr))
 			ptr->speed = ptr->speed2b;
 		if (low_dist < 1.5)
-			ptr->head2b=(double)((int)(vector(&ptr->coord, &(wptr->coord)) + 180.0) % 360);
+			ptr->head2b = normal(vector(&ptr->coord,&wptr->coord) + 180.0);
 		else
-			ptr->head2b = vector(&ptr->coord,&(wptr->coord));
+			ptr->head2b = vector(&ptr->coord,&wptr->coord);
 		if (shipclass[wptr->shpclass].cybs_can_att == 0)
 			cyb_annoy(ptr,low_ship,IGNORE);
 		else
@@ -1053,4 +1018,33 @@ if (call == 1 && gernd()%((10-cattkd)*600) == 0)
 	return(TRUE);
 
 return(FALSE);
+}
+
+void FUNC cyb_check_misl(ptr)
+WARSHP	*ptr;
+
+/* if missiles detected, decide whether to flee or stop and raise shields */
+
+{
+
+MISSILE	*mptr;
+
+int	i;
+
+for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
+	{
+	if (mptr->distance > 20000 && ptr->holdcourse == 0)
+		{
+		ptr->warncntr = FLEE;	/* don't send APPROACH again after returning from this */
+		cyb_cruise(ptr,2);
+		break;
+		}
+	else
+	if (mptr->distance < 5000 && mptr->distance > 0 && ptr->shieldstat != SHIELDDM)
+		{
+		ptr->speed2b = 990;
+		ptr->holdcourse = 1;
+		break;
+		}
+	}
 }
