@@ -2133,10 +2133,10 @@ if (margc != 2 || (!sameas(margv[1],"nav") && !sameas(margv[1],"sys") && !sameas
 	return;
 	}
 
-energy = (unsigned)warsptr->energy +.5;
-damage = (unsigned)warsptr->damage +.5;
-speed = ((unsigned)warsptr->speed  +.5);
-heading = (int)(warsptr->heading+.5);
+energy	= (unsigned)warsptr->energy +.5;
+damage	= (unsigned)warsptr->damage +.5;
+speed	= ((unsigned)warsptr->speed  +.5);
+heading	= (int)(warsptr->heading+.5);
 
 prfmsg(REP01,shipclass[warsptr->shpclass].typename,warsptr->shipname);
 prfmsg(DASHES);
@@ -3924,16 +3924,10 @@ int FUNC attack_men(num)
 unsigned long num;
 {
 
-double r;
-int won = 0;
+double	r;
+int	won = 0;
 int	ii;
-unsigned long	i,
-					j,
-					left1,
-					left2,
-					kill1,
-					kill2,
-					ratio;
+unsigned long i, j, left1, left2, kill1, kill2,	ratio;
 
 /* take troops off ship */
 warsptr->items[I_TROOPS] -= num;
@@ -4089,20 +4083,13 @@ int FUNC attack_fig(num)
 unsigned long num;
 {
 
-double r;
-int won = 0;
-unsigned long	j,
-					left1,
-					left2,
-					kill1,
-					kill2,
-					ratio;
+double	r;
+int	won = 0;
+unsigned long j, left1, left2, kill1, kill2, ratio;
 
+float	fl1, fl2, fl3;
 
-float	fl1,fl2,fl3;
-
-
-int ii;
+int	ii;
 
 warsptr->items[I_FIGHTER] -= num;
 sprintf(gechrbuf,"%ld",num);
@@ -4645,10 +4632,10 @@ outprfge(ALWAYS,usrnum);
 }
 
 void FUNC buy(item)
-int item;
+int	item;
 {
-long amt,avail;
-long tot;
+long	amt,avail;
+long	tot;
 unsigned long ptot;
 
 if (plptr->userid[0] != 0)
@@ -5137,11 +5124,11 @@ outprfge(ALWAYS,usrnum);
 void FUNC cmd_sysop()
 {
 
-int i,j;
-long amt;
-int gotone;
+int	i,j;
+long	amt;
+int	gotone;
 
-WARSHP *ptr;
+WARSHP	*ptr;
 
 #ifdef PHARLAP
 if ((!syscmds) || (sysonly && !(hasmkey(SYSKEY))))
@@ -6627,6 +6614,4 @@ else
 	outprfge(ALWAYS,usrnum);
 	}
 }
-
-
 
