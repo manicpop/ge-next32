@@ -1,5 +1,5 @@
 [1;33;44mÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ[0m
-[1;33;44m³ [37mGALACTIC EMPIRE ge-next 0.1   [1;31;44mşşşşşşşşş What's new this release şşşşşşşşş  [1;33m³[0m
+[1;33;44m³ [37mGALACTIC EMPIRE ge-next 0.2   [1;31;44mşşşşşşşşş What's new this release şşşşşşşşş  [1;33m³[0m
 [1;33;44mÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ[0m
 [1;37m
 ge-next RELEASE NOTES
@@ -11,116 +11,138 @@ https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact with me thoughts and suggestions.
 
-=== 0.1 === 2024-09-26:
+=== 0.2 === in progress
 
-PLANETS:
-* All ships can now attack with troops. Attacking with fighters remains
-limited to certain classes of ships only.
-* Men now eat every planetary cycle as troops do, which didn't happen in
-GE classic although it was apparently the intended behavior. This obviously
-changes the amount of food that planet owners need to grow. You can set
-MENEAT in MBMGEMS.MSG to NO to revert to the Galactic Empire 3.2e behavior.
-* Default rate of food production raised by 1.5x since men are eating now.
-* If you reach the planetary maximum on an item, you will stop getting
-messages that you've reached the maximum once you set production for
-that item to 0.
-* Planetary cash and tax are capped at 4,294,967,295 and can no longer
-overflow.
-* When ADMINing a planet for the first time, all items automatically have
-their price set to base prices.
-* When ADMINing a planet that has been previously owned and abandoned,
-the exisiting settings are kept.
-* When editing an item on the admin screen, it will show you the existing
-value and you can now press enter to keep the current value.
+The main focus of 0.2 is NPC behavior:
+* A legacy Galactic Empire bug that keeps Cybs from pursuing you if you are
+  the only player logged in has be resolved.
+* The options NUMSHIPS and MAXDROIDS have been removed, as well as the routine
+  to create to random classes of NPCs to fill the game up to the amount of
+  NUMSHIPS. The game will create only the amount of NPCs you specify with the
+  MAKE options, and allocates memory for only that amount.
+* Four new Cybertron classes replace the Cybertrons and Cyberquads: the
+  Cyber-Interceptor, Cyber-Destroyer, Cyber-Cruiser, and Cyber-Dreadnought.
+  The Cyber-Base is still around.
+* New non-Cyb NPCs (droids) have been added, and existing ones reworked.
+* Some non-Cybertron NPCs will send a distress message if they are being
+  attacked by Cybertrons or users. If you destroy their attacker, you will
+  receive bonus points. They will also remember you helped them and treat you
+  accordingly in the future.
+* While an NPC is in distress, you won't be able to hit it with phasers
+  (unless you're the attacker), so that you don't actually take out the ship
+  you're trying to protect. If you want to attack the ship instead of rescuing
+  it, setting your weapons lock to that ship will override this behavior.
+* NPC numbering has been reworked. All Cybertrons are all named "Cybertron
+  IxNNNN" where I is the class of Cybertron (higher number, more powerful)
+  and NNNN is identifying number.
+* The Cybertrons now are assigned random shield and phaser classes, between
+  50 and 100% of the max specified in the configuration file.
+* Cybertrons will pursue other NPCs if their CATK and NATK values are set that
+  way (and users are in the game to see it).
+* Faction codes: New to the ship configuration is the faction code. Users
+  should always be set to 0, which will allow them to fire on anyone.
+  Cybertrons should always be set to 1, and other NPCs have different codes.
+  Faction codes higher than 0 can't damage other ships with the same code,
+  which will keep Cybertrons from destroying each other with phasers if they
+  are lined up in pursuit.
+* Non-Cybertron factions will remember if you have attacked them and will
+  respond accordingly in future encounters. Something to think about before
+  destroying that NPC minding its own business.
+* Loadout codes: Also new is the loadout code, which is used to identify the
+  various classes of droid ships, so that droids can be added, removed,
+  renamed, etc. This code will also be used for optional upgrades for user
+  ships (coming soon).
+* Cybertrons with a 0 acceleration rate (by default, only the Cyber-Base) are
+  now excluded from any routines that involve pursuing other ships. This
+  should fix several legacy bugs related to the Bases moving when they
+  shouldn't.
+* When entering the game or traveling through a wormhole, all current
+  Cybertron pursuits for that player are dropped and the closest new ones are
+  picked. This means when you enter the game, the closest Cybertrons to your
+  position are dispatched, and when you go through a wormhole, the Cybertrons
+  pursuing you will forget about you and the ones closest to your new
+  location will pursue. If you destroy a Cybertron pursuing you or it gives
+  up on you, the previous (somewhat) random behavior will still be used to
+  pick a new pursuer. A new sysop command, SYS ASSIGNCYBS, can be used to
+  trigger this behavior as well.
+* The amount of gold on a Cybertron is still random, but it is now skewed
+  toward larger amounts on bigger Cybertrons and smaller amounts on smaller
+  ones.
+* Cybertrons will now carry, and can use, zippers and missiles if they are
+  configured to do so.
+* The CYBNEW/DROIDNEW messages now display the actual bearing if the new ship
+  is out of the player's scanner range, and the sector if within range. Thanks
+  Dave Walton for the idea.
+* The toughness level of Cybertrons has expanded to 0 through 4, corresponding
+  to the five classes of Cybertron ships.
+* CYBWHOOPS (the ability for a Cybertron to be prone to failure) has been
+  removed in favor of the new toughness levels and random shield and phaser
+  levels.
+* GE_BE_NICE and GE_BE_EASY, the values that made the Cybertrons easier until
+  you accumulated a certain number of kills, have also been removed in favor
+  of these new levels.
+* NPCs can no longer travel at above their maximum specified warp (except for
+  Cybertrons in pursuit) or travel at fractional (non-integer) warp values.
+* Cybertrons in long-range pursuit (the "hyperwarp" mode) will now show
+  "??.??" for their speed when traveling at this speed, then immediately snap
+  into a "normal" speed when reaching their destination.
 
-ITEMS:
-* The BUY, SELL, and TRANSFER commands now take "ALL" and "MAX" as arguments
-in addition to numerical amounts. "ALL" is for all onboard or on a planet,
-whereas "MAX" will fill your ship.
-* The TRANSFER command now lets you specify "u" or "d" instead of typing out
-"up" or "down."
-* The PRICE command now properly shows the base price of an item when you
-own the planet.
-* The PRICE command will tell you the price of the specified amount of
-items even if you can't hold that many.
-* Several checks and improvements to how large amounts of items and weights
-are handled and displayed.
-
-NAVIGATION:
-* You can now use absolute rotation (@) with the WARP and IMPULSE commands. 
-* If your ship is in the process of rotating, and you enter a warp or
-impulse command without a heading change, the rotation in process will
-continue.
-* The acceleration routine has been modified to work with ships with
-acceleration rates under 1000 (e.g. Planetary Transport). 
-* Helm will announce the new sector when you go through a wormhole or use SYS
-GOTO.
-* Bug that showed "helm is damaged" (when it's not) if entering an invalid
-degree value with the WARP command fixed.
-* Orbit planet message will not try to display the name of an unnamed planet.
-* Your ship name will now display in messages such as the "entering
-hyperspace" message.
-* If you try to rotate to a heading that you are already heading, the helm
-will report you're already heading that heading.
-
-REPORTS:
-* All reports have been cleaned up with proper spacing and alignment.
-* Ships without phasers or shields don't list them in reports.
-* Warp engine damage, fire control damage, and phaser damage now listed in
-REP SYS.
-
-SCANS:
-* For planets, the population for planets you don't own is now represented as
-thousands, hundreds of thousands, millions, etc.
-* Mine stockpile size is shown instead of food.
-* If you are orbiting an unowned planet, the scan will show the entire
-inventory just like it does when you own it.
-* The amounts that are considered moderate and large stockpiles were raised.
-
-COMBAT:
-* If phasers are damaged, hyperphasers are also inoperable.
-* If phasers are damaged and you try to use them, a message will now be
-displayed indicating they are damaged instead of just saying they have
-insufficient power.
-* If you have enough torpedoes, mines, etc. deployed that you can't deploy
-any more, the error message will now tell you what the maximum is.
-
-MISC:
-* A brand new, much more readable, HELP CLASS screen.
-* SCANNAMES and SCANFULL settings are now ON by default when a new player
-enters. They can still be turned off.
-* Cash is now displayed as unsigned, meaning cash can be a value of up to
-4,294,967,295. The SELL command, NEW command, cash awarded after user kill,
-and tax collection from a planet now all have checks to make sure you don't
-exceed this amount.
-* If you've been traveling over the recommended warp speed long enough that
-your top speed has been lowered, and you change speed, you're now only
-lowered to the new top speed if you choose a speed over the new top speed.
-* Roster cleaned up and re-spaced so huge population values won't explode
-the columns. "ROS ALL" now also shows users with 0 score.
-* You can now enter "x" at the ship selection screen to go back to the main
-menu in case you decide you don't want to play after all.
-* Cleaned up how the galactic perimeter is established. You can now travel
-all the way to (default) 300 300, you are only bounced back after trying to
-pass that. If you have wraparound on, it now wraps to the correct sector
-(e.g. 300 to -300).
-* Changed the CYBNEW and DROIDNEW announcments to show the sector of the
-newly created ship, as opposed to the (fake) bearing.
-* Changed "spy" to be "spies" so it's plural like all other items. Also
-changed the amount of letters you have to use to buy/sell/ transfer spies
-to two, so you can now enter or "spy" or "spies."
-* If you are damaged by the enforcer planet or the galactic boundary, the
-message will display the actual level of damage applied.
-
-COMING IN FUTURE VERSIONS:
-* New bad guys and improved behavior
-* Refinements to planetary attack
-* Refinements to planetary item production
-* Refinements to combat
-* New capabilities for owned planets that can be purchased with planet cash
-(e.g. remote administration)
-* Lots of item balancing to keep long running games competitive
-* Much, much more
+Other stuff:
+* A new ordnance report was added (REP ORD). This will list all incoming and
+  outgoing projectiles as well as display how any mines and decoys you have
+  deployed.
+* The ship you have locked onto will be displayed with red highlights in the
+  range scans and ordnance reports.
+* Ships in distress will have green highlights.
+* The Sysop ship was removed. "Hidden" ships might return in future versions.
+* A bug that sometimes showed the wrong defaults in the planetary
+  administration menu has been resolved.
+* A bug that sometimes showed the wrong ship name in messages regarding decoys
+  and cloaking has been resolved.
+* If a ship bounces off the galactic perimeter, the size of the bounce
+  backwards is now determined by the speed the ship is traveling when it hits.
+  Ships will no longer be doubly damaged if they hit a corner (that is, cross
+  the X boundary and Y boundary at the same time), but will be bounced in both
+  directions. The ship will also be pointed directly toward sector 0 0 after
+  the bounce. This should keep NPCs from destroying themselves by repeatedly
+   running into the barrier.
+* If you destroy another ship while you are low on space, gold is now
+  prioritized, and you will collect as much as you can hold. You will also now
+  collect the entire amount of gold (space permitting) from the ship you
+  destroyed (all other items remain a random amount between 20% and 100% of
+  the ship's contents).
+* Damage factors (DAMF) have been set for each ship to make the larger and/or
+  more powerful ones more difficult to damage.
+* A phaser's effective damage is now factored by the DAMF value of the ship.
+  The size (cargo capacity) of the ship is no longer part of the equation,
+  bringing it into line with all other forms of damage. This should keep
+  freighters from being nearly impossible to damage with phasers.
+* A STOP command has been added, which can bring the ship to a complete stop
+  even if the helm is damaged. If the helm isn't damaged, it's the same as
+  entering WARP 0 or IMPULSE 0.
+* If you accidentally issue the maintenance command while maintenance is in
+  progress, you will be notified and not charged a second time.
+* There is now an message shown to all users when a player exits.
+* A WHO command was added (well, changed) to show a list of users online.
+* The way missiles function has been changed. You can no longer "shake off"
+  missiles, but you can outrun them. If you get far enough away from a
+  missile, it will lose its lockon (you can use the new REP ORD to see their
+  distance from you). Also, missiles' energy now decrease over time, so they
+  will eventually run out of energy and sputter out. Missiles can now be
+  charged between 2000 and 20000, drain your ship's flux by that complete
+  amount, and the speed and maximum damage of missiles have both been
+  increased to compensate for these changes (20000 is equivalent damage to
+  50000 in GE classic). Also, a default of 5000 is now used if you don't
+  specify an amount.
+* When torpedoes or missiles fail to reach their target, the user is now
+  notified.
+* Several legacy bugs that allowed a ship's flux pile to roll over and go
+  negative when out of flux pods have been fixed.
+* "ALL" now works with the ATTACK command.
+* Firing a phaser and not hitting anyone, getting hit by phaser with 0 damage,
+  unsuccessfully attempting to fire torpedoes or missiles, or being the target
+  of such an unsuccessful attempt will not set your "can't exit" timer.
+* If torpedoes or missiles are locked onto you, this WILL set your "can't
+  exit" timer.
 
 
-

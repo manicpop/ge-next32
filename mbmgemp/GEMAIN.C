@@ -74,11 +74,11 @@
 
 
 #ifdef GETRAINER
-#define VERSION	"ge-next 0.2beta1 Trainer"
+#define VERSION	"ge-next 0.2beta2 Trainer"
 #define GEHELP	"MBMG2HLP.MCV"
 #define GEMSG	"MBMG2MSG.MCV"
 #else
-#define VERSION	"ge-next 0.2beta1"
+#define VERSION	"ge-next 0.2beta2"
 #define GEHELP	"MBMGEHLP.MCV"
 #define GEMSG	"MBMGEMSG.MCV"
 #endif
@@ -562,7 +562,7 @@ cyb_class = 0;
 dr_class = 0;
 
 /* load the ship class table */
-geshmb		= opnmsg(geshipcl);
+geshmb = opnmsg(geshipcl);
 setmbk(geshmb);
 
 #define NCL 28
