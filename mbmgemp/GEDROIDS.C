@@ -108,32 +108,39 @@ initshp(droidname,class);
 memcpy(ptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
 sprintf(ptr->shipname,"%s%u\0",shipclass[class].npcprefx,usrn*usrn+gernd()%(2*usrn+1)+1000);
 
-if (shipclass[ptr->shpclass].loadout == 1 && univmax > 40)	/* Garbage Scows stay close to 0 0 */
+if (shipclass[ptr->shpclass].loadout == 1)	/* Garbage Scows stay close to 0 0 */
 	{
-	ptr->coord.xcoord = rndm(79.9)-39.8;
-        ptr->coord.ycoord = rndm(79.9)-39.8;
+	ptr->coord.xcoord = rndm((double)univmax/6);
+        ptr->coord.ycoord = rndm((double)univmax/6);
 	}
 else
-if (shipclass[ptr->shpclass].loadout == 4 && univmax > 60)	/* SCTs, a little more room */
+if (shipclass[ptr->shpclass].loadout == 4)	/* SCTs, a little more room */
 	{
-	ptr->coord.xcoord = rndm(119.9)-59.8;
-        ptr->coord.ycoord = rndm(199.9)-59.8;
+	ptr->coord.xcoord = rndm((double)univmax/4);
+        ptr->coord.ycoord = rndm((double)univmax/4);
+	}
+else
+if (shipclass[ptr->shpclass].loadout == 2 || shipclass[ptr->shpclass].loadout == 6)	/* TGs, GCFs */
+	{
+	ptr->coord.xcoord = rndm((double)univmax/2);
+        ptr->coord.ycoord = rndm((double)univmax/2);
 	}
 else
 if (shipclass[ptr->shpclass].loadout == 5 && univmax > 30)	/* SDDs, halfway between neut and barrier */
 	{
 	ptr->coord.xcoord = ((double)univmax/2.0)+(rndm(29.9)-14.8);
-	if (gernd()%2 == 0)
-		ptr->coord.xcoord *= -1.0;
         ptr->coord.ycoord = ((double)univmax/2.0)+(rndm(29.9)-14.8);
-	if (gernd()%2 == 0)
-		ptr->coord.ycoord *= -1.0;
 	}
 else
 	{
-	ptr->coord.xcoord = rndm((double)univmax*2.0)-(double)univmax;
-	ptr->coord.ycoord = rndm((double)univmax*2.0)-(double)univmax;
+	ptr->coord.xcoord = rndm((double)univmax);
+	ptr->coord.ycoord = rndm((double)univmax);
 	}
+if (gernd()%2 == 0)	/* put in all quadrants */
+	ptr->coord.xcoord *= -1.0;
+if (gernd()%2 == 0)
+	ptr->coord.ycoord *= -1.0;
+
 
 if(shipclass[ptr->shpclass].loadout == 2)	/* Murdonian Transport */
 	{
@@ -650,7 +657,7 @@ if (ptr->jammer == 0)
 				if (wptr->cloak == 10)
 					ptr->head2b = rndm(359.9);
 				else
-					ptr->head2b = normal(vector(&ptr->coord, &(wptr->coord)) + 180.0 + (rand() % 51 - 25));
+					ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + 180.0 + (rand() % 51 - 25));
 				if (gernd()%2 == 0)
 					cyb_cruise(ptr,4);
 				else
@@ -794,7 +801,7 @@ if (ptr->jammer == 0)
 				}
 			else
 				{
-				ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + (rand() % 51 - 25) + 180);
+				ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + (rand() % 51 - 25) + 180.0);
 				ptr->speed2b = ((int)(rndm(350.0)+150.0)/10)*10;
 				}
 			}
@@ -869,7 +876,7 @@ if (ptr->jammer == 0)
 				break;
 				}
 			}
-		if (ptr->freq[1] == 8)	/* if i just did it, put me at the back of the line */
+		if (ptr->freq[1] == 9)	/* if i just did it, put me at the back of the line */
 			{
 			ptr->freq[1] = 0;
 			ptr->tick = CYBTICKTIME*10;
@@ -896,9 +903,12 @@ if (ptr->jammer == 0)
 		++ptr->warncntr;
 		if (ptr->freq[1] != 0)
 			{
-			if (ptr->freq[1] == 1 || (neutral(&ptr->coord) && ptr->freq[1] < 6))	/* go to Zygor */
+			if (ptr->freq[1] == 1 || ptr->freq[1] == 2 || (neutral(&ptr->coord) && ptr->freq[1] < 7))	/* go to Zygor */
 				{
-				ptr->head2b = normal(vector(&ptr->coord,&neutsect));
+				if (ptr->freq[1] < 3)
+					ptr->head2b = normal(vector(&ptr->coord,&neutsect));
+				if (ptr->freq[1] == 1 && cdistance(&ptr->coord,&neutsect) < 8)	/* keep cybs from picking off ships right outside neutral zone */
+					ptr->freq[1] = 2;
 				if (cdistance(&ptr->coord,&neutsect) > 1.5)
 					cyb_cruise(ptr,4);
 				else
@@ -908,7 +918,7 @@ if (ptr->jammer == 0)
 				if (cdistance(&ptr->coord,&neutsect) > .025)
 					ptr->speed2b = 250;
 				else
-				if (ptr->freq[1] == 1)
+				if (ptr->freq[1] == 1 || ptr->freq[1] == 2)
 					{
 					ptr->speed2b = 0;
 					ptr->speed = ptr->speed2b;
@@ -916,26 +926,26 @@ if (ptr->jammer == 0)
 						ptr->damage -= 3.0;
 					else
 						{
-						ptr->freq[1] = 2;
+						ptr->freq[1] = 3;
 						ptr->damage = 0.0;
 						}
 					}
 				else
-				if (ptr->freq[1] > 1 || ptr->freq[1] < 5)	/* hang out a little longer */
+				if (ptr->freq[1] > 2 || ptr->freq[1] < 6)	/* hang out a little longer */
 					++ptr->freq[1];
-				if (ptr->freq[1] == 5)
+				if (ptr->freq[1] == 6)
 					{
 					droid_zyg_loadout(ptr);		/* reset ship contents */
 					ptr->head2b = rndm(359.9);
 					cyb_cruise(ptr,4);
-					ptr->freq[1] = 6;
+					ptr->freq[1] = 7;
 					}
 				}
 			else
-			if (ptr->freq[1] == 6 && cdistance(&ptr->coord,&neutsect) > 15)		/* get a little distance */
-				ptr->freq[1] = 7;
+			if (ptr->freq[1] == 7 && cdistance(&ptr->coord,&neutsect) > 15)		/* get a little distance */
+				ptr->freq[1] = 8;
 			else
-			if (ptr->freq[1] == 7)	/* go the other way for a bit then let another ship do it */
+			if (ptr->freq[1] == 8)	/* go the other way for a bit then let another ship do it */
 				{
 				if (cdistance(&ptr->coord,&neutsect) < univmax/3)
 					{
@@ -945,7 +955,7 @@ if (ptr->jammer == 0)
 				else
 					{
 					cyb_cruise(ptr,1);
-					ptr->freq[1] = 8;	/* done */
+					ptr->freq[1] = 9;	/* done */
 					}
 				}
 			}
