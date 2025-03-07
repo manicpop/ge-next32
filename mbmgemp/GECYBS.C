@@ -375,7 +375,8 @@ else
 if (shipclass[ptr->shpclass].max_accel > 0)
 	{
 	cyb_check_damage(ptr,usrn);
-	cyb_check_misl(ptr);
+	if (shipclass[ptr->shpclass].tough_factor > 1)	/* tougher/faster ships use missile avoidance logic */
+		cyb_check_misl(ptr);
 	cyb_check_lockon(ptr,usrn);
 	}
 
@@ -1036,6 +1037,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 	if (mptr->distance > 20000 && ptr->holdcourse == 0)
 		{
 		ptr->warncntr = FLEE;	/* don't send APPROACH again after returning from this */
+		ptr->head2b = rndm(359.9);
 		cyb_cruise(ptr,2);
 		break;
 		}
