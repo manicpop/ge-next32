@@ -2388,7 +2388,7 @@ if (sameas(margv[1],"ord"))
 		{
 		none = TRUE;
 		prfmsg(REP44);
-		for (zothusn = 0; zothusn < numships; zothusn++)
+		for (zothusn = 0; zothusn < nships; zothusn++)
 			{
 			if (ingegame(zothusn))
 				{
@@ -2420,7 +2420,7 @@ if (sameas(margv[1],"ord"))
 		{
 		none = TRUE;
 		prfmsg(REP45);
-		for (zothusn = 0; zothusn < numships; zothusn++)
+		for (zothusn = 0; zothusn < nships; zothusn++)
 			{
 			if (ingegame(zothusn))
 				{
