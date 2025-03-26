@@ -2556,7 +2556,7 @@ Class 15 damage factor, 100 is normal. 200 is twice as
 resilient, 77 is the minimum.
 Damage = damage / (SnnDAMF / 100)
 
-S15DAMF {Damage effect factor: 100} (S15TYPE#<NONE>) N 77 32767
+S15DAMF {Damage effect factor: 125} (S15TYPE#<NONE>) N 77 32767
 
 Class 15 faction code.
 0 for user ships. 1 for Cybertrons.
