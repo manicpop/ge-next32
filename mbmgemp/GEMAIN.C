@@ -2137,9 +2137,7 @@ WARSHP	*wptr;
 
 static int	ticktock1 = 0;
 static int	ticktock2 = 0;
-int		count,class;
-int		i,j,clscnt;
-
+int		count,class,clscnt,i;
 
 logthis("TICK:autorti entered");
 
@@ -2158,55 +2156,40 @@ logthis(spr("ticktock1 = %d -- ticktock2 = %d",ticktock1,ticktock2));
 if (ticktock2 >= 30 && ticktock1 < nships)
 	{
 	logthis("ticktock2 >=30 and ticktock1 < nships");
-	logthis("ticktock2 >=30 and ticktock1 < nships");
-	logthis("ticktock2 >=30 and ticktock1 < nships");
-	logthis("ticktock2 >=30 and ticktock1 < nships");
-	logthis("ticktock2 >=30 and ticktock1 < nships");
 	wptr=warshpoff(ticktock1);
 	zothusn=ticktock1;
 
 	if (wptr->status == GESTAT_AVAIL)
 		{
+		/* determine class of current slot */
+		clscnt = ticktock1 - nterms;
 		class = -1;
 		logthis("Chan Stat = GESTAT_AVAIL");
-		/* look through the classes for artificial classes */
 		for (i=0;i<tot_classes;++i)
 			{
 			if (shipclass[i].max_type == CLASSTYPE_CYBORG ||
 				shipclass[i].max_type == CLASSTYPE_DROID)
 				{
-				/* is this class filled */
-				clscnt = 0;
-				for (j=0;j<nships;++j)
-					{
-					/* is this a automatron and of this class */
-					if ((warshpoff(j))->status == GESTAT_AUTO
-						&& (warshpoff(j))->shpclass == i)
-						{
-						clscnt++;
-						}
-					}
-				logthis(spr("Class %d -- Count %d",i,clscnt));
-				/* is this class full? */
+				/* is this slot within class i */
 				if (clscnt < shipclass[i].tot_to_create)
 					{
-					/* NO - (i) is now set to the class to create */
 					class = i;
 					break;
 					}
+				/* no... check next class */
+				clscnt -= shipclass[i].tot_to_create;
 				}
 			}
 
 		logthis(spr("picked class - %d",class));
 
 		/* initialize the non-user ship areas */
-		if (class > -1)
+		if (class > -1 && shipclass[class].init_func != NULL)
 			{
 			logthis(spr("Calling init_func 4 cls %d",class));
 			logthis(spr("   Name: %s",shipclass[i].typename));
 
-			if (shipclass[class].init_func != NULL)
-				(*(shipclass[class].init_func))(wptr,zothusn,class);
+			(*(shipclass[class].init_func))(wptr,zothusn,class);
 			}
 		}
 
