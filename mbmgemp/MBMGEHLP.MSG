@@ -932,7 +932,7 @@ inventory, accounting, and deployed ordnance. Issue the command as follows:
           [1;37mreport sys [1;36m produces a systems report
           [1;37mreport inv [1;36m produces an inventory report
           [1;37mrep acc    [1;36m produces an accounting report
-          [1;37mrep ord    [1;36m produces a ordnance report
+          [1;37mrep ord    [1;36m produces an ordnance report
 [1;37m} T GE help report message
 
 HLPROS {

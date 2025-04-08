@@ -13,6 +13,9 @@ Please contact with me thoughts and suggestions.
 The main focus of 0.2 is NPC behavior:
 * A legacy Galactic Empire bug that keeps Cybs from pursuing you if you are
   the only player logged in has been resolved.
+* A legacy Galactic Empire bug that caused too many of certain classes of
+  Cybertrons to be created, causing other NPC classes to never be created,
+  has been resolved.
 * The options NUMSHIPS and MAXDROIDS have been removed, as well as the routine
   to create to random classes of NPCs to fill the game up to the amount of
   NUMSHIPS. The game will create only the amount of NPCs you specify with the

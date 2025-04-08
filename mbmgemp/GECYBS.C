@@ -758,7 +758,7 @@ else
 			cyb_annoy(ptr,low_ship,APPROACH);
 		}
 	else
-	if (low_dist >= 3)
+	if (low_dist >= 2.85+(.175*(d_topspeed/shipclass[ptr->shpclass].max_accel))) /* fast ships with low accel brake earlier */
 		{
 		if (cyb_fast(ptr))
 			{

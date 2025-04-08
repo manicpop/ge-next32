@@ -16,6 +16,9 @@ Please contact with me thoughts and suggestions.
 The main focus of 0.2 is NPC behavior:
 * A legacy Galactic Empire bug that keeps Cybs from pursuing you if you are
   the only player logged in has been resolved.
+* A legacy Galactic Empire bug that caused too many of certain classes of
+  Cybertrons to be created, causing other NPC classes to never be created,
+  has been resolved.
 * Four new Cybertron classes replace the Cybertrons and Cyberquads: the
   Cyber-Interceptor, Cyber-Destroyer, Cyber-Cruiser, and Cyber-Dreadnought.
   The Cyber-Base is still around.
