@@ -379,6 +379,9 @@ if (shipclass[ptr->shpclass].max_accel > 0)
 		cyb_check_misl(ptr);
 	cyb_check_lockon(ptr,usrn);
 	}
+else	/* cyberbases do not use check_lockon... so raise shields here */
+	if (ptr->shieldstat != SHIELDDM)
+		shieldup(ptr,usrn);
 
 ptr->energy = 50000L;
 
