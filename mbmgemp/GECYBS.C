@@ -105,7 +105,6 @@ if (!(geudb(GELOOKUP,cybname, &tmpusr)))
 	}
 
 waruptr = warusroff(usrn);
-warsptr = warshpoff(usrn);
 
 if (geudb(GELOOKUP,cybname, waruptr))
 	{
@@ -145,6 +144,8 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		logthis(spr("GE:INF:Add shp,cls=%d/%d",class,ptr->shpclass));
 		sprintf(ptr->shipname,"%s%u\0",shipclass[class].npcprefx,usrn*usrn+gernd()%(2*usrn+1)+1000);
 		logthis(spr("  Named: %s",ptr->shipname));
+
+		waruptr->kills = 0;	/* new cyb so clear this */
 
 		if (shipclass[ptr->shpclass].max_accel == 0 && univmax > 100)	/* make sure bases aren't too close to 0 0 */
 			{
