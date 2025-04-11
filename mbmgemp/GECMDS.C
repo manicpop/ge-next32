@@ -1371,9 +1371,7 @@ void FUNC cmd_missl()
 {
 
 int shpnum;
-
 unsigned energy;
-long eng_long;
 
 lockwarn = TRUE;
 
@@ -1384,7 +1382,7 @@ if (shipclass[warsptr->shpclass].max_missl == 0)
 	return;
 	}
 
-if (warsptr->cloak > 0 )
+if (warsptr->cloak > 0)
 	{
 	prfmsg(PCLOKUP,"The missile launcher is");
 	outprfge(ALWAYS,usrnum);
@@ -1392,9 +1390,7 @@ if (warsptr->cloak > 0 )
 	}
 
 if (warsptr->shieldstat == SHIELDUP)
-	{
 	shielddn(warsptr,usrnum);
-	}
 
 if (warsptr->items[I_MISSILE] == 0)
 	{
@@ -1418,17 +1414,17 @@ if (margc < 2)
 	}
 
 if (margc == 2)
-	eng_long = 5000;
+	energy = 5000;
 else
-	eng_long = atol(margv[2]);
-
-if (eng_long > 20000L)
-	eng_long = 20000L;
-
-if (eng_long < 2000L)
-	eng_long = 2000L;
-
-energy = (unsigned)eng_long;
+	{
+	if (atol(margv[2]) > 20000L)
+		energy = 20000;
+	else
+	if (atol(margv[2]) < 2000L)
+		energy = 2000;
+	else
+		energy = (unsigned)(atol(margv[2]));
+	}
 
 if (fluxstat(warsptr,usrnum,energy) == 0)
 	{
@@ -1445,7 +1441,7 @@ if (shpnum == usrnum)
 	outprfge(ALWAYS,usrnum);
 	}
 else
-if ( shpnum >= 0)
+if (shpnum >= 0)
 	{
 	if (neutral(&warsptr->coord))
 		{

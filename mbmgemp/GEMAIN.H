@@ -65,7 +65,6 @@
 #define NEUTRAL_Y 0
 
 #define ACCENGAMT 120		/* Acceleration energy usage                 */
-#define MOVENGMIN 3000
 #define MOVENGUSE 10
 
 #define PRELOAD 10		/* Phasor reload rate / tick                 */

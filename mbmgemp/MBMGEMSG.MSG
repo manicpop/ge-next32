@@ -2630,8 +2630,7 @@ MISDEST2 {***
 } T GE torpedo hit missile message
 
 NOFLUX {
-[0;37m[[0;31mWARNING![0;37m] The neutron flux pile is empty, and there are no flux pods on-board!
-Speed is limited to warp 1; shields and phasers are unavailable.[1;37m
+[0;37m[[0;31mWARNING![0;37m] The neutron flux pile is empty, and there are no flux pods on-board![1;37m
 } T GE out of power message
 
 LASTFLUX {

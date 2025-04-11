@@ -137,7 +137,6 @@
 /*    1466 */ void FUNC shieldstat P((WARSHP *ptr , int usrn ));
 /*    1498 */ void FUNC cloakstat P((WARSHP *ptr , int usrn ));
 /*    1535 */ void FUNC checkmines P((void ));
-/*    1638 */ int FUNC useenergy P((WARSHP *ptr , int usrn , int amount ));
 /*    1660 */ void FUNC checktm P((WARSHP *ptr , int usrn ));
 /*    1903 */ void FUNC acctm P((WARSHP *ptr , int usrn , int mt , unsigned int channel ));
 /*    1926 */ void FUNC cleartm P((int channel ));

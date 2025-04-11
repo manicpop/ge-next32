@@ -497,7 +497,7 @@ if (ptr->speed < ptr->speed2b)
 			usage = 0;
 		else
 			usage = ACCENGAMT;
-		if (useenergy(ptr,usrn,usage) == 1)
+		if (fluxstat(ptr,usrn,usage) == 1)
 			{
 			if ((int)(ptr->speed/accelrate) != (int)((ptr->speed + accelrate)/accelrate))
 				{
@@ -506,6 +506,7 @@ if (ptr->speed < ptr->speed2b)
 				outprfge(FILTER,usrn);
 				}
 			ptr->speed += accelrate;
+			ptr->energy -= usage;
 			}
 		else
 			{
@@ -806,14 +807,15 @@ if (ptr->speed > 0)
 				ptr->warncntr = 0;
 				}
 			}
-		useenergy(ptr,usrn,MOVENGUSE);
 
-		if (fluxstat(ptr,usrn,MOVENGMIN) == 0)
+		if (fluxstat(ptr,usrn,MOVENGUSE) == 0)
 			{
 			ptr->speed2b = 0;
 			prfmsg(MOVE4);
 			outprfge(FILTER,usrn);
 			}
+		else
+			ptr->energy -= MOVENGUSE;
 		}
 	/* Cybertrons ignore gravity */
 	if (ptr->where == 0 && ptr->status == GESTAT_USER)
@@ -1066,8 +1068,9 @@ if (ptr->phasr < 0)
 else
 if (ptr->phasr < 100)
 	{
-	if(useenergy(ptr,usrn,PENGUSE) == 1)
+	if (fluxstat(ptr,usrn,PENGUSE) == 1)
 		{
+		ptr->energy -= PENGUSE;
 		/* If phasers get to minimum fire power tell captain */
 		preload = (double)(ptr->phasrtype * PRELOAD);
 		/* If phaser goes from under to 100 in one step, just show one msg */
@@ -1512,9 +1515,7 @@ if (ptr->cloak > 0)
 		outrange(FILTER,&ptr->coord);
 		}
 	 else
-		{
-		ptr->energy = ptr->energy - clenguse;
-		}
+		ptr->energy -= clenguse;
 	 }
 else
 if (ptr->cloak < 0)
@@ -1630,28 +1631,6 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 		mptr->channel = 255; /* stomp on it - HARD */
 	}
 }
-
-/**************************************************************************
-** Use up energy and check functions                                     **
-**************************************************************************/
-
-int FUNC useenergy(ptr,usrn,amount)
-
-WARSHP	*ptr;
-int	usrn, amount;
-
-{
-usrn = usrn; /* avoid the warning */
-if (ptr->energy >= amount+500) /* fudge a bit */
-	{
-	ptr->energy -= amount;
-	return(1);
-	}
-else
-	return(0);
-}
-
-
 
 /**************************************************************************
 ** Check for incoming torpedoes or missiles & track decoys               **
