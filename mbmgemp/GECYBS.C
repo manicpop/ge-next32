@@ -125,6 +125,7 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		ptr->cybupdate = 100 + gernd()%20;
 		ptr->holdcourse = 0;
 		ptr->tick = CYBTICKTIME + gernd()%(CYBTICKTIME*5);
+		ptr->lastfired = -1;
 
 		/* SANITY CHECK */
 		if (shipclass[ptr->shpclass].max_type != CLASSTYPE_CYBORG)

@@ -1877,6 +1877,14 @@ if (ptr->cloak == 2)
 	prfmsg(CLOKUP,ptr->shipname);
 	outprfge(ALWAYS,usrn);
 	}
+
+/* clear lastfired and lock if npc longer exists */
+if (ptr->lastfired >= 0 && ptr->lastfired < nships && warshpoff(ptr->lastfired)->status == GESTAT_AVAIL)
+	ptr->lastfired = -1;
+
+if (ptr->lock >= 0 && ptr->lock < nships && warshpoff(ptr->lock)->status == GESTAT_AVAIL)
+	ptr->lock = -1;
+
 }
 
 void FUNC acctm(ptr,usrn,mt,channel)

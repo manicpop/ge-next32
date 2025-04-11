@@ -108,6 +108,8 @@ initshp(droidname,class);
 memcpy(ptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
 sprintf(ptr->shipname,"%s%u\0",shipclass[class].npcprefx,usrn*usrn+gernd()%(2*usrn+1)+1000);
 
+waruptr->kills = 0;     /* new droid so clear this */
+
 if (shipclass[ptr->shpclass].loadout == 1)	/* Garbage Scows stay close to 0 0 */
 	{
 	ptr->coord.xcoord = rndm((double)univmax/6);
