@@ -452,16 +452,17 @@ if ((msgtype == LOATTACK || msgtype == HIATTACK || msgtype == CYBTORP) && shipcl
 	msgtype = CYBBASEB;
 
 /* let some of these through on occasion */
-if ((msgtype == NEUTRAL || msgtype == IGNORE || msgtype == TAUNT) && gernd()%((shipclass[ptr->shpclass].tough_factor+1)*30) == 0)
+if ((msgtype == NEUTRAL || msgtype == IGNORE || msgtype == TAUNT || msgtype == CYBTORP || msgtype == LOATTACK) &&
+	gernd()%((shipclass[ptr->shpclass].tough_factor+1)*30) == 0)
 	ptr->warncntr = 255;
 
 /* otherwise don't do the same message twice in a row */
 if (ptr->warncntr == msgtype)
 	return;
 
-/* don't do any of these after each other */
-if ((ptr->warncntr == LOATTACK || ptr->warncntr == CYBTORP || ptr->warncntr == NEUTRAL || ptr->warncntr == IGNORE || ptr->warncntr == TAUNT)
-	&& (msgtype == LOATTACK || msgtype == CYBTORP || msgtype == NEUTRAL || msgtype == IGNORE || msgtype == TAUNT))
+/* don't (usually) do any of these types twice in a row */
+if ((ptr->warncntr == TAUNT || ptr->warncntr == CYBTORP || ptr->warncntr == LOATTACK) &&
+	(msgtype == TAUNT || msgtype == CYBTORP || msgtype == LOATTACK))
 	return;
 
 /* if you're fleeing, be quiet after flee message */
@@ -551,13 +552,14 @@ int	zothusn;	/* users ship number*/
 
 {
 
-int i,j;
+int i,j,acted;
 
 if (ptr->phasr >= PMINFIRE && gernd()%(4-(shipclass[ptr->shpclass].tough_factor/2)) == 0)
 	{
 	ptr->degrees = (int)(cbearing(&ptr->coord,&wptr->coord,ptr->heading)+.5);
 	ptr->percent = 2;
 	firep(ptr,usrn);
+	acted = 1;
 	}
 
 /* fire torpedoes or missiles at the fool */
@@ -567,11 +569,13 @@ for (i=0;i<j;++i)
 	{
 	if (i>0)
 		lockwarn = FALSE;
-	if (gernd()%10 == 0 && shipclass[ptr->shpclass].max_missl && ptr->items[I_MISSILE] > 0)
-		misl(ptr,usrn,zothusn,(shipclass[ptr->shpclass].tough_factor+1)*4000,0);
+	if (gernd()%10 == 0 && shipclass[ptr->shpclass].max_missl && ptr->items[I_MISSILE] > 0 &&
+		misl(ptr,usrn,zothusn,(shipclass[ptr->shpclass].tough_factor+1)*4000,0) == 1)
+		acted = 1;
 	else
-		if (gernd()%2 == 0 && shipclass[ptr->shpclass].max_torps && ptr->items[I_TORPEDO] > 0 && torp(ptr,usrn,zothusn) == 1)
-			cyb_annoy(ptr,zothusn,CYBTORP);
+		if (gernd()%2 == 0 && shipclass[ptr->shpclass].max_torps && ptr->items[I_TORPEDO] > 0 &&
+			torp(ptr,usrn,zothusn) == 1)
+			acted = 2;
 	}
 
 /* launch Zippers if needed */
@@ -580,9 +584,19 @@ if (gernd()%10 == 0 && shipclass[ptr->shpclass].has_zip && ptr->items[I_ZIPPERS]
 	{
 	zip(ptr,usrn);
 	wptr->minesnear = FALSE;
+	acted = 1;
 	/* get the hell out of here ...then come back */
 	cyb_cruise(ptr,3);
 	}
+
+if (acted == 1)
+	cyb_annoy(ptr,zothusn,LOATTACK);
+else
+if (acted == 2)
+	cyb_annoy(ptr,zothusn,CYBTORP);
+else
+	cyb_annoy(ptr,zothusn,TAUNT);
+
 }
 
 /**************************************************************************
@@ -825,7 +839,6 @@ else
 				ptr->speed = ptr->speed2b;
 			ptr->head2b = rndm(359.9);
 			}
-		cyb_annoy(ptr,low_ship,TAUNT);
 		/* DEBUG
 		prf("***\r%s, IMPULSE, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
 			spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
