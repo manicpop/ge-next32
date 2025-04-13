@@ -1320,7 +1320,7 @@ if (warsptr->shieldstat == SHIELDUP)
 	}
 }
 
-void FUNC torp(ptr,usrn,shpnum)
+int FUNC torp(ptr,usrn,shpnum)
 WARSHP	*ptr;
 int	usrn;
 int	shpnum;
@@ -1334,7 +1334,7 @@ if (ptr->damage >= 100)
 	{
 	prfmsg(FRCTER);
 	outprfge(ALWAYS,usrn);
-	return;
+	return(0);
 	}
 
 if (lockon(ptr,0,shpnum,usrn) == 1)
@@ -1354,12 +1354,14 @@ if (lockon(ptr,0,shpnum,usrn) == 1)
 			wptr->ltorps[i].channel = (unsigned char)usrn;
 			wptr->cantexit = FIRETICKS;
 			ptr->cantexit = FIRETICKS;
-			return;
+			return(1);
 			}
 		}
 	prfmsg(TORMANY,MAXTORPS);
 	outprfge(FILTER,usrn);
+	return(0);
 	}
+return(0);
 }
 
 /**************************************************************************
@@ -1464,7 +1466,7 @@ if (warsptr->shieldstat == SHIELDUP)
 	}
 }
 
-void FUNC misl(ptr,usrnum,shpnum,energy,eng_flu)
+int FUNC misl(ptr,usrnum,shpnum,energy,eng_flu)
 WARSHP	*ptr;
 int	usrnum, shpnum;
 unsigned energy, eng_flu;
@@ -1477,7 +1479,7 @@ if (ptr->damage >= 100)
 	{
 	prfmsg(FRCTER);
 	outprfge(ALWAYS,usrnum);
-	return;
+	return(0);
 	}
 
 if (lockon(ptr,1,shpnum,usrnum) == 1)
@@ -1499,12 +1501,14 @@ if (lockon(ptr,1,shpnum,usrnum) == 1)
 			wptr->lmissl[i].energy = energy;
 			wptr->cantexit = FIRETICKS;
 			ptr->cantexit = FIRETICKS;
-			return;
+			return(1);
 			}
 		}
 	prfmsg(MISMANY,MAXMISSL);
 	outprfge(FILTER,usrnum);
+	return(0);
 	}
+return(0);
 }
 
 int FUNC lockon(ptr,type,ship,usrn)
@@ -1583,8 +1587,11 @@ if (wptr->cloak < 10 && (dist*10000.0) < (double)shipclass[warsptr->shpclass].sc
 			{
 			prfmsg(LOCK3,shpltr(usrn,ship));
 			outprfge(FILTER,usrn);
-			prfmsg(LOCK4,shpltr(ship,usrn));
-			outprfge(FILTER,ship);
+			if (warshpoff(usrn)->status == GESTAT_USER)
+				{
+				prfmsg(LOCK4,shpltr(ship,usrn));
+				outprfge(FILTER,ship);
+				}
 			}
 		lockwarn = TRUE;
 		return(0);
@@ -3331,8 +3338,8 @@ int i,j;
 int shp;
 int ff;
 
-ff		=	0;
-shp	=	0;
+ff = 0;
+shp = 0;
 
 sptr = &scantab[usrnum];
 

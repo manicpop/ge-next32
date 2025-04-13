@@ -190,9 +190,9 @@
 /*     981 */ void FUNC firep P((WARSHP *ptr , int usrn ));
 /*    1125 */ void FUNC firehp P((WARSHP *ptr , int usrn ));
 /*    1237 */ void FUNC cmd_torp P((void ));
-/*    1323 */ void FUNC torp P((WARSHP *ptr , int usrn , int shpnum ));
+/*    1323 */ int FUNC torp P((WARSHP *ptr , int usrn , int shpnum ));
 /*    1369 */ void FUNC cmd_missl P((void ));
-/*    1471 */ void FUNC misl P((WARSHP *ptr , int usrn , int shpnum , unsigned energy, unsigned eng_flu ));
+/*    1471 */ int FUNC misl P((WARSHP *ptr , int usrn , int shpnum , unsigned energy, unsigned eng_flu ));
 /*    1514 */ int FUNC lockon P((WARSHP *ptr , int type , int ship , int usrn ));
 /*    1605 */ int FUNC findshp P((char *ptr , int type ));
 /*    1698 */ void FUNC zaphim P((WARSHP *ptr , int usrn ));

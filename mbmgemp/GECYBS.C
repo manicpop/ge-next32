@@ -321,11 +321,11 @@ if (ptr->jammer == 0)
 					/* if target is NPC, and not traveling to neutral zone or is already targeting me */
 					((wptr->status == GESTAT_AUTO && ((wptr->freq[1] < 2 || wptr->freq[1] > 7) || wptr->cybmine == usrn)
 					/* ...and is attackable class and i've already targeted it or decide to do so */
-					&& (shipclass[wptr->shpclass].cybs_can_att && (ptr->cybmine == zothusn || cyb_pick_fight(zothusn,0))))) ||
+					&& (shipclass[wptr->shpclass].cybs_can_att && (ptr->cybmine == zothusn || cyb_pick_fight(zothusn,0)))) ||
 					/* if target is user, and attackable class... */
 					(wptr->status == GESTAT_USER && (shipclass[wptr->shpclass].cybs_can_att ||
 					/* ...or i've fired recently or my target has fired recently or gets too close to me */
-					 ptr->cantexit > 0 || wptr->cantexit > 0 || ddist < (tooclose+rndm(tooclose)))))
+					 ptr->cantexit > 0 || wptr->cantexit > 0 || ddist < (tooclose+rndm(tooclose))))))
 						{
 						if (wptr->where == 1)
 							{
@@ -447,6 +447,10 @@ if (usrn != ptr->cybmine)
 	return;
 	}
 
+/* add in and increase likelihood of base battle messages */
+if ((msgtype == LOATTACK || msgtype == HIATTACK || msgtype == CYBTORP) && shipclass[ptr->shpclass].max_accel == 0 && gernd()%2 == 0)
+	msgtype = CYBBASEB;
+
 /* let some of these through on occasion */
 if ((msgtype == NEUTRAL || msgtype == IGNORE || msgtype == TAUNT) && gernd()%((shipclass[ptr->shpclass].tough_factor+1)*30) == 0)
 	ptr->warncntr = 255;
@@ -459,10 +463,6 @@ if (ptr->warncntr == msgtype)
 if ((ptr->warncntr == LOATTACK || ptr->warncntr == CYBTORP || ptr->warncntr == NEUTRAL || ptr->warncntr == IGNORE || ptr->warncntr == TAUNT)
 	&& (msgtype == LOATTACK || msgtype == CYBTORP || msgtype == NEUTRAL || msgtype == IGNORE || msgtype == TAUNT))
 	return;
-
-/* add in and increase likelihood of base battle messages */
-if ((msgtype == LOATTACK || msgtype == HIATTACK) && shipclass[ptr->shpclass].max_accel == 0 && gernd()%2 == 0)
-	msgtype = CYBBASEB;
 
 /* if you're fleeing, be quiet after flee message */
 if (ptr->holdcourse > 0)
@@ -567,14 +567,11 @@ for (i=0;i<j;++i)
 	{
 	if (i>0)
 		lockwarn = FALSE;
-	if (gernd()%10 == 0 && shipclass[ptr->shpclass].max_missl && (ptr->items[I_MISSILE] > 0))
+	if (gernd()%10 == 0 && shipclass[ptr->shpclass].max_missl && ptr->items[I_MISSILE] > 0)
 		misl(ptr,usrn,zothusn,(shipclass[ptr->shpclass].tough_factor+1)*4000,0);
 	else
-		if (gernd()%2 == 0 && shipclass[ptr->shpclass].max_torps && (ptr->items[I_TORPEDO] > 0))
-			{
+		if (gernd()%2 == 0 && shipclass[ptr->shpclass].max_torps && ptr->items[I_TORPEDO] > 0 && torp(ptr,usrn,zothusn) == 1)
 			cyb_annoy(ptr,zothusn,CYBTORP);
-			torp(ptr,usrn,zothusn);
-			}
 	}
 
 /* launch Zippers if needed */
