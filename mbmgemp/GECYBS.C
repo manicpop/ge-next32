@@ -317,7 +317,7 @@ if (ptr->jammer == 0)
 				if (shipclass[ptr->shpclass].max_accel == 0 && ddist < (double)shipclass[wptr->shpclass].scanrange)
 					cyb_annoy(ptr,zothusn,CYBBASEA);
 				/* in range, and target not in neutral zone, AND... */
-				if (ddist < 30000.0 && !neutral(&wptr->coord) &&
+				if (ddist < 30000.0+((double)shipclass[ptr->shpclass].tough_factor * 2000.0) && !neutral(&wptr->coord) &&
 					/* if target is NPC, and not traveling to neutral zone or is already targeting me */
 					((wptr->status == GESTAT_AUTO && ((wptr->freq[1] < 2 || wptr->freq[1] > 7) || wptr->cybmine == usrn)
 					/* ...and is attackable class and i've already targeted it or decide to do so */
@@ -352,7 +352,6 @@ if (ptr->jammer == 0)
 						if (ptr->where == 0)
 							{
 							cyb_attack(ptr,usrn,wptr,zothusn);
-							cyb_annoy(ptr,zothusn,LOATTACK);
 							if (shipclass[ptr->shpclass].has_decoy && ptr->items[I_DECOYS] > 0)
 								cyb_lay_decoys(ptr);
 							}
@@ -376,7 +375,8 @@ else
 
 if (shipclass[ptr->shpclass].max_accel > 0)
 	{
-	cyb_check_damage(ptr,usrn);
+	if (ptr->cybmine < nships)
+		cyb_check_damage(ptr,usrn);
 	if (shipclass[ptr->shpclass].tough_factor > 1)	/* tougher/faster ships use missile avoidance logic */
 		cyb_check_misl(ptr);
 	cyb_check_lockon(ptr,usrn);
@@ -441,7 +441,7 @@ if (usrn == ptr->cybmine && msgtype == CYBBASEA)
 /* bypass logic, use simple random, and don't change warncntr */
 if (usrn != ptr->cybmine)
 	{
-	if (((msgtype == LOATTACK || msgtype == HIATTACK) && gernd()%12 == 0) ||
+	if (((msgtype == LOATTACK || msgtype == HIATTACK || msgtype == TAUNT) && gernd()%12 == 0) ||
 		((msgtype == CYBBASEA || msgtype == CYBTORP) && gernd()%7 == 0))
 		cyb_msg(ptr,usrn,msgtype);
 	return;
@@ -452,18 +452,22 @@ if ((msgtype == LOATTACK || msgtype == HIATTACK || msgtype == CYBTORP) && shipcl
 	msgtype = CYBBASEB;
 
 /* let some of these through on occasion */
-if ((msgtype == NEUTRAL || msgtype == IGNORE || msgtype == TAUNT || msgtype == CYBTORP || msgtype == LOATTACK) &&
-	gernd()%((shipclass[ptr->shpclass].tough_factor+1)*30) == 0)
+if ((msgtype == NEUTRAL || msgtype == IGNORE) &&
+	gernd()%(16+(shipclass[ptr->shpclass].tough_factor*2)) == 0)	/* adjust for tougher ships going faster */
 	ptr->warncntr = 255;
 
 /* otherwise don't do the same message twice in a row */
 if (ptr->warncntr == msgtype)
 	return;
 
-/* don't (usually) do any of these types twice in a row */
+/* throttle impulse battle msgs */
 if ((ptr->warncntr == TAUNT || ptr->warncntr == CYBTORP || ptr->warncntr == LOATTACK) &&
 	(msgtype == TAUNT || msgtype == CYBTORP || msgtype == LOATTACK))
-	return;
+	if (gernd()%(6+(shipclass[ptr->shpclass].tough_factor)) != 0)
+		{
+		ptr->warncntr = msgtype;
+		return;
+		}
 
 /* if you're fleeing, be quiet after flee message */
 if (ptr->holdcourse > 0)
@@ -480,7 +484,7 @@ if (ptr->warncntr == FLEE && msgtype == APPROACH)
 ptr->warncntr = msgtype;
 
 /* show some messages always, the rest sometimes */
-if (msgtype == FLEE || msgtype == APPROACH || gernd()%4 == 0)
+if (msgtype == FLEE || msgtype == APPROACH || gernd()%3 == 0)
 	cyb_msg(ptr,usrn,msgtype);
 
 }
@@ -553,6 +557,8 @@ int	zothusn;	/* users ship number*/
 {
 
 int i,j,acted;
+
+acted = 0;
 
 if (ptr->phasr >= PMINFIRE && gernd()%(4-(shipclass[ptr->shpclass].tough_factor/2)) == 0)
 	{
@@ -641,12 +647,13 @@ if (ptr->cybmine < nships && ptr->damage > CYB_MINDAM && ((gernd()%10 == 0) || p
 		&& ptr->items[I_JAMMERS] > 0
 		&& gernd()%40 == 0)
 		jam(ptr,usrn);
-
+	if (ptr->holdcourse == 1)
+		ptr->cybmine = 255;
 	if (ptr->holdcourse == 0)
 		{
-		cyb_cruise(ptr,2);
-		if (ptr->cybmine < nterms && ingegame(ptr->cybmine))
-			cyb_annoy(ptr,ptr->cybmine,FLEE);
+		cyb_annoy(ptr,ptr->cybmine,FLEE);
+		ptr->head2b = normal(vector(&ptr->coord,&warshpoff(ptr->cybmine)->coord) + 180.0);
+		cyb_cruise(ptr,3);
 		}
 	}
 }
@@ -970,9 +977,9 @@ else
 	}
 
 if (call == 2)
-	ptr->holdcourse = gernd()%8 + 4;
+	ptr->holdcourse = gernd()%10 + 6;
 if (call == 3)
-	ptr->holdcourse = gernd()%15 + 10;
+	ptr->holdcourse = gernd()%18 + 12;
 }
 
 /**************************************************************************
