@@ -3751,7 +3751,7 @@ SYSNP {
 } T GE sysop no multiply message
 
 SYSACY {
-[1;36mClosest Cybertrons assigned..[1;37m
+[1;36mClosest Cybertrons assigned.[1;37m
 } GE sysop assign cybs message
 
 MAIL1 {

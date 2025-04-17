@@ -5449,6 +5449,8 @@ else
 if (sameas("assigncybs",margv[1]) && margc == 2)
 	{
 	assign_cybs(usrnum,0);
+	prfmsg(SYSACY);
+	outprfge(ALWAYS,usrnum);
 	return;
 	}
 else
