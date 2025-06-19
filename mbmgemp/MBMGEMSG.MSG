@@ -3758,130 +3758,148 @@ The message was garbled beyond reconstruction / type - %d
 } T GE mail 3
 
 MESG02 {
-Distress message from %s in sector %d %d, they were attacked by 
-Commander %s in the %s with %s troops.
+Distress message from %s in sector %d %d, they
+were attacked by Commander %s in the
+%s with %s troops.
  
 They successfully defended the planet.
 } T GE mesg 02
 
 
 MESG03 {
-Distress message from %s in sector %d %d, they were attacked by 
-Commander %s in the %s with %s troops. 
+Distress message from %s in sector %d %d, they
+were attacked by Commander %s in the
+%s with %s troops. 
 
 They have surrendered the planet.
 } T GE mesg 03
 
 
 MESG04 {
-Distress message from %s in sector %d %d, they were attacked by 
-Commander %s in the %s with %s fighters. 
+Distress message from %s in sector %d %d, they
+were attacked by Commander %s in the
+%s with %s fighters. 
 
 They successfully defended the planet.
 } T GE mesg 04
 
 
 MESG05 {
-Distress message from %s in sector %d %d, they were attacked by 
-Commander %s in the %s with %s fighters. 
+Distress message from %s in sector %d %d, they
+were attacked by Commander %s in the
+%s with %s fighters. 
 
 They have surrendered the planet.
 } T GE mesg 05
 
 
 MESG06 {
-Distress message from %s in sector %d %d, the food supply is 
-extremely low and %s troops have been lost.
+Distress message from %s in sector %d %d, the food
+supply is extremely low and %s troops have been lost.
 } T GE mesg 06
 
 
 MESG07 {
-Distress message from %s in sector %d %d, the food supply is 
-extremely low and %s men been lost.
+Distress message from %s in sector %d %d, the food
+supply is extremely low and %s men been lost.
 } T GE mesg 07
 
 
 MESG08 {
-Message from %s in sector %d %d, the population of men has reached the
-maximum sustainable on this planet. Population now %s.
+Message from %s in sector %d %d, the population of
+men has reached the maximum sustainable on this planet. Population now
+%s.
 } T GE mesg 08
 
 
 MESG09 {
-Message from %s in sector %d %d, there are no more facilities for storing
-missiles, the missile production has been suspended at %s.
+Message from %s in sector %d %d, there are no
+more facilities for storing missiles, the missile production has been
+suspended at %s.
 } T GE mesg 09
 
 
 MESG10 {
-Message from %s in sector %d %d, there are no more facilities for storing
-torpedoes, the torpedo production has been suspended at %s.
+Message from %s in sector %d %d, there are no
+more facilities for storing torpedoes, the torpedo production has been
+suspended at %s.
 } T GE mesg 10
 
 
 MESG11 {
-Message from %s in sector %d %d, there are no more facilities for storing
-ion cannons, the ion cannon production has been suspended at %s.
+Message from %s in sector %d %d, there are no
+more facilities for storing ion cannons, the ion cannon production has
+been suspended at %s.
 } T GE mesg 11
 
 
 MESG12 {
-Message from %s in sector %d %d, there are no more facilities for storing
-flux pods, the flux pod production has been suspended at %s.
+Message from %s in sector %d %d, there are no
+more facilities for storing flux pods, the flux pod production has
+been suspended at %s.
 } T GE mesg 12
 
 
 MESG13 {
-Message from %s in Sector %d %d, there are no more facilities for storing
-food supplies, the food production has been suspended at %s.
+Message from %s in Sector %d %d, there are no
+more facilities for storing food supplies, the food production has
+been suspended at %s.
 } T GE mesg 13
 
 
 MESG14 {
-Message from %s in sector %d %d, there are no more support facilities for
-fighters, the fighter production has been suspended at %s.
+Message from %s in sector %d %d, there are no
+more support facilities for fighters, the fighter production has been
+suspended at %s.
 } T GE mesg 14
 
 
 MESG15 {
-Message from %s in sector %d %d, there are no more facilities for storing
-decoys, the decoy production has been suspended at %s.
+Message from %s in sector %d %d, there are no
+more facilities for storing decoys, the decoy production has been
+suspended at %s.
 } T GE mesg 15
 
 
 MESG16 {
-Message from %s in sector %d %d, there are no more facilities for housing
-troops, the training has been suspended at %s troops in active duty.
+Message from %s in sector %d %d, there are no
+more facilities for housing troops, the training has been suspended
+at %s troops in active duty.
 } T GE mesg 16
 
 
 MESG17 {
-Message from %s in sector %d %d, there are no more facilities for storing
-zippers, the zipper production has been suspended at %s.
+Message from %s in sector %d %d, there are no
+more facilities for storing zippers, the zipper production has been
+suspended at %s.
 } T GE mesg 17
 
 
 MESG18 {
-Message from %s in sector %d %d, there are no more facilities for storing
-jammers, the jammer production has been suspended at %s.
+Message from %s in sector %d %d, there are no
+more facilities for storing jammers, the jammer production has been
+suspended at %s.
 } T GE mesg 18
 
 
 MESG19 {
-Message from %s in sector %d %d, there are no more facilities for storing
-mines, the mines production has been suspended at %s.
+Message from %s in sector %d %d, there are no
+more facilities for storing mines, the mines production has been
+suspended at %s.
 } T GE mesg 19
 
 
 MESG19A {
-Message from %s in sector %d %d, there are no more facilities for storing
-gold, the gold mining has been suspended at %s.
+Message from %s in sector %d %d, there are no
+more facilities for storing gold, the gold mining has been suspended
+at %s.
 } T GE mesg 19A
 
 
 MESG19B {
-Message from %s in sector %d %d, the PIA (Planetary Intelligence Agency)
-has closed enrollment for its operative training facility at %s agents.
+Message from %s in sector %d %d, the PIA
+(Planetary Intelligence Agency) has closed enrollment for its
+operative training facility at %s agents.
 } T GE mesg 19b
 
 
@@ -3891,9 +3909,9 @@ Production report from %s in sector %d %d
 
 
 MESG30 {
-Distress message from %s in sector %d %d, the local population
-has revolted and overpowered our troops. %s troops joined the
-revolt, the rest were lost.
+Distress message from %s in sector %d %d, the
+local population has revolted and overpowered our troops.
+%s troops joined the revolt, the rest were lost.
 } T GE mesg 30
 
 
