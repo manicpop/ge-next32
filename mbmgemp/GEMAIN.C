@@ -1853,17 +1853,17 @@ else
 		{
 		if (fpos == 0)
 			{
-			agebtv(&planet, &intkey, 2);
-			fpos = absbtv();
+			agebtv(&planet, &intkey, 2);	/* acquire first planet record */
+			fpos = absbtv();		/* save position for next time through */
 			}
 		else
-			gabbtv(&planet, fpos, 2);
+			gabbtv(&planet, fpos, 2);	/* get the planet we found last time */
 
 		sprintf(gechrbuf,"%lu",fpos);
 
 		if (planet.xsect == 0 && planet.ysect == 0 && planet.plnum == 1)
 			{
-			logthis(spr("updating Zygor (%s)\r",gechrbuf));
+			logthis(spr("updating Zygor (%s)",gechrbuf));
 			plptr = &planet;
 			update_plan_1();
 			planet.plantimesave = plantime;
@@ -1871,14 +1871,14 @@ else
 		else
 		if (planet.xsect == 0 && planet.ysect == 0 && planet.plnum == 2)
 			{
-			logthis(spr("updating T-Station (%s)\r",gechrbuf));
+			logthis(spr("updating T-Station (%s)",gechrbuf));
 			plptr = &planet;
 			update_plan_2();
 			}
 		else
 		if (planet.xsect == 0 && planet.ysect == 0 && planet.plnum == 3)
 			{
-			logthis(spr("updating Enforcer Planet (%s)\r",gechrbuf));
+			logthis(spr("updating Enforcer Planet (%s)",gechrbuf));
 			plptr = &planet;
 			update_plan_3();
 			}
@@ -1933,6 +1933,7 @@ else
 
 			if (!qnxbtv() || (int)(gebb2->key[0]) != PLTYPE_PLNT)	/* hit a wormhole or no wormholes somehow? passnum done */
 				{
+				sprintf(gechrbuf,"%ld",tocks);
 				logthis(spr("tocks %s. planets updated %d, empty %d, unowned %d"),gechrbuf,plown,plemt,plnob);
 
 				ftocktime = ((double)(tocks * plantime))+1.0;
