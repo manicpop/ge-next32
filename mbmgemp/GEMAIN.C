@@ -1783,7 +1783,7 @@ setbtv(gebb2);
 numrecs=cntrbtv();	/* how many total records? sectors, planets, wormholes */
 
 sprintf(gechrbuf,"%ld",numrecs);
-logthis(spr("plartia entered, numrecs %s, passnum %d",gechrbuf,passnum));
+logthis(spr("plartia entered, numrecs %s, passnum %d, plantime %u",gechrbuf,passnum,plantime));
 
 ++tocks;	/* how many times routine has run this passnum */
 
@@ -1801,7 +1801,7 @@ if (passnum == 0)	/* fresh boot */
 	if (!agebtv(&planet, &intkey, 2))
 		{
 		plantime = 10;
-		logthis(spr("no planet records, wait %d seconds",plantime));
+		logthis(spr("no planet records, wait %u seconds",plantime));
 		}
 	else
 		{
@@ -1934,7 +1934,7 @@ else
 			if (!qnxbtv() || (int)(gebb2->key[0]) != PLTYPE_PLNT)	/* hit a wormhole or no wormholes somehow? passnum done */
 				{
 				sprintf(gechrbuf,"%ld",tocks);
-				logthis(spr("tocks %s. planets updated %d, empty %d, unowned %d"),gechrbuf,plown,plemt,plnob);
+				logthis(spr("tocks %s. planets updated %u, empty %u, unowned %u"),gechrbuf,plown,plemt,plnob);
 
 				ftocktime = ((double)(tocks * plantime))+1.0;
 				ftockfact = ((double)(SECSADAY/planupd)/ftocktime);
