@@ -189,18 +189,10 @@ players with SYSOP class only.
 
 SYSONLY {Allow sysop only to use sysop commands? YES} B
 
-This option controls the Dynamic Planet Update Feature.
-The system will monitor how long it takes to process 
-through all the planets in the galaxy and dynamically
-adjust the update frequency to keep the total cycle time as
-close to the time below as it can.
+This values controls how many times a planet is updated
+per day.
 
-Caution: Setting this value too small will cause the system
-to consume more CPU time than may be available.  It is
-recommended that this value be set to 6 hours (360
-minutes) which will cause four updates a day.
-
-PLANTOCK {How long to take to update all planets (minutes)? 360} N 1 32760
+PLANUPD {How many times a day to update all planets? 4} N 1 15
 
 This value controls the odds of a sector having 
 planets. The lower the number the more likely

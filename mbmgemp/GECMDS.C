@@ -5129,7 +5129,7 @@ void FUNC cmd_sysop()
 
 int	i,j;
 long	amt;
-int	gotone;
+int	gotone, intkey;
 
 WARSHP	*ptr;
 
@@ -5425,6 +5425,9 @@ if (sameas("orbit",margv[1]) && (margc == 3))
 				{
 				prfmsg(ORBIT1,plnum,plptr->name);
 				}
+			outprfge(ALWAYS,usrnum);
+			sprintf(gechrbuf,"%lu (%d)",plptr->timestamp >> 4,(int)plptr->timestamp & 0xF);
+			prf("Planet timestamp: %s\r",gechrbuf);
 			outprfge(ALWAYS,usrnum);
 			warsptr->where = 10 + plnum;
 			warsptr->speed = 0;

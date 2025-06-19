@@ -33,13 +33,9 @@
   * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA            *
   *************************************************************************/
 
-/* if FASTPLANET defined updates happen every 5 seconds
+/* if FASTPLANET defined updates happen every 3 seconds */
 
-#define FASTPLANET */
-
-/*
-#define BLDPLNTS 1 */
-
+/* #define FASTPLANET 1 */
 
 #ifdef PHARLAP
 
@@ -166,6 +162,7 @@ int				nships;
 int				heading;
 unsigned			speed;
 int				lockwarn;
+int				game_day;
 
 /* do not touch the next two definitions !!! */
 int				xsect,ysect;
@@ -193,7 +190,7 @@ long				max_plrec,
 				pltvdiv,
 				startcash;
 
-unsigned			plantime = PLANTIME;
+unsigned			plantime;
 
 int				gemaxplrs,
 				gefreebies,
@@ -239,7 +236,8 @@ int				gemaxplrs,
 				maxplanets,
 				meneat,
 				cattkd,
-				gcnum;
+				gcnum,
+				planupd;
 
 char				*opttxt,
 				optchr;
@@ -262,8 +260,6 @@ double				tor_fact,
 				plattrt1,
 				plattrt2,
 				plattrt3;
-
-long				plantock;
 
 SHPKEY				shpkey;
 MAILKEY				mailkey;
@@ -361,7 +357,6 @@ void FUNC iniwara(void)
 {
 int	i,n,type,classbase;
 int	j;
-long	numrecs;
 
 int	class_tab[50];
 
@@ -389,7 +384,7 @@ trans_opt	= ynopt(TRANSOPT);
 syscmds		= ynopt(SYSCMDS);
 sysonly		= ynopt(SYSONLY);
 max_plnts	= numopt(MAXPLNTS,1,256);
-plantock	= lngopt(PLANTOCK,1,32760)*60L;
+planupd		= numopt(PLANUPD,1,15);
 plodds		= numopt(PLODDS,1,20);
 wormodds	= numopt(WORMODDS,1,100);
 univmax		= numopt(UNIVMAX,10,32767);
@@ -539,24 +534,7 @@ gebb4=opnbtv(gemail,sizeof(struct message)+GEMSGSIZ);
 
 gebb2=opnbtv(geplnt,sizeof(GALSECT));
 
-numrecs = cntrbtv();
-
-numrecs+=25;
-
-geshocst(1,spr("Numrecs (raw) originally %ld",numrecs));
-numrecs = (numrecs/(long)plodds)*4L;
-
-plantime = (int)(plantock/numrecs);
-
-if (plantime < 4)
-	plantime = 4;
-
-#ifdef FASTPLANET
-	plantime = 4;
-#endif
-
-geshocst(1,spr("Numrecs calculated to be %ld",numrecs));
-geshocst(1,spr("Plantime set to %d",plantime));
+game_day = cofdat(today());
 
 cyb_class = 0;
 dr_class = 0;
@@ -823,10 +801,7 @@ geshocst(0,spr("Registration # %s",stgopt(REGNO)));
 rtkick(TICKTIME,pwarrti);
 rtkick(TICKTIME2,pwarrti2);
 rtkick(60,pwarrti3);
-rtkick(plantime,pplarti);
-#ifdef BLDPLNTS
-rtkick(30,plabld);
-#endif
+rtkick(30,pplarti);
 rtkick(1,pautorti);
 
 #else
@@ -834,7 +809,7 @@ rtkick(1,pautorti);
 rtkick(TICKTIME,warrti);
 rtkick(TICKTIME2,warrti2);
 rtkick(60,warrti3);
-rtkick(plantime,plarti);
+rtkick(10,plarti);
 rtkick(1,autorti);
 
 #endif
@@ -1007,7 +982,7 @@ if (qlobtv(0))
 					tmpstat.int1 = planet.xsect;
 					tmpstat.int2 = planet.ysect;
 					tmpstat.cash = planet.cash;
-					tmpstat.debt = planet.debt;
+					tmpstat.timestamp = planet.timestamp;
 					tmpstat.tax = planet.tax;
 					for (i=0;i<NUMITEMS;++i)
 						tmpstat.itemqty[i] = planet.items[i].qty;
@@ -1786,267 +1761,240 @@ return(0);
 }
 #endif
 
-
 void FUNC plartia(void)
 {
+static int passnum = 0;
+static int foundpl = TRUE;
+static long fpos = 0;
+static long tocks = 0;
+double ftocktime,ftockfact;
+int i, tic, multnum;
+int intkey = PLTYPE_PLNT;
+static unsigned int plown = 0;
+static unsigned int plnob = 0;
+static unsigned int plemt = 0;
+long numrecs;
 
-static long		fpos = 0;
-static unsigned int	plntcnt = 0;
-static unsigned int	plntpop = 0;
-static unsigned int	sectcnt = 0;
-static unsigned int	wormcnt = 0;
+#define SECSADAY 82800L		/* 23 hours, for breathing room */
+#define MAXTIC 25
 
-int		flag, tic, plnt_type, not_done;
-int		firstime = FALSE;
-int		i;
-
-#define MAXTIC	20
-
-static long	tocks = 0;
-double		ftocktime,ftockfact;
-unsigned int	minutes;
-
-int	intkey;
-
-logthis("TICK:plarti entered");
 setbtv(gebb2);
+
+numrecs=cntrbtv();	/* how many total records? sectors, planets, wormholes */
+
+sprintf(gechrbuf,"%ld",numrecs);
+logthis(spr("plartia entered, numrecs %s, game_day %d",gechrbuf,game_day));
 
 ++tocks;
 
-/* DEBUG 2024-12AGS */
-geshocst(1,spr("plarti:fpos %ld, plntcnt %d, plntpop %d, sectcnt %d, wormcnt %d",fpos,plntcnt,plntpop,sectcnt,wormcnt));
-geshocst(1,spr("plarti:firstime %d, tocks %d",firstime,tocks)); /**/
-
-/* if first time through get the first record in the file */
-
-if (fpos == 0)
+if (passnum > planupd)	/* we've run all the day's updates */
 	{
-	logthis("plarti:fpos == 0 reset stuff");
-	intkey = 1;
-	if(agtbtv(&planet,&intkey,2))
-		{
-		logthis("plarti:querried first planet get fpos");
-		fpos=absbtv();
-		/* DEBUG 2024-12AGS */
-		geshocst(1,spr("plarti:fpos %ld",fpos)); /**/
-		}
-	tocks = 0;
-	sectcnt = 0;
-	wormcnt = 0;
-	plntcnt = 0;
-	plntpop = 0;
-	firstime = TRUE;
-	}
-
-/* if we still do not have any records go no further */
-if (fpos == 0)
-	{
-	/* DEBUG 2024-12AGS */
-	geshocst(1,spr("plarti: go no further")); /**/
-#ifdef PHARLAP
-	rtkick(plantime,pplarti);
-#else
-	rtkick(plantime,plarti);
-#endif
+	agebtv(&planet, &intkey, 2);
+	planet.timestamp = ((unsigned long)game_day << 4) | passnum;
+	gesdb(GEUPDATE, (PKEY *)&planet, (GALSECT *)&planet);
+	geshocst(1,spr("GE:INF:plartia game_day %d complete",game_day));
 	return;
 	}
 
-tic = 0;
-not_done = TRUE;
-
-logthis("plarti:get absolute planet record");
-gabbtv(&planet,fpos,2);
-
-
-do
+if (passnum == 0)	/* fresh boot */
 	{
-	tic++;
-	if (tic > MAXTIC)
+	if (!agebtv(&planet, &intkey, 2))
 		{
-		/* must get the current record to mark the spot */
-		gcrbtv(&planet,2);
-		fpos=absbtv();
-		logthis("plarti:hit max tic - break do loop");
-		/* DEBUG 2024-12AGS */
-		geshocst(1,spr("plarti do loop: maxtic fpos %ld",fpos)); /**/
-		break;
-		}
-
-	if (firstime==TRUE || qnxbtv())
-		{
-		if (firstime==TRUE)
-			logthis("First time through plarti do loop");
-
-		firstime = FALSE;
-		logthis("plarti: got next record");
-
-
-		plnt_type = (int)(gebb2->key[0]);
-		geshocst(1,spr("plarti do loop: plnt_type %d",plnt_type));
-		if (plnt_type == SECTYPE_NORMAL)
-			{
-			logthis("plarti:found sector record");
-			++sectcnt;
-			}
-		else
-		if (plnt_type == PLTYPE_PLNT)
-			{
-			gcrbtv(&planet,2);
-			fpos=absbtv();
-			not_done = FALSE;
-			logthis("plarti:found planet record");
-			/* DEBUG 2024-12AGS */
-			geshocst(1,spr("plarti do loop: found planet fpos %ld",fpos)); /**/
-			++plntcnt;
-			}
-		else
-		if (plnt_type == PLTYPE_WORM)
-			{
-			logthis("plarti:found wormhole record");
-			++wormcnt;
-			}
-		else
-			{
-			logthis("GE:ERR:Bad Plt Type in Db");
-			}
-
+		plantime = 10;
+		geshocst(1,spr("GE:INF:no planet records, wait %d seconds",plantime));
 		}
 	else
 		{
-		/* hit end of file - recalibrate tock */
-
-		logthis("plarti:EOF hit - recalibrate");
-		ftocktime = ((double)(tocks * plantime))+1.0;
-		minutes = (ftocktime/60);
-
-		ftockfact = ((double)plantock)/ftocktime;
-
-		ftocktime = ((double)plantime*ftockfact);
-
-		/* no smaller than every 3 seconds */
-		if (ftocktime < 3.0)
+		if (planet.xsect == 0 && planet.ysect == 0 && planet.plnum == 1)
 			{
-			geshocst(1,"GE:INF:plarti:recalb tic forced to 3");
+			logthis("Checking Zygor timestamp");
+
+#ifdef FASTPLANET
 			plantime = 3;
+#else
+			/* if no plantime saved, how fast do we want to start out?
+			   good enough i guess. maybe i'll make this smarter later */
+			if (planet.plantimesave <= 3)
+				{
+				if (numrecs < 50)
+					plantime = 4000/planupd;
+				else
+				if (numrecs < 500)
+					plantime = 400/planupd;
+				else
+				if (numrecs < 5000)
+					plantime = 40/planupd;
+				else
+					plantime = 3;
+				}
+			else
+				plantime = planet.plantimesave;
+#endif
+			if (plantime < 3)
+				plantime = 3;
+
+			if ((planet.timestamp >> 4) == game_day)	/* game has already been up today */
+				{
+				passnum = (int)(planet.timestamp & 0xF);
+				if (passnum > planupd)
+					plantime = 3;
+				}
+			else
+				passnum = 1;	/* different day than last time */
 			}
 		else
-			plantime	= (int)ftocktime;
-
-		tocks = 0;
-		fpos = 0;
-
-
-		geshocst(1,spr("GE:INF:plarti:recalib t=%d",plantime));
-		geshocst(1,spr("GE:INF:plarti:pass took %d",minutes));
-		geshocst(1,spr("GE:INF:plarti:# sectors %d",sectcnt));
-		geshocst(1,spr("GE:INF:plarti:# wormholes %d",wormcnt));
-		geshocst(1,spr("GE:INF:plarti:# plnts tot %d",plntcnt));
-		geshocst(1,spr("GE:INF:plarti:# plnts pop %d",plntpop));
-
-		#ifdef FASTPLANET
-			geshocst(1,"GE:INF:FASTPLANET Override set to 5");
-			plantime = 5;
-		#endif
-
-		break;
+			catastro("GE:ERR:First planet record is not Zygor");
 		}
 	}
-while (not_done);
-
-
-/* skip past neutral zone */
-/* GE22e patch to fix dieing population on Zygor-3
-if (planet.xsect == 0 && planet.ysect == 0)
-	++ss;
-*/
-
-flag = 0;
-if (fpos != 0 && tic <= MAXTIC)
+else
 	{
-	logthis("got a planet record");
-	plptr = &planet;
-	if (plptr->items[0].qty > 0 && plptr->userid[0] != 0)	/* any men on planet? */
+	if (foundpl == TRUE)
 		{
-		logthis("and it has a population");
-		++plntpop;
-		logthis("calling multiply");
-		multiply();
-		logthis("calling checkspy");
-		check_spy();
-		logthis("back from checkspy");
-		setbtv(gebb2);
-		setmbk(gemb);
-		flag = 1;
+		if (fpos == 0)
+			{
+			agebtv(&planet, &intkey, 2);
+			fpos = absbtv();
+			}
+		else
+			gabbtv(&planet, fpos, 2);
+
+		sprintf(gechrbuf,"%lu",fpos);
+
+		if (planet.xsect == 0 && planet.ysect == 0 && planet.plnum == 1)
+			{
+			logthis(spr("updating Zygor (%s)\r",gechrbuf));
+			plptr = &planet;
+			update_plan_1();
+			planet.plantimesave = plantime;
+			}
+		else
+		if (planet.xsect == 0 && planet.ysect == 0 && planet.plnum == 2)
+			{
+			logthis(spr("updating T-Station (%s)\r",gechrbuf));
+			plptr = &planet;
+			update_plan_2();
+			}
+		else
+		if (planet.xsect == 0 && planet.ysect == 0 && planet.plnum == 3)
+			{
+			logthis(spr("updating Enforcer Planet (%s)\r",gechrbuf));
+			plptr = &planet;
+			update_plan_3();
+			}
+		else
+			{
+			logthis(spr("updating Planet %s (%s %s)...",gechrbuf,planet.name,planet.userid));
+			/* updated in the last 7 days? catch up */
+			if ((planet.timestamp >> 4) >= game_day - 7 && (planet.timestamp >> 4) < game_day)
+				{
+				multnum = ((game_day - (int)(planet.timestamp >> 4) - 1) * planupd)
+					+ (planupd - (int)(planet.timestamp & 0xF)) + passnum;
+				}
+			else
+			/* updated today but missed a pass? unlikely, but whatev */
+			if ((planet.timestamp >> 4) == game_day)
+				{
+				multnum = passnum - (int)(planet.timestamp & 0xF);
+				}
+			else
+			/* otherwise update once */
+				multnum = 1;
+			if (multnum < 0)
+				multnum = 0;
+			logthis(spr("...%d times",multnum));
+			plptr = &planet;
+			for (i = 0; i < multnum-1; ++i)
+				multiply(FALSE);	/* don't send mail for multiples */
+			if (multnum > 0)
+				multiply(TRUE);
+			logthis("calling checkspy");
+			check_spy();
+			logthis("back from checkspy");
+			setbtv(gebb2);
+			setmbk(gemb);
+			}
+
+		planet.timestamp = (((unsigned long)game_day) << 4) | passnum;
+		gesdb(GEUPDATE, (PKEY *)&planet, (GALSECT *)&planet);
 		}
-	}
 
-/* GE22e patch to fix dieing population on Zygor-3 */
+		/* mbm was right, see GEREADME 02/04/90 */
+		/* at this point, we either just finished a planet update or are coming into this routine fresh */
+		/* either way, we need to set the key and cursor again for query next to work */
+		gabbtv(&planet, fpos, 2);
 
-if (planet.xsect == 0 && planet.ysect == 0 && planet.plnum == 1)
-	{
-	logthis("Updating Zygor");
+		foundpl = FALSE;
+		tic = 0;
 
-	for (i=0;i<NUMITEMS;++i)
-		{
-		planet.items[i].qty = 1032000L;
-		planet.items[i].sell = 'Y';
-		planet.items[i].markup2a = (baseprice[i]*2)+(gernd()%baseprice[i]);
-		}
+		do
+			{
+			tic++;
 
-	flag = 1;
-	}
+			if (!qnxbtv() || (int)(gebb2->key[0]) != PLTYPE_PLNT)	/* hit a wormhole or no wormholes somehow? passnum done */
+				{
+				logthis(spr("tocks %s. planets updated %d, empty %d, unowned %d"),gechrbuf,plown,plemt,plnob);
 
-if (planet.xsect == 0 && planet.ysect == 0 && planet.plnum == 2)
-	{
-	logthis("Updating T-station");
-	planet.items[I_TROOPS].qty = 1032000L; /* BJ ADDED L */
-	planet.items[I_TROOPS].sell = 'Y';
-	planet.items[I_TROOPS].markup2a = (baseprice[I_TROOPS]*2)+(gernd()%baseprice[I_TROOPS]);
+				ftocktime = ((double)(tocks * plantime))+1.0;
+				ftockfact = ((double)(SECSADAY/planupd)/ftocktime);
+				ftocktime = ((double)plantime*ftockfact);
 
-	planet.items[I_MEN].qty = 1032000L;
-	planet.items[I_MEN].sell = 'Y';
-	planet.items[I_MEN].markup2a = (baseprice[I_MEN]*2)+(gernd()%baseprice[I_MEN]);
+				if (ftocktime < 3.0)
+					{
+					geshocst(1,"GE:INF:plarti:recalb tic forced to 3");
+					plantime = 3;
+					}
+				else
+#ifdef FASTPLANET
+					{
+					plantime = 3;
+					}
+#else
+					{
+					plantime = (int)ftocktime;
+					}
+#endif
+				++passnum;
+				foundpl = TRUE;
+				fpos = 0;
+				tocks = 0;
+				plown = 0;
+				plnob = 0;
+				plemt = 0;
+				break;
+				}
 
-	planet.items[I_FOOD].qty = 1032000L;
-	planet.items[I_FOOD].sell = 'Y';
-	planet.items[I_FOOD].markup2a = (baseprice[I_FOOD]*2)+(gernd()%baseprice[I_FOOD]);
-	flag = 1;
-	}
-
-if (flag == 1)
-	{
-	logthis("plarti:changes made to planet - update it");
-	gesdb(GEUPDATE,(PKEY *)&planet,(GALSECT *)&planet);
+			gcrbtv(&planet, 2);
+			if (planet.userid[0] != '\0' && ((planet.items[I_MEN].qty > 0 || planet.items[I_TROOPS].qty > 0)
+				|| (planet.xsect == 0 && planet.ysect == 0)))	/* owned and populated or in neut */
+				{
+				fpos = absbtv();
+				foundpl = TRUE;
+				sprintf(gechrbuf,"%lu",fpos);
+				++plown;
+				logthis(spr("found next owned planet at %s", gechrbuf));
+				break;
+				}
+			else
+				{
+				fpos = absbtv();
+				sprintf(gechrbuf,"%lu",fpos);
+				if (planet.userid[0] != '\0')
+					++plemt;
+				else
+					++plnob;
+				}
+			} while (tic < MAXTIC);
 	}
 
 #ifdef PHARLAP
-
-
-rtkick(plantime,pplarti);
-
-
+rtkick(plantime, pplarti);
 #else
-rtkick(plantime,plarti);
+rtkick(plantime, plarti);
 #endif
+
 return;
 }
 
-#ifdef BLDPLNTS
-
-void FUNC plabld(void)
-{
-COORD	temp;
-
-logthis("plabld entered");
-
-temp.xcoord = rndm((double)univmax*2)-(double)univmax;
-temp.ycoord = rndm((double)univmax*2)-(double)univmax;
-
-getsector(&temp);
-rtkick(10,plabld);
-
-}
-#endif
 /**************************************************************************
 ** Real time kick routine                                                **
 **************************************************************************/

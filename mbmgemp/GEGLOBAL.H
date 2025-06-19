@@ -150,7 +150,8 @@ extern	int		gemaxplrs,
 			maxplanets,
 			meneat,
 			cattkd,
-			gcnum;
+			gcnum,
+			planupd;
 
 extern	char		*opttxt,
 			optchr;
@@ -173,8 +174,6 @@ extern	double		tor_fact,
 			plattrt1,
 			plattrt2,
 			plattrt3;
-
-extern	long		plantock;
 
 #ifdef	TESTDRIVE
 extern	int		endtd,

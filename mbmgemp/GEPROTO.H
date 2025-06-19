@@ -71,7 +71,6 @@
 /*    1776 */ void FUNC pplarti P((void ));
 /*    1782 */ int FUNC plarti P((void ));
 /*    1790 */ void FUNC plartia P((void ));
-/*    2036 */ void FUNC plabld P((void ));
 /*    2055 */ void FUNC pwarrti P((void ));
 /*    2061 */ int FUNC warrti P((void ));
 /*    2068 */ void FUNC warrtia P((void ));
@@ -303,15 +302,18 @@
 
 /* geplanet.c */
 /*      73 */ void FUNC check_spy P((void ));
-/*     179 */ void FUNC multiply P((void ));
-/*     385 */ int FUNC getsector P((COORD *sect ));
-/*     453 */ int FUNC xgetsector P((COORD *sect , int wormy ));
-/*     663 */ void FUNC build_plan_1 P((int idx ));
-/*     728 */ void FUNC build_plan_2 P((int idx ));
-/*     769 */ void FUNC build_other P((int idx ));
-/*     798 */ void FUNC build_worm P((int idx ));
-/*     844 */ int FUNC getplanet P((COORD *sect , int plnt ));
-/*     865 */ int FUNC neutral P((COORD *coord ));
+/*     179 */ void FUNC multiply P((int final_mult ));
+/*     391 */ int FUNC getsector P((COORD *sect ));
+/*     459 */ int FUNC xgetsector P((COORD *sect , int wormy ));
+/*     668 */ void FUNC build_plan_1 P((int idx ));
+/*     695 */ void FUNC build_plan_2 P((int idx ));
+/*     723 */ void FUNC build_other P((int idx ));
+/*     752 */ void FUNC build_worm P((int idx ));
+/*     798 */ int FUNC getplanet P((COORD *sect , int plnt ));
+/*     819 */ int FUNC neutral P((COORD *coord ));
+/*     827 */ void FUNC update_plan_1 P((void ));
+/*     837 */ void FUNC update_plan_2 P((void ));
+/*     853 */ void FUNC update_plan_3 P((void ));
 
 /* gelib.c */
 /*      65 */ unsigned smallest P((unsigned a1 , unsigned a2 ));

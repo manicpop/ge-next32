@@ -53,7 +53,8 @@
 
 /* workarounds for mbbsemu math functions */
 /* hopefully not necessary much longer */
-#define MBBSEMU 1
+/* #define MBBSEMU 1 */
+
 
 /***************************************************************************/
 /* The following defines have been carefully chosen and refined to provide */
@@ -118,7 +119,6 @@
 #define TICKTIME 6		/* how often does RTKICK fire    6   */
 #define TICKTIME2 1		/* how often does RTKICK fire       */
 #define CYBTICKTIME 5		/* Cyborgs do stuff this fast       */
-#define PLANTIME 55		/* how often do planets get updated */
 
 #define FIRETICKS 10		/* how many ticks to hold a player  */
 				/* when involved in battle          */
@@ -427,7 +427,7 @@ GALPLNT {					/* star system data record              */
 	char	enviorn;			/* environment factor                   */
 	char	resource;			/* resources                            */
 	unsigned long cash;			/* cash on hand                         */
-	unsigned long debt;			/* unused                               */
+	unsigned long timestamp;		/* time of last update                  */
 	unsigned long tax;			/* amount of tax collected              */
 	int	taxrate;			/* rate to tax population               */
 	char	warnings;			/* warnings to intruders                */
@@ -436,7 +436,7 @@ GALPLNT {					/* star system data record              */
 	ITEM	items[NUMITEMS];		/* 195                                  */
 	char	beacon[BEACONMSGSZ];
 	char	spyowner[UIDSIZ];
-	int	technology;
+	unsigned int	plantimesave;
 	unsigned long	teamcode;
 	char	filler[512-182-(UIDSIZ*2)-(sizeof(ITEM)*NUMITEMS)];
 
@@ -520,7 +520,7 @@ MAILSTAT	{
 		int	int1;
 		int	int2;
 	unsigned long	cash;				/* cash on hand                 */
-	unsigned long	debt;				/* unused                       */
+	unsigned long	timestamp;			/* time of last update          */
 	unsigned long	tax;				/* amount of tax collected      */
 	unsigned long	itemqty[NUMITEMS];
 	char	filler[253-97-(UIDSIZ)-(sizeof(long)*NUMITEMS)];	/* fill to 250 BJ changed size for name */

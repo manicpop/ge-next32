@@ -176,7 +176,8 @@ if	(plptr->spyowner[0] != 0)
 }
 
 
-void FUNC multiply()
+void FUNC multiply(final_mult)
+int final_mult;
 {
 
 
@@ -192,14 +193,17 @@ if ((plptr->items[I_TROOPS].qty/100)> plptr->items[I_FOOD].qty)
 	cnt = plptr->items[I_TROOPS].qty / 8;
 	plptr->items[I_TROOPS].qty -= cnt;
 
-	mail.class = MAIL_CLASS_DISTRESS;
-	mail.type = MESG06;
-	strncpy(mail.userid,plptr->userid,UIDSIZ);
-	strcpy(mail.name1,plptr->name);
-	mail.int1 = plptr->xsect;
-	mail.int2 = plptr->ysect;
-	mail.long1 = cnt;
-	mailit(0);
+	if (final_mult == TRUE)
+		{
+		mail.class = MAIL_CLASS_DISTRESS;
+		mail.type = MESG06;
+		strncpy(mail.userid,plptr->userid,UIDSIZ);
+		strcpy(mail.name1,plptr->name);
+		mail.int1 = plptr->xsect;
+		mail.int2 = plptr->ysect;
+		mail.long1 = cnt;
+		mailit(0);
+		}
 	}
 
 /* troops eat first */
@@ -228,14 +232,17 @@ if ((plptr->items[I_MEN].qty/100)> plptr->items[I_FOOD].qty)
 
 	plptr->items[I_MEN].qty = temp;
 
-	mail.class = MAIL_CLASS_DISTRESS;
-	mail.type = MESG07;
-	strncpy(mail.userid,plptr->userid,UIDSIZ);
-	strcpy(mail.name1,plptr->name);
-	mail.int1 = plptr->xsect;
-	mail.int2 = plptr->ysect;
-	mail.long1 = cnt;
-	mailit(0);
+	if (final_mult == TRUE)
+		{
+		mail.class = MAIL_CLASS_DISTRESS;
+		mail.type = MESG07;
+		strncpy(mail.userid,plptr->userid,UIDSIZ);
+		strcpy(mail.name1,plptr->name);
+		mail.int1 = plptr->xsect;
+		mail.int2 = plptr->ysect;
+		mail.long1 = cnt;
+		mailit(0);
+		}
 	}
 
 /* men eat */
@@ -267,7 +274,6 @@ plptr->items[I_GOLD].qty = 0;
 
 for (i=0;i<NUMITEMS;++i)
 	{
-/* qty = plptr->items[i].qty;*/
 	men = (float)plptr->items[I_MEN].qty;
 	rate= (float)plptr->items[i].rate;
 	hrs = (float)manhours[i];
@@ -310,7 +316,7 @@ for (i=0;i<NUMITEMS;++i)
 
 	logthis(gechrbuf);
 
-	if (temp > max && !(plptr->xsect == 0 && plptr->ysect == 0)) /* don't mail for neutral zone */
+	if (final_mult == TRUE && temp > max)
 		{
 		logthis("Mailing production report");
 		temp = max;
@@ -592,10 +598,9 @@ if (!gesdb(GEGET,&pkey,&sector))
 				planet.resource = (char)(rndm(3.999));
 
 				planet.cash = 0;
-				planet.debt = 0;
+				planet.timestamp = 0;
 				planet.tax = 0;
 				planet.taxrate = 0;
-				planet.debt = 0;
 				planet.warnings = 0;
 				planet.lastattack[0] = 0;
 
@@ -615,7 +620,7 @@ if (!gesdb(GEGET,&pkey,&sector))
 					}
 				if (rndm(3.99) > 3)
 					{
-					for (k = 0; k < NUMITEMS;++k) 
+					for (k = 0; k < NUMITEMS;++k)
 						planet.items[k].rate = (unsigned int)rndm(5.1);
 
 					planet.items[I_MEN].qty = (unsigned long)rndm(50000.0);
@@ -673,44 +678,6 @@ strcpy(planet.password,"none");
 planet.enviorn = s00[idx].env;
 planet.resource = s00[idx].res;
 
-planet.items[I_MEN].qty = 32000;
-
-planet.items[I_MISSILE].qty = 32000;
-planet.items[I_MISSILE].sell = 'Y';
-planet.items[I_MISSILE].markup2a = baseprice[I_MISSILE]*2;
-
-planet.items[I_TORPEDO].qty = 32000;
-planet.items[I_TORPEDO].sell = 'Y';
-planet.items[I_TORPEDO].markup2a = baseprice[I_TORPEDO]*2;
-
-planet.items[I_IONCANNON].qty = 32000;
-planet.items[I_IONCANNON].sell = 'Y';
-planet.items[I_IONCANNON].markup2a = baseprice[I_IONCANNON]*2;
-
-planet.items[I_FLUXPOD].qty = 32000;
-planet.items[I_FLUXPOD].sell = 'Y';
-planet.items[I_FLUXPOD].markup2a = baseprice[I_FLUXPOD]*2;
-
-planet.items[I_FIGHTER].qty = 32000;
-planet.items[I_FIGHTER].sell = 'Y';
-planet.items[I_FIGHTER].markup2a = baseprice[I_FIGHTER]*2;
-
-planet.items[I_DECOYS].qty = 32000;
-planet.items[I_DECOYS].sell = 'Y';
-planet.items[I_DECOYS].markup2a = baseprice[I_DECOYS]*2;
-
-planet.items[I_MINE].qty = 32000;
-planet.items[I_MINE].sell = 'Y';
-planet.items[I_MINE].markup2a = baseprice[I_MINE]*2;
-
-planet.items[I_JAMMERS].qty = 32000;
-planet.items[I_JAMMERS].sell = 'Y';
-planet.items[I_JAMMERS].markup2a = baseprice[I_JAMMERS]*2;
-
-planet.items[I_ZIPPERS].qty = 32000;
-planet.items[I_ZIPPERS].sell = 'Y';
-planet.items[I_ZIPPERS].markup2a = baseprice[I_ZIPPERS]*2;
-
 pkey.plnum = idx+1;
 pkey.xsect = 0;
 pkey.ysect = 0;
@@ -721,6 +688,9 @@ planet.plnum = pkey.plnum;
 planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
 planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
 planet.type = PLTYPE_PLNT;
+
+plptr = &planet;
+update_plan_1();
 
 logthis("Zygor build first time");
 }
@@ -731,25 +701,12 @@ int	idx;
 
 setmem(&planet,sizeof(GALPLNT),0);
 
-
 strncpy(planet.userid,s00[idx].owner,UIDSIZ);
 strncpy(planet.name,s00[idx].name,20);
 strcpy(planet.password,"none");
 
 planet.enviorn = s00[idx].env;
 planet.resource = s00[idx].res;
-
-planet.items[I_TROOPS].qty = 1032000L;
-planet.items[I_TROOPS].sell = 'Y';
-planet.items[I_TROOPS].markup2a = baseprice[I_TROOPS]*2;
-
-planet.items[I_MEN].qty = 1032000L;
-planet.items[I_MEN].sell = 'Y';
-planet.items[I_MEN].markup2a = baseprice[I_MEN]*2;
-
-planet.items[I_FOOD].qty = 1032000L;
-planet.items[I_FOOD].sell = 'Y';
-planet.items[I_FOOD].markup2a = baseprice[I_FOOD]*2;
 
 pkey.plnum = idx+1;
 pkey.xsect = 0;
@@ -761,6 +718,9 @@ planet.plnum = pkey.plnum;
 planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
 planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
 planet.type = PLTYPE_PLNT;
+
+plptr = &planet;
+update_plan_2();
 
 logthis("T-Station build first time");
 
@@ -870,3 +830,40 @@ ysect=coord1(coord->ycoord);
 return (xsect == 0 && ysect == 0);
 }
 
+void FUNC update_plan_1(void)
+{
+int i;
+for (i = 0; i < NUMITEMS; ++i)
+	{
+	plptr->items[i].qty = SLCAP;
+	plptr->items[i].sell = 'Y';
+	plptr->items[i].markup2a = (baseprice[i]*2) + (gernd() % baseprice[i]);
+	}
+}
+
+void FUNC update_plan_2(void)
+{
+int i;
+for (i = 0; i < NUMITEMS; ++i)
+	{
+	plptr->items[i].qty = 0;
+	plptr->items[i].sell = 'N';
+	plptr->items[i].markup2a = (baseprice[i]*2) + (gernd() % baseprice[i]);
+	}
+plptr->items[I_MEN].qty = SLCAP;
+plptr->items[I_FOOD].qty = SLCAP;
+plptr->items[I_TROOPS].qty = SLCAP;
+plptr->items[I_MEN].sell = 'Y';
+plptr->items[I_FOOD].sell = 'Y';
+plptr->items[I_TROOPS].sell = 'Y';
+}
+
+void FUNC update_plan_3(void)
+{
+int i;
+for (i = 0; i < NUMITEMS; ++i)
+	{
+	plptr->items[i].qty = 0;
+	plptr->items[i].sell = 'N';
+	}
+}
