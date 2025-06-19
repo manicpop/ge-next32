@@ -1776,23 +1776,23 @@ static unsigned int plemt = 0;
 long numrecs;
 
 #define SECSADAY 82800L		/* 23 hours, for breathing room */
-#define MAXTIC 25
+#define MAXTIC 25		/* max planets to scan in a go without finding one to update */
 
 setbtv(gebb2);
 
 numrecs=cntrbtv();	/* how many total records? sectors, planets, wormholes */
 
 sprintf(gechrbuf,"%ld",numrecs);
-logthis(spr("plartia entered, numrecs %s, game_day %d",gechrbuf,game_day));
+logthis(spr("plartia entered, numrecs %s, passnum %d",gechrbuf,passnum));
 
-++tocks;
+++tocks;	/* how many times routine has run this passnum */
 
 if (passnum > planupd)	/* we've run all the day's updates */
 	{
 	agebtv(&planet, &intkey, 2);
 	planet.timestamp = ((unsigned long)game_day << 4) | passnum;
 	gesdb(GEUPDATE, (PKEY *)&planet, (GALSECT *)&planet);
-	geshocst(1,spr("GE:INF:plartia game_day %d complete",game_day));
+	geshocst(1,spr("GE:INF:all planets updated for day %d",game_day));
 	return;
 	}
 
@@ -1801,13 +1801,13 @@ if (passnum == 0)	/* fresh boot */
 	if (!agebtv(&planet, &intkey, 2))
 		{
 		plantime = 10;
-		geshocst(1,spr("GE:INF:no planet records, wait %d seconds",plantime));
+		logthis(spr("no planet records, wait %d seconds",plantime));
 		}
 	else
 		{
 		if (planet.xsect == 0 && planet.ysect == 0 && planet.plnum == 1)
 			{
-			logthis("Checking Zygor timestamp");
+			logthis(spr("Checking Zygor timestamp, game day %d",game_day));
 
 #ifdef FASTPLANET
 			plantime = 3;
@@ -1836,8 +1836,9 @@ if (passnum == 0)	/* fresh boot */
 			if ((planet.timestamp >> 4) == game_day)	/* game has already been up today */
 				{
 				passnum = (int)(planet.timestamp & 0xF);
-				if (passnum > planupd)
+				if (passnum > planupd)	/* if we're already done, no need to wait */
 					plantime = 3;
+				logthis(spr("resuming from planupd %d",planupd));
 				}
 			else
 				passnum = 1;	/* different day than last time */
@@ -1883,7 +1884,7 @@ else
 			}
 		else
 			{
-			logthis(spr("updating Planet %s (%s %s)...",gechrbuf,planet.name,planet.userid));
+			logthis(spr("updating Planet %s (%s, %s)...",gechrbuf,planet.name,planet.userid));
 			/* updated in the last 7 days? catch up */
 			if ((planet.timestamp >> 4) >= game_day - 7 && (planet.timestamp >> 4) < game_day)
 				{
@@ -1971,7 +1972,7 @@ else
 				foundpl = TRUE;
 				sprintf(gechrbuf,"%lu",fpos);
 				++plown;
-				logthis(spr("found next owned planet at %s", gechrbuf));
+				logthis(spr("plartia: found next owned planet at %s", gechrbuf));
 				break;
 				}
 			else
@@ -1985,6 +1986,9 @@ else
 				}
 			} while (tic < MAXTIC);
 	}
+
+if (foundpl == FALSE)
+	logthis("plartia: no planet this tock");
 
 #ifdef PHARLAP
 rtkick(plantime, pplarti);

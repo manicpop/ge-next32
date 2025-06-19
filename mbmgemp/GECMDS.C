@@ -5129,7 +5129,7 @@ void FUNC cmd_sysop()
 
 int	i,j;
 long	amt;
-int	gotone, intkey;
+int	gotone;
 
 WARSHP	*ptr;
 
