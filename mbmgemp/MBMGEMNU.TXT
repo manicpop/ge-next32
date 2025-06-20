@@ -11,7 +11,7 @@ https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact with me thoughts and suggestions.
 
-=== 0.2 === in progress
+=== 0.2 ===
 
 The main focus of 0.2 is NPC behavior:
 * A legacy Galactic Empire bug that keeps Cybs from pursuing you if you are
@@ -50,6 +50,11 @@ The main focus of 0.2 is NPC behavior:
   configured to do so.
 
 Other stuff:
+* A new planet scanning and updating routine, which should ensure that all
+  planets are updated the same amount of times every day. It's more
+  efficient than the old routine so it should be able to handle even very
+  large, long running games. Also, if updates are missed (due to downtime,
+  etc.), it will catch the planets up, up to a week out.
 * A new ordnance report was added (REP ORD). This will list all incoming and
   outgoing projectiles as well as display how any mines and decoys you have
   deployed.

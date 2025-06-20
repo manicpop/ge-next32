@@ -3334,9 +3334,11 @@ SCANTAB *sptr;
 
 int othusn;
 
-int i,j;
+int i,j,spdlen;
 int shp;
 int ff;
+
+char *spdstr;
 
 ff = 0;
 shp = 0;
@@ -3372,8 +3374,19 @@ for (i=0; i<MAXY; ++i)
 		othusn = sptr->ship[shp].shipno;
 		if (ff == 0)
 			{
-			prf("\33[1;37m     %c   %s    %4d    %4d     %s\33[0;31m\r",sptr->ship[shp].letter,spr("%6ld",(long)(sptr->ship[shp].dist)),
-				sptr->ship[shp].bearing,sptr->ship[shp].heading,showarp(sptr->ship[shp].speed));
+			prf("\33[1;37m     %c   %s    %4d    %4d",sptr->ship[shp].letter,spr("%6ld",(long)(sptr->ship[shp].dist)),
+				sptr->ship[shp].bearing,sptr->ship[shp].heading);
+
+			spdstr = showarp(sptr->ship[shp].speed);
+			spdlen = strlen(spdstr);
+
+			if (spdlen == 6)
+				prf("   %s\33[0;31m\r",spdstr);
+			else
+			if (spdlen == 5)
+				prf("    %s\33[0;31m\r",spdstr);
+			else
+				prf("     %s\33[0;31m\r",spdstr);
 
 			if (!waruptr->options[SCANNAMES])
 				shp++;
