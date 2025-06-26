@@ -1174,6 +1174,7 @@ if (who >= 0 && who < nships && who != usrn)
 	if (shipclass[wptr->shpclass].max_tons <= calcweight(wptr))
 		{
 		full = TRUE;
+		comma = TRUE;
 		prf(" nothing");
 		}
 	else
