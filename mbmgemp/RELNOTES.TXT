@@ -8,7 +8,17 @@ https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact with me thoughts and suggestions.
 
-=== 0.2 ===
+=== 0.2.1 === 2025-06-27:
+
+A few non-gameplay related issues were addressed:
+* A text bug in the message displayed if your ship is too full to pick up
+  any items from a ship you destroyed was fixed.
+* The "scanners are jammed" message is now only displayed if you are
+  close enough to the jamming to be affected by it.
+* SDDs were too chatty... now they only send messages to you if you are
+  close.
+
+=== 0.2 === 2025-06-19:
 
 The main focus of 0.2 is NPC behavior:
 * A legacy Galactic Empire bug that keeps Cybs from pursuing you if you are

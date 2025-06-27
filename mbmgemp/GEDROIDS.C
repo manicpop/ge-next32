@@ -726,7 +726,7 @@ if (ptr->jammer == 0)
 				ddist *= 10000;
 				/* hail any users if close */
 				if (zothusn < nterms && wptr->status == GESTAT_USER && ddist < (double)shipclass[wptr->shpclass].scanrange &&
-					ddist < (double)shipclass[ptr->shpclass].scanrange && wptr->cloak != 10)
+					ddist < (double)shipclass[ptr->shpclass].scanrange && ddist < 15000.0 && wptr->cloak != 10)
 					{
 					ptr->tick = CYBTICKTIME + gernd()%(5-shipclass[ptr->shpclass].tough_factor);
 					droid_annoy(ptr,zothusn);
