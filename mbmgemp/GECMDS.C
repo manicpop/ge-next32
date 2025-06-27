@@ -1819,7 +1819,8 @@ for (zothusn=0; zothusn < nships ; zothusn++)
 			ddist = 0;
 
 		wptr->jammer = (unsigned)(((double)jamtime)*ddist);
-		prfmsg(JAMMER3);
+		if (wptr->jammer > 0)
+			prfmsg(JAMMER3);
 		outprfge(FILTER,zothusn);
 		}
 	}
