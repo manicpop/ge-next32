@@ -5397,7 +5397,7 @@ if (sameas("multiply",margv[1]) && (margc > 1 && margc < 4))
 			j = 50;			/* be nice to system resources */
 		for (i=0;i<j;++i)
 			{
-		multiply();
+		multiply(TRUE);
 			}
 		gesdb(GEUPDATE,(PKEY *)&planet,(GALSECT *)&planet);
 		prfmsg(SYSPOP,j);
