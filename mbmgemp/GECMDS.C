@@ -356,6 +356,14 @@ int	ndx,i;
 
 char	gechrbuf4[20], gechrbuf5[20], gechrbuf6[20], gechrbuf7[20];
 
+if (genearas(margv[1],"version"))
+	{
+	prf(VERSION);
+	prf("\r\r");
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
 if (genearas(margv[1],"sys"))
 	{
 #ifdef PHARLAP
@@ -4373,7 +4381,7 @@ if (qlobtv(0))
 			gcrbtv(&planet,1);
 			if (sameas(planet.userid,warsptr->userid))
 				{
-				prf("%-20s %5d %5d  %d \r",planet.name,planet.xsect,planet.ysect,planet.plnum);
+				prf("%-25s %4d %4d  %5d \r",planet.name,planet.xsect,planet.ysect,planet.plnum);
 				outprfge(ALWAYS,usrnum);
 				}
 			else

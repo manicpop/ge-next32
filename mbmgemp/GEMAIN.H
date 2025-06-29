@@ -42,6 +42,16 @@
 */
 
 #ifdef GETRAINER
+#define VERSION "ge-next 0.2.2rc Trainer"
+#define GEHELP  "MBMG2HLP.MCV"
+#define GEMSG   "MBMG2MSG.MCV"
+#else
+#define VERSION "ge-next 0.2.2rc"
+#define GEHELP  "MBMGEHLP.MCV"
+#define GEMSG   "MBMGEMSG.MCV"
+#endif
+
+#ifdef GETRAINER
 #include "mbmg2msg.h"
 #include "mbmg2hlp.h"
 #include "mbmgeshp.h"

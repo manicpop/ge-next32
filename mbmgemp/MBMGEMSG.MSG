@@ -3497,7 +3497,7 @@ NOZYG {***
 } T GE you are unwelcome in the neutral zone message
 
 PLAMSG1 {
-[1;36mPlanet Name         sector planet[1;37m
+[1;36mPlanet Name                  sector planet[1;37m
 } T GE planet list message
 
 PLAMSG2 {
