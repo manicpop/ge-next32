@@ -1410,9 +1410,9 @@ if (who >= 0 && who < nships && who != usrn)
 else
 	{
 	if (shipclass[ptr->shpclass].max_type != CLASSTYPE_USER)
-		prfmsg(DIEDNPC,ptr->shipname,username(ptr));
+		prfmsg(DIEDNPC,ptr->shipname);
 	else
-		prfmsg(DIED,ptr->shipname);
+		prfmsg(DIED,ptr->shipname,username(ptr));
 	outwar(ALWAYS,usrn,0);
 	if (shipclass[ptr->shpclass].kill_func != NULL)
 		shipclass[ptr->shpclass].kill_func(ptr,usrn,NULL);
