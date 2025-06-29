@@ -637,8 +637,10 @@ WARSHP	*ptr;
 int	usrn;
 {
 
+WARSHP	*wptr;
 COORD	oldsect,newsect,neutsect;
-int	diff,intspeed;
+int	diff,intspeed,zothusn;
+double	ddist;
 
 neutsect.xcoord = 0.50001;
 neutsect.ycoord = 0.50001;
@@ -755,6 +757,28 @@ if (ptr->speed > 0)
 			}
 		}
 
+	/* if I am cloaked tell the closer ones */
+	if (ptr->cloak == 10 && ptr->speed2b > (rndm(200.0)+10.0) && gernd()%25 == 0)
+		{
+		for (zothusn=0 ; zothusn < nterms ; zothusn++)
+			{
+			wptr=warshpoff(zothusn);
+			if (ingegame(zothusn) && zothusn != usrn)
+				{
+				ddist = cdistance(&warsptr->coord,&wptr->coord);
+				ddist *= 10000;
+
+				if (ddist < (shipclass[wptr->shpclass].scanrange/2) && wptr->jammer == 0)
+					{
+					bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading)+.5);
+					/* slop it up +- 10 degrees on either side */
+					bearing = bearing + (gernd()%20)-10;
+					prfmsg(CLOK3,bearing);
+					outprfge(ALWAYS,zothusn);
+					}
+				}
+			}
+		}
 	if (ptr->speed > 1000.0 && ptr->status == GESTAT_USER)
 		{
 		intspeed = ptr->speed/1000.0;

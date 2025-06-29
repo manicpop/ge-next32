@@ -517,9 +517,7 @@ outprfge(ALWAYS,usrnum);
 void FUNC cmd_impulse()
 {
 unsigned deg;
-int	zothusn;
-WARSHP	*wptr;
-double	ddist;
+
 if (margc < 2 || margc > 3)
 	{
 	prfmsg(FORMAT,"IMPULSE");
@@ -577,29 +575,6 @@ if (valpcnt(margv[1],0,99))
 		warsptr->speed2b = 1000.0 * ((double)warsptr->percent/100.0);
 		if (deg != warsptr->head2b)
 			warsptr->head2b = (double)deg;
-		/* if I am cloaked tell the closer ones */
-		if (warsptr->cloak == 10 && warsptr->speed2b > (rndm(200.0)+10.0))
-			{
-			for (zothusn=0 ; zothusn < nterms ; zothusn++)
-				{
-				wptr=warshpoff(zothusn);
-				if (ingegame(zothusn) && zothusn != usrnum)
-					{
-					ddist = cdistance(&warsptr->coord,&wptr->coord);
-					ddist *= 10000;
-
-					if (ddist < (shipclass[wptr->shpclass].scanrange/2)
-						&& wptr->jammer == 0)
-						{
-						bearing = (int)(cbearing(&wptr->coord,&warsptr->coord,wptr->heading)+.5);
-						/* slop it up +- 10 degrees on either side */
-						bearing = bearing + (gernd()%20)-10;
-						prfmsg(CLOK3,bearing);
-						outprfge(ALWAYS,zothusn);
-						}
-					}
-				}
-			}
 		}
 	else
 		{
