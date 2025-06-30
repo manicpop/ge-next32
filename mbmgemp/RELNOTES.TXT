@@ -8,10 +8,10 @@ https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact with me thoughts and suggestions.
 
-=== 0.2.2 === 2025-06-29:
+=== 0.2.2 === 2025-06-30:
 
 * A bug that caused planetary updates to not happen under certain
-  conditions has (hopefully) been resolved.
+  conditions has been resolved.
 * A bug that showed "invalid pointer" when a ship is destroyed when the
   user is disconnected while in battle has been resolved.
 * The "ion field displacement" message has been moved from the impulse
