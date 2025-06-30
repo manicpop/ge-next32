@@ -226,7 +226,8 @@ int				gemaxplrs,
 				meneat,
 				cattkd,
 				gcnum,
-				planupd;
+				planupd,
+				passnum;
 
 char				*opttxt,
 				optchr;
@@ -908,6 +909,7 @@ void FUNC gemidnighta(void)
 {
 int	i;
 int	foundit;
+int	intkey = PLTYPE_PLNT;
 long	scr;
 
 setmbk(gemb);
@@ -939,6 +941,17 @@ if (qlobtv(0))
 geshocst(1,spr("GE:INF:Cleanup Phase-2"));
 
 setbtv(gebb2);
+
+/* if we didn't finish one full planet pass, recalc plantime tomorrow */
+if (passnum <= 1)
+	{
+	geshocst(1,spr("GE:INF:first planet cycle didn't complete, recalc tomorrow"));
+	if (agebtv(&planet, &intkey, 2))
+		{
+		planet.plantimesave = 0;
+		gesdb(GEUPDATE, (PKEY *)&planet, (GALSECT *)&planet);
+		}
+	}
 
 if (qlobtv(0))
 	{
@@ -1752,7 +1765,6 @@ return(0);
 
 void FUNC plartia(void)
 {
-static int passnum = 0;
 static int foundpl = TRUE;
 static long fpos = 0;
 static long tocks = 0;
@@ -1779,6 +1791,7 @@ logthis(spr("plartia entered, numrecs %s, passnum %d, plantime %u",gechrbuf,pass
 if (passnum > planupd)	/* we've run all the day's updates */
 	{
 	agebtv(&planet, &intkey, 2);
+	planet.plantimesave = plantime;
 	planet.timestamp = ((unsigned long)game_day << 4) | passnum;
 	gesdb(GEUPDATE, (PKEY *)&planet, (GALSECT *)&planet);
 	geshocst(1,spr("GE:INF:all planets updated for day %d",game_day));
@@ -1801,20 +1814,17 @@ if (passnum == 0)	/* fresh boot */
 #ifdef FASTPLANET
 			plantime = 3;
 #else
-			/* if no plantime saved, how fast do we want to start out?
-			   good enough i guess. maybe i'll make this smarter later */
+			/* if no plantime saved, how fast do we want to start out? */
 			if (planet.plantimesave <= 3)
 				{
 				if (numrecs < 50)
-					plantime = 4000/planupd;
+					numrecs = 50;
 				else
-				if (numrecs < 500)
-					plantime = 400/planupd;
-				else
-				if (numrecs < 5000)
-					plantime = 40/planupd;
-				else
-					plantime = 3;
+				if (numrecs > 5000)
+					numrecs = 5000;
+				plantime = (unsigned int)((3997L * (5000L - numrecs)) / 4950L + 3);
+				plantime /= planupd;
+				logthis(spr("estimated plantime set to %u",plantime));
 				}
 			else
 				plantime = planet.plantimesave;
@@ -1825,8 +1835,6 @@ if (passnum == 0)	/* fresh boot */
 			if ((planet.timestamp >> 4) == game_day)	/* game has already been up today */
 				{
 				passnum = (int)(planet.timestamp & 0xF);
-				if (passnum > planupd)	/* if we're already done, no need to wait */
-					plantime = 3;
 				logthis(spr("resuming from planupd %d",planupd));
 				}
 			else

@@ -8,6 +8,19 @@ https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact with me thoughts and suggestions.
 
+=== 0.2.2 === 2025-06-29:
+
+* A bug that caused planetary updates to not happen under certain
+  conditions has (hopefully) been resolved.
+* A bug that showed "invalid pointer" when a ship is destroyed when the
+  user is disconnected while in battle has been resolved.
+* The "ion field displacement" message has been moved from the impulse
+  command to the moveship routine. This will keep one user from being
+  able to flood another user's screen with messages by entering
+  multiple impulse commands.
+* The text alignment for the "planet" command has been cleaned up.
+* A "help version" command was added by request.
+
 === 0.2.1 === 2025-06-27:
 
 A few non-gameplay related issues were addressed:

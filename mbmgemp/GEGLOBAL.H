@@ -151,7 +151,8 @@ extern	int		gemaxplrs,
 			meneat,
 			cattkd,
 			gcnum,
-			planupd;
+			planupd,
+			passnum;
 
 extern	char		*opttxt,
 			optchr;
