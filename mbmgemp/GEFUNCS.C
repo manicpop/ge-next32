@@ -797,7 +797,7 @@ if (ptr->speed > 0)
 
 			if (gernd()%diff==0)
 				{
-				if (ptr->warncntr > 4)
+				if (ptr->overspeed > 4)
 					{
 					/* blow up the engines */
 					prfmsg(WARPBRK);
@@ -808,27 +808,27 @@ if (ptr->speed > 0)
 					}
 				else
 					{
-					prfmsg(WARPFAST+ptr->warncntr);
+					prfmsg(WARPFAST+(int)ptr->overspeed);
 					outprfge(FILTER,usrn);
-					ptr->warncntr++;
+					ptr->overspeed++;
 					}
 				}
 
 			}
 		else
 			{
-			if (ptr->warncntr > 0)
+			if (ptr->overspeed > 0)
 				{
 				/* speed is normal but he was going to fast before... limit the
             engine maximum speed */
 
-				ptr->topspeed = ptr->topspeed/ptr->warncntr;
+				ptr->topspeed = ptr->topspeed/(int)ptr->overspeed;
 				if (ptr->speed2b > ptr->topspeed*1000.0)
 					ptr->speed2b = ptr->topspeed*1000.0;
 				prfmsg(WARPSPD,ptr->topspeed);
 				outprfge(FILTER,usrn);
 				/* reset the warning counter */
-				ptr->warncntr = 0;
+				ptr->overspeed = 0;
 				}
 			}
 

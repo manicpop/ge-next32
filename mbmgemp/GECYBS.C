@@ -120,7 +120,7 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		ptr->status = GESTAT_AUTO;
 		ptr->shield = 40 + (ptr->shieldtype*10);
 		ptr->phasr = 100;
-		ptr->warncntr = (byte)255;
+		ptr->npcmsg = (byte)255;
 		cyb_cruise(ptr,0);
 		ptr->cybupdate = 100 + gernd()%20;
 		ptr->holdcourse = 0;
@@ -176,7 +176,7 @@ if (geudb(GELOOKUP,cybname, waruptr))
 
 		ptr->cybmine = (byte)255;
 		ptr->distress = (byte)255;
-		ptr->warncntr = (byte)255;
+		ptr->npcmsg = (byte)255;
 		ptr->shield = 40 + (ptr->shieldtype*10);
 		ptr->phasr = 100;
 
@@ -438,7 +438,7 @@ if (usrn == ptr->cybmine && msgtype == CYBBASEA)
 	return;
 
 /* these messages can be called on users that aren't being targeted */
-/* bypass logic, use simple random, and don't change warncntr */
+/* bypass logic, use simple random, and don't change npcmsg */
 if (usrn != ptr->cybmine)
 	{
 	if (((msgtype == LOATTACK || msgtype == HIATTACK || msgtype == TAUNT) && gernd()%12 == 0) ||
@@ -454,18 +454,18 @@ if ((msgtype == LOATTACK || msgtype == HIATTACK || msgtype == CYBTORP) && shipcl
 /* let some of these through on occasion */
 if ((msgtype == NEUTRAL || msgtype == IGNORE) &&
 	gernd()%(16+(shipclass[ptr->shpclass].tough_factor*2)) == 0)	/* adjust for tougher ships going faster */
-	ptr->warncntr = 255;
+	ptr->npcmsg = 255;
 
 /* otherwise don't do the same message twice in a row */
-if (ptr->warncntr == msgtype)
+if (ptr->npcmsg == msgtype)
 	return;
 
 /* throttle impulse battle msgs */
-if ((ptr->warncntr == TAUNT || ptr->warncntr == CYBTORP || ptr->warncntr == LOATTACK) &&
+if ((ptr->npcmsg == TAUNT || ptr->npcmsg == CYBTORP || ptr->npcmsg == LOATTACK) &&
 	(msgtype == TAUNT || msgtype == CYBTORP || msgtype == LOATTACK))
 	if (gernd()%(6+(shipclass[ptr->shpclass].tough_factor)) != 0)
 		{
-		ptr->warncntr = msgtype;
+		ptr->npcmsg = msgtype;
 		return;
 		}
 
@@ -474,14 +474,14 @@ if (ptr->holdcourse > 0)
 	return;
 
 /* if you've fled, and you're returning, don't reannounce */
-if (ptr->warncntr == FLEE && msgtype == APPROACH)
+if (ptr->npcmsg == FLEE && msgtype == APPROACH)
 	{
-	ptr->warncntr = APPROACH;
+	ptr->npcmsg = APPROACH;
 	return;
 	}
 
 /* remember which message type was called last (even if it doesn't necessarily get displayed) */
-ptr->warncntr = msgtype;
+ptr->npcmsg = msgtype;
 
 /* show some messages always, the rest sometimes */
 if (msgtype == FLEE || msgtype == APPROACH || gernd()%3 == 0)
@@ -1058,7 +1058,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 	{
 	if (mptr->distance > 20000 && ptr->holdcourse == 0)
 		{
-		ptr->warncntr = FLEE;	/* don't send APPROACH again after returning from this */
+		ptr->npcmsg = FLEE;	/* don't send APPROACH again after returning from this */
 		ptr->head2b = rndm(359.9);
 		cyb_cruise(ptr,2);
 		break;

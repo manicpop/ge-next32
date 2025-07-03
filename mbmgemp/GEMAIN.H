@@ -307,73 +307,106 @@ extern
 
 WARSHP {						/*   user data blocks                        */
 		char		userid[UIDSIZ];		/*   userid of player                        */
+/*30*/
 		int		shipno;			/*   Ship id number                          */
-		char		shipname[35];		/*   Ship name                               */
 /*32*/
+		char		shipname[35];		/*   Ship name                               */
+/*67*/
 		int		shpclass;		/*   Ship Class   display                    */
+/*69*/
 		double		heading;		/*   Heading of this ship                    */
-/*42*/
+/*77*/
 		double		head2b;			/*   direction rotating to                   */
+/*85*/
 		double		speed;			/*   Speed                                   */
-/*58*/
+/*93*/
 		double		speed2b;		/*   Speed to be                             */
-/*66*/
-/*70*/
+/*101*/
 		COORD		coord;
-/*86*/
+/*117*/
 		double		damage;			/*   Damage on this ship (0 - 100%)          */
-/*94*/
+/*125*/
 		double		energy;			/*   Amount of energy available              */
-/*102*/
-		double		phasr;			/*   Phasor strength (0 - 100%)              */
-/*110*/
-		byte		phasrtype;		/*   Type of Phasor system                   */
-		int		kills;			/*   No kills                                */
-		int		lastfired;		/*   usernumber of last user to fire on you  */
-		byte		shieldtype;		/*   shield type                             */
-		byte		shieldstat;		/*   shield status (supposed to be up/dn)    */
-		int		shield;			/*   shield charge                           */
-		int		cloak;			/*   cloak flag  -1 = up 0 = down + = time   */
-		int		degrees;		/*   work fields for calculating degrees     */
-/*123*/
-		int		percent;		/*   Work field for calculating percentages  */
-		int		tactical;		/*   Tactical Display damage indicator       */
-		int		helm;			/*   Helm Control damage indicator           */
-		int		train;			/*   Training screen counter                 */
-		int		where;			/*   Hyperspace flag                         */
 /*133*/
-		TORPEDO		ltorps[MAXTORPS];	/*   Locked on torpedoes                     */
+		double		phasr;			/*   Phasor strength (0 - 100%)              */
+/*141*/
+		byte		phasrtype;		/*   Type of Phasor system                   */
 /*142*/
+		int		kills;			/*   No kills                                */
+/*144*/
+		int		lastfired;		/*   usernumber of last user to fire on you  */
+/*146*/
+		byte		shieldtype;		/*   shield type                             */
+/*147*/
+		byte		shieldstat;		/*   shield status (supposed to be up/dn)    */
+/*148*/
+		int		shield;			/*   shield charge                           */
+/*150*/
+		int		cloak;			/*   cloak flag  -1 = up 0 = down + = time   */
+/*152*/
+		int		degrees;		/*   work fields for calculating degrees     */
+/*154*/
+		int		percent;		/*   Work field for calculating percentages  */
+/*156*/
+		int		tactical;		/*   Tactical Display damage indicator       */
+/*158*/
+		int		helm;			/*   Helm Control damage indicator           */
+/*160*/
+		int		train;			/*   Training screen counter                 */
+/*162*/
+		int		where;			/*   Hyperspace flag                         */
+/*164*/
+		TORPEDO		ltorps[MAXTORPS];	/*   Locked on torpedoes                     */
+/*173*/
 		MISSILE		lmissl[MAXMISSL];	/*   Locked on missiles                      */
-/*157*/
+/*188*/
 		unsigned	decout[MAXDECOY];	/*   decoys out                              */
-/*177*/
+/*208*/
 		unsigned	jammer;			/*   supper time?                            */
+/*210*/
 		unsigned	freq[3];		/*   sub space, hyper space, planetary       */
-/*185*/
+/*216*/
 		unsigned long	items[NUMITEMS];	/*   all the items                           */
-/*237*/
+/*272*/
 		unsigned	titem;			/*   establishing a colony mode temp item    */
+/*274*/
 		unsigned	hostile;		/*   being hostile flag                      */
+/*276*/
 		unsigned	cantexit;		/*   cannot exit counter                     */
+/*278*/
 		unsigned	repair;			/*   repairs underway flag                   */
+/*280*/
 		unsigned	hypha;			/*   hyper-phasers cooling flag              */
-/*247*/
+/*282*/
 		unsigned	firecntl;		/*   fire-control damage flag                */
+/*284*/
 		byte		destruct;		/*   self destruct countdown                 */
+/*285*/
 		byte		status;			/*   Status of this record                   */
+/*286*/
 		byte		cybmine;		/*   I have found me a ship to seek          */
+/*287*/
 		byte		upgrade;		/*   UNUSED ATM                              */
+/*288*/
 		byte		cybupdate;		/*   update cyborg counter                   */
+/*289*/
 		byte		tick;			/*   Ship Ticker                             */
+/*290*/
 		byte		distress;		/*   has sent distress message               */
+/*291*/
 		byte		minesnear;		/*   set when mines are near                 */
+/*292*/
 		int		lock;			/*   set to the ship we are locked onto      */
+/*294*/
 		byte		holdcourse;		/*   Hold course ticker                      */
-		int		topspeed;
-		byte		warncntr;
-/*256 ---------------------v  */
-		char		filler[512-266-UIDSIZ];	/*   fill to 512 BJ added 20 for name        */
+/*295*/
+		int		topspeed;		/*   top speed considering damage            */
+/*297*/
+		byte		npcmsg;			/*   keeps track of last annoy msg sent      */
+/*298*/
+		unsigned long	overspeed;		/*   counter for over maximum warp           */
+/*302*/
+		char		filler[514-272-UIDSIZ]; /*   WARSHP in GE classic is 514             */
 };
 
 /*

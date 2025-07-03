@@ -191,7 +191,7 @@ if (shipclass[class].max_shlds > 1)
 else
 	ptr->shieldtype = shipclass[class].max_shlds;
 
-ptr->warncntr = 0;
+ptr->npcmsg = 0;
 
 for (zothusn=0; zothusn<nterms; zothusn++)
 	{
@@ -314,12 +314,12 @@ sel = 0;
 
 if (ptr->cybmine == 255)
 	{
-	if (ptr->warncntr == 0)			/* if starting fresh or coming back from cybmine set */
-		ptr->warncntr = interval;
-	if (ptr->warncntr > interval*4)		/* cycle through msgs instead of rnd pick */
-		ptr->warncntr = 1;
-	if (ptr->warncntr%interval == 0)
-		sel = base + (ptr->warncntr/interval);
+	if (ptr->npcmsg == 0)			/* if starting fresh or coming back from cybmine set */
+		ptr->npcmsg = interval;
+	if (ptr->npcmsg > interval*4)		/* cycle through msgs instead of rnd pick */
+		ptr->npcmsg = 1;
+	if (ptr->npcmsg%interval == 0)
+		sel = base + (ptr->npcmsg/interval);
 	if (sel != 0)
 		{
 		if (sel+4 >= DRLASTM)
@@ -345,11 +345,11 @@ else
 		return;
 		}
 	/* if engaged, show message every time hit (255) */
-	if (ptr->warncntr == 255 && ptr->damage < 100)
+	if (ptr->npcmsg == 255 && ptr->damage < 100)
 		{
 		prfmsg(sel,ptr->shipname);
 		outprfge(FILTER,usrn);
-		ptr->warncntr = 0;
+		ptr->npcmsg = 0;
 		}
 	}
 }
@@ -408,7 +408,7 @@ if (ptr->jammer == 0)
 					}
 				}
 			}
-		++ptr->warncntr;
+		++ptr->npcmsg;
 		}
 	if (ptr->cybmine < nships && ingegame(ptr->cybmine))
 		{
@@ -480,7 +480,7 @@ if (ptr->jammer == 0)
 					}
 				}
 			}
-		++ptr->warncntr;
+		++ptr->npcmsg;
 		/* get back to it if no one's around */
 		if (around == FALSE && ptr->holdcourse == 0)
 			cyb_cruise(ptr,0);
@@ -557,7 +557,7 @@ if (ptr->jammer == 0)
 					}
 				}
 			}
-		++ptr->warncntr;
+		++ptr->npcmsg;
 		}
 	if (ptr->cybmine < nships && ingegame(ptr->cybmine))
 		{
@@ -642,7 +642,7 @@ if (ptr->jammer == 0)
 					}
 				}
 			}
-		++ptr->warncntr;
+		++ptr->npcmsg;
 		}
 	if (ptr->cybmine < nships && ingegame(ptr->cybmine))
 		{
@@ -744,7 +744,7 @@ if (ptr->jammer == 0)
 					}
 				}
 			}
-		++ptr->warncntr;
+		++ptr->npcmsg;
 		if (low_ship >= 0 && low_ship < nships)
 			ptr->cybmine = low_ship;
 		}
@@ -902,7 +902,7 @@ if (ptr->jammer == 0)
 					}
 				}
 			}
-		++ptr->warncntr;
+		++ptr->npcmsg;
 		if (ptr->freq[1] != 0)
 			{
 			if (ptr->freq[1] == 1 || ptr->freq[1] == 2 || (neutral(&ptr->coord) && ptr->freq[1] < 7))	/* go to Zygor */

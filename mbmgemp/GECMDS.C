@@ -1043,7 +1043,7 @@ if (ptr->phasr >=PMINFIRE)
 							{
 							wptr->cybmine = usrn;	/* engage user */
 							wptr->tick = 2;		/* do it fast */
-							wptr->warncntr = 255;	/* reset annoy msg tracking */
+							wptr->npcmsg = 255;	/* reset annoy msg tracking */
 							}
 						if (wptr->shieldstat != SHIELDUP)
 							{
@@ -1193,7 +1193,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 								{
 								wptr->cybmine = usrn;	/* engage user */
 								wptr->tick = 2;		/* do it fast */
-								wptr->warncntr = 255;	/* reset annoy msg tracking */
+								wptr->npcmsg = 255;	/* reset annoy msg tracking */
 								}
 							wptr->cantexit = FIRETICKS;
 							ptr->cantexit = FIRETICKS;
@@ -1532,7 +1532,7 @@ if (wptr->cloak < 10 && (dist*10000.0) < (double)shipclass[warsptr->shpclass].sc
 		{
 		wptr->cybmine = usrn;	/* engage user */
 		wptr->tick = 2;		/* do it fast */
-		wptr->warncntr = 255;	/* reset annoy msg tracking */
+		wptr->npcmsg = 255;	/* reset annoy msg tracking */
 		}
 
 	speed = ptr->speed + wptr->speed;
