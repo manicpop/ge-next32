@@ -352,9 +352,27 @@ outprfge(ALWAYS,usrnum);
 
 void FUNC cmd_gehelp()
 {
-int	ndx,i;
+int	ndx,i,syshelp;
 
 char	gechrbuf4[20], gechrbuf5[20], gechrbuf6[20], gechrbuf7[20];
+
+#ifdef PHARLAP
+if ((!syscmds) || (sysonly && !(hasmkey(SYSKEY))))
+#else
+if ((!syscmds) || (sysonly && !(usrptr->flags&ISYSOP)))
+#endif
+	syshelp = FALSE;
+else
+	syshelp = TRUE;
+
+setmbk(gehlpmb);
+
+if (margc < 2 || margc > 3)
+	{
+	prfmsg(HLPINDEX);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
 
 if (genearas(margv[1],"version"))
 	{
@@ -364,24 +382,7 @@ if (genearas(margv[1],"version"))
 	return;
 	}
 
-if (genearas(margv[1],"sys"))
-	{
-#ifdef PHARLAP
-	if ((!syscmds) || (sysonly && !(hasmkey(SYSKEY))))
-#else
-	if ((!syscmds) || (sysonly && !(usrptr->flags&ISYSOP)))
-#endif
-		{
-		setmbk(gehlpmb);
-		prfmsg(HLPINDEX);
-		outprfge(ALWAYS,usrnum);
-		return;
-		}
-	}
-
-setmbk(gehlpmb);
-
-if (margc < 2 || margc > 3)
+if (genearas(margv[1],"sys") && syshelp == FALSE)
 	{
 	prfmsg(HLPINDEX);
 	outprfge(ALWAYS,usrnum);
