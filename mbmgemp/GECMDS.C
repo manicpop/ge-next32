@@ -4357,7 +4357,7 @@ if (qlobtv(0))
 			gcrbtv(&planet,1);
 			if (sameas(planet.userid,warsptr->userid))
 				{
-				prf("%-25s %4d %4d  %5d \r",planet.name,planet.xsect,planet.ysect,planet.plnum);
+				prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
 				outprfge(ALWAYS,usrnum);
 				}
 			else

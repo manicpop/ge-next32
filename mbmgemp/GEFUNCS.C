@@ -312,15 +312,36 @@ if (qlobtv(0))
 	if (gepdb(GELOOKUPNAME,usaptr->userid,0,warsptr))
 		{
 		sptr = &scantab[usrnum];
-		prf("\r#  XSect YSect Class                           Name:\r");
+		prf("\33[1;36m    Class                Name                 Sector         Status\r");
 		do
 			{
 			gcrbtv(warsptr,0);
 			if (sameas(usaptr->userid,warsptr->userid))
 				{
 				setsect(warsptr);
-				prf("%-2d %-5d %-5d %-30s %s\r",found+1,xsect,ysect,shipclass[warsptr->shpclass].typename,
-					warsptr->shipname);
+				prf("\33[1;37m%2d  %-20s %-20s %6d %6d  \33[1;37m",found+1,shipclass[warsptr->shpclass].typename,
+					warsptr->shipname,xsect,ysect);
+				if (warsptr->energy < 5000 && warsptr->items[I_FLUXPOD] == 0)
+					prf("\33[0;31mflux depleted\33[1;37m");
+				else
+				if (warsptr->damage > 75.5)
+					prf("\33[0;31msevere\33[1;37m damage");
+				else
+				if (warsptr->damage > 50.5)
+					prf("\33[0;31mheavy\33[1;37m damage");
+				else
+				if (warsptr->cloak > 0)
+					prf("cloak \33[1;32mON\33[1;37m");
+				else
+				if (warsptr->where > 10)
+					prf("orbiting planet \33[1;34m%d\33[1;37m",warsptr->where-10);
+				else
+				if (warsptr->items[I_GOLD] >= 500)
+					{
+					sprintf(gechrbuf,"%lu",warsptr->items[I_GOLD]);
+					prf("%s gold",gechrbuf);
+					}
+				prf("\33[1;37m\r");
 				sptr->ship[found].shipno = warsptr->shipno;
 				++found;
 				}
@@ -329,6 +350,7 @@ if (qlobtv(0))
 			} while (qnxbtv());
 		}
 	}
+
 /* added 06/17/89 to prevent cyborg code from thinking this user is a
 	cybertron incase the next alpha record was indeed Cyborg-1. */
 
