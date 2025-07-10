@@ -3669,7 +3669,7 @@ Class 22 damage factor, 100 is normal. 200 is twice as
 resilient, 77 is the minimum.
 Damage = damage / (SnnDAMF / 100)
 
-S22DAMF {Damage effect factor: 150} (S22TYPE#<NONE>) N 77 32767
+S22DAMF {Damage effect factor: 175} (S22TYPE#<NONE>) N 77 32767
 
 Class 22 faction code.
 0 for user ships. 1 for Cybertrons.
@@ -3975,7 +3975,7 @@ Class 24 damage factor, 100 is normal. 200 is twice as
 resilient, 77 is the minimum.
 Damage = damage / (SnnDAMF / 100)
 
-S24DAMF {Damage effect factor: 250} (S24TYPE#<NONE>) N 77 32767
+S24DAMF {Damage effect factor: 300} (S24TYPE#<NONE>) N 77 32767
 
 Class 24 faction code.
 0 for user ships. 1 for Cybertrons.
@@ -4128,7 +4128,7 @@ Class 25 damage factor, 100 is normal. 200 is twice as
 resilient, 77 is the minimum.
 Damage = damage / (SnnDAMF / 100)
 
-S25DAMF {Damage effect factor: 360} (S25TYPE#<NONE>) N 77 32767
+S25DAMF {Damage effect factor: 425} (S25TYPE#<NONE>) N 77 32767
 
 Class 25 faction code.
 0 for user ships. 1 for Cybertrons.

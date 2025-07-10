@@ -433,6 +433,19 @@ int	msgtype;
 if (usrn >= nterms)
 	return;
 
+/* if already blowed up, don't msg */
+if (ptr->damage > 100)
+	return;
+
+/* if we are fleeing from this user, don't send other msgs to this user until done */
+if (usrn == ptr->cybmine && ptr->npcmsg == FLEE)
+	{
+	/* if coming back from missile avoidance */
+	if (msgtype == APPROACH)
+		ptr->npcmsg = APPROACH;
+	return;
+	}
+
 /* if base is targeting user, don't show approach msg */
 if (usrn == ptr->cybmine && msgtype == CYBBASEA)
 	return;
@@ -595,14 +608,17 @@ if (gernd()%10 == 0 && shipclass[ptr->shpclass].has_zip && ptr->items[I_ZIPPERS]
 	cyb_cruise(ptr,3);
 	}
 
-if (acted == 1)
-	cyb_annoy(ptr,zothusn,LOATTACK);
-else
-if (acted == 2)
-	cyb_annoy(ptr,zothusn,CYBTORP);
-else
-	cyb_annoy(ptr,zothusn,TAUNT);
-
+/* if damage in flee range, don't talk trash */
+if (ptr->damage < CYB_MINDAM)
+	{
+	if (acted == 1)
+		cyb_annoy(ptr,zothusn,LOATTACK);
+	else
+	if (acted == 2)
+		cyb_annoy(ptr,zothusn,CYBTORP);
+	else
+		cyb_annoy(ptr,zothusn,TAUNT);
+	}
 }
 
 /**************************************************************************
@@ -648,11 +664,14 @@ if (ptr->cybmine < nships && ptr->damage > CYB_MINDAM && ((gernd()%10 == 0) || p
 		&& gernd()%40 == 0)
 		jam(ptr,usrn);
 	if (ptr->holdcourse == 1)
+		{
 		ptr->cybmine = 255;
+		ptr->npcmsg = 255;
+		}
 	if (ptr->holdcourse == 0)
 		{
 		cyb_annoy(ptr,ptr->cybmine,FLEE);
-		ptr->head2b = normal(vector(&ptr->coord,&warshpoff(ptr->cybmine)->coord) + 180.0);
+		ptr->head2b = normal(vector(&ptr->coord,&warshpoff(ptr->cybmine)->coord) + 180.0 + (rand() % 51 - 25));
 		cyb_cruise(ptr,3);
 		}
 	}
@@ -953,10 +972,13 @@ if (ptr->topspeed == 0)
 	}
 else
 	{
-	if (ptr->speed < 1000)	/* no fractional warp speeds */
+	if (ptr->speed < 1000)	/* quick jump to warp, no fractional warp speeds */
 		{
-		ptr->speed2b = 0.0;
-		ptr->speed = ptr->speed2b;
+		ptr->where = 1;
+		if (shipclass[ptr->shpclass].max_accel <= ptr->topspeed*1000)
+			ptr->speed = shipclass[ptr->shpclass].max_accel;
+		else
+			ptr->speed = ptr->topspeed*1000;
 		}
 	if (cyb_fast(ptr))
 		{

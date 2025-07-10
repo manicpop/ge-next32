@@ -8,6 +8,18 @@ https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact with me thoughts and suggestions.
 
+=== 0.2.3 === 2025-07-10:
+
+* A bug with the HELP command introduced in 0.2.2 is resolved.
+* A new ship selection screen is a little neater and also displays
+  information about your ships.
+* 2x, 4x, 8x Cybs were given a small damage factor boost.
+* Some changes were made to the Cybertron flee routine to make them
+  a little smarter about how they try to get away.
+* Cybs will no longer "talk trash" if they're fleeing or about to
+  flee (this sometimes resulted in two messages in quick succession).
+
+
 === 0.2.2 === 2025-06-30:
 
 * A bug that caused planetary updates to not happen under certain
