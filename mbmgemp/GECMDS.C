@@ -1804,8 +1804,10 @@ for (zothusn=0; zothusn < nships ; zothusn++)
 
 		wptr->jammer = (unsigned)(((double)jamtime)*ddist);
 		if (wptr->jammer > 0)
+			{
 			prfmsg(JAMMER3);
-		outprfge(FILTER,zothusn);
+			outprfge(FILTER,zothusn);
+			}
 		}
 	}
 --ptr->items[I_JAMMERS];
