@@ -368,8 +368,10 @@ else
 	/* as long as they can't see ... the other player must be trying to get
 		away.... might as well mine the area */
 		if (shipclass[ptr->shpclass].has_mine && ptr->items[I_MINE] > 0 && gernd()%5 == 0)
+			{
 			laymine(ptr,usrn,10);
-		cyb_cruise(ptr,2);
+			cyb_cruise(ptr,2);
+			}
 		}
 	}
 
