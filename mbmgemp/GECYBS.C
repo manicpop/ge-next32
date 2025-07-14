@@ -602,7 +602,6 @@ if (gernd()%10 == 0 && shipclass[ptr->shpclass].has_zip && ptr->items[I_ZIPPERS]
 	&& shipclass[ptr->shpclass].max_accel > 0 && wptr->minesnear == TRUE)
 	{
 	zip(ptr,usrn);
-	wptr->minesnear = FALSE;
 	acted = 1;
 	/* get the hell out of here ...then come back */
 	cyb_cruise(ptr,3);

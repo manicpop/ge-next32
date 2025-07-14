@@ -1582,7 +1582,7 @@ if (ptr->cloak < 0)
 
 void FUNC checkmines()
 {
-int	i;
+int	i, mineset;
 int	zothusn;	/* general purpose other-user channel number */
 WARSHP	*wptr;
 WARUSR	*wuptr;
@@ -1593,6 +1593,8 @@ setmbk(gemb);
 
 /*DEBUG
 printf("checking mines\r\n");*/
+
+mineset = FALSE;
 
 for (i=0,mptr = mines; i<nummines;++mptr,++i)
 	{
@@ -1606,6 +1608,8 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 				wptr=warshpoff(zothusn);
 				if (ingegame(zothusn))
 					{
+					if (mineset == FALSE)
+						wptr->minesnear = FALSE;
 					ddist = cdistance(&mptr->coord,&wptr->coord);
 					ddist *= 10000;
 					bearing = (int)(cbearing(&wptr->coord,&mptr->coord,wptr->heading)+.5);
@@ -1662,6 +1666,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 								outprfge(FILTER,zothusn);
 								}
 							wptr->minesnear = TRUE;
+							mineset = TRUE;
 							}
 						}
 					else
