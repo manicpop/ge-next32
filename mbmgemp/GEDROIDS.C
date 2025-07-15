@@ -177,7 +177,7 @@ else
 		ptr->items[I_GOLD] = (gernd()%200)+100;
 	}
 
-cyb_cruise(ptr,0);
+cyb_cruise(ptr,usrn,0);
 ptr->holdcourse = 0;
 ptr->status = GESTAT_AUTO;
 ptr->tick = (CYBTICKTIME + gernd()%CYBTICKTIME)*5;
@@ -250,7 +250,7 @@ if (ptr->cybupdate > 1)		/* this should only be set on droids if telezip is call
 else
 if (ptr->cybupdate == 1)
 	{
-	cyb_cruise(ptr,0);
+	cyb_cruise(ptr,usrn,0);
 	ptr->cybupdate = 0;
 	}
 
@@ -424,13 +424,13 @@ if (ptr->jammer == 0)
 			droid_annoy(ptr,zothusn);
 			}
 		else
-			cyb_cruise(ptr,0);	/* phew we're safe */
+			cyb_cruise(ptr,usrn,0);	/* phew we're safe */
 		}
 	else
 		ptr->cybmine = 255;
 	}
 else
-	cyb_cruise(ptr,3);
+	cyb_cruise(ptr,usrn,3);
 droid_check_state(ptr,usrn);
 droid_distress(ptr,usrn);
 }
@@ -483,7 +483,7 @@ if (ptr->jammer == 0)
 		++ptr->npcmsg;
 		/* get back to it if no one's around */
 		if (around == FALSE && ptr->holdcourse == 0)
-			cyb_cruise(ptr,0);
+			cyb_cruise(ptr,usrn,0);
 		}
 	if (ptr->cybmine < nships && ingegame(ptr->cybmine))
 		{
@@ -498,7 +498,7 @@ if (ptr->jammer == 0)
 				droid_annoy(ptr,zothusn);
 			/* if still in range, flee and attack */
 			if (ptr->damage > 50)
-				cyb_cruise(ptr,4);
+				cyb_cruise(ptr,usrn,4);
 			else
 				ptr->speed2b = 990.0;
 			if (wptr->cloak == 10)
@@ -509,13 +509,13 @@ if (ptr->jammer == 0)
 				droid_phaser(ptr,usrn,wptr);
 			}
 		else
-			cyb_cruise(ptr,0);	/* phew we're safe */
+			cyb_cruise(ptr,usrn,0);	/* phew we're safe */
 		}
 	else
 		ptr->cybmine = 255;
 	}
 else
-	cyb_cruise(ptr,3);
+	cyb_cruise(ptr,usrn,3);
 droid_check_state(ptr,usrn);
 droid_distress(ptr,usrn);
 }
@@ -575,7 +575,7 @@ if (ptr->jammer == 0)
 					ptr->speed2b = ((gernd()%99)+1)*10;
 				else
 					{
-					cyb_cruise(ptr,4);
+					cyb_cruise(ptr,usrn,4);
 					if (ptr->items[I_MINE] > 0 && shipclass[ptr->shpclass].has_mine && !neutral(&ptr->coord) && gernd()%3 == 0)
 						laymine(ptr,usrn,10);
 					}
@@ -594,13 +594,13 @@ if (ptr->jammer == 0)
 				}
 			}
 		else
-			cyb_cruise(ptr,0);	/* phew we're safe */
+			cyb_cruise(ptr,usrn,0);	/* phew we're safe */
 		}
 	else
 		ptr->cybmine = 255;
 	}
 else
-	cyb_cruise(ptr,3);
+	cyb_cruise(ptr,usrn,3);
 droid_check_state(ptr,usrn);
 droid_distress(ptr,usrn);
 }
@@ -661,7 +661,7 @@ if (ptr->jammer == 0)
 				else
 					ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + 180.0 + (rand() % 51 - 25));
 				if (gernd()%2 == 0)
-					cyb_cruise(ptr,4);
+					cyb_cruise(ptr,usrn,4);
 				else
 					ptr->speed2b = 990;
 				ptr->holdcourse = gernd()%15 + 10;
@@ -676,13 +676,13 @@ if (ptr->jammer == 0)
 				}
 			}
 		else
-			cyb_cruise(ptr,0);	/* phew we're safe */
+			cyb_cruise(ptr,usrn,0);	/* phew we're safe */
 		}
 	else
 		ptr->cybmine = 255;
 	}
 else
-	cyb_cruise(ptr,3);
+	cyb_cruise(ptr,usrn,3);
 droid_check_state(ptr,usrn);
 droid_distress(ptr,usrn);
 }
@@ -751,7 +751,7 @@ if (ptr->jammer == 0)
 	/* if still not tracking */
 	if (ptr->cybmine == 255 && ptr->holdcourse == 0)
 		{
-		cyb_cruise(ptr,0);
+		cyb_cruise(ptr,usrn,0);
 		ptr->holdcourse=gernd()%5+5;
 		}
 	if (ptr->cybmine < nships && ingegame(ptr->cybmine))
@@ -761,7 +761,7 @@ if (ptr->jammer == 0)
 		if (wptr->cloak == 10 && ptr->holdcourse == 0)
 			{
 			ptr->holdcourse=gernd()%5+5;
-			cyb_cruise(ptr,0); /* let them cruise */
+			cyb_cruise(ptr,usrn,0); /* let them cruise */
 
 			/* if the guy is cloaked then give up after awhile */
 			if (gernd()%10 == 0)
@@ -777,7 +777,7 @@ if (ptr->jammer == 0)
 			if (ddist > 50000.0)
 				{
 				ptr->head2b = vector(&ptr->coord,&(wptr->coord));
-				cyb_cruise(ptr,4);
+				cyb_cruise(ptr,usrn,4);
 				}
 			else
 			if (ddist > 20000.0)
@@ -793,7 +793,7 @@ if (ptr->jammer == 0)
 					ptr->speed2b = 10000;
 					}
 				else
-					cyb_cruise(ptr,4);
+					cyb_cruise(ptr,usrn,4);
 				}
 			else
 			if (ddist > 5000.0)
@@ -835,7 +835,7 @@ if (ptr->jammer == 0)
 		ptr->cybmine = 255;
 	}
 else
-	cyb_cruise(ptr,3);
+	cyb_cruise(ptr,usrn,3);
 droid_check_state(ptr,usrn);
 }
 
@@ -912,7 +912,7 @@ if (ptr->jammer == 0)
 				if (ptr->freq[1] == 1 && cdistance(&ptr->coord,&neutsect) < 8)	/* keep cybs from picking off ships right outside neutral zone */
 					ptr->freq[1] = 2;
 				if (cdistance(&ptr->coord,&neutsect) > 1.5)
-					cyb_cruise(ptr,4);
+					cyb_cruise(ptr,usrn,4);
 				else
 				if (cdistance(&ptr->coord,&neutsect) > .1)
 					ptr->speed2b = 990;
@@ -939,7 +939,7 @@ if (ptr->jammer == 0)
 					{
 					droid_zyg_loadout(ptr);		/* reset ship contents */
 					ptr->head2b = rndm(359.9);
-					cyb_cruise(ptr,4);
+					cyb_cruise(ptr,usrn,4);
 					ptr->freq[1] = 7;
 					}
 				}
@@ -952,11 +952,11 @@ if (ptr->jammer == 0)
 				if (cdistance(&ptr->coord,&neutsect) < univmax/3)
 					{
 					ptr->head2b = normal(vector(&ptr->coord,&neutsect) + 180.0);
-					cyb_cruise(ptr,4);
+					cyb_cruise(ptr,usrn,4);
 					}
 				else
 					{
-					cyb_cruise(ptr,1);
+					cyb_cruise(ptr,usrn,1);
 					ptr->freq[1] = 9;	/* done */
 					}
 				}
@@ -981,7 +981,7 @@ if (ptr->jammer == 0)
 				if (ptr->damage < 33)
 					ptr->speed2b = 990.0;
 				else
-					cyb_cruise(ptr,4);
+					cyb_cruise(ptr,usrn,4);
 				ptr->holdcourse = gernd()%15 + 10;
 				}
 			if (ddist < 30000 && !neutral(&ptr->coord) && wptr->cloak != 10)
@@ -1000,22 +1000,23 @@ if (ptr->jammer == 0)
 				}
 			}
 		else
-			cyb_cruise(ptr,0);			/* phew we're safe */
+			cyb_cruise(ptr,usrn,0);			/* phew we're safe */
 		}
 	else
 		ptr->cybmine = 255;
 	}
 else
-	cyb_cruise(ptr,3);
+	cyb_cruise(ptr,usrn,3);
 droid_check_state(ptr,usrn);
 droid_distress(ptr,usrn);
 }
 
-void FUNC droid_won(ptr)
+void FUNC droid_won(ptr,usrn)
 WARSHP	*ptr;
+int	usrn;
 
 {
-cyb_cruise(ptr,0);
+cyb_cruise(ptr,usrn,0);
 }
 
 

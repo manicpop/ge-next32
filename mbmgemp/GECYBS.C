@@ -121,7 +121,7 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		ptr->shield = 40 + (ptr->shieldtype*10);
 		ptr->phasr = 100;
 		ptr->npcmsg = (byte)255;
-		cyb_cruise(ptr,0);
+		cyb_cruise(ptr,usrn,0);
 		ptr->cybupdate = 100 + gernd()%20;
 		ptr->holdcourse = 0;
 		ptr->tick = CYBTICKTIME + gernd()%(CYBTICKTIME*5);
@@ -292,7 +292,7 @@ db_update(ptr,usrn);
 
 /* still moving at pursuit speed, but no longer pursuing */
 if (cyb_fast(ptr) && ptr->cybmine == 255)
-	cyb_cruise(ptr,0);
+	cyb_cruise(ptr,usrn,0);
 
 /* am I being jammed ? */
 if (ptr->jammer == 0)
@@ -370,7 +370,7 @@ else
 		if (shipclass[ptr->shpclass].has_mine && ptr->items[I_MINE] > 0 && gernd()%5 == 0)
 			{
 			laymine(ptr,usrn,10);
-			cyb_cruise(ptr,2);
+			cyb_cruise(ptr,usrn,2);
 			}
 		}
 	}
@@ -380,7 +380,7 @@ if (shipclass[ptr->shpclass].max_accel > 0)
 	if (ptr->cybmine < nships)
 		cyb_check_damage(ptr,usrn);
 	if (shipclass[ptr->shpclass].tough_factor > 1)	/* tougher/faster ships use missile avoidance logic */
-		cyb_check_misl(ptr);
+		cyb_check_misl(ptr,usrn);
 	cyb_check_lockon(ptr,usrn);
 	}
 else	/* cyberbases do not use check_lockon... so raise shields here */
@@ -541,7 +541,7 @@ if (ptr->cybupdate > 1)
 /* if cruising around and about to update, change speed/direction */
 if (ptr->cybupdate == 1 && (ptr->cybmine >= nships || (warshpoff(ptr->cybmine)->status == GESTAT_AUTO && ptr->cantexit == 0)))
 	{
-	cyb_cruise(ptr,0);	/* keep cyb from endlessly chasing npcs it can't catch */
+	cyb_cruise(ptr,usrn,0);	/* keep cyb from endlessly chasing npcs it can't catch */
 	--ptr->cybupdate;
 	return;
 	}
@@ -606,7 +606,7 @@ if (gernd()%10 == 0 && shipclass[ptr->shpclass].has_zip && ptr->items[I_ZIPPERS]
 	zip(ptr,usrn);
 	acted = 1;
 	/* get the hell out of here ...then come back */
-	cyb_cruise(ptr,3);
+	cyb_cruise(ptr,usrn,3);
 	}
 
 /* if damage in flee range, don't talk trash */
@@ -673,7 +673,7 @@ if (ptr->cybmine < nships && ptr->damage > CYB_MINDAM && ((gernd()%10 == 0) || p
 		{
 		cyb_annoy(ptr,ptr->cybmine,FLEE);
 		ptr->head2b = normal(vector(&ptr->coord,&warshpoff(ptr->cybmine)->coord) + 180.0 + (rand() % 51 - 25));
-		cyb_cruise(ptr,3);
+		cyb_cruise(ptr,usrn,3);
 		}
 	}
 }
@@ -718,7 +718,7 @@ else
 	{
 	if (!ingegame(zothusn))
 		{
-		cyb_cruise(ptr,0);
+		cyb_cruise(ptr,usrn,0);
 		return;
 		}
 
@@ -727,7 +727,7 @@ else
 	if (wptr->cloak == 10)
 		{
 		ptr->holdcourse=gernd()%5+5;
-		cyb_cruise(ptr,1); /* let them cruise */
+		cyb_cruise(ptr,usrn,1); /* let them cruise */
 		ptr->cybmine = zothusn;
 
 		/* if the guy is cloaked then give up after awhile */
@@ -923,7 +923,7 @@ WARSHP	*wptr;				/* ptr to ship cyber killed */
 {
 usrn = usrn;
 wptr = wptr;
-cyb_cruise(ptr,0);
+cyb_cruise(ptr,usrn,0);
 ptr->cybupdate = 0;
 }
 
@@ -943,8 +943,9 @@ ptr->status = GESTAT_AVAIL;
 ** Set random speed and heading if cruising                              **
 **************************************************************************/
 
-void FUNC cyb_cruise(ptr,call)
+void FUNC cyb_cruise(ptr,usrn,call)
 WARSHP *ptr;
+int usrn;
 int call;
 
 {
@@ -975,7 +976,7 @@ else
 	{
 	if (ptr->speed < 1000)	/* quick jump to warp, no fractional warp speeds */
 		{
-		ptr->where = 1;
+		hyperspace(ptr,usrn,1);
 		if (shipclass[ptr->shpclass].max_accel <= ptr->topspeed*1000)
 			ptr->speed = shipclass[ptr->shpclass].max_accel;
 		else
@@ -1066,8 +1067,9 @@ if (call == 1 && gernd()%((10-cattkd)*600) == 0)
 return(FALSE);
 }
 
-void FUNC cyb_check_misl(ptr)
+void FUNC cyb_check_misl(ptr,usrn)
 WARSHP	*ptr;
+int usrn;
 
 /* if missiles detected, decide whether to flee or stop and raise shields */
 
@@ -1083,7 +1085,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 		{
 		ptr->npcmsg = FLEE;	/* don't send APPROACH again after returning from this */
 		ptr->head2b = rndm(359.9);
-		cyb_cruise(ptr,2);
+		cyb_cruise(ptr,usrn,2);
 		break;
 		}
 	else

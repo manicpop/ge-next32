@@ -276,9 +276,9 @@
 /*     641 */ void FUNC cyb_check_lockon P((WARSHP *ptr , int usrn ));
 /*     875 */ void FUNC cyb_won P((WARSHP *ptr , int usrn , WARSHP *wptr ));
 /*     887 */ void FUNC cyb_died P((WARSHP *ptr , int usrn , WARSHP *wptr ));
-/*     903 */ void FUNC cyb_cruise P((WARSHP *ptr , int call ));
+/*     903 */ void FUNC cyb_cruise P((WARSHP *ptr , int usrn , int call ));
 /*     967 */ int FUNC cyb_pick_fight P((int usrn , int call ));
-/*    1023 */ void FUNC cyb_check_misl P((WARSHP *ptr ));
+/*    1023 */ void FUNC cyb_check_misl P((WARSHP *ptr , int usrn ));
 
 /* gedroids.c */
 /*      73 */ void FUNC droid_init P((WARSHP *ptr , int usrn , int class ));
@@ -291,7 +291,7 @@
 /*     604 */ void FUNC droid_act_4 P((WARSHP *ptr , int usrn ));
 /*     686 */ void FUNC droid_act_5 P((WARSHP *ptr , int usrn ));
 /*     838 */ void FUNC droid_act_6 P((WARSHP *ptr , int usrn ));
-/*    1002 */ void FUNC droid_won P((WARSHP *ptr ));
+/*    1002 */ void FUNC droid_won P((WARSHP *ptr , int usrn));
 /*    1010 */ void FUNC droid_died P((WARSHP *ptr ));
 /*    1018 */ void FUNC droid_check_state P((WARSHP *ptr , int usrn ));
 /*    1037 */ int FUNC notclaimed_d P((int drtype , int usrn ));
