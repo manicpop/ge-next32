@@ -3918,7 +3918,7 @@ Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
 
-S24ACCL {Acceleration rate: 5000} (S24TYPE#<NONE>) N 0 32767
+S24ACCL {Acceleration rate: 2000} (S24TYPE#<NONE>) N 0 32767
 
 Maximum warp cruising speed of class 24.
 For user ships, actual top speed is 1.5x this value, but

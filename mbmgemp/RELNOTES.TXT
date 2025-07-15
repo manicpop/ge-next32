@@ -8,17 +8,23 @@ https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact with me thoughts and suggestions.
 
-=== 0.2.3 === 2025-07-10:
+=== 0.2.3 === 2025-07-16:
 
 * A bug with the HELP command introduced in 0.2.2 is resolved.
 * A new ship selection screen is a little neater and also displays
   information about your ships.
-* 2x, 4x, 8x Cybs were given a small damage factor boost.
+* 2x, 4x, 8x, and Base Cybs were given a small damage factor boost.
+* 4x and 8x get a small boost in points, Base increased to 30000
+  to make it actually worth the time to take one out. (Congrats to
+  Mlacko for being the first person, myself included, to defeat a
+  ge-next Cyber-base!)
+* 8x acceleration reduced to make it a little more lumbering.
 * Some changes were made to the Cybertron flee routine to make them
-  a little smarter about how they try to get away.
+  react a little quicker and be a little smarter about how they try
+  to get away.
 * Cybs will no longer "talk trash" if they're fleeing or about to
   flee (this sometimes resulted in two messages in quick succession).
-
+* Cybs should be smarter about how and when they use zippers.
 
 === 0.2.2 === 2025-06-30:
 
