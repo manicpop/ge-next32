@@ -25,6 +25,8 @@ Please contact with me thoughts and suggestions.
 * Cybs will no longer "talk trash" if they're fleeing or about to
   flee (this sometimes resulted in two messages in quick succession).
 * Cybs should be smarter about how and when they use zippers.
+* Cybs will now sometimes circle around a ship firing missiles at it
+  to outrun them instead of completely retreating.
 
 === 0.2.2 === 2025-06-30:
 

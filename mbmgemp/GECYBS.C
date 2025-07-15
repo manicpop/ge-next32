@@ -380,7 +380,7 @@ if (shipclass[ptr->shpclass].max_accel > 0)
 	if (ptr->cybmine < nships)
 		cyb_check_damage(ptr,usrn);
 	if (shipclass[ptr->shpclass].tough_factor > 1)	/* tougher/faster ships use missile avoidance logic */
-		cyb_check_misl(ptr,usrn);
+		cyb_check_misl(ptr);
 	cyb_check_lockon(ptr,usrn);
 	}
 else	/* cyberbases do not use check_lockon... so raise shields here */
@@ -1067,9 +1067,8 @@ if (call == 1 && gernd()%((10-cattkd)*600) == 0)
 return(FALSE);
 }
 
-void FUNC cyb_check_misl(ptr,usrn)
+void FUNC cyb_check_misl(ptr)
 WARSHP	*ptr;
-int usrn;
 
 /* if missiles detected, decide whether to flee or stop and raise shields */
 
@@ -1081,11 +1080,15 @@ int	i;
 
 for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 	{
-	if (mptr->distance > 20000 && ptr->holdcourse == 0)
+	if (ptr->where == 1 && mptr->distance > 20000 && ptr->holdcourse == 0 && mptr->channel < numships)
 		{
 		ptr->npcmsg = FLEE;	/* don't send APPROACH again after returning from this */
-		ptr->head2b = rndm(359.9);
-		cyb_cruise(ptr,usrn,2);
+		if (cdistance(&ptr->coord,&warshpoff(mptr->channel)->coord) > 2.0)
+			ptr->head2b = vector(&ptr->coord,&warshpoff(mptr->channel)->coord);
+		else
+			ptr->head2b = vector(&ptr->coord,&warshpoff(mptr->channel)->coord) + 45.0 + (rand() % 11 - 5);
+		ptr->speed2b = (double)ptr->topspeed*1000;
+		ptr->holdcourse = 3;
 		break;
 		}
 	else
