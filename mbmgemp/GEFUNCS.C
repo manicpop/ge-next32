@@ -1247,7 +1247,8 @@ if (who >= 0 && who < nships && who != usrn)
 			{
 			if (full == TRUE)
 				break;
-			if (i != I_MEN && i != I_TROOPS && i != I_SPY && i != I_GOLD)
+			if (i != I_MEN && i != I_TROOPS && i != I_SPY && i != I_GOLD &&
+				!(shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG && i == I_FOOD))
 				{
 				amt = ptr->items[i] / (gernd()%5 +1);
 				/* only collect as much as we can hold */
