@@ -940,7 +940,7 @@ for (i=0; i<MAXPLANETS;++i)
 		dist = (unsigned)(cdistance(&ptr->coord,&ptab[usrn].planets[i].coord)*10000);
 	/*      prf("dist to planet %u is %d\r",i,dist);
 		outprfge(ALWAYS,usrn);*/
-		if (dist < 250)
+		if (dist < 250 && ptr->damage < 101.0)	/* no addl msgs after crash */
 			{
 			if (dist >= 50)
 				{
