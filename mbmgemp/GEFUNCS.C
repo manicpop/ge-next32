@@ -971,7 +971,10 @@ for (i=0; i<MAXPLANETS;++i)
 
 				outprfge(ALWAYS,usrn);
 				if (ptab[usrn].planets[i].type == PLTYPE_PLNT)
+					{
 					ptr->damage = 101.0;
+					ptr->cantexit = FIRETICKS; /* no exiting after crashing */
+					}
 				else
 					{
 					setsect(ptr); /* build PKEY */
