@@ -383,9 +383,9 @@ if (shipclass[ptr->shpclass].max_accel > 0)
 		cyb_check_misl(ptr);
 	cyb_check_lockon(ptr,usrn);
 	}
-else	/* cyberbases do not use check_lockon... so raise shields here */
-	if (ptr->shieldstat != SHIELDDM)
-		shieldup(ptr,usrn);
+
+if (ptr->where == 0 && ptr->shieldstat == SHIELDDN)
+	shieldup(ptr,usrn);
 
 ptr->energy = 50000L;
 
@@ -775,6 +775,8 @@ else
 	if (low_dist >= hyperdist1)
 		{
 		ptr->speed2b = ((int)(low_dist/hyperdist1))*FARSPEED;
+		if (ptr->speed < 1000)
+			hyperspace(ptr,usrn,1);
 		ptr->speed = ptr->speed2b;
 		ptr->head2b = vector(&ptr->coord,&(wptr->coord));
 		/* DEBUG
@@ -791,7 +793,11 @@ else
 			ptr->speed = ptr->speed2b;
 			}
 		else
+			{
+			if (ptr->speed < 1000)
+				hyperspace(ptr,usrn,1);
 			ptr->speed2b = d_topspeed;
+			}
 		ptr->head2b = vector(&ptr->coord,&(wptr->coord));
 		/* DEBUG
 		prf("***\r%s, MID, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
@@ -809,7 +815,11 @@ else
 			ptr->speed = ptr->speed2b;
 			}
 		else
+			{
+			if (ptr->speed < 1000)
+				hyperspace(ptr,usrn,1);
 			ptr->speed2b = d_topspeed;
+			}
 		ptr->head2b = vector(&ptr->coord,&(wptr->coord));
 		/* DEBUG
 		prf("***\r%s, SHORT, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
@@ -819,7 +829,7 @@ else
 			cyb_annoy(ptr,low_ship,APPROACH);
 		}
 	else
-	if (wptr->where == 1)
+	if (wptr->where == 1 && d_topspeed >= 1000)
 		{
 		if (cyb_fast(ptr))
 			{
@@ -856,14 +866,20 @@ else
 			{
 			ptr->speed2b = 990.0;
 			if (cyb_fast(ptr))
+				{
+				hyperspace(ptr,usrn,0);
 				ptr->speed = ptr->speed2b;
+				}
 			ptr->head2b = vector(&ptr->coord,&(wptr->coord));
 			}
 		else
 			{
 			ptr->speed2b = ((int)(rndm(350.0)+150.0)/10)*10;
 			if (cyb_fast(ptr))
+				{
+				hyperspace(ptr,usrn,0);
 				ptr->speed = ptr->speed2b;
+				}
 			ptr->head2b = rndm(359.9);
 			}
 		/* DEBUG
@@ -876,7 +892,10 @@ else
 		/* back off if not going to shoot first */
 		ptr->speed2b = ((int)(rndm(750.0)+150.0)/10)*10;
 		if (cyb_fast(ptr))
+			{
+			hyperspace(ptr,usrn,0);
 			ptr->speed = ptr->speed2b;
+			}
 		if (low_dist < 1.5)
 			ptr->head2b = normal(vector(&ptr->coord,&wptr->coord) + 180.0);
 		else
@@ -889,28 +908,13 @@ else
 		}
 	/* make sure speed jumps won't leave us in a weird state */
 	/* avoid fractional warp values */
-	if (ptr->speed < 1000)
+	if (ptr->speed < 1000 && ptr->speed2b >= 1000)
 		{
-		if (ptr->speed2b >= 1000 && shipclass[ptr->shpclass].max_accel >= 1000)
-			{
-			if (ptr->speed2b <= shipclass[ptr->shpclass].max_accel)
-				ptr->speed = ptr->speed2b;
-			else
-				ptr->speed = shipclass[ptr->shpclass].max_accel;
-			}
+		hyperspace(ptr,usrn,1);
+		if (ptr->speed2b <= shipclass[ptr->shpclass].max_accel)
+			ptr->speed = ptr->speed2b;
 		else
-			{
-			ptr->where = 0;
-			if (ptr->shieldstat != SHIELDDM)
-				shieldup(ptr,usrn);
-			}
-		}
-	if (ptr->speed >= 1000)
-		{
-		ptr->where = 1;
-		if (ptr->shieldstat == SHIELDUP)
-			shielddn(ptr,usrn);
-
+			ptr->speed = shipclass[ptr->shpclass].max_accel;
 		}
 	}
 }

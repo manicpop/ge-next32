@@ -8,7 +8,7 @@ https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact with me thoughts and suggestions.
 
-=== 0.2.3 === 2025-07-16:
+=== 0.2.3 === 2025-07-22:
 
 * A bug with the HELP command introduced in 0.2.2 is resolved.
 * A new ship selection screen is a little neater and also displays
@@ -19,6 +19,8 @@ Please contact with me thoughts and suggestions.
   Mlacko for being the first person, myself included, to defeat a
   ge-next Cyber-base!)
 * 8x acceleration reduced to make it a little more lumbering.
+* 4x and 8x ships will immediately raise shields upon dropping to
+  impulse. (1x and 2x still have a little window.)
 * Some changes were made to the Cybertron flee routine to make them
   react a little quicker and be a little smarter about how they try
   to get away.
@@ -28,6 +30,8 @@ Please contact with me thoughts and suggestions.
 * Cybs will now sometimes circle around a ship firing missiles at it
   to outrun them instead of completely retreating.
 * Cybs will no longer pick up food cases when destroying a ship.
+* An issue with torpedoes fired at a Cyb not going away when the
+  Cyb goes to warp under certain circumstances has been resolved.
 
 === 0.2.2 === 2025-06-30:
 

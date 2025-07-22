@@ -634,19 +634,22 @@ if (flag == 1)
 	}
 else
 	{
-	if (ptr->status == GESTAT_AUTO)
-		prfmsg(HYPEROU2,ptr->shipname);
-	else
-		prfmsg(HYPEROUT,ptr->shipname);
+	prfmsg(HYPEROUT,ptr->shipname);
 	outprfge(FILTER,usrn);
 
 	ptr->where = 0;
 
-	prfmsg(HYPEROU2,ptr->shipname);
+	if (ptr->status == GESTAT_AUTO)
+		{
+		/* tough cybs raise shields immediately */
+		if (shipclass[ptr->shpclass].tough_factor > 1 && ptr->shieldstat == SHIELDDN)
+			shieldup(ptr,usrn);
+		prfmsg(HYPEROU2,ptr->shipname);
+		}
+	else
+		prfmsg(HYPEROUN,ptr->shipname);
 	outsect(FILTER,&(warshpoff(usrn)->coord),usrn,0);
-
 	}
-
 }
 
 /**************************************************************************
