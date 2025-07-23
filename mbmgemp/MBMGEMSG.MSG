@@ -2505,6 +2505,10 @@ MISMISS {***
 [0;37mSensors indicate a hyper-missile fired at ship [0;36m%c[0;37m has been lost![1;37m
 } T GE your missile hit message
 
+MISMISS2 {***
+[0;37mSensors indicate all hyper-missiles fired at ship [0;36m%c[0;37m have been lost![1;37m
+} T GE your missile hit message
+
 TORMISS {***
 [0;37mSensors indicate all torpedoes fired at ship [0;36m%c[0;37m have been lost![1;37m
 } T GE your missile hit message

@@ -988,7 +988,7 @@ for (i=0; i<MAXPLANETS;++i)
 					prfmsg(MOVE1,xsect,ysect,coord1(worm.destination.xcoord),coord1(worm.destination.ycoord));
 					ptr->damage+= 5.5;
 					outprfge(ALWAYS,usrn);
-					cleartm(usrn);	/* clear the tors and missiles */
+					clearitm(usrn);	 /* clear the tors and missiles */
 					assign_cybs(usrn,0); /* clear current cyb pursuits and pick closest new ones */
 					}
 				}
@@ -1448,7 +1448,7 @@ else
 	}
 
 
-cleartm(usrn);
+cleartm(usrn);	/* change destroyed user's torps and mis to 'no user' */
 
 --(waruptr->noships);
 /* fix any wrap problem */
@@ -1966,6 +1966,47 @@ if (channel != 255)
 else
 	{
 	ptr->lastfired = -1;
+	}
+}
+
+void FUNC clearitm(usrn)
+int	usrn;
+{
+WARSHP	*ptr;
+int	i, first;
+
+ptr=warshpoff(usrn);
+
+first = TRUE;
+
+for (i=0;i<MAXTORPS;++i)
+	{
+	if (ptr->ltorps[i].distance > 0)
+		{
+		ptr->ltorps[i].distance = 0;
+		if (first == TRUE)
+			{
+			prfmsg(TORMISS,shpltr(ptr->ltorps[i].channel,usrn));
+			outprfge(FILTER,ptr->ltorps[i].channel);
+			first = FALSE;
+			}
+		}
+	}
+
+first = TRUE;
+
+for (i=0;i<MAXMISSL;++i)
+	{
+	if (ptr->lmissl[i].distance > 0)
+		{
+		ptr->lmissl[i].distance = 0;
+		if (first == TRUE)
+			{
+			prfmsg(MISMISS2,shpltr(ptr->lmissl[i].channel,usrn));
+			outprfge(FILTER,ptr->lmissl[i].channel);
+			first = FALSE;
+			}
+		}
 	}
 }
 

@@ -8,7 +8,15 @@ https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact with me thoughts and suggestions.
 
-=== 0.2.3 === 2025-07-22:
+=== 0.2.4 === (in progress)
+Some things planned for version 0.3 were fast tracked due to
+popular demand:
+
+* Torpedoes and missiles will not follow you through a wormhole.
+  (This was actually supposed to fixed in classic 3.2d, but a
+  a small oversight kept it from working properly.)
+
+=== 0.2.3 === 2025-07-21:
 
 * A bug with the HELP command introduced in 0.2.2 is resolved.
 * A new ship selection screen is a little neater and also displays
