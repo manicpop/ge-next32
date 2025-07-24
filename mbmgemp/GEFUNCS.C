@@ -2311,6 +2311,8 @@ if (ptr->damage > 20.0)
 				prfmsg(RNDNAVG);
 				outprfge(ALWAYS,usrn);
 				ptr->helm = 0 - (int)rndm((ptr->damage+10.0));
+				if (ptr->helm < -8)	/* this is hacky, but this whole routine needs work */
+					ptr->helm = -8;
 				break;
 
 			case 6:	/* not used */

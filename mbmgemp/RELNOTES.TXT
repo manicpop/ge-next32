@@ -17,6 +17,10 @@ popular demand:
   a small oversight kept it from working properly.)
 * Jamming will be cleared when traveling through a wormhole.
 * Non-Cyb NPCs could fire torpedoes from within 0 0 -- fixed.
+* The amount of time your helm can be damaged has been capped
+  to eight cycles, so ships won't be sitting ducks for minutes
+  and minutes. The "random damage" routine will be reworked in
+  0.3, but this is a quick, if hacky, fix.
 
 === 0.2.3 === 2025-07-21:
 
