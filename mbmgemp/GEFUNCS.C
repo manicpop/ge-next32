@@ -989,6 +989,7 @@ for (i=0; i<MAXPLANETS;++i)
 					ptr->damage+= 5.5;
 					outprfge(ALWAYS,usrn);
 					clearitm(usrn);	 /* clear the tors and missiles */
+					ptr->jammer = 0;
 					assign_cybs(usrn,0); /* clear current cyb pursuits and pick closest new ones */
 					}
 				}
