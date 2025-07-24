@@ -1095,7 +1095,8 @@ int	zothusn;
 
 int i, j;
 
-if (ptr->where == 0 && wptr->where == 0 && shipclass[ptr->shpclass].max_torps && gernd()%2 == 0)
+if (!neutral(&ptr->coord) && !neutral(&wptr->coord) && wptr->cloak != 10 &&
+	ptr->where == 0 && wptr->where == 0 && shipclass[ptr->shpclass].max_torps && gernd()%2 == 0)
 	{
 	j = gernd()%((shipclass[ptr->shpclass].tough_factor)+2);
 	for (i=0;i<j;++i)
