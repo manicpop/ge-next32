@@ -4645,17 +4645,18 @@ if (plptr->userid[0] != 0)
 	{
 	if ((amt = atol(margv[1])) > 0 || sameas("MAX",margv[1]) || sameas("ALL",margv[1]))
 		{
-		if (amt > SLCAP / baseprice[item])
-			{
-			prfmsg(TOOMUCH);
-			return;
-			}
 		if (sameas(plptr->userid,warsptr->userid) || plptr->items[item].sell == 'Y')
 			{
 			if (sameas("MAX",margv[1]))
 				amt = (shipclass[warsptr->shpclass].max_tons - calcweight(warsptr))/((double)weight[item]/100.0);
 			if (sameas("ALL",margv[1]))
 				amt = amt4sale(item);
+			if ((sameas(plptr->userid,warsptr->userid) && amt > SLCAP / baseprice[item])
+				|| (!sameas(plptr->userid,warsptr->userid) && amt > SLCAP / (long)plptr->items[item].markup2a))
+				{
+				prfmsg(TOOMUCH);
+				return;
+				}
 			if (chkweight(warsptr,item,amt))
 				{
 				avail = amt4sale(item);
