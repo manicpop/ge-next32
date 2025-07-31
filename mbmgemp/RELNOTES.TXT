@@ -8,7 +8,7 @@ https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact with me thoughts and suggestions.
 
-=== 0.2.4 === (in progress)
+=== 0.2.4 === 2025-07-31:
 Some things planned for version 0.3 were fast tracked due to
 popular demand:
 
