@@ -1723,7 +1723,7 @@ flag = 0;
 shotdown = 0;
 for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 	{
-	if (tptr->distance > 1)
+	if (tptr->distance > 0)
 		{
 		ptr->cantexit = FIRETICKS;
 		if (neutral(&ptr->coord) && tptr->distance < 5000)
