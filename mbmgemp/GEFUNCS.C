@@ -333,14 +333,14 @@ if (qlobtv(0))
 				if (warsptr->cloak > 0)
 					prf("cloak \33[1;32mON\33[1;37m");
 				else
-				if (warsptr->where > 10)
-					prf("orbiting planet \33[1;34m%d\33[1;37m",warsptr->where-10);
-				else
 				if (warsptr->items[I_GOLD] >= 500)
 					{
 					sprintf(gechrbuf,"%lu",warsptr->items[I_GOLD]);
 					prf("%s gold",gechrbuf);
 					}
+				else
+				if (warsptr->where > 10)
+					prf("orbiting planet \33[1;34m%d\33[1;37m",warsptr->where-10);
 				prf("\33[1;37m\r");
 				sptr->ship[found].shipno = warsptr->shipno;
 				++found;
