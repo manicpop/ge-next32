@@ -21,6 +21,8 @@ popular demand:
   to eight cycles, so ships won't be sitting ducks for minutes
   and minutes. The "random damage" routine will be reworked in
   0.3, but this is a quick, if hacky, fix.
+* Torpedoes and missiles will no longer follow you into sector
+  0 0; the Enforcer Planet will shoot them down.
 
 === 0.2.3 === 2025-07-21:
 

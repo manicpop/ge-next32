@@ -2495,23 +2495,51 @@ MTACC2 {***
 
 MTACC1N {***
 [0;37mSensors indicate a torpedo has hit ship [0;36m%c[0;37m, [0;36m%s[0;37m.[1;37m
-} T GE your torp hit message
+} T GE your torp hit npc message
 
 MTACC2N {***
 [0;37mSensors indicate a hyper-missile has hit ship [0;36m%c[0;37m, [0;36m%s[0;37m.[1;37m
-} T GE your missile hit message
+} T GE your missile hit npc message
 
 MISMISS {***
 [0;37mSensors indicate a hyper-missile fired at ship [0;36m%c[0;37m has been lost![1;37m
-} T GE your missile hit message
+} T GE your missile lost message
 
 MISMISS2 {***
 [0;37mSensors indicate all hyper-missiles fired at ship [0;36m%c[0;37m have been lost![1;37m
-} T GE your missile hit message
+} T GE all your missiles lost message
+
+MISMISS3 {***
+[0;37mSensors indicate %d hyper-missiles fired at ship [0;36m%c[0;37m have been lost![1;37m
+} T GE your missiles lost message
 
 TORMISS {***
+[0;37mSensors indicate a torpedo fired at ship [0;36m%c[0;37m has been lost![1;37m
+} T GE your torpedo lost message
+
+TORMISS2 {***
 [0;37mSensors indicate all torpedoes fired at ship [0;36m%c[0;37m have been lost![1;37m
-} T GE your missile hit message
+} T GE all your torpedoes lost message
+
+TORMISS3 {***
+[0;37mSensors indicate %d torpedoes fired at ship [0;36m%c[0;37m have been lost![1;37m
+} T GE your torpedoes lost message
+
+TORENF {***
+[1;36mThe Enforcer Planet shot down %d incoming torpedoes![1;37m
+} T GE incoming torpedoes got shot down message
+
+TORENF1 {***
+[1;36mThe Enforcer Planet shot down an incoming torpedo![1;37m
+} T GE incoming torpedo got shot down message
+
+MISENF {***
+[1;36mThe Enforcer Planet shot down %d incoming missiles![1;37m
+} T GE incoming missiles got shot down message
+
+MISENF1 {***
+[1;36mThe Enforcer Planet shot down an incoming missile![1;37m
+} T GE incoming missile got shot down message
 
 TORP1 {***
 [0;37m[[0;31mWARNING![0;37m] Tracking incoming torpedo![1;37m

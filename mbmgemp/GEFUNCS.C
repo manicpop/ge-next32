@@ -622,7 +622,7 @@ if (flag == 1)
 			{
 			if (flag == 1 && ingegame(ptr->ltorps[i].channel) && ptr->ltorps[i].channel < nterms)
 				{
-				prfmsg(TORMISS,shpltr(ptr->ltorps[i].channel,usrn));
+				prfmsg(TORMISS2,shpltr(ptr->ltorps[i].channel,usrn));
 				outprfge(FILTER,ptr->ltorps[i].channel);
 				}
 			flag = 0;
@@ -1701,7 +1701,7 @@ void FUNC checktm(ptr,usrn)
 WARSHP	*ptr;
 int	usrn;
 {
-int	i,j,flag,power;
+int	i,j,flag,power,shotdown;
 
 WARUSR				*wuptr;
 MISSILE				*mptr;
@@ -1720,11 +1720,18 @@ if (ptr->cantexit > 0)
 /* torpedoes first */
 
 flag = 0;
+shotdown = 0;
 for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 	{
 	if (tptr->distance > 1)
 		{
 		ptr->cantexit = FIRETICKS;
+		if (neutral(&ptr->coord) && tptr->distance < 5000)
+			{
+			tptr->distance = 0;
+			++shotdown;
+			}
+		else
 		if (tptr->distance <= torpsped)
 			{
 			tptr->distance = 0;
@@ -1800,13 +1807,34 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 		}
 	}
 
+if (shotdown > 0)
+	{
+	if (shotdown == 1)
+		prfmsg(TORENF1);
+	else
+		prfmsg(TORENF,shotdown);
+	outprfge(FILTER,usrn);
+	if (shotdown == 1)
+		prfmsg(TORMISS,shpltr(tptr->channel,usrn));
+	else
+		prfmsg(TORMISS3,shotdown,shpltr(tptr->channel,usrn));
+	outprfge(FILTER,tptr->channel);
+	}
+
 /* missiles second */
 flag = 0;
+shotdown = 0;
 for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 	{
 	if (mptr->distance > 0)
 		{
 		ptr->cantexit = FIRETICKS;
+		if (neutral(&ptr->coord) && mptr->distance < 5000)
+			{
+			mptr->distance = 0;
+			++shotdown;
+			}
+		else
 		if (mptr->distance < mislsped)
 			{
 			mptr->distance = 0;
@@ -1902,6 +1930,22 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 			}
 		}
 	}
+
+if (shotdown > 0)
+	{
+	if (shotdown == 1)
+		prfmsg(MISENF1);
+	else
+		prfmsg(MISENF,shotdown);
+	outprfge(FILTER,usrn);
+	if (shotdown == 1)
+		prfmsg(MISMISS,shpltr(mptr->channel,usrn));
+	else
+		prfmsg(MISMISS3,shotdown,shpltr(mptr->channel,usrn));
+	outprfge(FILTER,mptr->channel);
+	}
+shotdown = 0;
+
 /* finally decoys */
 
 for (i=0,dptr=ptr->decout;i<MAXDECOY;++i)
@@ -1987,7 +2031,7 @@ for (i=0;i<MAXTORPS;++i)
 		ptr->ltorps[i].distance = 0;
 		if (first == TRUE)
 			{
-			prfmsg(TORMISS,shpltr(ptr->ltorps[i].channel,usrn));
+			prfmsg(TORMISS2,shpltr(ptr->ltorps[i].channel,usrn));
 			outprfge(FILTER,ptr->ltorps[i].channel);
 			first = FALSE;
 			}
