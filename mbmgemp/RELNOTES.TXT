@@ -25,6 +25,9 @@ popular demand:
   0 0; the Enforcer Planet will shoot them down.
 * The "decoy self-destructed" message will no longer print
   multiple messages at once.
+* You can exit the game at any time when you are in sector 0 0,
+  unless you have incoming torpedoes or missiles. Of course, if
+  you stay in 0 0 long enough, they'll go away.
 
 === 0.2.3 === 2025-07-21:
 

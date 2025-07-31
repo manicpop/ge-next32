@@ -2023,6 +2023,27 @@ else
 	}
 }
 
+int FUNC chkitm(usrn)
+int	usrn;
+{
+WARSHP	*ptr;
+int	i;
+
+ptr=warshpoff(usrn);
+
+for (i=0;i<MAXTORPS;++i)
+	{
+	if (ptr->ltorps[i].distance > 0)
+		return(FALSE);
+	}
+for (i=0;i<MAXMISSL;++i)
+	{
+	if (ptr->lmissl[i].distance > 0)
+		return(FALSE);
+	}
+return(TRUE);
+}
+
 void FUNC clearitm(usrn)
 int	usrn;
 {

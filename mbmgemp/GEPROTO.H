@@ -138,6 +138,7 @@
 /*    1535 */ void FUNC checkmines P((void ));
 /*    1660 */ void FUNC checktm P((WARSHP *ptr , int usrn ));
 /*    1903 */ void FUNC acctm P((WARSHP *ptr , int usrn , int mt , unsigned int channel ));
+/*    1926 */ int FUNC chkitm P((int usrn ));
 /*    1926 */ void FUNC clearitm P((int usrn ));
 /*    1926 */ void FUNC cleartm P((int channel ));
 /*    1961 */ void FUNC fireion P((WARSHP *ptr , int usrn ));

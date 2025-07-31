@@ -2598,8 +2598,9 @@ int FUNC mnu_fightsub()
 {
 if (sameas(input,"x"))
 	{
-	if (warsptr->cantexit == 0)
+	if (warsptr->cantexit == 0 || (neutral(&warsptr->coord) && chkitm(usrnum)))
 		{
+		warsptr->cantexit = 0;
 		cleartm(usrnum);
 		gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
 		geudb(GEUPDATE,waruptr->userid,waruptr);
