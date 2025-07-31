@@ -5458,6 +5458,17 @@ if (sameas("assigncybs",margv[1]) && margc == 2)
 	return;
 	}
 else
+if (sameas("decoylist",margv[1]) && margc == 2)
+	{
+	for (i=0;i<MAXDECOY;++i)
+		{
+		prf("%u ",warsptr->decout[i]);
+		}
+	prf("\r");
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+else
 
 prfmsg(FORMAT,"SYS");
 outprfge(ALWAYS,usrnum);

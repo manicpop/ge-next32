@@ -1952,12 +1952,21 @@ for (i=0,dptr=ptr->decout;i<MAXDECOY;++i)
 	{
 	if (dptr[i] > 0)
 		{
-		if (--dptr[i] == 0)
-			{
-			prfmsg(DECGONE,ptr->shipname);
-			outprfge(FILTER,usrn);
-			}
+		--dptr[i];
+		if (dptr[i] == 0)
+			++shotdown;
 		}
+	}
+if (shotdown == 1)
+	{
+	prfmsg(DECGONE);
+	outprfge(FILTER,usrn);
+	}
+else
+if (shotdown > 1)
+	{
+	prfmsg(DECGONE2,shotdown);
+	outprfge(FILTER,usrn);
 	}
 /* and Jammers too */
 if (ptr->jammer > 0)

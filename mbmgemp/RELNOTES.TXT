@@ -23,6 +23,8 @@ popular demand:
   0.3, but this is a quick, if hacky, fix.
 * Torpedoes and missiles will no longer follow you into sector
   0 0; the Enforcer Planet will shoot them down.
+* The "decoy self-destructed" message will no longer print
+  multiple messages at once.
 
 === 0.2.3 === 2025-07-21:
 

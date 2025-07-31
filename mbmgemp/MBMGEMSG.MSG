@@ -2617,8 +2617,12 @@ NODECOYS {
 [0;37m[[1;31mERROR[0;37m] There are no decoys on-board.[1;37m
 } T GE no decoys message
 
-DECGONE {
-[0;37m[[1;31mCAUTION[0;37m] A decoy deployed from the [0;36m%s[0;37m has self-destructed![1;37m
+DECGONE {***
+[0;37m[[1;31mCAUTION[0;37m] A decoy has self-destructed![1;37m
+} T GE decoy destructed message
+
+DECGONE2 {***
+[0;37m[[1;31mCAUTION[0;37m] %d decoys have self-destructed![1;37m
 } T GE decoy destructed message
 
 DECFIRE {
@@ -2626,7 +2630,7 @@ DECFIRE {
 } T GE decoy launched message
 
 DECMANY {
-[0;37m[[1;31mERROR[0;37m] No more than 10 decoys can deployed at once.[1;37m
+[0;37m[[1;31mERROR[0;37m] No more than 10 decoys can be deployed at once.[1;37m
 } T GE too many decoys message
 
 DECOY0 {
