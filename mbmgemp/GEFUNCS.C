@@ -1730,6 +1730,8 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 			{
 			tptr->distance = 0;
 			++shotdown;
+			prfmsg(TORMISS,shpltr(tptr->channel,usrn));
+			outprfge(FILTER,tptr->channel);
 			}
 		else
 		if (tptr->distance <= torpsped)
@@ -1810,23 +1812,11 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 
 if (shotdown > 0)
 	{
-	if (usrn < nterms)
-		{
-		if (shotdown == 1)
-			prfmsg(TORENF1);
-		else
-			prfmsg(TORENF,shotdown);
-		outprfge(FILTER,usrn);
-		}
-
-	if (tptr->channel < nterms)
-		{
-		if (shotdown == 1)
-			prfmsg(TORMISS,shpltr(tptr->channel,usrn));
-		else
-			prfmsg(TORMISS3,shotdown,shpltr(tptr->channel,usrn));
-		outprfge(FILTER,tptr->channel);
-		}
+	if (shotdown == 1)
+		prfmsg(TORENF1);
+	else
+		prfmsg(TORENF,shotdown);
+	outprfge(FILTER,usrn);
 	}
 
 /* missiles second */
@@ -1841,6 +1831,8 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 			{
 			mptr->distance = 0;
 			++shotdown;
+			prfmsg(MISMISS,shpltr(mptr->channel,usrn));
+			outprfge(FILTER,mptr->channel);
 			}
 		else
 		if (mptr->distance < mislsped)
@@ -1941,24 +1933,13 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 
 if (shotdown > 0)
 	{
-	if (usrn < nterms)
-		{
-		if (shotdown == 1)
-			prfmsg(MISENF1);
-		else
-			prfmsg(MISENF,shotdown);
-		outprfge(FILTER,usrn);
-		}
-
-	if (mptr->channel < nterms)
-		{
-		if (shotdown == 1)
-			prfmsg(MISMISS,shpltr(mptr->channel,usrn));
-		else
-			prfmsg(MISMISS3,shotdown,shpltr(mptr->channel,usrn));
-		outprfge(FILTER,mptr->channel);
-		}
+	if (shotdown == 1)
+		prfmsg(MISENF1);
+	else
+		prfmsg(MISENF,shotdown);
+	outprfge(FILTER,usrn);
 	}
+
 shotdown = 0;
 
 /* finally decoys */

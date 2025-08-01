@@ -2509,10 +2509,6 @@ MISMISS2 {***
 [0;37mSensors indicate all hyper-missiles fired at ship [0;36m%c[0;37m have been lost![1;37m
 } T GE all your missiles lost message
 
-MISMISS3 {***
-[0;37mSensors indicate %d hyper-missiles fired at ship [0;36m%c[0;37m have been lost![1;37m
-} T GE your missiles lost message
-
 TORMISS {***
 [0;37mSensors indicate a torpedo fired at ship [0;36m%c[0;37m has been lost![1;37m
 } T GE your torpedo lost message
@@ -2520,10 +2516,6 @@ TORMISS {***
 TORMISS2 {***
 [0;37mSensors indicate all torpedoes fired at ship [0;36m%c[0;37m have been lost![1;37m
 } T GE all your torpedoes lost message
-
-TORMISS3 {***
-[0;37mSensors indicate %d torpedoes fired at ship [0;36m%c[0;37m have been lost![1;37m
-} T GE your torpedoes lost message
 
 TORENF {***
 [1;36mThe Enforcer Planet shot down %d incoming torpedoes![1;37m
