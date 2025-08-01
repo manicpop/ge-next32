@@ -14,7 +14,7 @@ popular demand:
 
 * Torpedoes and missiles will not follow you through a wormhole.
   (This was actually supposed to fixed in classic 3.2d, but a
-  a small oversight kept it from working properly.)
+  small oversight kept it from working properly.)
 * Jamming will be cleared when traveling through a wormhole.
 * Non-Cyb NPCs could fire torpedoes from within 0 0 -- fixed.
 * The amount of time your helm can be damaged has been capped
