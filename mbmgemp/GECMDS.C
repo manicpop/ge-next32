@@ -3794,7 +3794,12 @@ if (plptr->userid[0] == 0)
 	usrptr->substt = ADMENU1;
 	}
 else
-if (sameas(plptr->userid,warsptr->userid))
+#ifdef PHARLAP
+if (sameas(plptr->userid,warsptr->userid) || (syscmds && !sysonly) || (sysonly && (hasmkey(SYSKEY))))
+#else
+if (sameas(plptr->userid,warsptr->userid) || (syscmds && !sysonly) || (sysonly && (usrptr->flags&ISYSOP))))
+#endif
+
 	{
 	prfmsg(ADMENU2);
 	outprfge(ALWAYS,usrnum);
