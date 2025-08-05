@@ -2914,19 +2914,19 @@ return ((total <= (double)shipclass[wptr->shpclass].max_tons)
 
 /* tell the total weight on board */
 
-long FUNC calcweight(wptr)
+unsigned long FUNC calcweight(wptr)
 WARSHP	*wptr;
 {
 int	i;
 double	totald = 0.0;
-long	total = 0;
+unsigned long total = 0;
 
 for (i=0; i<NUMITEMS; ++i)
 	{
 	totald += (wptr->items[i]*((double)weight[i]/100L));
 	}
 
-total = (long)ceil(totald);
+total = (unsigned long)ceil(totald);
 return (total);
 }
 

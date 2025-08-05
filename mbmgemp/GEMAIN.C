@@ -2748,7 +2748,7 @@ if (margc > 0)
 				prfmsg(ADMIN02);
 				for (i=0; i<NUMITEMS; ++i)
 					{
-					sprintf(gechrbuf,"%-11s %5u %10ld %5u %5u %5c %8ld",
+					sprintf(gechrbuf,"%-11s %5u %10lu %5u %5u %5c %8lu",
 							item_name[i],
 							plptr->items[i].rate,
 							plptr->items[i].qty,

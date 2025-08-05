@@ -2277,13 +2277,13 @@ if (sameas(margv[1],"inv"))
 		{
 		if (warsptr->items[i] > 0)
 			{
-			sprintf(gechrbuf,"%s%s%16ld",item_name[i],gedots(22-strlen(item_name[i])),warsptr->items[i]);
+			sprintf(gechrbuf,"%s%s%16lu",item_name[i],gedots(22-strlen(item_name[i])),warsptr->items[i]);
 			gechrbuf[0] = toupper(gechrbuf[0]);
 			prf("%s\r",gechrbuf);
 			}
 		}
 
-	sprintf(gechrbuf2,"%ld",calcweight(warsptr));
+	sprintf(gechrbuf2,"%lu",calcweight(warsptr));
 	prfmsg(REP37,gechrbuf2);
 	}
 else
@@ -2733,7 +2733,7 @@ if (plnum <= MAXPLANETS && plnum > 0)
 					{
 					if (plptr->items[i].qty > 0)
 						{
-						sprintf(gechrbuf,"%s%s%12ld",item_name[i],gedots(26-strlen(item_name[i])),plptr->items[i].qty);
+						sprintf(gechrbuf,"%s%s%12lu",item_name[i],gedots(26-strlen(item_name[i])),plptr->items[i].qty);
 						gechrbuf[0] = toupper(gechrbuf[0]);
 						prf("%s\r",gechrbuf);
 						}
@@ -3638,7 +3638,7 @@ if (trans_opt || sameas(plptr->userid,warsptr->userid))
 			{
 			warsptr->items[item] -= amt;
 			plptr->items[item].qty += amt;
-			sprintf(gechrbuf,"%ld",amt);
+			sprintf(gechrbuf,"%lu",amt);
 			prfmsg(TRANSFR5,gechrbuf,item_name[item]);
 			setsect(warsptr); /* build PKEY */
 			pkey.plnum = plnum;
@@ -3688,7 +3688,7 @@ if (sameas(plptr->userid,warsptr->userid) || plptr->userid[0] == 0)
 				{
 				plptr->items[item].qty -= amt;
 				warsptr->items[item] += amt;
-				sprintf(gechrbuf,"%ld",amt);
+				sprintf(gechrbuf,"%lu",amt);
 				prfmsg(TRANSUP5,gechrbuf,item_name[item]);
 				setsect(warsptr); /* load PKEY */
 				pkey.plnum = plnum;
@@ -4642,9 +4642,7 @@ outprfge(ALWAYS,usrnum);
 void FUNC buy(item)
 int	item;
 {
-long	amt,avail;
-long	tot;
-unsigned long ptot;
+unsigned long amt, avail, tot, ptot;
 
 if (plptr->userid[0] != 0)
 	{
@@ -4766,17 +4764,17 @@ else
 	}
 }
 
-long FUNC amt4sale(item)
+unsigned long FUNC amt4sale(item)
 int item;
 
 {
-long forsale = 0;
+unsigned long forsale = 0;
 
 if (sameas(plptr->userid, warsptr->userid))
 	forsale = plptr->items[item].qty;
 else
-	if (plptr->items[item].qty > (long)plptr->items[item].reserve && plptr->items[item].sell == 'Y')
-		forsale = plptr->items[item].qty - (long)plptr->items[item].reserve;
+	if (plptr->items[item].qty > plptr->items[item].reserve && plptr->items[item].sell == 'Y')
+		forsale = plptr->items[item].qty - plptr->items[item].reserve;
 
 if (item == I_GOLD)
 	{

@@ -164,7 +164,7 @@
 /*    2686 */ void FUNC shieldchg P((WARSHP *wptr , int usrn ));
 /*    2725 */ void FUNC charge P((WARSHP *wptr , int *max , int *pct ));
 /*    2736 */ int FUNC chkweight P((WARSHP *wptr , int itm , long amt ));
-/*    2757 */ long FUNC calcweight P((WARSHP *wptr ));
+/*    2757 */ unsigned long FUNC calcweight P((WARSHP *wptr ));
 /*    2776 */ char FUNC shpltr P((int usrn , int ship ));
 /*    2794 */ char *FUNC username P((WARSHP *ptr ));
 /*    2806 */ void FUNC logthis P((char *str ));
@@ -241,7 +241,7 @@
 /*    4524 */ void FUNC cmd_buy P((void ));
 /*    4608 */ void FUNC cmd_price P((void ));
 /*    4647 */ void FUNC buy P((int item ));
-/*    4773 */ long FUNC amt4sale P((int item ));
+/*    4773 */ unsigned long FUNC amt4sale P((int item ));
 /*    4798 */ long FUNC price P((unsigned item , unsigned long amt ));
 /*    4819 */ void FUNC cmd_maint P((void ));
 /*    4908 */ void FUNC cmd_new P((void ));

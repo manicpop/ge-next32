@@ -835,7 +835,7 @@ void FUNC update_plan_1(void)
 int i;
 for (i = 0; i < NUMITEMS; ++i)
 	{
-	plptr->items[i].qty = SLCAP;
+	plptr->items[i].qty = ULCAP;
 	plptr->items[i].sell = 'Y';
 	plptr->items[i].markup2a = (baseprice[i]*2) + (gernd() % baseprice[i]);
 	}
@@ -850,9 +850,9 @@ for (i = 0; i < NUMITEMS; ++i)
 	plptr->items[i].sell = 'N';
 	plptr->items[i].markup2a = (baseprice[i]*2) + (gernd() % baseprice[i]);
 	}
-plptr->items[I_MEN].qty = SLCAP;
-plptr->items[I_FOOD].qty = SLCAP;
-plptr->items[I_TROOPS].qty = SLCAP;
+plptr->items[I_MEN].qty = ULCAP;
+plptr->items[I_FOOD].qty = ULCAP;
+plptr->items[I_TROOPS].qty = ULCAP;
 plptr->items[I_MEN].sell = 'Y';
 plptr->items[I_FOOD].sell = 'Y';
 plptr->items[I_TROOPS].sell = 'Y';
