@@ -2774,6 +2774,10 @@ TRANSFR1 {
 [1;36mThere are not that many on-board.[1;37m
 } T GE not enough to transfer down message
 
+TRANSFR2 {
+[1;36mThe Galactic Command does not accept charitable donations.[1;37m
+} T GE no transfer down in 0 0 message
+
 TRANSFR3 {
 [1;36mItems can only be transferred while in orbit.[1;37m
 } T GE no transfer unless in orbit message

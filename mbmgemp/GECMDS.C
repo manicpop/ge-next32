@@ -3624,6 +3624,12 @@ int	item;
 {
 unsigned long amt;
 
+if (neutral(&warsptr->coord))
+	{
+	prfmsg(TRANSFR2);
+	return;
+	}
+
 plnum = warsptr->where - 10;
 
 getplanetdat(usrnum);
