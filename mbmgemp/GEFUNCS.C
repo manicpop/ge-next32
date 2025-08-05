@@ -1054,8 +1054,6 @@ if (!samesect(&tmpcoord, &ss))
 	{
 	logthis(spr("GEFUNCS:refreshing sector for usrn %d",usrn));
 	getsector(&ss);
-
-	movecoord(&ptab[usrn].planets[i].coord, &ss);
 	memcpy(&ptab[usrn],&sector.ptab,sizeof(PLANETAB));
 	}
 }

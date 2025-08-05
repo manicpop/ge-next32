@@ -8,6 +8,15 @@ https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact with me thoughts and suggestions.
 
+=== 0.2.5 === 2025-08-05:
+
+* Transferring items down to a planet in the neutral zone is
+  no longer allowed (it can cause the item count on the
+  planet to overflow and break).
+* Resolved a really odd legacy GE bug that caused gravity
+  and orbiting planets to not function for a user if another
+  user scanned in the same sector in certain circumstances.
+
 === 0.2.4 === 2025-07-31:
 Some things planned for version 0.3 were fast tracked due to
 popular demand:
