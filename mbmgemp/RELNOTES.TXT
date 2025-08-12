@@ -8,6 +8,13 @@ https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact with me thoughts and suggestions.
 
+=== ??? === in progress
+
+* You can now only zip or jam once per cycle, so players aren't
+  able to spam each other's screens.
+* You can now use "-" before an amount with the TRANSFER
+  command, to transfer all but that amount.
+
 === 0.2.5 === 2025-08-05:
 
 * Transferring items down to a planet in the neutral zone is

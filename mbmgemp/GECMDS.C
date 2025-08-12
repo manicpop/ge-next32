@@ -3637,7 +3637,7 @@ void trans_down(item)
 int	item;
 
 {
-unsigned long amt;
+long	amt;
 
 if (neutral(&warsptr->coord))
 	{
@@ -3651,10 +3651,32 @@ getplanetdat(usrnum);
 
 if (trans_opt || sameas(plptr->userid,warsptr->userid))
 	{
-	if ((amt = atol(margv[2])) > 0L || sameas("ALL",margv[2]))
+	if ((amt = atol(margv[2])) != 0L || sameas("ALL",margv[2]))
 		{
-		if (sameas("ALL",margv[2]) && warsptr->items[item] > 0L)
+		if (warsptr->items[item] == 0UL)
+			{
+			prfmsg(TRANSFR1);
+			outprfge(ALWAYS,usrnum);
+			return;
+			}
+		if (sameas("ALL",margv[2]))
 			amt = warsptr->items[item];
+		if (amt == 0)
+			{
+			prfmsg(FORMAT,"TRANSFER");
+			outprfge(ALWAYS,usrnum);
+			return;
+			}
+		if (amt < 0)
+			{
+			amt = warsptr->items[item] + amt;
+			if (amt < 0)
+				{
+				prfmsg(TRANSFR1);
+				outprfge(ALWAYS,usrnum);
+				return;
+				}
+			}
 		if (warsptr->items[item] >= amt)
 			{
 			warsptr->items[item] -= amt;
@@ -3687,7 +3709,7 @@ void trans_up(item)
 int	item;
 
 {
-unsigned long amt;
+long	amt;
 
 plnum = warsptr->where - 10;
 
@@ -3697,12 +3719,34 @@ getplanetdat(usrnum);
 
 if (sameas(plptr->userid,warsptr->userid) || plptr->userid[0] == 0)
 	{
-	if ((amt = atol(margv[2])) > 0L || sameas("MAX",margv[2]) || sameas("ALL",margv[2]))
+	if ((amt = atol(margv[2])) != 0L || sameas("MAX",margv[2]) || sameas("ALL",margv[2]))
 		{
+		if (plptr->items[item].qty == 0UL)
+			{
+			prfmsg(TRANSUP1);
+			outprfge(ALWAYS,usrnum);
+			return;
+			}
 		if (sameas("MAX",margv[2]))
 			amt = (shipclass[warsptr->shpclass].max_tons - calcweight(warsptr))/((double)weight[item]/100.0);
 		if (sameas("ALL",margv[2]))
 			amt = plptr->items[item].qty;
+		if (amt == 0)
+			{
+			prfmsg(FORMAT,"TRANSFER");
+			outprfge(ALWAYS,usrnum);
+			return;
+			}
+		if (amt < 0)
+			{
+			amt = plptr->items[item].qty + amt;
+			if (amt < 0)
+				{
+				prfmsg(TRANSUP1);
+				outprfge(ALWAYS,usrnum);
+				return;
+				}
+			}
 		if (chkweight(warsptr,item,amt))
 			{
 			if (plptr->items[item].qty >= amt)

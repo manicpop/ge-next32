@@ -1096,9 +1096,9 @@ HLPTRA {
 [1;36mThe [1;37mTRANSFER[1;36m command permits you to transfer goods from your ship to a planet
 or from a planet to your ship. Issue the command as follows:
 
-[1;37m  transfer [1;32m[u(p)/d(own)] [amount/[1;37mall[1;32m/[1;37mmax[1;32m] [item]
+[1;37m  transfer [1;32m[[1;37mu(p)/d(own)[1;32m] [([1;37m-[1;32m)amount/[1;37mall[1;32m/[1;37mmax[1;32m] [item]
 
-  amount[1;36m = the amount you want to transfer
+  amount[1;36m = the amount to transfer (use - sign for all but this amount)
            [1;37mall[1;36m to transfer up all on the planet / transfer down all onboard
            [1;37mmax[1;36m to fill your ship to capacity (up only)
 
