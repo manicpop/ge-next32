@@ -406,7 +406,11 @@ WARSHP {						/*   user data blocks                        */
 /*298*/
 		unsigned long	overspeed;		/*   counter for over maximum warp           */
 /*302*/
-		char		filler[514-272-UIDSIZ]; /*   WARSHP in GE classic is 514             */
+		byte		zipload;		/*   zipper launch throttle                  */
+/*303*/
+		byte		jamload;		/*   jam launch throttle                     */
+/*304*/
+		char		filler[514-274-UIDSIZ]; /*   WARSHP in GE classic is 514             */
 };
 
 /*

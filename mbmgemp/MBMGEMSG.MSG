@@ -3609,6 +3609,10 @@ JAMMER5 {***
 [0;37mThe jamming has stopped![1;37m
 } T GE jamming stopped message
 
+JAMMER6 {
+[0;37m[[1;31mERROR[0;37m] The jammer launcher is reloading.[1;37m
+} T GE jammer reloading message
+
 ZIPPER0 {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with a zipper launcher.[1;37m
 } T GE no zipper launcher message
@@ -3628,6 +3632,10 @@ ZIPPER3 {***
 ZIPPER3N {***
 [0;37m[[1;31mCAUTION[0;37m] Sensors detect [0;36m%s[0;37m just launched a zipper.[1;37m
 } T GE someone else fired a zipper message
+
+ZIPPER4 {
+[0;37m[[1;31mERROR[0;37m] The zipper launcher is reloading.[1;37m
+} T GE zipper launcher reloading message
 
 NEW1 {
 [1;36mYou must go to Zygor in sector [1;34m0 0[1;36m to get new equipment.[1;37m

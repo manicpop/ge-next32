@@ -1762,7 +1762,6 @@ if (warsptr->cloak > 0 )
 	return;
 	}
 
-
 if (!shipclass[warsptr->shpclass].has_jam)
 	{
 	prfmsg(JAMMER0);
@@ -1773,6 +1772,13 @@ if (!shipclass[warsptr->shpclass].has_jam)
 if (warsptr->items[I_JAMMERS] == 0)
 	{
 	prfmsg(JAMMER1);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if (warsptr->jamload > 0 )
+	{
+	prfmsg(JAMMER6);
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
@@ -1812,6 +1818,7 @@ for (zothusn=0; zothusn < nships ; zothusn++)
 	}
 --ptr->items[I_JAMMERS];
 ptr->cantexit = FIRETICKS;
+ptr->jamload = 1;
 }
 
 
@@ -1841,6 +1848,13 @@ if (warsptr->cloak > 0 )
 if (warsptr->items[I_ZIPPERS] == 0)
 	{
 	prfmsg(ZIPPER1);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if (warsptr->zipload > 0 )
+	{
+	prfmsg(ZIPPER4);
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
@@ -1879,6 +1893,7 @@ else
 outrange(FILTER,&ptr->coord);
 --ptr->items[I_ZIPPERS];
 ptr->cantexit = FIRETICKS;
+ptr->zipload = 1;
 }
 
 /**************************************************************************

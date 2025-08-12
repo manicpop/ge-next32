@@ -1711,6 +1711,12 @@ double				damfact;
 if (ptr->hypha > 0)
 	--(ptr->hypha);
 
+if (ptr->jamload > 0)
+	--(ptr->jamload);
+
+if (ptr->zipload > 0)
+	--(ptr->zipload);
+
 /* knock down battle lock ticks */
 if (ptr->cantexit > 0)
 	--(ptr->cantexit);
