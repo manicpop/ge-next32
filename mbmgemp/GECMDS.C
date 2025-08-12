@@ -4855,6 +4855,9 @@ if (plptr->userid[0] == 0 || plptr->items[I_MEN].qty < 25000L)
 	return;
 	}
 
+if (neutral(&warsptr->coord) && chkitm(usrnum))
+	warsptr->cantexit = 0;
+
 if (warsptr->cantexit > 0)
 	{
 	prfmsg(MAINT9);
