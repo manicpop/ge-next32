@@ -1012,12 +1012,10 @@ unsigned dist;
 
 refresh(ptr, usrn);
 
-i = ptr->hostile - 10;
+i = ptr->hostile - 11;
 if (ptab[usrn].planets[i].type != 0)
 	{
 	dist = (unsigned)(cdistance(&ptr->coord,&ptab[usrn].planets[i].coord)*10000);
-/*      prf("dist to planet %u is %d\r",i,dist);
-	outprfge(ALWAYS,usrn);*/
 	if (dist > 1000)
 		{
 		ptr->hostile = 0;
