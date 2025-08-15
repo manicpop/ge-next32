@@ -8,7 +8,7 @@ https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact with me thoughts and suggestions.
 
-=== ??? === in progress
+=== 0.2.6 === 2025-08-15
 
 * You can now only zip or jam once per cycle, so players aren't
   able to spam each other's screens.
@@ -17,6 +17,11 @@ Please contact with me thoughts and suggestions.
 * Fixed a legacy GE bug regarding ion cannons. Ion cannons
   will now fire on you until you are 1000 away from the
   planet you attacked, which was the intended behavior.
+* Cybs that are heavily damaged won't pick new pursuits.
+  (Cybs were occasionally picking new pursuits and then fleeing
+  before they even reached their target.)
+* Unless something unexpected comes up, this will be the last
+  release of the 0.2 series.
 
 === 0.2.5 === 2025-08-05:
 
