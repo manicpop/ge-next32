@@ -435,7 +435,8 @@ if (ptr->repair > 0)
 			ptr->phasr = 0;
 		ptr->tactical = 0;
 		ptr->helm = 0;
-		ptr->cloak = 0;
+		if (ptr->cloak < 1)	/* this is for oliver */
+			ptr->cloak = 0;
 		ptr->firecntl = 0;
 		if (ptr->shieldstat == SHIELDDM)
 			ptr->shieldstat = SHIELDDN;
