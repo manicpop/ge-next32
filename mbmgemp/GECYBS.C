@@ -439,6 +439,10 @@ if (usrn >= nterms)
 if (ptr->damage > 100)
 	return;
 
+/* if out of user's range, don't msg */
+if (cdistance(&ptr->coord,&warshpoff(usrn)->coord)*10000 > (double)shipclass[warshpoff(usrn)->shpclass].scanrange)
+	return;
+
 /* if we are fleeing from this user, don't send other msgs to this user until done */
 if (usrn == ptr->cybmine && ptr->npcmsg == FLEE)
 	{
@@ -610,7 +614,7 @@ if (gernd()%10 == 0 && shipclass[ptr->shpclass].has_zip && ptr->items[I_ZIPPERS]
 	}
 
 /* if damage in flee range, don't talk trash */
-if (ptr->damage < CYB_MINDAM)
+if (ptr->damage <= CYB_MINDAM)
 	{
 	if (acted == 1)
 		cyb_annoy(ptr,zothusn,LOATTACK);
@@ -741,7 +745,7 @@ else
 	low_dist = cdistance(&ptr->coord,&(wptr->coord));
 	}
 
-if (ptr->cybmine == (byte)255)
+if (ptr->cybmine == (byte)255 && ptr->damage <= CYB_MINDAM) /* don't pick new pursuit if heavily damaged */
 	{
 	lta = shipclass[ptr->shpclass].lowest_to_attk-1;
 
