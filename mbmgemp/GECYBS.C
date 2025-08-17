@@ -377,7 +377,7 @@ else
 
 if (shipclass[ptr->shpclass].max_accel > 0)
 	{
-	if (ptr->cybmine < nships)
+	if (ptr->cybmine < nships && ingegame(ptr->cybmine))
 		cyb_check_damage(ptr,usrn);
 	if (shipclass[ptr->shpclass].tough_factor > 1)	/* tougher/faster ships use missile avoidance logic */
 		cyb_check_misl(ptr);
@@ -657,7 +657,7 @@ int	usrn;
 
 {
 
-if (ptr->cybmine < nships && ptr->damage > CYB_MINDAM && ((gernd()%10 == 0) || ptr->holdcourse > 0))
+if (ptr->damage > CYB_MINDAM && ((gernd()%10 == 0) || ptr->holdcourse > 0))
 	{
 	if (shipclass[ptr->shpclass].has_mine
 		&& ptr->items[I_MINE] > 0
