@@ -2164,19 +2164,19 @@ Warp engine damaged severely![1;37m
 } T GE warp engine destroyed message
 
 WARPSPD {
-[0;37m[[1;31mERROR[0;37m] The warp drives need repair and can only safely operate at warp [1;37m%d[0;37m.[1;37m
+[0;37m[[1;31mERROR[0;37m] The warp drive needs repair and can only safely operate at warp [1;37m%d[0;37m.[1;37m
 } T GE warp needs repair message
 
 WARPSPD2 {
-[0;37m[[1;31mERROR[0;37m] The warp drives need repair and only impulse power is left.[1;37m
+[0;37m[[1;31mERROR[0;37m] The warp drive needs repair and only impulse power is left.[1;37m
 } T GE warp really needs repair message
 
 WARPSPD3 {
-[0;37m[[1;31mERROR[0;37m] The warp drives need repair and cannot exceed the current speed.[1;37m
+[0;37m[[1;31mERROR[0;37m] The warp drive needs repair and cannot exceed the current speed.[1;37m
 } T GE warp needs repair can't exceed current message
 
 WARPSPD4 {
-[0;37m[[1;31mERROR[0;37m] The warp drives need repair and cannot exceed warp [1;37m%d[0;37m.[1;37m
+[0;37m[[1;31mERROR[0;37m] The warp drive needs repair and cannot exceed warp [1;37m%d[0;37m.[1;37m
 } T GE warp needs repair can't exceed limit message
 
 SPEEDIS {***

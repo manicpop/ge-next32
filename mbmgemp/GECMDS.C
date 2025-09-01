@@ -3682,7 +3682,6 @@ if (trans_opt || sameas(plptr->userid,warsptr->userid))
 		if (warsptr->items[item] == 0UL)
 			{
 			prfmsg(TRANSFR1);
-			outprfge(ALWAYS,usrnum);
 			return;
 			}
 		if (sameas("ALL",margv[2]))
@@ -3690,7 +3689,6 @@ if (trans_opt || sameas(plptr->userid,warsptr->userid))
 		if (amt == 0)
 			{
 			prfmsg(FORMAT,"TRANSFER");
-			outprfge(ALWAYS,usrnum);
 			return;
 			}
 		if (amt < 0)
@@ -3699,7 +3697,6 @@ if (trans_opt || sameas(plptr->userid,warsptr->userid))
 			if (amt < 0)
 				{
 				prfmsg(TRANSFR1);
-				outprfge(ALWAYS,usrnum);
 				return;
 				}
 			}
@@ -3750,7 +3747,6 @@ if (sameas(plptr->userid,warsptr->userid) || plptr->userid[0] == 0)
 		if (plptr->items[item].qty == 0UL)
 			{
 			prfmsg(TRANSUP1);
-			outprfge(ALWAYS,usrnum);
 			return;
 			}
 		if (sameas("MAX",margv[2]))
@@ -3760,7 +3756,6 @@ if (sameas(plptr->userid,warsptr->userid) || plptr->userid[0] == 0)
 		if (amt == 0)
 			{
 			prfmsg(FORMAT,"TRANSFER");
-			outprfge(ALWAYS,usrnum);
 			return;
 			}
 		if (amt < 0)
@@ -3769,7 +3764,6 @@ if (sameas(plptr->userid,warsptr->userid) || plptr->userid[0] == 0)
 			if (amt < 0)
 				{
 				prfmsg(TRANSUP1);
-				outprfge(ALWAYS,usrnum);
 				return;
 				}
 			}
