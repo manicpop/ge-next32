@@ -443,6 +443,7 @@ if (ptr->repair > 0)
 		if (ptr->shield < 1)
 			ptr->shield = 0;
 		ptr->topspeed = shipclass[ptr->shpclass].max_warp;
+		ptr->overspeed = 0;
 		prfmsg(MAINT7);
 		outprfge(ALWAYS,usrn);
 		}
@@ -576,6 +577,8 @@ if (ptr->speed > ptr->speed2b)
 				outprfge(FILTER,usrn);
 				}
 			}
+		if (ptr->speed/1000 > ptr->topspeed && (ptr->speed - decelrate)/1000 <= ptr->topspeed)
+			prfmsg(WARPSPD,ptr->topspeed);
 		ptr->speed -= decelrate;
 		}
 	}
@@ -665,8 +668,9 @@ int	usrn;
 
 WARSHP	*wptr;
 COORD	oldsect,newsect,neutsect;
-int	diff,intspeed,zothusn;
+int	overamt,intspeed,zothusn;
 double	ddist;
+float	newtop;
 
 neutsect.xcoord = 0.50001;
 neutsect.ycoord = 0.50001;
@@ -809,52 +813,35 @@ if (ptr->speed > 0)
 		{
 		intspeed = ptr->speed/1000.0;
 
-		/* if this ship is exceeding the safety zone and not decelerating */
-		if (intspeed > ptr->topspeed && ptr->speed <= ptr->speed2b)
+		/* if this ship is exceeding top cruising speed and not in the process of going under it */
+		if (intspeed > ptr->topspeed && (int)(ptr->speed2b/1000.0) > ptr->topspeed)
 			{
+			newtop = shipclass[ptr->shpclass].max_warp * (1.0f - (float)ptr->overspeed / 10000.0f);
+			if (ptr->topspeed != newtop && ptr->topspeed != 0)
+				ptr->topspeed = (int)newtop;
 
-			/* the following function yealds a factor from 10 to 60 which
-            is lower the faster the player is going */
-			diff = intspeed - ptr->topspeed;
-			diff = (diff*100)/intspeed;
-			diff = 60 - diff;
-			if (diff < 0)
-				diff = 5;
+			/* for every 10% over cruising speed, increase potential random damage */
+			overamt = (intspeed * 100 / newtop) - 100;
+			ptr->overspeed += (gernd()%(overamt+1));
 
-			if (gernd()%diff==0)
+			/* if over twice new cruising speed, blow up the engines */
+			if ((overamt >= 110 || ptr->overspeed > 4000000000UL) && ptr->topspeed != 0)
 				{
-				if (ptr->overspeed > 4)
-					{
-					/* blow up the engines */
-					prfmsg(WARPBRK);
-					outprfge(ALWAYS,usrn);
-					ptr->topspeed = 0;
-					ptr->speed2b = 0;
-					ptr->damage += gernd()%20;
-					}
-				else
-					{
-					prfmsg(WARPFAST+(int)ptr->overspeed);
-					outprfge(FILTER,usrn);
-					ptr->overspeed++;
-					}
+				prfmsg(WARPBRK);
+				outprfge(ALWAYS,usrn);
+				ptr->topspeed = 0;
+				ptr->speed2b = 0;
+				ptr->damage += gernd()%20;
 				}
-
-			}
-		else
-			{
-			if (ptr->overspeed > 0)
+			else
+			if (overamt != ptr->npcmsg)
 				{
-				/* speed is normal but he was going to fast before... limit the
-            engine maximum speed */
-
-				ptr->topspeed = ptr->topspeed/(int)ptr->overspeed;
-				if (ptr->speed2b > ptr->topspeed*1000.0)
-					ptr->speed2b = ptr->topspeed*1000.0;
-				prfmsg(WARPSPD,ptr->topspeed);
-				outprfge(FILTER,usrn);
-				/* reset the warning counter */
-				ptr->overspeed = 0;
+				if (overamt >= 60 && overamt/10 != ptr->npcmsg/10)
+					{
+					prfmsg(WARPFAST+(int)((overamt/10)-6));
+					outprfge(FILTER,usrn);
+					}
+				ptr->npcmsg = overamt;
 				}
 			}
 

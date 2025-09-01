@@ -8,6 +8,17 @@ https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact with me thoughts and suggestions.
 
+=== 0.3 === (in progress)
+
+The main focus of 0.3 is enhancements for user ships:
+* A new "overspeed" routine has been implemented that will
+  smoothly degrade a ship's warp engines over time when it is
+  traveling above the recommended cruising speed, instead of
+  cutting speed by half, then half, and so on. The accumulated
+  warp damage is also saved, so drops in cruising speed can't
+  be avoided by lowering speed right before a drop, then
+  raising it again.
+
 === 0.2.6 === 2025-08-15
 
 * You can now only zip or jam once per cycle, so players aren't

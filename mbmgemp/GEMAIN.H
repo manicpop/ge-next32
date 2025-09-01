@@ -42,11 +42,11 @@
 */
 
 #ifdef GETRAINER
-#define VERSION "ge-next 0.2.6 Trainer"
+#define VERSION "ge-next 0.3-pre1 Trainer"
 #define GEHELP  "MBMG2HLP.MCV"
 #define GEMSG   "MBMG2MSG.MCV"
 #else
-#define VERSION "ge-next 0.2.6"
+#define VERSION "ge-next 0.3-pre1"
 #define GEHELP  "MBMGEHLP.MCV"
 #define GEMSG   "MBMGEMSG.MCV"
 #endif
@@ -94,8 +94,6 @@
 #define SHHITENG 1000		/* Energy drained when hit                   */
 #define SHMAXCHG 10		/* Max (full) charge in the shields          */
 #define SHMINCHG 5		/* Minimum charge to be effective            */
-
-#define TONFACT	15000.0		/* divisor for ton factor */
 
 #define SSMAX 10000
 

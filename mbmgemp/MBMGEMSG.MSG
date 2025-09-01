@@ -2139,19 +2139,19 @@ WARP04 {
 } T GE over top cruising speed message
 
 WARPFAST {***
-[0;37m[[0;31mWARNING![0;37m] Warp drives operating out of specification. Damage may result![1;37m
+[0;37m[[0;31mWARNING![0;37m] The warp drive is operating above recommended cruising speed![1;37m
 } T GE over top cruising speed warning 0
 
 WARPFST1 {***
-[0;37m[[0;31mWARNING![0;37m] If this speed is maintained for long, the warp drive will be damaged.[1;37m
+[0;37m[[0;31mWARNING![0;37m] The warp drive is exceeding recommended thermal levels![1;37m
 } T GE over top cruising speed warning 1
 
 WARPFST2 {***
-[0;37m[[0;31mWARNING![0;37m] The warp drives are overheating and won't hold up much longer![1;37m
+[0;37m[[0;31mWARNING![0;37m] The warp drive is overheating and won't hold up much longer![1;37m
 } T GE over top cruising speed warning 2
 
 WARPFST3 {***
-[0;37m[[0;31mWARNING![0;37m] The warp drives are beginning to melt the neutron shield![1;37m
+[0;37m[[0;31mWARNING![0;37m] The warp drive is beginning to melt the neutron shield![1;37m
 } T GE over top cruising speed warning 3
 
 WARPFST4 {***
@@ -2164,12 +2164,20 @@ Warp engine damaged severely![1;37m
 } T GE warp engine destroyed message
 
 WARPSPD {
-[0;37m[[1;31mERROR[0;37m] The warp drives need repair, and can only safely operate at warp [1;37m%d[0;37m.[1;37m
+[0;37m[[1;31mERROR[0;37m] The warp drives need repair and can only safely operate at warp [1;37m%d[0;37m.[1;37m
 } T GE warp needs repair message
 
 WARPSPD2 {
-[0;37m[[1;31mERROR[0;37m] The warp drives need repair, and only impulse power is left.[1;37m
+[0;37m[[1;31mERROR[0;37m] The warp drives need repair and only impulse power is left.[1;37m
 } T GE warp really needs repair message
+
+WARPSPD3 {
+[0;37m[[1;31mERROR[0;37m] The warp drives need repair and cannot exceed the current speed.[1;37m
+} T GE warp needs repair can't exceed current message
+
+WARPSPD4 {
+[0;37m[[1;31mERROR[0;37m] The warp drives need repair and cannot exceed warp [1;37m%d[0;37m.[1;37m
+} T GE warp needs repair can't exceed limit message
 
 SPEEDIS {***
 [1;32mHelm reports speed is now warp [1;37m%s[1;32m![1;37m
@@ -3195,6 +3203,9 @@ REP19 {[0;31m   Warp engines inoperable[1;37m
 REP20 {[0;31m   Warp engines damaged
    Warp [1;37m%d[0;31m or below recommended[1;37m
 } T GE report 20
+
+REP20A {[0;31m   Warp engines above cruising speed[1;37m
+} T GE report 20A
 
 REP21 {[0;31m   Phasers damaged[1;37m
 } T GE report 21

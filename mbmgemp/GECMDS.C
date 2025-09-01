@@ -595,7 +595,7 @@ if (valpcnt(margv[1],0,99))
 void FUNC cmd_warp()
 {
 unsigned deg;
-int	speed,topspeed;
+int	speed,topspeed,cap;
 
 if (shipclass[warsptr->shpclass].max_warp == 0 && atoi(margv[1]) != 0)
 	{
@@ -620,7 +620,8 @@ if (margc < 2 || margc > 3)
 else
 	{
 	speed = atoi(margv[1]);
-	topspeed=warsptr->topspeed;
+	topspeed = warsptr->topspeed;
+	cap = topspeed+(topspeed/2);
 	if (speed < 0)
 		{
 		prfmsg(FORMAT,"WARP");
@@ -628,11 +629,33 @@ else
 		return;
 		}
 
-	if (speed > topspeed+(topspeed/2))
+	/* if requsted speed is over 150% cruising speed and over current speed */
+	if (speed > cap && speed > warsptr->speed/1000)
 		{
-		prfmsg(WARP03);
-		outprfge(ALWAYS,usrnum);
-		return;
+		/* if current speed is over 100% cruising speed */
+		if (warsptr->speed/1000 > warsptr->topspeed)
+			{
+			/* if current speed is over 150% cruising speed, don't change */
+			if (warsptr->speed/1000 > cap)
+				{
+				prfmsg(WARPSPD3);
+				outprfge(ALWAYS,usrnum);
+				return;
+				}
+			/* if not, change to 150% cruising speed */
+			else
+				{
+				speed = cap;
+				prfmsg(WARPSPD4,speed);
+				outprfge(ALWAYS,usrnum);
+				}
+			}
+		else
+			{
+			prfmsg(WARP03);
+			outprfge(ALWAYS,usrnum);
+			return;
+			}
 		}
 
 	if (margc == 3)
@@ -656,7 +679,7 @@ else
 		if (*gechrbuf2 != '@')
 			if (!valdegree(gechrbuf))
 				return;
-		if (speed > topspeed)
+		if (speed > topspeed && warsptr->speed/1000 <= topspeed)
 			{
 			prfmsg(WARP04,topspeed);
 			outprfge(ALWAYS,usrnum);
@@ -2272,7 +2295,10 @@ if (sameas(margv[1],"sys"))
 		if (warsptr->topspeed == 0)
 			prfmsg(REP19);
 		else
-		if (warsptr->topspeed != shipclass[warsptr->shpclass].max_warp)
+		if (warsptr->speed/1000 > warsptr->topspeed)
+			prfmsg(REP20A);
+		else
+		if (warsptr->overspeed > 0)
 			prfmsg(REP20,warsptr->topspeed);
 		}
 
