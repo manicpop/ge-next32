@@ -200,7 +200,7 @@ while (flag == 1)
 			}
 		}
 	}
-tmpshp.heading		= rndm(359.99);
+tmpshp.heading		= gernd()%360;
 tmpshp.head2b		= tmpshp.heading;
 
 tmpshp.shpclass		= type;
@@ -577,7 +577,8 @@ if (ptr->speed > ptr->speed2b)
 				outprfge(FILTER,usrn);
 				}
 			}
-		if (ptr->speed/1000 > ptr->topspeed && (ptr->speed - decelrate)/1000 <= ptr->topspeed)
+		if (ptr->speed/1000 > ptr->topspeed && (ptr->speed - decelrate)/1000 <= ptr->topspeed &&
+			ptr->topspeed < shipclass[ptr->shpclass].max_warp)
 			prfmsg(WARPSPD,ptr->topspeed);
 		ptr->speed -= decelrate;
 		}
