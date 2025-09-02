@@ -210,6 +210,7 @@ struct hlpcmd gehlp[] = {
 		{"transfer",			HLPTRA},
 		{"warp",			HLPWAR},
 		{"who",				HLPWHO},
+		{"x",				HLPEXT},
 		{"zipper",			HLPZIP},
 
 /* FYI: The above are commands and below are topics....       Mike       */

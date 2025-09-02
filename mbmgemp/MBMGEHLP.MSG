@@ -9,7 +9,7 @@ Commands: [1;32mabandon  abort  admin  attack  buy  cloak  cls  decoy  destruct
           freq  help  impulse  jammer  jettison  lock  maintenance  mine
           missile  navigate  new  orbit  phaser  planet  price  rename
           report  roster  rotate  scan  sell  send  set  shield  spy  stop
-          team  torpedo  transfer  warp  who  zipper
+          team  torpedo  transfer  warp  who  x  zipper
 
 [1;36m Topics:  [1;32mbattle  class  communicate  distress  flux  galaxy  moving
           planets  scoring  starting  strategy  wormholes  Cybertrons
@@ -761,6 +761,9 @@ ship and charge you a nominal fee of [0;33m2500[1;36m at Zygor and [0;33m200
 
 Leaving orbit early will cease all repairs on the ship. If the planet has a
 trade password set, it will be required.
+
+Maintenance crews will not operate on any ship that is determined to be
+engaged in hostilities, as defined by the Galactic Codes of Engagement.
 [1;37m} T GE help maintenance message
 
 HLPMIN {
@@ -1276,6 +1279,19 @@ available for the use of sysops, game administrators, or their designees:
 HLPWHO {
 [1;36mThe [1;37mWHO[1;36m command displays a list of users online.
 [1;37m} T GE help cls message
+
+HLPEXT {
+[1;36mThe [1;37mX[1;36m command powers down your ship and exits Galactic Empire.
+
+The Galactic Codes of Engagement state that a user may not power down their
+ship during hostilities until a cease fire period has passed. If you
+disconnect from Galactic Empire by any other means during this period, when
+you return you will find that your ship was destroyed, and credit for
+destroying the ship will be assigned to the last ship to fire upon you.
+
+An amendment to these rules was ratified in 3280, allowing ships to power down
+at any time if they are in the neutral zone and no projectiles are incoming.
+[1;37m} T GE help exit message
 
 
 

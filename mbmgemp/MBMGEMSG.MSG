@@ -2010,9 +2010,7 @@ EXIWAR {
 } T GE exit message
 
 CANTEXT {
-[1;36mSorry... the Galactic Codes of Engagement prevent you from abandoning a battle
-you are involved in until a cease fire of a period of time has passed. If you
-disconnect now, your ship will be destroyed![1;37m
+[1;36mYou can't exit during battle. (Type [1;37mHELP X[1;36m for more info.)[1;37m
 } T GE cannot exit message
 
 EXIWAR2 {***
