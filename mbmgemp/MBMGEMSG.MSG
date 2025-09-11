@@ -83,7 +83,7 @@ MAXLIST {The number of entries shown in the roster: 10} N 3 50
 Set this value to control the maximum number of ships a 
 player can have at the same. 
 
-MAXSHIPS {The maximum number of ships a player can own: 32} N 1 50
+MAXSHIPS {The maximum number of ships a player can own: 30} N 1 60
 
 Set this value to control the maximum number of planets a
 player can own at the same time. 

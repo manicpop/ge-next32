@@ -118,7 +118,7 @@
 /*     141 */ void FUNC tossingegame P((void ));
 /*     169 */ int FUNC initshp P((char *userid , int type ));
 /*     269 */ int FUNC initusr P((char *userid ));
-/*     301 */ int FUNC findships P((int drection , int quiet ));
+/*     301 */ int FUNC findships P((int direction , int quiet ));
 /*     349 */ void FUNC selectship P((void ));
 /*     387 */ void FUNC repairship P((WARSHP *ptr , int usrn ));
 /*     434 */ void FUNC rotateship P((WARSHP *ptr , int usrn ));
