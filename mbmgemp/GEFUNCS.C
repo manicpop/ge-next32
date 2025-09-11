@@ -71,7 +71,7 @@
 void FUNC lookupshp()
 
 {
-int	noships,shpno;
+int	noships = 0;
 
 /* get the user record from GEuser.dat */
 
@@ -88,20 +88,37 @@ else
 	geudb(GEGET,usaptr->userid, waruptr);
 	}
 
-/* go tell the poor sap what ships he still has */
-noships = findships();
+setbtv(gebb1);
+
+/* don't count if no ships at all, or no ships for this user */
+if (qlobtv(0) && gepdb(GELOOKUPNAME, usaptr->userid, 0, warsptr))
+	{
+	/* get a total for user ship count */
+	do
+		{
+		gcrbtv(warsptr,0);
+		if (!sameas(usaptr->userid, warsptr->userid))
+			break;
+		noships++;
+		} while (qnxbtv());
+
+	waruptr->noships = noships;
+	gepdb(GELOOKUPNAME, usaptr->userid, 0, warsptr);
+	}
 
 if (noships == 0)
 	{
 	initshp(usaptr->userid,0); /* give the dude a class 1 ship */
 	gepdb(GEADD,tmpshp.userid,tmpshp.shipno,&tmpshp);
 	memcpy(warsptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
+	waruptr->noships = 1;
 	prfmsg(FIRSTIME);
 	outprfge(ALWAYS,usrnum);
 	}
 else
 if (noships > 1)
 	{
+	findships(0, 0);
 	prfmsg(FLEET3);
 	usrptr->substt = CHOOSESH;
 	outprfge(ALWAYS,usrnum);
@@ -110,11 +127,9 @@ if (noships > 1)
 else
 if (noships == 1)
 	{
-	shpno = scantab[usrnum].ship[0].shipno;
-
 	setbtv(gebb1);
 
-	if (gepdb(GEGET,usaptr->userid,shpno,warsptr))
+	if (gepdb(GELOOKUPNAME,usaptr->userid,0,warsptr))
 		{
 		tossingegame(); /* into the game you go bud! */
 		return;
@@ -298,69 +313,128 @@ return(0);
 ** find and list all the ships a single user has                         **
 **************************************************************************/
 
-int FUNC findships()
+int FUNC findships(int direction, int quiet)
 {
+int	found = 0;
+int	i, j, step, thispage, lastpage;
+int	first_no = 0;
+int	last_no = 0;
+int	first_index = 0;
+SCANTAB *sptr;
 
-int	found;
-SCANTAB	*sptr;
 setbtv(gebb1);
+sptr = &scantab[usrnum];
 
-found = 0;
-
-if (qlobtv(0))
+/* if we're paging, grab current page’s known first/last ship numbers from scantab */
+if (direction != 0)
 	{
-	if (gepdb(GELOOKUPNAME,usaptr->userid,0,warsptr))
+	for (i = 0; i < NOSCANTAB; ++i)
 		{
-		sptr = &scantab[usrnum];
-		prf("\33[1;36m    Class                Name                 Sector         Status\r");
-		do
+		if (sptr->ship[i].shipno != 0)
 			{
-			gcrbtv(warsptr,0);
-			if (sameas(usaptr->userid,warsptr->userid))
-				{
-				setsect(warsptr);
-				prf("\33[1;37m%2d  %-20s %-20s %6d %6d  \33[1;37m",found+1,shipclass[warsptr->shpclass].typename,
-					warsptr->shipname,xsect,ysect);
-				if (warsptr->energy < 5000 && warsptr->items[I_FLUXPOD] == 0)
-					prf("\33[0;31mflux depleted\33[1;37m");
-				else
-				if (warsptr->damage > 75.5)
-					prf("\33[0;31msevere\33[1;37m damage");
-				else
-				if (warsptr->damage > 50.5)
-					prf("\33[0;31mheavy\33[1;37m damage");
-				else
-				if (warsptr->cloak > 0)
-					prf("cloak \33[1;32mON\33[1;37m");
-				else
-				if (warsptr->items[I_GOLD] >= 500)
+			first_no = sptr->ship[0].shipno;
+			/* find last non-zero */
+			for (j = NOSCANTAB-1; j >= 0; --j)
+				if (sptr->ship[j].shipno != 0)
 					{
-					sprintf(gechrbuf,"%lu",warsptr->items[I_GOLD]);
-					prf("%s gold",gechrbuf);
+					last_no = sptr->ship[j].shipno;
+					break;
 					}
-				else
-				if (warsptr->where > 10)
-					prf("orbiting planet \33[1;34m%d\33[1;37m",warsptr->where-10);
-				prf("\33[1;37m\r");
-				sptr->ship[found].shipno = warsptr->shipno;
-				++found;
-				}
-			else
-				break;
-			} while (qnxbtv());
+			break;
+			}
+		}
+	}
+else
+	/* make sure we're at beginning */
+	gepdb(GELOOKUPNAME, usaptr->userid, 0, warsptr);
+
+
+/* page navigation */
+if (direction > 0 && last_no != 0)
+	{
+	/* last ship of current page, plus one */
+	if (gepdb(GEGET, usaptr->userid, last_no, warsptr))
+		{
+		if (!qnxbtv())	/* no next page */
+			return 0;
+		}
+	}
+else
+if (direction < 0 && first_no != 0)
+	{
+	/* first ship of current page, then back NOSCANTAB, plus one */
+	if (gepdb(GEGET, usaptr->userid, first_no, warsptr))
+		{
+		step = 0;
+		while (step < NOSCANTAB && qprbtv())
+			step++;
 		}
 	}
 
-/* added 06/17/89 to prevent cyborg code from thinking this user is a
-	cybertron incase the next alpha record was indeed Cyborg-1. */
+/* clear the page buffer to avoid stale shipnos */
+for (i = 0; i < NOSCANTAB; ++i)
+	sptr->ship[i].shipno = 0;
 
-waruptr->noships = found;
+/* print header and one page */
+if (!quiet)
+	prf("\33[1;36m    Class                Name                 Sector         Status\r");
+do
+	{
+	gcrbtv(warsptr,0);
+
+	if (!sameas(usaptr->userid, warsptr->userid))
+		break;
+
+	setsect(warsptr);
+	prf("\33[1;37m%2d  %-20s %-20s %6d %6d  \33[1;37m", found+1,
+		shipclass[warsptr->shpclass].typename, warsptr->shipname, xsect, ysect);
+
+	if (warsptr->energy < 5000 && warsptr->items[I_FLUXPOD] == 0)
+		prf("\33[0;31mflux depleted\33[1;37m");
+	else
+	if (warsptr->damage > 75.5)
+		prf("\33[0;31msevere\33[1;37m damage");
+	else
+	if (warsptr->damage > 50.5)
+		prf("\33[0;31mheavy\33[1;37m damage");
+	else
+	if (warsptr->cloak > 0)
+		prf("cloak \33[1;32mON\33[1;37m");
+	else
+	if (warsptr->items[I_GOLD] >= 500)
+		{
+		sprintf(gechrbuf,"%lu",warsptr->items[I_GOLD]);
+		prf("%s gold",gechrbuf);
+		}
+	else
+	if (warsptr->where > 10)
+		prf("orbiting planet \33[1;34m%d\33[1;37m",warsptr->where-10);
+
+	prf("\33[1;37m\r");
+
+	sptr->ship[found].shipno = warsptr->shipno;
+	if (found == 0)
+		first_index = warsptr->shipno;
+	++found;
+	} while (qnxbtv() && found < NOSCANTAB);
+
+/* display page X of Y if needed */
+if (!quiet && waruptr->noships > NOSCANTAB)
+	{
+	thispage = ((first_index - 1) / NOSCANTAB) + 1;
+	lastpage = (waruptr->noships + NOSCANTAB - 1) / NOSCANTAB;
+	prf("\33[1;36mPage %d of %d, ", thispage, lastpage);
+	if (thispage == 1)
+		prf("\"n\" for next page.\r");
+	else
+	if (thispage == lastpage)
+		prf("\"p\" for previous page.\r");
+	else
+		prf("\"p\" for previous page, \"n\" for next page.\r");
+	}
 warsptr->status = 0;
+outprfge(ALWAYS,usrnum);
 
-if (found == 1)
-	clrprf();
-else
-	outprfge(ALWAYS,usrnum);
 return (found);
 }
 
@@ -372,7 +446,9 @@ void FUNC selectship()
 {
 int	selection;
 int	shpno;
+int	page_count;
 
+/* exit back */
 if ((sameas(margv[0],"x")) || (sameas(margv[0],"X")))
 	{
 	disp_main_menu();
@@ -381,13 +457,12 @@ if ((sameas(margv[0],"x")) || (sameas(margv[0],"X")))
 	return;
 	}
 
-selection = (atoi(margv[0]))-1;
-if (selection >= 0)
+/* numeric selection on current page */
+selection = (atoi(margv[0])) - 1;
+if (selection >= 0 && selection < NOSCANTAB && scantab[usrnum].ship[selection].shipno != 0)
 	{
 	shpno = scantab[usrnum].ship[selection].shipno;
-
 	setbtv(gebb1);
-
 	if (gepdb(GEGET,usaptr->userid,shpno,warsptr))
 		{
 		tossingegame(); /* into the game you go bud! */
@@ -395,8 +470,52 @@ if (selection >= 0)
 		}
 	}
 
+/* paging */
+if (sameas(margv[0], "N") || sameas(margv[0], "n"))
+	{
+	page_count = findships(1, 0);
+	if (page_count == 0)
+		{
+		prfmsg(FLEET4);
+		page_count = findships(0, 0);
+		}
+	prfmsg(FLEET3);
+	usrptr->substt = CHOOSESH;
+	outprfge(ALWAYS, usrnum);
+	return;
+	}
+
+if (sameas(margv[0], "P") || sameas(margv[0], "p"))
+	{
+	page_count = findships(-1, 1);
+	if (page_count == 0)
+		{
+		prfmsg(FLEET4);
+		page_count = findships(0, 0);
+		}
+	prfmsg(FLEET3);
+	usrptr->substt = CHOOSESH;
+	outprfge(ALWAYS, usrnum);
+	return;
+	}
+
+/* anything else, show error and first page again */
 prfmsg(FLEET4);
-findships();
+page_count = findships(0, 0);
+
+/* auto-enter only if user truly has ONE ship total and this page has 1 */
+if (waruptr->noships == 1 && page_count == 1 && scantab[usrnum].ship[0].shipno != 0)
+	{
+	shpno = scantab[usrnum].ship[0].shipno;
+	setbtv(gebb1);
+	if (gepdb(GEGET, usaptr->userid, shpno, warsptr))
+		{
+		tossingegame();	/* into the game you go bud! */
+		return;
+		}
+	}
+
+/* otherwise, prompt */
 prfmsg(FLEET3);
 usrptr->substt = CHOOSESH;
 outprfge(ALWAYS,usrnum);

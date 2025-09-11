@@ -19,6 +19,16 @@ The main focus of 0.3 is enhancements for user ships:
   be avoided by lowering speed right before a drop, then
   raising it again.
 
+Other stuff:
+* The list of ships presented at the start of the game will now
+  show 15 ships, and if you have more than 15, you can use 'n'
+  and 'p' to scroll through the pages of ships. This fixes a
+  memory error where long lists of ships were overflowing into
+  other users' memory areas, causing people to not be able to
+  select ships if more than one user was in the menu at one
+  time. It's been tested with up to 60 ships. Max configurable
+  ships is now 60, the default has been changed to 30.
+
 === 0.2.6 === 2025-08-15
 
 * You can now only zip or jam once per cycle, so players aren't
