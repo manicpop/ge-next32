@@ -3056,6 +3056,18 @@ for (i=0; i<NOSCANTAB; ++i)
 	if (sptr->ship[i].shipno == ship)
 		return(sptr->ship[i].letter);
 	}
+
+/* not found, update scantab */
+update_scantab(warshpoff(usrn), usrn);
+
+/* try again */
+for (i=0; i<NOSCANTAB; ++i)
+	{
+	if (sptr->ship[i].shipno == ship)
+		return(sptr->ship[i].letter);
+	}
+
+/* still not found, too many ships */
 return('?');
 }
 

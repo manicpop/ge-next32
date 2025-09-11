@@ -2674,13 +2674,6 @@ if (shpnum >= 0)
 			prfmsg(SCAN2,bearing);
 			}
 		else
-		/* if within his range but he has never scanned disply this msg */
-		if (ltr == '?')
-			{
-			bearing = (int)(cbearing(&wptr->coord,&warsptr->coord,wptr->heading)+.5);
-			prfmsg(SCAN3,bearing);
-			}
-		else
 			{
 			/* all else get this */
 			prfmsg(SCAN1,ltr,warsptr->shipname);
