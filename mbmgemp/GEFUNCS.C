@@ -128,8 +128,9 @@ else
 if (noships == 1)
 	{
 	setbtv(gebb1);
+	findships(0,1);
 
-	if (gepdb(GELOOKUPNAME,usaptr->userid,0,warsptr))
+	if (gepdb(GEGET,usaptr->userid,scantab[usrnum].ship[0].shipno,warsptr))
 		{
 		tossingegame(); /* into the game you go bud! */
 		return;
@@ -386,31 +387,34 @@ do
 		break;
 
 	setsect(warsptr);
-	prf("\33[1;37m%2d  %-20s %-20s %6d %6d  \33[1;37m", found+1,
-		shipclass[warsptr->shpclass].typename, warsptr->shipname, xsect, ysect);
-
-	if (warsptr->energy < 5000 && warsptr->items[I_FLUXPOD] == 0)
-		prf("\33[0;31mflux depleted\33[1;37m");
-	else
-	if (warsptr->damage > 75.5)
-		prf("\33[0;31msevere\33[1;37m damage");
-	else
-	if (warsptr->damage > 50.5)
-		prf("\33[0;31mheavy\33[1;37m damage");
-	else
-	if (warsptr->cloak > 0)
-		prf("cloak \33[1;32mON\33[1;37m");
-	else
-	if (warsptr->items[I_GOLD] >= 500)
+	if (!quiet)
 		{
-		sprintf(gechrbuf,"%lu",warsptr->items[I_GOLD]);
-		prf("%s gold",gechrbuf);
-		}
-	else
-	if (warsptr->where > 10)
-		prf("orbiting planet \33[1;34m%d\33[1;37m",warsptr->where-10);
+		prf("\33[1;37m%2d  %-20s %-20s %6d %6d  \33[1;37m", found+1,
+			shipclass[warsptr->shpclass].typename, warsptr->shipname, xsect, ysect);
 
-	prf("\33[1;37m\r");
+		if (warsptr->energy < 5000 && warsptr->items[I_FLUXPOD] == 0)
+			prf("\33[0;31mflux depleted\33[1;37m");
+		else
+		if (warsptr->damage > 75.5)
+			prf("\33[0;31msevere\33[1;37m damage");
+		else
+		if (warsptr->damage > 50.5)
+			prf("\33[0;31mheavy\33[1;37m damage");
+		else
+		if (warsptr->cloak > 0)
+			prf("cloak \33[1;32mON\33[1;37m");
+		else
+		if (warsptr->items[I_GOLD] >= 500)
+			{
+			sprintf(gechrbuf,"%lu",warsptr->items[I_GOLD]);
+			prf("%s gold",gechrbuf);
+			}
+		else
+		if (warsptr->where > 10)
+			prf("orbiting planet \33[1;34m%d\33[1;37m",warsptr->where-10);
+
+		prf("\33[1;37m\r");
+	}
 
 	sptr->ship[found].shipno = warsptr->shipno;
 	if (found == 0)
@@ -502,20 +506,6 @@ if (sameas(margv[0], "P") || sameas(margv[0], "p"))
 /* anything else, show error and first page again */
 prfmsg(FLEET4);
 page_count = findships(0, 0);
-
-/* auto-enter only if user truly has ONE ship total and this page has 1 */
-if (waruptr->noships == 1 && page_count == 1 && scantab[usrnum].ship[0].shipno != 0)
-	{
-	shpno = scantab[usrnum].ship[0].shipno;
-	setbtv(gebb1);
-	if (gepdb(GEGET, usaptr->userid, shpno, warsptr))
-		{
-		tossingegame();	/* into the game you go bud! */
-		return;
-		}
-	}
-
-/* otherwise, prompt */
 prfmsg(FLEET3);
 usrptr->substt = CHOOSESH;
 outprfge(ALWAYS,usrnum);
