@@ -242,6 +242,9 @@ struct hlpcmd gehlp[] = {
 		{NULL,				0}
 };
 
+/* out of range mask for printmap/printmapfull */
+static const int scan_side_blocks[15] =
+	{9, 6, 4, 2, 1, 0, 0, 0, 0, 0, 1, 2, 4, 6, 9};
 
 struct	cmd * FUNC gesearch(ptr,tab,len)
 char	*ptr;
@@ -2970,9 +2973,9 @@ for (i=0 ; i< NOSCANTAB; i++)
 map[MAXY/2][MAXX/2] = '*';
 
 if (waruptr->options[SCANFULL])
-	printmapfull();
+	printmapfull(TRUE);
 else
-	printmap();
+	printmap(TRUE);
 
 outprfge(ALWAYS,usrnum);
 }
@@ -3033,7 +3036,7 @@ map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '*';
 mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '2';
 
 map_planets();
-printmap();
+printmap(FALSE);
 outprfge(ALWAYS,usrnum);
 }
 
@@ -3116,7 +3119,7 @@ for (othusn=0 ; othusn < nships ; othusn++)
 	}
 map[MAXY/2][MAXX/2] = '*';
 
-printmap();
+printmap(TRUE);
 
 outprfge(ALWAYS,usrnum);
 }
@@ -3313,31 +3316,43 @@ for (i=0; i < MAXY; ++i)
 }
 
 
-void FUNC printmap()
-
+void FUNC printmap(mask)
+int mask;
 {
-int i,j;
+int i,j,start;
 prfmsg(PLUSDASH);
 for (i=0; i<MAXY; ++i)
 	{
 	prf("   |");
-	for (j=0; j<MAXX; ++j)
+	j = 0;
+	while (j < MAXX)
 		{
-		if (mapc[i][j] == '1')
+		if (mask && (j < scan_side_blocks[i] || j >= MAXX - scan_side_blocks[i]))
 			{
-			prf("\33[1;31m%c\33[0;31m",map[i][j]);
+			start = j;
+			while (j < MAXX && (j < scan_side_blocks[i] || j >= MAXX - scan_side_blocks[i]))
+				j++;
+			prf("\33[41m%*s\33[0;31m", j - start, "");  /* print N spaces in red */
 			}
 		else
-		if (mapc[i][j] == '2')
 			{
-			prf("\33[1;33m%c\33[0;31m",map[i][j]);
-			}
-		else
-			{
-			if (map[i][j] == ' ')
-				prf(" ");	/* prevent excessive color codes */
+			if (mapc[i][j] == '1')
+				{
+				prf("\33[1;31m%c\33[0;31m",map[i][j]);
+				}
 			else
-				prf("\33[1;37m%c\33[0;31m",map[i][j]);
+			if (mapc[i][j] == '2')
+				{
+				prf("\33[1;33m%c\33[0;31m",map[i][j]);
+				}
+			else
+				{
+				if (map[i][j] == ' ')
+					prf(" ");	/* prevent excessive color codes */
+				else
+					prf("\33[1;37m%c\33[0;31m",map[i][j]);
+				}
+			j++;
 			}
 		}
 	prf("|\r");
@@ -3349,7 +3364,8 @@ prf("\33[1;37m");
 }
 
 
-void FUNC printmapfull()
+void FUNC printmapfull(mask)
+int mask;
 
 {
 SCANTAB *sptr;
@@ -3357,8 +3373,7 @@ SCANTAB *sptr;
 int othusn;
 
 int i,j,spdlen;
-int shp;
-int ff;
+int shp,ff,start;
 
 char *spdstr;
 
@@ -3371,23 +3386,35 @@ prfmsg(PLUSFULL);
 for (i=0; i<MAXY; ++i)
 	{
 	prf("   |");
-	for (j=0; j<MAXX; ++j)
+	j = 0;
+	while (j < MAXX)
 		{
-		if (mapc[i][j] == '1')
+		if (mask && (j < scan_side_blocks[i] || j >= MAXX - scan_side_blocks[i]))
 			{
-			prf("\33[1;31m%c\33[0;31m",map[i][j]);
+			start = j;
+			while (j < MAXX && (j < scan_side_blocks[i] || j >= MAXX - scan_side_blocks[i]))
+				j++;
+			prf("\33[41m%*s\33[0;31m", j - start, "");  /* print N spaces in red */
 			}
 		else
-		if (mapc[i][j] == '2')
 			{
-			prf("\33[1;33m%c\33[0;31m",map[i][j]);
-			}
-		else
-			{
-			if (map[i][j] == ' ')
-				prf(" ");
+			if (mapc[i][j] == '1')
+				{
+				prf("\33[1;31m%c\33[0;31m",map[i][j]);
+				}
 			else
-				prf("\33[1;37m%c\33[0;31m",map[i][j]);
+			if (mapc[i][j] == '2')
+				{
+				prf("\33[1;33m%c\33[0;31m",map[i][j]);
+				}
+			else
+				{
+				if (map[i][j] == ' ')
+					prf(" ");
+				else
+					prf("\33[1;37m%c\33[0;31m",map[i][j]);
+				}
+			j++;
 			}
 		}
 	prf("|");
@@ -3403,12 +3430,12 @@ for (i=0; i<MAXY; ++i)
 			spdlen = strlen(spdstr);
 
 			if (spdlen == 6)
-				prf("   %s\33[0;31m\r",spdstr);
+				prf("   %s\33[0;31m",spdstr);
 			else
 			if (spdlen == 5)
-				prf("    %s\33[0;31m\r",spdstr);
+				prf("    %s\33[0;31m",spdstr);
 			else
-				prf("     %s\33[0;31m\r",spdstr);
+				prf("     %s\33[0;31m",spdstr);
 
 			if (!waruptr->options[SCANNAMES])
 				shp++;
@@ -3419,20 +3446,17 @@ for (i=0; i<MAXY; ++i)
 		else
 			{
 			if (warsptr->lock == othusn)	/* locked, red highlights */
-				prf("    \33[0;31m*\33[0;36m%s\33[0;31m*\r",username(warshpoff(othusn)));
+				prf("    \33[0;31m*\33[0;36m%s\33[0;31m*",username(warshpoff(othusn)));
 			else
 			if (warshpoff(othusn)->distress != 255)		/* distress, green highlights */
-				prf("    \33[1;32m*\33[0;36m%s\33[1;32m*\33[0;31m\r",username(warshpoff(othusn)));
+				prf("    \33[1;32m*\33[0;36m%s\33[1;32m*\33[0;31m",username(warshpoff(othusn)));
 			else
-				prf("     \33[0;36m%s\33[0;31m\r",username(warshpoff(othusn)));
+				prf("     \33[0;36m%s\33[0;31m",username(warshpoff(othusn)));
 			shp++;
 			ff = 0;
 			}
 		}
-	else
-		{
 		prf("\r");
-		}
 	}
 
 prfmsg(PLUSDASH);
