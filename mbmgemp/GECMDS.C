@@ -3332,7 +3332,7 @@ for (i=0; i<MAXY; ++i)
 			start = j;
 			while (j < MAXX && (j < scan_side_blocks[i] || j >= MAXX - scan_side_blocks[i]))
 				j++;
-			prf("\33[41m%*s\33[0;31m", j - start, "");  /* print N spaces in red */
+			prf("%s", gedots(j - start));
 			}
 		else
 			{
@@ -3394,7 +3394,7 @@ for (i=0; i<MAXY; ++i)
 			start = j;
 			while (j < MAXX && (j < scan_side_blocks[i] || j >= MAXX - scan_side_blocks[i]))
 				j++;
-			prf("\33[41m%*s\33[0;31m", j - start, "");  /* print N spaces in red */
+			prf("%s", gedots(j - start));
 			}
 		else
 			{
