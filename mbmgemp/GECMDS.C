@@ -3040,13 +3040,13 @@ printmap(FALSE);
 outprfge(ALWAYS,usrnum);
 }
 
-
 void FUNC scan_lo()
-
 {
-int x,y;
-
-double xf,yf,x1,y1,range,xfactor,yfactor;
+int x, y, fullgal;
+double xf, yf, x1, y1, range;
+double minx, maxx, miny, maxy;
+double xfactor, yfactor, galextent;
+double sx, sy, cell_minx, cell_maxx, cell_miny, cell_maxy;
 
 WARSHP	*wptr;
 
@@ -3057,53 +3057,83 @@ if (margc != 2)
 	return;
 	}
 
-if (margc == 4 )
-	{
-	if (!sameto("full",margv[3]))
-		{
-		prfmsg(FORMAT,"SCAN");
-		outprfge(ALWAYS,usrnum);
-		return;
-		}
-	}
-
 setsect(warsptr);
 
 range = (double)(shipclass[warsptr->shpclass].scanrange)*10.0;
+galextent = (double)univmax * 10000.0;
+
+x1 = warsptr->coord.xcoord * 10000.0;
+y1 = warsptr->coord.ycoord * 10000.0;
+
+/* will this scan touch all four corners of the galaxy? */
+fullgal = (range >= (x1 + galextent) &&
+           range >= (galextent - x1) &&
+           range >= (y1 + galextent) &&
+           range >= (galextent - y1));
 
 if (waruptr->options[SCANHOME])
 	ansifunc(CLEAR);
 
-prfmsg(SCAN24,spr("%ld",(long)range),xsect,ysect);
+if (fullgal)
+	prfmsg(SCAN24, "galaxy", xsect, ysect);
+else
+	prfmsg(SCAN24, spr("%ld",(long)range), xsect, ysect);
 
-range = (range/10000.0);
 clearmap();
 
-x1 = (warsptr->coord.xcoord);
-y1 = (warsptr->coord.ycoord);
-range = range*2.0;
-xfactor = (range)/((double)MAXX-1.0);
-yfactor = (range)/((double)MAXY-1.0);
-/* debug
-prf("Xfactor=%s,Yfactor=%s\r",spr("%ld",(long)xfactor),spr("%ld",(long)yfactor));*/
+if (fullgal)
+	{
+	minx = -galextent;
+	maxx =  galextent;
+	miny = -galextent;
+	maxy =  galextent;
+	}
+else
+	{
+	minx = x1 - range;
+	maxx = x1 + range;
+	miny = y1 - range;
+	maxy = y1 + range;
+	}
 
-for (othusn=0 ; othusn < nships ; othusn++)
+xfactor = (maxx - minx) / ((double)MAXX - 1.0);
+yfactor = (maxy - miny) / ((double)MAXY - 1.0);
+
+if (!fullgal)
+	{
+	for (y = 0; y < MAXY; y++)
+		{
+		for (x = 0; x < MAXX; x++)
+			{
+			cell_minx = minx + x * xfactor;
+			cell_maxx = cell_minx + xfactor;
+			cell_miny = miny + y * yfactor;
+			cell_maxy = cell_miny + yfactor;
+
+			/* if the entire cell lies outside galaxy bounds */
+			if (cell_maxx < -galextent || cell_minx > galextent ||
+				cell_maxy < -galextent || cell_miny > galextent)
+				{
+				map[y][x]  = '.';
+				mapc[y][x] = '4';
+				}
+			}
+		}
+	}
+
+for (othusn = 0; othusn < nships; othusn++)
 	{
 	if (ingegame(othusn))
 		{
 		wptr = warshpoff(othusn);
-		xf = (wptr->coord.xcoord)- x1;
-		yf = (wptr->coord.ycoord)- y1;
-		xf = (xf/xfactor);
-		yf = (yf/yfactor);
-		xf+=(((double)MAXX)/2.0);
-		yf+=(((double)MAXY)/2.0);
 
+		sx = (wptr->coord.xcoord * 10000.0 - minx) / xfactor;
+		sy = (wptr->coord.ycoord * 10000.0 - miny) / yfactor;
 
-		if ((xf >= 0.0 && xf < (double)MAXX) && (yf>= 0.0 && yf < (double)MAXY))
+		if (sx >= 0.0 && sx < (double)MAXX && sy >= 0.0 && sy < (double)MAXY)
 			{
-			x = (int)xf;
-			y = (int)yf;
+			x = (int)sx;
+			y = (int)sy;
 			if (wptr->status == GESTAT_AUTO)
 				{
 				map[y][x] = '+';
@@ -3117,10 +3147,13 @@ for (othusn=0 ; othusn < nships ; othusn++)
 			}
 		}
 	}
-map[MAXY/2][MAXX/2] = '*';
 
-printmap(TRUE);
+xf = (x1 - minx) / xfactor;
+yf = (y1 - miny) / yfactor;
+if (xf >= 0.0 && xf < (double)MAXX && yf >= 0.0 && yf < (double)MAXY)
+	map[(int)yf][(int)xf] = '*';
 
+printmap(FALSE);
 outprfge(ALWAYS,usrnum);
 }
 
@@ -3344,6 +3377,11 @@ for (i=0; i<MAXY; ++i)
 			if (mapc[i][j] == '2')
 				{
 				prf("\33[1;33m%c\33[0;31m",map[i][j]);
+				}
+			else
+			if (mapc[i][j] == '4')
+				{
+				prf("\33[1;34m%c\33[0;31m",map[i][j]);
 				}
 			else
 				{
