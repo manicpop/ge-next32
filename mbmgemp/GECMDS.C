@@ -2888,12 +2888,12 @@ else
 void FUNC scan_ra()
 
 {
-int	x,y;
-
+int	i,x,y;
 double	xf,yf,x1,y1,range,xfactor,yfactor;
-
-
-int	i;
+double	minx, miny;
+double	cell_center_x, cell_center_y;
+double	cell_half_x, cell_half_y;
+double	gal_min, gal_max;
 
 WARSHP	*wptr;
 MINE	*mptr;
@@ -2907,7 +2907,7 @@ if (margc != 3)
 
 x = atoi(margv[2]);
 if (x < 1 || x > 9)
-	x = 1;
+	x = 9;
 
 setsect(warsptr);
 
@@ -2927,8 +2927,34 @@ update_scantab(warsptr,usrnum);
 x1 = (warsptr->coord.xcoord);
 y1 = (warsptr->coord.ycoord);
 range = range*2.0;
-yfactor = range/(((double)MAXY)-1.0);
-xfactor = range/(((double)MAXX)-1.0);
+xfactor = range * 2.0 / ((double)MAXX);
+yfactor = range * 2.0 / ((double)MAXY);
+
+minx = x1 - range - (xfactor / 2.0);
+miny = y1 - range - (yfactor / 2.0);
+
+cell_half_x = xfactor / 2.0;
+cell_half_y = yfactor / 2.0;
+
+gal_min = -((double)univmax);
+gal_max = (double)univmax + 0.99;
+
+/* mark out of bounds areas */
+for (y = 0; y < MAXY; y++)
+	{
+	for (x = 0; x < MAXX; x++)
+		{
+		cell_center_x = minx + (x + 0.5) * xfactor;
+		cell_center_y = miny + (y + 0.5) * yfactor;
+
+		if ((cell_center_x + cell_half_x < gal_min) || (cell_center_x - cell_half_x > gal_max) ||
+			(cell_center_y + cell_half_y < gal_min) || (cell_center_y - cell_half_y > gal_max))
+			{
+			map[y][x] = '.';
+			mapc[y][x] = '4';
+			}
+		}
+	}
 
 for (i=0,mptr = mines; i<nummines;++mptr,++i)
 	{
@@ -2936,9 +2962,6 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 		{
 		xf = (((double)MAXX)/2.0)+(((mptr->coord.xcoord) - x1)/xfactor);
 		yf = (((double)MAXY)/2.0)+(((mptr->coord.ycoord) - y1)/yfactor);
-/* DEBUG
-		sprintf(gechrbuf,"xf = %f - yf = %f",xf,yf);
-		prf("MINES FOUND @ %s",gechrbuf);*/
 		if ((xf >= 0.0 && xf < (double)MAXX)
 			&& (yf >= 0.0 && yf < (double)MAXY))
 			{
@@ -3044,9 +3067,12 @@ void FUNC scan_lo()
 {
 int x, y, fullgal;
 double xf, yf, x1, y1, range;
-double minx, maxx, miny, maxy;
-double xfactor, yfactor, galextent;
-double sx, sy, cell_minx, cell_maxx, cell_miny, cell_maxy;
+double minx, miny;
+double xfactor, yfactor;
+double sx, sy;
+double cell_center_x, cell_center_y;
+double cell_half_x, cell_half_y;
+double gal_min, gal_max;
 
 WARSHP	*wptr;
 
@@ -3060,16 +3086,18 @@ if (margc != 2)
 setsect(warsptr);
 
 range = (double)(shipclass[warsptr->shpclass].scanrange)*10.0;
-galextent = (double)univmax * 10000.0;
 
 x1 = warsptr->coord.xcoord * 10000.0;
 y1 = warsptr->coord.ycoord * 10000.0;
 
+gal_min = -(double)univmax * 10000.0;
+gal_max = ((double)univmax * 10000.0) + 9999.0;
+
 /* will this scan touch all four corners of the galaxy? */
-fullgal = (range >= (x1 + galextent) &&
-           range >= (galextent - x1) &&
-           range >= (y1 + galextent) &&
-           range >= (galextent - y1));
+fullgal = (range >= (x1 - gal_min) &&
+           range >= (gal_max - x1) &&
+           range >= (y1 - gal_min) &&
+           range >= (gal_max - y1));
 
 if (waruptr->options[SCANHOME])
 	ansifunc(CLEAR);
@@ -3083,21 +3111,21 @@ clearmap();
 
 if (fullgal)
 	{
-	minx = -galextent;
-	maxx =  galextent;
-	miny = -galextent;
-	maxy =  galextent;
+	minx = gal_min;
+	miny = gal_min;
+	xfactor = (gal_max - gal_min) / (double)MAXX;
+	yfactor = (gal_max - gal_min) / (double)MAXY;
 	}
 else
 	{
 	minx = x1 - range;
-	maxx = x1 + range;
 	miny = y1 - range;
-	maxy = y1 + range;
+	xfactor = (2.0 * range) / (double)MAXX;
+	yfactor = (2.0 * range) / (double)MAXY;
 	}
 
-xfactor = (maxx - minx) / ((double)MAXX - 1.0);
-yfactor = (maxy - miny) / ((double)MAXY - 1.0);
+cell_half_x = xfactor / 2.0;
+cell_half_y = yfactor / 2.0;
 
 if (!fullgal)
 	{
@@ -3105,14 +3133,12 @@ if (!fullgal)
 		{
 		for (x = 0; x < MAXX; x++)
 			{
-			cell_minx = minx + x * xfactor;
-			cell_maxx = cell_minx + xfactor;
-			cell_miny = miny + y * yfactor;
-			cell_maxy = cell_miny + yfactor;
+			cell_center_x = minx + (x + 0.5) * xfactor;
+			cell_center_y = miny + (y + 0.5) * yfactor;
 
 			/* if the entire cell lies outside galaxy bounds */
-			if (cell_maxx < -galextent || cell_minx > galextent ||
-				cell_maxy < -galextent || cell_miny > galextent)
+			if ((cell_center_x + cell_half_x < gal_min) || (cell_center_x - cell_half_x > gal_max) ||
+				(cell_center_y + cell_half_y < gal_min) || (cell_center_y - cell_half_y > gal_max))
 				{
 				map[y][x]  = '.';
 				mapc[y][x] = '4';
@@ -3444,6 +3470,11 @@ for (i=0; i<MAXY; ++i)
 			if (mapc[i][j] == '2')
 				{
 				prf("\33[1;33m%c\33[0;31m",map[i][j]);
+				}
+			else
+			if (mapc[i][j] == '4')
+				{
+				prf("\33[1;34m%c\33[0;31m",map[i][j]);
 				}
 			else
 				{
