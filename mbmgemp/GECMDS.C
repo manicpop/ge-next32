@@ -244,7 +244,7 @@ struct hlpcmd gehlp[] = {
 
 /* out of range mask for printmap/printmapfull */
 static const int scan_side_blocks[15] =
-	{9, 6, 4, 2, 1, 0, 0, 0, 0, 0, 1, 2, 4, 6, 9};
+	{7, 4, 3, 1, 0, 0, 0, 0, 0, 0, 0, 1, 3, 4, 7};
 
 struct	cmd * FUNC gesearch(ptr,tab,len)
 char	*ptr;
@@ -2886,52 +2886,51 @@ else
 }
 
 void FUNC scan_ra()
-
 {
-int	i,x,y;
-double	xf,yf,x1,y1,range,xfactor,yfactor;
-double	minx, miny;
-double	cell_center_x, cell_center_y;
-double	cell_half_x, cell_half_y;
-double	gal_min, gal_max;
+int i, x, y;
+double xf, yf, x1, y1, range;
+double minx, miny;
+double xfactor, yfactor;
+double cell_center_x, cell_center_y;
+double cell_half_x, cell_half_y;
+double gal_min, gal_max;
+double shiftx = 0.0, shifty = 0.0;
 
-WARSHP	*wptr;
-MINE	*mptr;
+WARSHP *wptr;
+MINE   *mptr;
 
 if (margc != 3)
 	{
-	prfmsg(FORMAT,"SCAN");
-	outprfge(ALWAYS,usrnum);
+	prfmsg(FORMAT, "SCAN");
+	outprfge(ALWAYS, usrnum);
 	return;
 	}
 
 x = atoi(margv[2]);
-if (x < 1 || x > 9)
-	x = 9;
+if (x < 1 || x > 9) x = 9;
 
 setsect(warsptr);
 
-range = (double)((shipclass[warsptr->shpclass].scanrange)/((10-x)*(10-x)));
+range = (double)((shipclass[warsptr->shpclass].scanrange) / ((10 - x) * (10 - x)));
 
 if (waruptr->options[SCANHOME])
 	ansifunc(CLEAR);
 
-prfmsg(SCAN24,spr("%ld",(long)range),xsect,ysect);
+prfmsg(SCAN24, spr("%ld", (long)range), xsect, ysect);
 
-range = range/10000;
+range = range / 5000.0;
 
 clearmap();
+update_scantab(warsptr, usrnum);
 
-update_scantab(warsptr,usrnum);
+x1 = warsptr->coord.xcoord;
+y1 = warsptr->coord.ycoord;
 
-x1 = (warsptr->coord.xcoord);
-y1 = (warsptr->coord.ycoord);
-range = range*2.0;
-xfactor = range * 2.0 / ((double)MAXX);
-yfactor = range * 2.0 / ((double)MAXY);
+xfactor = range / (double)MAXX;
+yfactor = range / (double)MAXY;
 
-minx = x1 - range - (xfactor / 2.0);
-miny = y1 - range - (yfactor / 2.0);
+minx = x1 - range / 2.0;
+miny = y1 - range / 2.0;
 
 cell_half_x = xfactor / 2.0;
 cell_half_y = yfactor / 2.0;
@@ -2939,13 +2938,21 @@ cell_half_y = yfactor / 2.0;
 gal_min = -((double)univmax);
 gal_max = (double)univmax + 0.99;
 
-/* mark out of bounds areas */
+/* determine shift for X if player would fall one left of center */
+if ((int)((x1 - minx) / xfactor) == (MAXX/2) - 1)
+	shiftx = xfactor;
+
+/* determine shift for Y if player would fall one above center */
+if ((int)((y1 - miny) / yfactor) == (MAXY/2) - 1)
+	shifty = yfactor;
+
+/* mark out-of-bounds areas */
 for (y = 0; y < MAXY; y++)
 	{
 	for (x = 0; x < MAXX; x++)
 		{
-		cell_center_x = minx + (x + 0.5) * xfactor;
-		cell_center_y = miny + (y + 0.5) * yfactor;
+		cell_center_x = minx + x * xfactor + shiftx;
+		cell_center_y = miny + y * yfactor + shifty;
 
 		if ((cell_center_x + cell_half_x < gal_min) || (cell_center_x - cell_half_x > gal_max) ||
 			(cell_center_y + cell_half_y < gal_min) || (cell_center_y - cell_half_y > gal_max))
@@ -2956,53 +2963,69 @@ for (y = 0; y < MAXY; y++)
 		}
 	}
 
-for (i=0,mptr = mines; i<nummines;++mptr,++i)
+/* plot mines */
+for (i = 0, mptr = mines; i < nummines; ++mptr, ++i)
 	{
-	if (mptr->channel != 255)	/* if a live mine */
+	if (mptr->channel != 255)
 		{
-		xf = (((double)MAXX)/2.0)+(((mptr->coord.xcoord) - x1)/xfactor);
-		yf = (((double)MAXY)/2.0)+(((mptr->coord.ycoord) - y1)/yfactor);
-		if ((xf >= 0.0 && xf < (double)MAXX)
-			&& (yf >= 0.0 && yf < (double)MAXY))
+		xf = ((mptr->coord.xcoord - x1) / xfactor) + ((double)MAXX)/2.0;
+		yf = ((mptr->coord.ycoord - y1) / yfactor) + ((double)MAXY)/2.0;
+
+		xf += shiftx / xfactor;
+		yf += shifty / yfactor;
+
+		if (xf >= 0.0 && xf < (double)MAXX && yf >= 0.0 && yf < (double)MAXY)
 			{
-			y=(int)yf;
-			x=(int)xf;
+			x = (int)xf;
+			y = (int)yf;
 			map[y][x] = '.';
+			mapc[y][x] = '0';
 			}
 		}
 	}
 
-for (i=0 ; i< NOSCANTAB; i++)
+/* plot ships from scantab */
+for (i = 0; i < NOSCANTAB; i++)
 	{
 	othusn = scantab[usrnum].ship[i].shipno;
 	if (scantab[usrnum].ship[i].flag == 1)
 		{
 		wptr = warshpoff(othusn);
-		xf = (wptr->coord.xcoord)- x1;
-		yf = (wptr->coord.ycoord)- y1;
-		xf = (((double)MAXX)/2.0)+(xf/xfactor);
-		yf = (((double)MAXY)/2.0)+(yf/yfactor);
 
-		if ((xf >= 0.0 && xf < (double)MAXX)
-			&& (yf>= 0.0 && yf < (double)MAXY))
+		xf = ((wptr->coord.xcoord - x1) / xfactor) + ((double)MAXX)/2.0 + shiftx / xfactor;
+		yf = ((wptr->coord.ycoord - y1) / yfactor) + ((double)MAXY)/2.0 + shifty / yfactor;
+
+		if (xf >= 0.0 && xf < (double)MAXX && yf >= 0.0 && yf < (double)MAXY)
 			{
-			x=(int)xf;
-			y=(int)yf;
+			x = (int)xf;
+			y = (int)yf;
 			map[y][x] = scantab[usrnum].ship[i].letter;
+
+			if (warsptr->lock == othusn)
+				mapc[y][x] = '6';
+			else
+			if (shipclass[wptr->shpclass].max_type == CLASSTYPE_CYBORG)
+				mapc[y][x] = '1';
+			else
+			if (shipclass[wptr->shpclass].max_type == CLASSTYPE_DROID)
+				mapc[y][x] = '4';
+			else
+				mapc[y][x] = '2';
 			}
 		}
 	}
 
+/* plot player at center */
 map[MAXY/2][MAXX/2] = '*';
+mapc[MAXY/2][MAXX/2] = '0';
 
 if (waruptr->options[SCANFULL])
 	printmapfull(TRUE);
 else
 	printmap(TRUE);
 
-outprfge(ALWAYS,usrnum);
+outprfge(ALWAYS, usrnum);
 }
-
 
 void FUNC scan_se()
 
@@ -3032,6 +3055,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 		x = coord2(mptr->coord.xcoord) +50;
 		y = coord2(mptr->coord.ycoord) +50;
 		map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '.';
+		mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '0';
 		}
 	}
 
@@ -3046,8 +3070,14 @@ for (i=0 ; i< NOSCANTAB; i++)
 			x = coord2(wptr->coord.xcoord) +50;
 			y = coord2(wptr->coord.ycoord) +50;
 			map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = scantab[usrnum].ship[i].letter;
-			if (wptr->status == GESTAT_AUTO)
+			if (warsptr->lock == othusn)
+				mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '6';
+			else
+			if (shipclass[wptr->shpclass].max_type == CLASSTYPE_CYBORG)
 				mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '1';
+			else
+			if (shipclass[wptr->shpclass].max_type == CLASSTYPE_DROID)
+				mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '4';
 			else
 				mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '2';
 			}
@@ -3056,7 +3086,7 @@ for (i=0 ; i< NOSCANTAB; i++)
 x = coord2(warsptr->coord.xcoord) +50;
 y = coord2(warsptr->coord.ycoord) +50;
 map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '*';
-mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '2';
+mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '0';
 
 map_planets();
 printmap(FALSE);
@@ -3073,8 +3103,9 @@ double sx, sy;
 double cell_center_x, cell_center_y;
 double cell_half_x, cell_half_y;
 double gal_min, gal_max;
+double shiftx = 0.0;
 
-WARSHP	*wptr;
+WARSHP *wptr;
 
 if (margc != 2)
 	{
@@ -3085,7 +3116,7 @@ if (margc != 2)
 
 setsect(warsptr);
 
-range = (double)(shipclass[warsptr->shpclass].scanrange)*10.0;
+range = (double)(shipclass[warsptr->shpclass].scanrange) * 10.0;
 
 x1 = warsptr->coord.xcoord * 10000.0;
 y1 = warsptr->coord.ycoord * 10000.0;
@@ -3094,16 +3125,14 @@ gal_min = -(double)univmax * 10000.0;
 gal_max = ((double)univmax * 10000.0) + 9999.0;
 
 /* will this scan touch all four corners of the galaxy? */
-fullgal = (range >= (x1 - gal_min) &&
-           range >= (gal_max - x1) &&
-           range >= (y1 - gal_min) &&
-           range >= (gal_max - y1));
+fullgal = (range >= (x1 - gal_min) && range >= (gal_max - x1) &&
+	range >= (y1 - gal_min) && range >= (gal_max - y1));
 
 if (waruptr->options[SCANHOME])
 	ansifunc(CLEAR);
 
 if (fullgal)
-	prfmsg(SCAN24, "galaxy", xsect, ysect);
+	prfmsg(SCAN24G);
 else
 	prfmsg(SCAN24, spr("%ld",(long)range), xsect, ysect);
 
@@ -3122,66 +3151,103 @@ else
 	miny = y1 - range;
 	xfactor = (2.0 * range) / (double)MAXX;
 	yfactor = (2.0 * range) / (double)MAXY;
+
+	/* compute visual shift so player ends up at MAXX/2 */
+	shiftx = ((double)MAXX / 2.0) - 0.5 - ((x1 - minx) / xfactor);
+	shiftx *= xfactor;  /* convert from cells to units */
 	}
 
 cell_half_x = xfactor / 2.0;
 cell_half_y = yfactor / 2.0;
 
-if (!fullgal)
+/* mark outside of galaxy */
+for (y = 0; y < MAXY; y++)
 	{
-	for (y = 0; y < MAXY; y++)
+	for (x = 0; x < MAXX; x++)
 		{
-		for (x = 0; x < MAXX; x++)
-			{
-			cell_center_x = minx + (x + 0.5) * xfactor;
-			cell_center_y = miny + (y + 0.5) * yfactor;
+		cell_center_x = minx + (x + 0.5) * xfactor + shiftx;
+		cell_center_y = miny + (y + 0.5) * yfactor;
 
-			/* if the entire cell lies outside galaxy bounds */
-			if ((cell_center_x + cell_half_x < gal_min) || (cell_center_x - cell_half_x > gal_max) ||
-				(cell_center_y + cell_half_y < gal_min) || (cell_center_y - cell_half_y > gal_max))
-				{
-				map[y][x]  = '.';
-				mapc[y][x] = '4';
-				}
+		/* if the entire cell lies outside galaxy bounds */
+		if ((cell_center_x + cell_half_x < gal_min) || (cell_center_x - cell_half_x > gal_max) ||
+			(cell_center_y + cell_half_y < gal_min) || (cell_center_y - cell_half_y > gal_max))
+			{
+			map[y][x]  = '.';
+			mapc[y][x] = '4';
 			}
 		}
 	}
 
+/* place all ships except the player scanning */
 for (othusn = 0; othusn < nships; othusn++)
 	{
-	if (ingegame(othusn))
+	if (ingegame(othusn) && othusn != usrnum)
 		{
 		wptr = warshpoff(othusn);
 
-		sx = (wptr->coord.xcoord * 10000.0 - minx) / xfactor;
+		sx = (wptr->coord.xcoord * 10000.0 - minx + shiftx) / xfactor;
 		sy = (wptr->coord.ycoord * 10000.0 - miny) / yfactor;
 
-		if (sx >= 0.0 && sx < (double)MAXX && sy >= 0.0 && sy < (double)MAXY)
+		if (sx >= 0.0 && sy >= 0.0)
 			{
 			x = (int)sx;
 			y = (int)sy;
-			if (wptr->status == GESTAT_AUTO)
+
+			/* clamp to grid */
+			if (x >= MAXX) x = MAXX - 1;
+			if (y >= MAXY) y = MAXY - 1;
+
+			if (x >= 0 && y >= 0 && x < MAXX && y < MAXY)
 				{
-				map[y][x] = '+';
-				mapc[y][x] = '2';
-				}
-			else
-				{
-				map[y][x] = '=';
-				mapc[y][x] = '2';
+				if (wptr->status == GESTAT_AUTO)
+					{
+					if (map[y][x] != '=')   /* user ships take precedence */
+						{
+						map[y][x] = '+';
+						mapc[y][x] = '0';
+						}
+					}
+				else
+					{
+					map[y][x] = '=';
+					mapc[y][x] = '0';
+					}
 				}
 			}
 		}
 	}
 
-xf = (x1 - minx) / xfactor;
-yf = (y1 - miny) / yfactor;
-if (xf >= 0.0 && xf < (double)MAXX && yf >= 0.0 && yf < (double)MAXY)
-	map[(int)yf][(int)xf] = '*';
+/* place player */
+if (fullgal)
+	{
+	xf = (x1 - minx) / xfactor;
+	yf = (y1 - miny) / yfactor;
+
+	if (xf >= 0.0 && yf >= 0.0)
+		{
+		x = (int)xf;
+		y = (int)yf;
+
+		if (x >= MAXX) x = MAXX - 1;
+		if (y >= MAXY) y = MAXY - 1;
+
+		if (x >= 0 && y >= 0 && x < MAXX && y < MAXY)
+			{
+			map[y][x] = '*';
+			mapc[y][x] = '0';
+			}
+		}
+	}
+else
+	{
+	map[MAXY/2][MAXX/2] = '*';
+	mapc[MAXY/2][MAXX/2] = '0';
+	}
 
 printmap(FALSE);
 outprfge(ALWAYS,usrnum);
 }
+
 
 void FUNC update_scantab(ptr, usrn)
 WARSHP	*ptr;
@@ -3354,6 +3420,10 @@ for (i=0;i < sector.numplan;++i)
 		x = coord2(sector.ptab[i].coord.xcoord)+25;
 		y = coord2(sector.ptab[i].coord.ycoord)+25;
 		map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '1' + i;
+		if (sector.ptab[i].type == PLTYPE_WORM)
+			mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '3';
+		else
+			mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '5';
 		}
 	}
 }
@@ -3395,27 +3465,28 @@ for (i=0; i<MAXY; ++i)
 			}
 		else
 			{
+			if (map[i][j] == ' ')
+				prf(" ");	/* prevent excessive color codes */
+			else
 			if (mapc[i][j] == '1')
-				{
 				prf("\33[1;31m%c\33[0;31m",map[i][j]);
-				}
 			else
 			if (mapc[i][j] == '2')
-				{
+				prf("\33[1;32m%c\33[0;31m",map[i][j]);
+			else
+			if (mapc[i][j] == '3')
 				prf("\33[1;33m%c\33[0;31m",map[i][j]);
-				}
 			else
 			if (mapc[i][j] == '4')
-				{
 				prf("\33[1;34m%c\33[0;31m",map[i][j]);
-				}
 			else
-				{
-				if (map[i][j] == ' ')
-					prf(" ");	/* prevent excessive color codes */
-				else
-					prf("\33[1;37m%c\33[0;31m",map[i][j]);
-				}
+			if (mapc[i][j] == '5')
+				prf("\33[0;34m%c\33[0;31m",map[i][j]);
+			else
+			if (mapc[i][j] == '6')
+				prf("\33[0;31m%c",map[i][j]);
+			else
+				prf("\33[1;37m%c\33[0;31m",map[i][j]);
 			j++;
 			}
 		}
@@ -3462,27 +3533,28 @@ for (i=0; i<MAXY; ++i)
 			}
 		else
 			{
+			if (map[i][j] == ' ')
+				prf(" ");	/* prevent excessive color codes */
+			else
 			if (mapc[i][j] == '1')
-				{
 				prf("\33[1;31m%c\33[0;31m",map[i][j]);
-				}
 			else
 			if (mapc[i][j] == '2')
-				{
+				prf("\33[1;32m%c\33[0;31m",map[i][j]);
+			else
+			if (mapc[i][j] == '3')
 				prf("\33[1;33m%c\33[0;31m",map[i][j]);
-				}
 			else
 			if (mapc[i][j] == '4')
-				{
 				prf("\33[1;34m%c\33[0;31m",map[i][j]);
-				}
 			else
-				{
-				if (map[i][j] == ' ')
-					prf(" ");
-				else
-					prf("\33[1;37m%c\33[0;31m",map[i][j]);
-				}
+			if (mapc[i][j] == '5')
+				prf("\33[0;34m%c\33[0;31m",map[i][j]);
+			else
+			if (mapc[i][j] == '6')
+				prf("\33[0;31m%c",map[i][j]);
+			else
+				prf("\33[1;37m%c\33[0;31m",map[i][j]);
 			j++;
 			}
 		}
@@ -5633,6 +5705,41 @@ if (sameas("assigncybs",margv[1]) && margc == 2)
 	assign_cybs(usrnum,0);
 	prfmsg(SYSACY);
 	outprfge(ALWAYS,usrnum);
+	return;
+	}
+else
+if (sameas("tl",margv[1]) && margc == 2)
+	{
+	warsptr->coord.xcoord = -300.0000;
+	warsptr->coord.ycoord = -300.0000;
+	return;
+	}
+else
+if (sameas("tr",margv[1]) && margc == 2)
+	{
+	warsptr->coord.xcoord = 300.9999;
+	warsptr->coord.ycoord = -300.0000;
+	return;
+	}
+else
+if (sameas("bl",margv[1]) && margc == 2)
+	{
+	warsptr->coord.xcoord = -300.0000;
+	warsptr->coord.ycoord = 300.9999;
+	return;
+	}
+else
+if (sameas("br",margv[1]) && margc == 2)
+	{
+	warsptr->coord.xcoord = 300.9999;
+	warsptr->coord.ycoord = 300.9999;
+	return;
+	}
+else
+if (sameas("pos", margv[1]) && margc == 3)
+	{
+	warsptr->coord.xcoord = 0.5 + (99999.0 / 10000.0) * sin(atoi(margv[2]) * PI / 180.0);
+	warsptr->coord.ycoord = 0.5 - (99999.0 / 10000.0) * cos(atoi(margv[2]) * PI / 180.0);
 	return;
 	}
 else
