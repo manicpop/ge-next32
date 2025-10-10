@@ -18,6 +18,36 @@ The main focus of 0.3 is enhancements for user ships:
   warp damage is also saved, so drops in cruising speed can't
   be avoided by lowering speed right before a drop, then
   raising it again.
+* Scans have been overhauled:
+  - SCAN RA (which is a circular scan) has red highlighting
+    showing where the scan doesn't reach.
+  - SCAN RA and SE shows locked on ships, Cybs, non-Cyb NPCs,
+    user ships, planets, and wormholes in different colors.
+  - SCA SE now displays planet distances and bearings in the
+    right area.
+  - Both SCAN RA and SCAN LO have blue highlighting indicating
+    areas that are outside the galaxy boundaries.
+  - SCAN RA can be issued without a range specified, which
+    defaults to full range. 'h' and 'q' can be specified for
+    half and quarter ranges as well. The original 1 through 9
+    are still available.
+  - SCAN LO can also use 'h' and 'q' ranges.
+  - The = (user ship) takes precedence over the + (NPC) in
+    SCAN LO, so you will always be able to locate user ships.
+  - A locked on ship takes precedence over all other ships in
+    SCAN RA.
+  - Scan accuracy has increased, ships should "line up" better.
+  - The list of ships in SCAN RA will only display ships that
+    are inside your specified scan range.
+  - If your scan range is large enough that a SCAN LO will
+    touch all four corners of the galaxy, you will receive
+    a full galaxy scan properly scaled to the scan window.
+  - There are new options for scans in the SET command,
+    including showing more than 8 ships in a SCAN RA, or
+    displaying just text and no map. See HELP SET for more info.
+    If upgrading a game from 0.2, users will need to set this.
+  - Color code usage has been optimized, so scans might feel
+    a little "snappier."
 
 Other stuff:
 * The list of ships presented at the start of the game will now

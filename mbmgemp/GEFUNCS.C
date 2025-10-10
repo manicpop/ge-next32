@@ -302,8 +302,7 @@ tmpusr.cash		= startcash;
 
 tmpusr.topshipno	= 0;
 
-tmpusr.options[0]	= TRUE; /* scannames default */
-tmpusr.options[2]	= TRUE; /* scanfull default */
+tmpusr.options[0]	= FULLNAMES; /* set scan default */
 
 memset(tmpusr.factions, 0, sizeof(tmpusr.factions));
 
@@ -378,7 +377,7 @@ for (i = 0; i < NOSCANTAB; ++i)
 
 /* print header and one page */
 if (!quiet)
-	prf("\33[1;36m    Class                Name                 Sector         Status\r");
+	prf("%s    Class                Name                 Sector         Status\r",CLR_CYAN2);
 do
 	{
 	gcrbtv(warsptr,0);
@@ -389,20 +388,20 @@ do
 	setsect(warsptr);
 	if (!quiet)
 		{
-		prf("\33[1;37m%2d  %-20s %-20s %6d %6d  \33[1;37m", found+1,
+		prf("%s%2d  %-20s %-20s %6d %6d  ", CLR_WHITE2, found+1,
 			shipclass[warsptr->shpclass].typename, warsptr->shipname, xsect, ysect);
 
 		if (warsptr->energy < 5000 && warsptr->items[I_FLUXPOD] == 0)
-			prf("\33[0;31mflux depleted\33[1;37m");
+			prf("%sflux depleted%s",CLR_RED1,CLR_WHITE2);
 		else
 		if (warsptr->damage > 75.5)
-			prf("\33[0;31msevere\33[1;37m damage");
+			prf("%ssevere%s damage",CLR_RED1,CLR_WHITE2);
 		else
 		if (warsptr->damage > 50.5)
-			prf("\33[0;31mheavy\33[1;37m damage");
+			prf("%sheavy%s damage",CLR_RED1,CLR_WHITE2);
 		else
 		if (warsptr->cloak > 0)
-			prf("cloak \33[1;32mON\33[1;37m");
+			prf("cloak %sON%s",CLR_GREEN2,CLR_WHITE1);
 		else
 		if (warsptr->items[I_GOLD] >= 500)
 			{
@@ -411,9 +410,10 @@ do
 			}
 		else
 		if (warsptr->where > 10)
-			prf("orbiting planet \33[1;34m%d\33[1;37m",warsptr->where-10);
+			prf("orbiting planet %s%d%s",CLR_BLUE2,warsptr->where-10,CLR_WHITE2);
 
-		prf("\33[1;37m\r");
+		prf("\r");
+		prf(CLR_WHITE2);
 	}
 
 	sptr->ship[found].shipno = warsptr->shipno;
@@ -427,7 +427,7 @@ if (!quiet && waruptr->noships > NOSCANTAB)
 	{
 	thispage = ((first_index - 1) / NOSCANTAB) + 1;
 	lastpage = (waruptr->noships + NOSCANTAB - 1) / NOSCANTAB;
-	prf("\33[1;36mPage %d of %d, ", thispage, lastpage);
+	prf("%sPage %d of %d, ", CLR_CYAN2, thispage, lastpage);
 	if (thispage == 1)
 		prf("\"n\" for next page.\r");
 	else
@@ -2679,9 +2679,9 @@ setmem(gemsg,FIXEDMSGSIZ,0);
 if (qeqbtv(&mailkey,1))
 	{
 	gcrbtv(gemsg,1);
-	prf("\33[1;34m------------------------------------------------------------------------------\33[1;36m\r");
+	prf("%s------------------------------------------------------------------------------%s\r",CLR_BLUE2,CLR_CYAN2);
 	prf(gemsg->text);
-	prf("\33[1;34m------------------------------------------------------------------------------\33[1;0m");
+	prf("%s------------------------------------------------------------------------------%s",CLR_BLUE2,CLR_WHITE2);
 	outprfge(ALWAYS,usrnum);
 
 	delbtv();
@@ -3154,6 +3154,14 @@ if (fmod(speed, FARSPEED) == 0.0)
 	sprintf(warpbuf,"??.??");
 else
 	sprintf(warpbuf,"%.2f",speed/1000.0);
+#ifdef MBBSEMU
+	/* MBBSemu doesn't currently honor %.2f */
+	if (warpbuf[strlen(warpbuf) - 2] == '.')
+		strcat(warpbuf, "0");
+	else
+	if (warpbuf[strlen(warpbuf) - 3] != '.')
+		strcat(warpbuf, ".00");
+#endif
 return(warpbuf);
 }
 

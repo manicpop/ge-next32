@@ -971,19 +971,25 @@ HLPSET {
 [1;36mThe [1;37mSET[1;36m command lets you set user-configurable options. Issue the command as
 follows:
 
-[1;37m  set [1;32m[option/[1;37m?[1;32m] [[1;37mon[1;32m/[1;37moff[1;32m]
+[1;37m  set [1;32m[option/[1;37m?[1;32m] [setting]
 [1;36m
   [1;32moptions[1;36m:
-[1;37m    scanhome  [1;36m-- clear and home the screen before displaying scan
-[1;37m    scanfull  [1;36m-- full screen scans with ship detail
-[1;37m    scannames [1;36m-- show user names in range scans (scanfull must be ON too)
-[1;37m    filter    [1;36m-- filters out 80% of the battle messages  
+[1;37m    scan [1;36m(affects SE and RA only)
+[1;37m       simple       [1;36m-- display maps only
+[1;37m       full         [1;36m-- display maps with list of ships or planets
+[1;37m       fullnames    [1;36m-- include ship names in list on second line
+[1;37m       fullextra    [1;36m-- include more than 8 ships if necessary
+[1;37m       nomap        [1;36m-- do not display map, text only
 
-[1;36mEnter [1;37mSET ?[1;36m to show a list of options and whether they are on or off.
+[1;37m    filter
+[1;37m       off          [1;36m-- receive all messages
+[1;37m       on           [1;36m-- filter out battle messages and etc
+
+[1;36mEnter [1;37mSET ?[1;36m to show a list of options and their current settings.
 
 Examples:
-[1;37m  set scanhome on
-  set scannames off
+[1;37m  set scan fullnames
+  set filter off
   set ?     
 } T GE help set message
 
@@ -994,17 +1000,23 @@ Issue the command as follows:
 [1;37m  scan [1;32m[type] [ship letter/planet number/range]
 
 [1;32mtype[1;36m:
-  [1;37mse[1;36m = sector scan showing the ships and planets in this sector
   [1;37msh[1;36m = ship scan showing detail on [1;32mship letter
   [1;37mpl[1;36m = planet scan showing detail on [1;32mplanet number
-  [1;37mra[1;36m = close range scan of [1;32mrange 1 to 9
-  [1;37mlo[1;36m = long range scan of neutron distortions
+  [1;37mse[1;36m = sector scan showing the ships, planets, and mines in this sector
+  [1;37mra[1;36m = close range scan showing ships and mines
+     [1;32mrange 1 to 9[1;36m can be specified, with 9 being full range, and the rest
+     shrinking quadratically. Alternatively, [1;32mh[1;36m can be specified for half range,
+     and [1;32mq[1;36m for one quarter range.
+  [1;37mlo[1;36m = long range scan (10x) showing ships
+     [1;32mh[1;36m can be specified for half range, and [1;32mq[1;36m for one quarter range.
 
 [1;36mExamples: [1;37mscan se
           scan sh a
           scan pl 1
-          sca ra 9 
+          sca ra
+          sca ra 4
           sca lo
+          sca lo q
 
 [1;36mSee the [1;37mSET[1;36m command for additional configuration options for [1;37mSCAN[1;36m.
 [1;37m} T GE help scan message

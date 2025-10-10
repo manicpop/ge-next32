@@ -207,12 +207,12 @@
 
 /* user options */
 
-#define	SCANNAMES 0
-#define	SCANHOME 1
-#define	SCANFULL 2
-#define	MSG_FILTER 3
-#define DUMMY1 4
-#define DUMMY2 5
+#define SCANOPTS 0
+#define UNUSED1 1
+#define UNUSED2 2
+#define MSG_FILTER 3
+#define UNUSED4 4
+#define UNUSED5 5
 
 #define	MAXTEAMS 50
 
@@ -237,6 +237,41 @@
 #define FLEE 7
 #define CYBBASEA 8
 #define CYBBASEB 9
+
+/* map types */
+#define SECTOR 0
+#define SECTORFULL 1
+#define RANGE 2
+#define RANGEFULL 3
+#define RANGENAMES 4
+#define RANGEEXTRA 5
+#define LONG 6
+#define RANGENOMAP 7
+#define SECTORNOMAP 8
+
+/* scan settigns */
+#define SIMPLE 0
+#define FULL 1
+#define FULLNAMES 2
+#define FULLEXTRA 3
+#define NOMAP 4
+
+/* colors */
+#define CLR_RED1	"\33[0;31m"
+#define CLR_RED2	"\33[1;31m"
+#define CLR_GREEN1	"\33[0;32m"
+#define CLR_GREEN2	"\33[1;32m"
+#define CLR_YELLOW1	"\33[0;33m"
+#define CLR_YELLOW2	"\33[1;33m"
+#define CLR_BLUE1	"\33[0;34m"
+#define CLR_BLUE2	"\33[1;34m"
+#define CLR_PURPLE1	"\33[0;35m"
+#define CLR_PURPLE2	"\33[1;35m"
+#define CLR_CYAN1	"\33[0;36m"
+#define CLR_CYAN2	"\33[1;36m"
+#define CLR_WHITE1	"\33[0;37m"
+#define CLR_WHITE2	"\33[1;37m"
+
 
 /*****************************************************************************/
 /* End of Defines                                                            */

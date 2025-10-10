@@ -1,5 +1,5 @@
 Galactic Empire Standard Message File
-Version ge-next 0.2
+Version ge-next 0.3
 
 LEVEL0 {}
 
@@ -3116,14 +3116,6 @@ PHANONE {
 [0;37m[[1;31mERROR[0;37m] There is insufficient phaser power to fire![1;37m
 } T GE no phaser power message
 
-SETOPTS {
-[0;37mUser options are:[1;37m
-} T GE set options message
-
-SETOPT {
-[0;37mUser option [1;37m%s[0;37m set [1;37m%s[0;37m.[1;37m
-} T GE set option changed message
-
 REP01 {
 [1;37m%s: the %s
 } T GE report 01
@@ -3351,15 +3343,15 @@ SCAN15 {[1;37mVery good
 SCAN16 {[0;37mResources: } T GE scan 16
 
 SCAN24 {[0;37m
-Scanning range %s from sector [1;34m%d %d[0;37m:[1;37m
+Scanning range %s from sector [1;34m%d %d[0;37m:
 } T GE scan 24
 
 SCAN24G {[0;37m
-Full galaxy scan:[1;37m
-} T GE scan 24
+Full galaxy scan:
+} T GE scan 24 galaxy
 
 SCAN25 {[0;37m
-Scanning sector [1;34m%d %d[0;37m:[1;37m
+Scanning sector [1;34m%d %d[0;37m:
 } T GE scan 25
 
 SCAN28 {[0;37mPopulation: [1;37m%s
@@ -3387,11 +3379,21 @@ SCANWRM {
 [0;37mScanning wormhole [1;33m%d[0;37m: [1;33m%s[1;37m
 } T GE scan wormhole message
 
-PLUSDASH { [0;31m  +------------------------------+
-} T GE dashes for scans
+PLUSDASH {[0;31m   +------------------------------+} T GE dashes for scans
 
-PLUSFULL { [0;31m  +------------------------------+  [0;37mShip Distance Bearing Heading Speed[0;31m
-} T GE dashes for scans with names
+PLUSFULL {[0;31m   +------------------------------+  [0;37mShip Distance Bearing Heading Speed} T GE dashes for scans with names
+
+PLUSSECT {[0;31m   +------------------------------+  [0;37m   # Distance Bearing} T GE dashes for scans with planets
+
+NOMAPSE {[0;37m     # Distance Bearing} T GE dashes for scans with planets
+
+NOMAPRA {[0;37m     Distance Bearing Heading Speed       Distance Bearing Heading Speed} T GE dashes for scans with planets
+
+SCANNOSH {No ships detected in scan range.
+} T NOMAP no ships
+
+SCANNOPL {No planets or wormholes detected in scan range.
+} T NOMAP no planets
 
 ADMIN01 {
 Planet accounting report for %s:
