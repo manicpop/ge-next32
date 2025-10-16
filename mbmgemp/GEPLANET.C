@@ -474,6 +474,18 @@ pkey.plnum = 0;
 
 if (!gesdb(GEGET,&pkey,&sector))
 	{
+	/* Is the DB full? */
+	if (cntrbtv() >= max_plrec)
+		{
+		geshocst(1,spr("GE:INF:Planet DB full, sector %d %d shown as empty",pkey.xsect,pkey.ysect));
+		setmem(&sector, sizeof(GALSECT), 0);
+		sector.xsect = pkey.xsect;
+		sector.ysect = pkey.ysect;
+		sector.numplan = 0;
+		sector.type = SECTYPE_NORMAL;
+		return(FALSE);
+		}
+
 	/* Didn't find a record - make one */
 	logthis("GE:DBG:Getsector-new sect");
 

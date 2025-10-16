@@ -58,6 +58,9 @@ Other stuff:
   select ships if more than one user was in the menu at one
   time. It's been tested with up to 60 ships. Max configurable
   ships is now 60, the default has been changed to 30.
+* A bug that caused that invalid planet data to show if the
+  planet database has reached its limit (MAXPLREC) has beed
+  addressed.
 
 === 0.2.6 === 2025-08-15
 
