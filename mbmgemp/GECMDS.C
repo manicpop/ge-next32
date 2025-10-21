@@ -4004,53 +4004,60 @@ getplanetdat(usrnum);
 
 if (trans_opt || sameas(plptr->userid,warsptr->userid))
 	{
-	if ((amt = atol(margv[2])) != 0L || sameas("ALL",margv[2]))
+	if (sameas("ALL",margv[2]))
 		{
-		if (warsptr->items[item] == 0UL)
+		amt = warsptr->items[item];
+		if (amt == 0L)
 			{
-			prfmsg(TRANSFR1);
-			return;
-			}
-		if (sameas("ALL",margv[2]))
-			amt = warsptr->items[item];
-		if (amt == 0)
-			{
-			prfmsg(FORMAT,"TRANSFER");
-			return;
-			}
-		if (amt < 0)
-			{
-			amt = warsptr->items[item] + amt;
-			if (amt < 0)
-				{
-				prfmsg(TRANSFR1);
-				return;
-				}
-			}
-		if (warsptr->items[item] >= amt)
-			{
-			warsptr->items[item] -= amt;
-			plptr->items[item].qty += amt;
+			/* user wants all down but there are none */
 			sprintf(gechrbuf,"%lu",amt);
 			prfmsg(TRANSFR5,gechrbuf,item_name[item]);
-			setsect(warsptr); /* build PKEY */
-			pkey.plnum = plnum;
-			gesdb(GEUPDATE,&pkey,(GALSECT *)&planet);
-			gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
 			return;
-			}
-		else
-			{
-			prfmsg(TRANSFR1);
 			}
 		}
 	else
+		amt = atol(margv[2]);
+
+	if (amt == 0L)
 		{
+		/* user specified 0 or non-number */
 		prfmsg(FORMAT,"TRANSFER");
+		return;
+		}
+
+	if (amt < 0L)
+		{
+		/* user wants all but specified amount */
+		amt = warsptr->items[item] + amt;
+		if (amt < 0L)
+			{
+			/* the amount to withhold is more than the total */
+			prfmsg(TRANSFR1);
+			return;
+			}
+		}
+
+	if (warsptr->items[item] >= amt)
+		{
+		warsptr->items[item] -= amt;
+		plptr->items[item].qty += amt;
+		sprintf(gechrbuf,"%lu",amt);
+		prfmsg(TRANSFR5,gechrbuf,item_name[item]);
+		setsect(warsptr); /* build PKEY */
+		pkey.plnum = plnum;
+		gesdb(GEUPDATE,&pkey,(GALSECT *)&planet);
+		gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
+		return;
+		}
+	else
+		{
+		/* not enough on board */
+		prfmsg(TRANSFR1);
 		}
 	}
 else
 	{
+	/* not owner */
 	prfmsg(TRANSFR4);
 	}
 }
@@ -4069,62 +4076,79 @@ getplanetdat(usrnum);
 
 if (sameas(plptr->userid,warsptr->userid) || plptr->userid[0] == 0)
 	{
-	if ((amt = atol(margv[2])) != 0L || sameas("MAX",margv[2]) || sameas("ALL",margv[2]))
+	if (sameas("MAX",margv[2]))
 		{
-		if (plptr->items[item].qty == 0UL)
+		amt = (shipclass[warsptr->shpclass].max_tons - calcweight(warsptr))/((double)weight[item]/100.0);
+		if (amt <= 0L)
 			{
+			/* user wants max but not even one will fit */
+			prfmsg(TRANSUP6);
+			return;
+			}
+		}
+	else
+	if (sameas("ALL",margv[2]))
+		{
+		amt = plptr->items[item].qty;
+		if (amt == 0L)
+			{
+			/* user wants all up but there are none */
+			sprintf(gechrbuf,"%lu",amt);
+			prfmsg(TRANSUP5,gechrbuf,item_name[item]);
+			return;
+			}
+		}
+	else
+		amt = atol(margv[2]);
+
+	if (amt == 0L)
+		{
+		/* user specified 0 or non-number */
+		prfmsg(FORMAT,"TRANSFER");
+		return;
+		}
+
+	if (amt < 0)
+		{
+		/* user wants all but specified amount */
+		amt = plptr->items[item].qty + amt;
+		if (amt < 0)
+			{
+			/* the amount to withhold is more than the total */
 			prfmsg(TRANSUP1);
 			return;
 			}
-		if (sameas("MAX",margv[2]))
-			amt = (shipclass[warsptr->shpclass].max_tons - calcweight(warsptr))/((double)weight[item]/100.0);
-		if (sameas("ALL",margv[2]))
-			amt = plptr->items[item].qty;
-		if (amt == 0)
+		}
+
+	if (chkweight(warsptr,item,amt))
+		{
+		if (plptr->items[item].qty >= amt)
 			{
-			prfmsg(FORMAT,"TRANSFER");
+			plptr->items[item].qty -= amt;
+			warsptr->items[item] += amt;
+			sprintf(gechrbuf,"%lu",amt);
+			prfmsg(TRANSUP5,gechrbuf,item_name[item]);
+			setsect(warsptr); /* load PKEY */
+			pkey.plnum = plnum;
+			gesdb(GEUPDATE,&pkey,(GALSECT *)&planet);
+			gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
 			return;
-			}
-		if (amt < 0)
-			{
-			amt = plptr->items[item].qty + amt;
-			if (amt < 0)
-				{
-				prfmsg(TRANSUP1);
-				return;
-				}
-			}
-		if (chkweight(warsptr,item,amt))
-			{
-			if (plptr->items[item].qty >= amt)
-				{
-				plptr->items[item].qty -= amt;
-				warsptr->items[item] += amt;
-				sprintf(gechrbuf,"%lu",amt);
-				prfmsg(TRANSUP5,gechrbuf,item_name[item]);
-				setsect(warsptr); /* load PKEY */
-				pkey.plnum = plnum;
-				gesdb(GEUPDATE,&pkey,(GALSECT *)&planet);
-				gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
-				return;
-				}
-			else
-				{
-				prfmsg(TRANSUP1);
-				}
 			}
 		else
 			{
-			prfmsg(TRANSUP6);
+			/* not enough on planet */
+			prfmsg(TRANSUP1);
 			}
 		}
 	else
 		{
-		prfmsg(FORMAT,"TRANSFER");
+		/* not enough space */
+		prfmsg(TRANSUP6);
 		}
 	}
 else
 	{
+	/* not owner */
 	prfmsg(TRANSUP4);
 	}
 }
