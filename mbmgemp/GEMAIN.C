@@ -1513,7 +1513,6 @@ PKEY	*sect;
 GALSECT	*geptr;
 {
 int	rtn;
-long	numrecs = 0;
 
 logthis(spr("Func GESDB, func = %d, sect*= %ld,geptr*=%ld",func,(long)sect,(long)geptr));
 logthis(spr("            xsect %d, ysect %d, plnum %d",sect->xsect,sect->ysect,sect->plnum));
@@ -1543,24 +1542,16 @@ switch (func)
 		break;
 
 	case	GEADD		:
-		numrecs = cntrbtv();
-		if (numrecs < max_plrec)
-			{
-			logthis(spr("GE:DBG:Ins Sect %d %d %d",geptr->xsect,geptr->ysect,geptr->plnum));
+		logthis(spr("GE:DBG:Ins Sect %d %d %d",geptr->xsect,geptr->ysect,geptr->plnum));
 
 #ifdef PHARLAP
-			if (!dinsbtv(geptr))
+		if (!dinsbtv(geptr))
 #else
-			if (!insbtv(geptr))
+		if (!insbtv(geptr))
 #endif
-				geshocst(0,"GE:ERR:Sect/plt ins Fail");
-
-			logthis("GE:DBG:Ins Sect suceeded");
-			}
+			geshocst(0,"GE:ERR:Sect/plt ins Fail");
 		else
-			{
-			geshocst(1,"GE:INF:Max Sect Reached");
-			}
+			logthis("GE:DBG:Ins Sect suceeded");
 		break;
 
 	case	GEGET		:

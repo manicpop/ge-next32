@@ -475,7 +475,7 @@ pkey.plnum = 0;
 if (!gesdb(GEGET,&pkey,&sector))
 	{
 	/* Is the DB full? */
-	if (cntrbtv() >= max_plrec)
+	if (cntrbtv() >= max_plrec && !wormy)
 		{
 		geshocst(1,spr("GE:INF:Planet DB full, sector %d %d shown as empty",pkey.xsect,pkey.ysect));
 		setmem(&sector, sizeof(GALSECT), 0);
@@ -824,7 +824,7 @@ pkey.plnum = plnt;
 
 if (!gesdb(GEGET,&pkey,(GALSECT *)&planet))
 	{
-	geshocst(0,spr("GE: ERROR Missing Pl Sect X:%d Y:%d",xsect,ysect));
+	geshocst(0,spr("GE: ERROR Missing Pl %d Sect X:%d Y:%d",pkey.plnum,pkey.xsect,pkey.ysect));
 	}
 return(0);
 }
