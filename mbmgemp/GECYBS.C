@@ -847,7 +847,7 @@ else
 				ptr->speed2b = d_topspeed;
 			else
 				{
-				ptr->speed2b = ((int)(wptr->speed * .5)/1000)*1000;
+				ptr->speed2b = ((long)(wptr->speed * 0.5) / 1000L) * 1000.0;
 				if (ptr->speed2b == 0)
 					ptr->speed2b = 990;
 				}
@@ -856,7 +856,7 @@ else
 		if (wptr->speed * 1.25 >= d_topspeed)
 			ptr->speed2b = d_topspeed;
 		else
-			ptr->speed2b = ((int)(wptr->speed * 1.25)/1000)*1000;
+			ptr->speed2b = ((long)(wptr->speed * 1.25) / 1000L) * 1000.0;
 		ptr->head2b = vector(&ptr->coord,&(wptr->coord));
 		/* DEBUG
 		prf("***\r%s, CLOSE, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
