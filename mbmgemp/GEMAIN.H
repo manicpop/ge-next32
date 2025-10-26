@@ -63,7 +63,7 @@
 
 /* workarounds for mbbsemu math functions */
 /* hopefully not necessary much longer */
-/* #define MBBSEMU 1 */
+#define MBBSEMU 1
 
 
 /***************************************************************************/
@@ -200,15 +200,10 @@
 #define MAIL_CLASS_GAMESTATS 4
 #define MAIL_CLASS_PLSTATS 5
 
-/* ansi display function codes*/
-
-#define HOMEY 1
-#define CLEAR 2
-
 /* user options */
 
 #define SCANOPTS 0
-#define UNUSED1 1
+#define JAMTEST 1
 #define UNUSED2 2
 #define MSG_FILTER 3
 #define UNUSED4 4

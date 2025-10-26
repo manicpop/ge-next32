@@ -253,7 +253,6 @@
 /*    6212 */ void FUNC cmd_team P((void ));
 /*    6741 */ char *FUNC teamname P((WARUSR *ptr ));
 /*    6758 */ void FUNC cmd_clear P((void ));
-/*    6765 */ void FUNC ansifunc P((int func ));
 /*    6775 */ void FUNC cmd_data P((void ));
 #ifdef DATACMD
 /*    6891 */ void FUNC scan_data1 P((void ));

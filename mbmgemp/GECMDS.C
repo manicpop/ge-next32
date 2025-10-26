@@ -274,7 +274,6 @@ int	len;
 	return(NULL);
 }
 
-
 void FUNC gwar()
 {
 struct	cmd *cmdptr;
@@ -3492,6 +3491,10 @@ switch (color)
 static void print_ship_letter(int othusn, char letter)
 {
 int type = shipclass[warshpoff(othusn)->shpclass].max_type;
+
+if (waruptr->options[JAMTEST] > 2 && (gernd()%(20 / waruptr->options[JAMTEST])) == 0)
+	letter = '?';
+
 if (type == CLASSTYPE_CYBORG)
 	prf("%s%c%s", CLR_RED2, letter, CLR_WHITE2);
 else
@@ -3517,19 +3520,52 @@ else
 	prf(" %s%s", CLR_CYAN1, username(warshpoff(othusn)));
 }
 
-static void print_planet_line(int shp)
+static int print_planet_line(int shp)
 {
+unsigned int rseed = gernd();
+int jam_digits, len, k;
+
 if (ptab[usrnum].planets[shp].type == PLTYPE_WORM)
 	prf(CLR_YELLOW2);
 else
 	prf(CLR_BLUE1);
 
-prf("     %d%s %8d %7d", shp + 1, CLR_WHITE2,
-	(int)(cdistance(&warsptr->coord, &ptab[usrnum].planets[shp].coord) * 10000),
-	(int)(cbearing(&warsptr->coord, &ptab[usrnum].planets[shp].coord, warsptr->heading) + .5));
+if (rseed%(waruptr->options[JAMTEST]+1) > 6)
+	return(FALSE);
+if (rseed%(waruptr->options[JAMTEST]+1) > 3)
+	sprintf(gechrbuf,"%c",'?');
+else
+	sprintf(gechrbuf,"%d",shp + 1);
+
+sprintf(gechrbuf2, "%d", (int)(cdistance(&warsptr->coord, &ptab[usrnum].planets[shp].coord) * 10000));
+sprintf(gechrbuf3, "%d", (int)(cbearing(&warsptr->coord, &ptab[usrnum].planets[shp].coord, warsptr->heading) + .5));
+
+/* if jammed, mess up the numbers */
+if (waruptr->options[JAMTEST] > 2)
+	{
+	jam_digits = rseed % (((waruptr->options[JAMTEST] < 6) ?
+		(waruptr->options[JAMTEST] / 2) : (waruptr->options[JAMTEST] - 2)) + 1);
+	len = strlen(gechrbuf2);
+	if (jam_digits > len)
+		jam_digits = len;
+	for (k = len - jam_digits; k < len; k++)
+		gechrbuf2[k] = '?';
+
+	jam_digits = (rseed >> 4) % (((waruptr->options[JAMTEST] < 6) ?
+		(waruptr->options[JAMTEST] / 2) : (waruptr->options[JAMTEST] - 2)) + 1);
+	len = strlen(gechrbuf3);
+	if (jam_digits > len)
+		jam_digits = len;
+	for (k = len - jam_digits; k < len; k++)
+		if (gechrbuf3[k] != '-')	/* always keep negative symbol */
+			gechrbuf3[k] = '?';
+	}
+
+prf("     %s%s %8s %7s", gechrbuf, CLR_WHITE2, gechrbuf2, gechrbuf3);
 
 if (warsptr->where - 11 == shp)
 	prf("   (orbiting)");
+return(TRUE);
 }
 
 static void print_map_header(int maptype)
@@ -3570,56 +3606,79 @@ prf("\r");
 
 static void print_map_row(int i, int maptype)
 {
-	int j = 0, start;
-	int prev_color = 6, cur_color;
+int j = 0, start;
+int prev_color = 6, cur_color;
+unsigned int rseed = gernd();
 
-	prf("%s   |", CLR_RED1);
-
-	while (j < MAXX)
+prf("%s   |", CLR_RED1);
+while (j < MAXX)
+	{
+	/* add red out of range highlighting */
+	if (maptype >= RANGE && maptype <= RANGEEXTRA &&
+		(j < scan_side_blocks[i] || j >= MAXX - scan_side_blocks[i]))
 		{
-		/* add red out of range highlighting */
-		if (maptype >= RANGE && maptype <= RANGEEXTRA &&
-			(j < scan_side_blocks[i] || j >= MAXX - scan_side_blocks[i]))
-			{
-			start = j;
-			while (j < MAXX && (j < scan_side_blocks[i] || j >= MAXX - scan_side_blocks[i]))
-				j++;
-
-			if (prev_color != 6)
-				{
-				prf(CLR_RED1);
-				prev_color = 6;
-				}
-			prf("%s", gedots(j - start));
-			}
-		else
-		/* if empty space, skip color */
-		if (map[i][j] != ' ')
-			{
-			switch (mapc[i][j])
-				{
-				case '1': cur_color = 1; break;
-				case '2': cur_color = 2; break;
-				case '3': cur_color = 3; break;
-				case '4': cur_color = 4; break;
-				case '5': cur_color = 5; break;
-				case '6': cur_color = 6; break;
-				default:  cur_color = 0; break;
-				}
-
-			if (prev_color != cur_color)
-				{
-				set_map_color(cur_color);
-				prev_color = cur_color;
-				}
-			}
-		prf("%c", map[i][j]);
+		start = j;
+		while (j < MAXX && (j < scan_side_blocks[i] || j >= MAXX - scan_side_blocks[i]))
 		j++;
+
+		if (prev_color != 6)
+			{
+			prf(CLR_RED1);
+			prev_color = 6;
+			}
+		prf("%s", gedots(j - start));
+		}
+	else
+	if (waruptr->options[JAMTEST] > 0)
+		{
+		if (!(map[i][j] == '.' && mapc[i][j] == '4') && map[i][j] != '*') /* don't overwrite out of bounds or player indicator */
+			{
+			/* cheap xorshift random, avoid a gazillion gernd calls */
+			rseed ^= rseed << 7;
+			rseed ^= rseed >> 9;
+			rseed ^= rseed << 8;
+			if (map[i][j] != ' ')
+				{
+				if (rseed%(waruptr->options[JAMTEST]) > 4) /* jam level increases chance of legit object blanked */
+					map[i][j] = ' ';
+				}
+			if (map[i][j] == ' ') /* scramble empty spaces and blanked objects */
+				{
+				if (rseed%(80/waruptr->options[JAMTEST]) == 0)
+					{
+					map[i][j] = (byte)((rseed%94)+33); /* printable ascii range */
+					if (maptype != LONG && rseed%6 == 0)	/* add color speckles if not sca lo */
+						mapc[i][j] = (byte)((rseed%7)+48); /* ascii 0-6 */
+					}
+				}
+			}
+		}
+	if (map[i][j] != ' ') /* if empty space, color code change not needed */
+		{
+		switch (mapc[i][j])
+			{
+			case '1': cur_color = 1; break;
+			case '2': cur_color = 2; break;
+			case '3': cur_color = 3; break;
+			case '4': cur_color = 4; break;
+			case '5': cur_color = 5; break;
+			case '6': cur_color = 6; break;
+			default: cur_color = 0; break;
+			}
+		if (prev_color != cur_color)
+			{
+			set_map_color(cur_color);
+			prev_color = cur_color;
+			}
 		}
 
-	if (prev_color != 6)
-		prf(CLR_RED1);
-	prf("|");
+	prf("%c", map[i][j]);
+	j++;
+	}
+
+if (prev_color != 6)
+	prf(CLR_RED1);
+prf("|");
 }
 
 /* RANGEEXTRA / RANGENOMAP pairs */
@@ -3721,8 +3780,8 @@ static void print_planet_summary(int shp)
 {
 for (; shp < MAXPLANETS && ptab[usrnum].planets[shp].type != 0; ++shp)
 	{
-	print_planet_line(shp);
-	prf("\r");
+	if (print_planet_line(shp) == TRUE)
+		prf("\r");
 	}
 
 if (shp == 0) /* no planets */
@@ -3752,8 +3811,12 @@ for (i = 0; i < MAXY + 1; ++i)
 		print_map_row(i, maptype);
 
 	if (maptype == SECTORFULL)
-		if (shp < MAXPLANETS && ptab[usrnum].planets[shp].type != 0)
-			print_planet_line(shp++);
+		{
+		while (shp < MAXPLANETS && ptab[usrnum].planets[shp].type != 0 && print_planet_line(shp) == FALSE)
+			shp++;  /* skip jammed planet and immediately try next one */
+
+		shp++;
+		}
 
 	if (maptype == RANGENAMES || maptype == RANGEEXTRA)
 		shp += print_range_line(sptr, shp, &ff, dist_filter);
@@ -6173,6 +6236,11 @@ if (sameas(margv[1],"filter"))
 		invalid = TRUE;
 	}
 else
+if (sameas(margv[1],"jamtest"))
+	{
+	waruptr->options[JAMTEST] = atoi(margv[2]);
+	}
+else
 if (sameas(margv[1],"?"))
 	{
 	invalid = 2;
@@ -6782,18 +6850,8 @@ return(&badteamname[0]);
 void FUNC cmd_clear()
 
 {
-ansifunc(CLEAR);
+prf("\33[2J\33[0;0H");
 outprfge(ALWAYS,usrnum);
-}
-
-void FUNC ansifunc(int func)
-{
-switch (func)
-	{
-	case	CLEAR:
-		prf("\33[2J\33[0;0H");
-		break;
-	}
 }
 
 void FUNC cmd_data()
@@ -7092,7 +7150,6 @@ int	item;
 
 {
 unsigned long amt;
-
 
 if (sameas("ALL",margv[1]) > 0L)
 	{
