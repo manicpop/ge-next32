@@ -232,8 +232,9 @@ extern	int		cybhaltflg;
 #else
 
 /* GESCAN Global Defs ****************************************************/
+#ifndef GESCAN
 extern const int scan_side_blocks[15];
-
+#endif
 /* MAJORBBS Global Defs **************************************** */
 
 extern

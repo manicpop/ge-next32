@@ -333,6 +333,7 @@
 void FUNC set_map_color P((int color ));
 void FUNC print_ship_letter P((int othusn , char letter ));
 void FUNC print_ship_data P((long dist , int bearing , int heading , double speed ));
+void FUNC print_ship_name P((int othusn ));
 int FUNC print_planet_line P((int shp ));
 void FUNC print_map_header P((int maptype ));
 void FUNC print_map_row P((int i , int maptype ));

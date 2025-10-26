@@ -3497,10 +3497,18 @@ for (i = 0; i < MAXY + 1; ++i)
 		}
 
 	if (maptype == RANGENAMES || maptype == RANGEEXTRA)
+		{
+		while (ff == 0 && waruptr->options[JAMTEST] > 7 && gernd()%2 == 0)
+			shp++;
 		shp += print_range_line(sptr, shp, &ff, dist_filter);
+		}
 
 	if (maptype == RANGEFULL)
+		{
+		while (ff == 0 && waruptr->options[JAMTEST] > 7 && gernd()%2 == 0)
+			shp++;
 		shp += print_fullrange_line(sptr, shp, dist_filter);
+		}
 
 	prf("\r");
 	}

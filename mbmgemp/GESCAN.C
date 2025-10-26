@@ -84,9 +84,12 @@ void FUNC print_ship_letter(int othusn, char letter)
 {
 int type = shipclass[warshpoff(othusn)->shpclass].max_type;
 
-if (waruptr->options[JAMTEST] > 2 && (gernd()%(20 / waruptr->options[JAMTEST])) == 0)
+if (waruptr->options[JAMTEST] > 2 && (gernd()%(10 / waruptr->options[JAMTEST])) == 0)
 	letter = '?';
 
+if (letter == '?')
+	prf("%s%c", CLR_WHITE2, letter);
+else
 if (type == CLASSTYPE_CYBORG)
 	prf("%s%c%s", CLR_RED2, letter, CLR_WHITE2);
 else
@@ -98,42 +101,97 @@ else
 
 void FUNC print_ship_data(long dist, int bearing, int heading, double speed)
 {
-prf("%s    %4d    %4d%9s", spr("%6ld", dist), bearing, heading, showarp(speed));
+int i;
+
+/* build base string */
+sprintf(gechrbuf, "%s    %4d    %4d%9s", spr("%6ld", dist), bearing, heading, showarp(speed));
+
+/* heavy jamming: total scramble */
+if (waruptr->options[JAMTEST] > 7)
+	{
+	for (i = 0; gechrbuf[i]; ++i)
+		{
+		if (gechrbuf[i] != ' ' && gechrbuf[i] != '-' && gechrbuf[i] != '\0')
+	                gechrbuf[i] = '?';
+		}
+	}
+
+/* moderate jamming: speckle randomly */
+else
+if (waruptr->options[JAMTEST] > 2)
+	{
+	for (i = 0; gechrbuf[i]; ++i)
+		{
+		if (gechrbuf[i] != ' ' && gechrbuf[i] != '-' && gechrbuf[i] != '\0' && gernd()%(10 - waruptr->options[JAMTEST]) == 0)
+			gechrbuf[i] = '?';
+		}
+	}
+
+prf("%s", gechrbuf);
 }
+
 
 void FUNC print_ship_name(int othusn)
 {
-if (warsptr->lock == othusn)
-	prf("%s*%s%s%s*", CLR_RED1, CLR_CYAN1, username(warshpoff(othusn)), CLR_RED1);
+int len, k;
+unsigned int rseed = gernd();
+
+len = (int)strlen(username(warshpoff(othusn)));
+if (len >= 254)
+	len = 254;
+memcpy(gechrbuf, username(warshpoff(othusn)), len);
+gechrbuf[len] = '\0';
+
+if (waruptr->options[JAMTEST] > 7)
+	for (k = 0; k < len; k++)
+		gechrbuf[k] = '?';
 else
-if (warshpoff(othusn)->distress != 255)
-	prf("%s*%s%s%s*", CLR_GREEN2, CLR_CYAN1, username(warshpoff(othusn)), CLR_GREEN2);
+if (waruptr->options[JAMTEST] > 2)
+	for (k = 0; k < len; k++)
+		{
+		rseed ^= rseed << 7;
+		rseed ^= rseed >> 9;
+		rseed ^= rseed << 8;
+		if (rseed%(9 - waruptr->options[JAMTEST]) == 0)
+			gechrbuf[k] = '?';
+		}
+
+if (warsptr->lock == othusn && waruptr->options[JAMTEST] < 3)
+	prf("%s*%s%s%s*", CLR_RED1, CLR_CYAN1, gechrbuf, CLR_RED1);
 else
-	prf(" %s%s", CLR_CYAN1, username(warshpoff(othusn)));
+if (warshpoff(othusn)->distress != 255 && waruptr->options[JAMTEST] < 3)
+	prf("%s*%s%s%s*", CLR_GREEN2, CLR_CYAN1, gechrbuf, CLR_GREEN2);
+else
+	prf(" %s%s", CLR_CYAN1, gechrbuf);
 }
 
 int FUNC print_planet_line(int shp)
 {
 unsigned int rseed = gernd();
 int jam_digits, len, k;
+int orbit = (warsptr->where - 11 == shp);
 
-if (ptab[usrnum].planets[shp].type == PLTYPE_WORM)
-	prf(CLR_YELLOW2);
-else
-	prf(CLR_BLUE1);
-
-if (rseed%(waruptr->options[JAMTEST]+1) > 6)
+if (rseed%(waruptr->options[JAMTEST]+1) > 6 && !orbit)
 	return(FALSE);
-if (rseed%(waruptr->options[JAMTEST]+1) > 3)
+if (rseed%(waruptr->options[JAMTEST]+1) > 3 && !orbit)
+	{
+	prf(CLR_WHITE2);
 	sprintf(gechrbuf,"%c",'?');
+	}
 else
+	{
+	if (ptab[usrnum].planets[shp].type == PLTYPE_WORM)
+		prf(CLR_YELLOW2);
+	else
+		prf(CLR_BLUE1);
 	sprintf(gechrbuf,"%d",shp + 1);
+	}
 
 sprintf(gechrbuf2, "%d", (int)(cdistance(&warsptr->coord, &ptab[usrnum].planets[shp].coord) * 10000));
 sprintf(gechrbuf3, "%d", (int)(cbearing(&warsptr->coord, &ptab[usrnum].planets[shp].coord, warsptr->heading) + .5));
 
 /* if jammed, mess up the numbers */
-if (waruptr->options[JAMTEST] > 2)
+if (waruptr->options[JAMTEST] > 2 && warsptr->where - 11 != shp)
 	{
 	jam_digits = rseed % (((waruptr->options[JAMTEST] < 6) ?
 		(waruptr->options[JAMTEST] / 2) : (waruptr->options[JAMTEST] - 2)) + 1);
@@ -357,13 +415,32 @@ return 0; /* no ship, don't increment */
 /* RANGEEXTRA / RANGENOMAP */
 void FUNC print_range_summary(SCANTAB *sptr, int shp, long dist_filter, int maptype)
 {
-for (; shp < NOSCANTAB && sptr->ship[shp].flag == 1 &&
-	(long)(sptr->ship[shp].dist) < dist_filter; shp += 2)
+int visible[NOSCANTAB];
+int count = 0;
+int i;
+
+/* build a list of ships to show starting from current shp */
+for (; shp < NOSCANTAB; ++shp)
 	{
-	print_ship_pair(sptr, shp, shp + 1, dist_filter);
+	if (sptr->ship[shp].flag != 1)
+		continue;
+	if ((long)(sptr->ship[shp].dist) >= dist_filter)
+		continue;
+        /* heavy jamming: random chance to skip ship */
+	if (waruptr->options[JAMTEST] > 7 && (gernd() % 2 == 0))
+		continue;
+
+	visible[count++] = shp;
 	}
 
-if (maptype == RANGENOMAP && shp == 0) /* no ships */
+for (i = 0; i < count; i += 2)
+	{
+	int left = visible[i];
+	int right = (i + 1 < count) ? visible[i + 1] : -1;
+	print_ship_pair(sptr, left, right, dist_filter);
+	}
+
+if (maptype == RANGENOMAP && count == 0 && waruptr->options[JAMTEST] <= 7)
 	prfmsg(SCANNOSH);
 }
 
