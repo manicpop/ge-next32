@@ -230,6 +230,10 @@ extern	int		cybhaltflg;
 
 #ifdef PHARLAP
 #else
+
+/* GESCAN Global Defs ****************************************************/
+extern const int scan_side_blocks[15];
+
 /* MAJORBBS Global Defs **************************************** */
 
 extern

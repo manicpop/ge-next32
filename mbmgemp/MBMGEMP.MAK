@@ -15,7 +15,7 @@
 mbmgemp.dll: \
      mbmgemsg.h    mbmgehlp.h    mbmgeshp.h                            \
      gemain.obj     gefuncs.obj   gecmds.obj    gecybs.obj   geplanet.obj \
-     gelib.obj      gedroids.obj \
+     gelib.obj      gedroids.obj  gescan.obj\
      \wgserv\dlib\galimp.lib        \wgserv\dlib\gsblimp.lib                 \
      \run286\bc3\lib\phapi.lib     \wgserv\dlib\nodef.def
      ltdll mbmgemp
@@ -39,6 +39,8 @@ gelib.obj: gelib.c
      ctdll gelib
 gedroids.obj: gedroids.c
      ctdll gedroids
+gescan.obj: gescan.c
+     ctdll gescan
 
 ###############################################################################
 #####               Generate Headers for Compilation                      #####

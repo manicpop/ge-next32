@@ -6,7 +6,8 @@
 \wgserv\phobj\gecybs +
 \wgserv\phobj\gedroids +
 \wgserv\phobj\geplanet +
-\wgserv\phobj\gelib
+\wgserv\phobj\gelib +
+\wgserv\phobj\gescan
 \wgserv\mbmgemp
 /MAP:\wgserv\mbmgemp.map
 \run286\bc3\lib\phapi +
