@@ -228,7 +228,7 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		for (zothusn=0; zothusn<nterms; zothusn++)
 			{
 			wptr=warshpoff(zothusn);
-			if (ingegame(zothusn) && wptr->jam_sev == (byte)0)
+			if (ingegame(zothusn) && wptr->jam_sev == (byte)2)
 				{
 				ddist = cdistance(&ptr->coord,&wptr->coord);
 				ddist *= 10000;
@@ -295,7 +295,7 @@ if (cyb_fast(ptr) && ptr->cybmine == 255)
 	cyb_cruise(ptr,usrn,0);
 
 /* am I being jammed ? */
-if (ptr->jam_sev == (byte)0)
+if (ptr->jam_sev == (byte)3)
 	{
 	/* look at all the other ships */
 	for (zothusn=0 ; zothusn < nships ; zothusn++)

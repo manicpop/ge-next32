@@ -63,7 +63,7 @@
 
 /* workarounds for mbbsemu math functions */
 /* hopefully not necessary much longer */
-#define MBBSEMU 1
+/* #define MBBSEMU 1 */
 
 
 /***************************************************************************/

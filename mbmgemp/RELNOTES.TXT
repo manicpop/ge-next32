@@ -48,6 +48,22 @@ The main focus of 0.3 is enhancements for user ships:
     If upgrading a game from 0.2, users will need to set this.
   - Color code usage has been optimized, so scans might feel
     a little "snappier."
+* Jamming has been overhauled:
+  - Instead of jamming causing scanners not to function, a
+    "jamming effect" will be applied to your scans if you are
+    jammed. The intensity of the jamming effect will be greater
+    the closer you are to the ship that launched the jammer.
+  - Light jamming will interfere with your readouts of ships
+    and planets, heavier jamming might cause them to disappear
+    from your scans completely.
+  - The range of a jammer is now 50,000, and is no longer
+    determined your scanner range.
+  - The duration of a jam is the same for everyone affected by
+    it, only the severity changes.
+  - Torpedoes and missiles will work if you are only lightly
+    jammed (however, if you are only lightly jammed, you are
+    probably not in weapons range of the ship doing the jamming).
+  - NPCs will still get confused by moderate to severe jamming.
 
 Other stuff:
 * The list of ships presented at the start of the game will now

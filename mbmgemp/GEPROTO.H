@@ -340,7 +340,8 @@ void FUNC print_map_row P((int i , int maptype ));
 void FUNC print_ship_pair P((SCANTAB *sptr , int left , int right , long dist_filter ));
 int FUNC print_range_line P((SCANTAB *sptr , int shp , int *ff , long dist_filter ));
 int FUNC print_fullrange_line P((SCANTAB *sptr , int shp , long dist_filter ));
-void FUNC print_range_summary P((SCANTAB *sptr, int shp, long dist_filter, int maptype));
-void FUNC print_planet_summary P((int shp));
+void FUNC print_range_summary P((SCANTAB *sptr , int shp, long dist_filter, int maptype ));
+void FUNC print_planet_summary P((int shp ));
+void FUNC jam_scramble P((char *buf, byte sev , unsigned int *rseed ));
 
 #undef P

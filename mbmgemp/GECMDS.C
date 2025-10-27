@@ -1533,7 +1533,7 @@ if (ptr->firecntl > 0)
 	return(0);
 	}
 
-if (warsptr->jam_sev > (byte)0)
+if (warsptr->jam_sev > (byte)2)
 	{
 	prfmsg(JAMMER4);
 	outprfge(ALWAYS,usrn);
@@ -2401,7 +2401,7 @@ if (sameas(margv[1],"ord"))
 				}
 			if (warsptr->ltorps[i].channel == 255)
 				prf("\r  (destroyed)   ");
-			if (warsptr->jam_sev == (byte)0)
+			if (warsptr->jam_sev == (byte)2)
 				prf("Dist: %u",warsptr->ltorps[i].distance);
 			else
 				prf("Dist: ?????");
@@ -2429,7 +2429,7 @@ if (sameas(margv[1],"ord"))
 				}
 			if (warsptr->lmissl[i].channel == 255)
 				prf("\r  (destroyed)   ");
-			if (warsptr->jam_sev == (byte)0)
+			if (warsptr->jam_sev == (byte)2)
 				prf("Dist: %u",warsptr->lmissl[i].distance);
 			else
 				prf("Dist: ?????");
@@ -2458,7 +2458,7 @@ if (sameas(margv[1],"ord"))
 							prf(" %s*%s%s%s*%s  ",CLR_RED1,CLR_BLUE2,username(ptr),CLR_RED1,CLR_WHITE2);
 						else
 							prf("  %s%s%s   ",CLR_BLUE2,username(ptr),CLR_WHITE2);
-						if (warsptr->jam_sev == (byte)0)
+						if (warsptr->jam_sev == (byte)2)
 							prf("Dist: %u",ptr->ltorps[i].distance);
 						else
 							prf("Dist: ?????");
@@ -2489,7 +2489,7 @@ if (sameas(margv[1],"ord"))
 							prf(" %s*%s%s%s*%s  ",CLR_RED1,CLR_BLUE2,username(ptr),CLR_RED1,CLR_WHITE2);
 						else
 							prf("  %s%s%s   ",CLR_BLUE2,username(ptr),CLR_WHITE2);
-						if (warsptr->jam_sev == (byte)0)
+						if (warsptr->jam_sev == (byte)2)
 							prf("Dist: %u",ptr->lmissl[i].distance);
 						else
 							prf("Dist: ?????");
@@ -2514,7 +2514,7 @@ if (sameas(margv[1],"ord"))
 				ddist = cdistance(&warsptr->coord,&mines[i].coord);
 				ddist *= 10000;
 				bearing = (int)(cbearing(&warsptr->coord,&mines[i].coord,warsptr->heading)+.5);
-				if (warsptr->jam_sev == (byte)0)
+				if (warsptr->jam_sev == (byte)2)
 					prf("%d %d  T:%2d  Br:%4d  Dist: %s",
 						(int)mines[i].coord.xcoord,(int)mines[i].coord.ycoord,mines[i].timer,bearing,spr("%ld",(long)ddist));
 				else
@@ -2663,10 +2663,18 @@ int	shpnum,gheading;
 WARSHP	*wptr;
 WARUSR	*wuptr;
 char	ltr;
+unsigned int rseed = gernd();
 
 if (margc != 3)
 	{
 	prfmsg(FORMAT,"SCAN");
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if (warsptr->jam_sev > (byte)7 || (warsptr->jam_sev > (byte)2 && rseed%(9 - (int)warsptr->jam_sev) == 0))
+	{
+	prfmsg(JAMMER4);
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
@@ -2691,24 +2699,49 @@ if (shpnum >= 0)
 		gheading = (int) (wptr->heading+.5);
 
 		speed = ((unsigned)(wptr->speed+.5));
+
+		sprintf(gechrbuf,"%s",wptr->shipname);
+
+		if (warsptr->jam_sev > 2)
+			jam_scramble(gechrbuf, warsptr->jam_sev, &rseed);
 		if (wptr->status == GESTAT_AUTO)
-			prfmsg(SCAN01N,wptr->shipname);
+			prfmsg(SCAN01N,gechrbuf);
 		else
-			prfmsg(SCAN01,wptr->shipname);
+			prfmsg(SCAN01,gechrbuf);
 		prfmsg(DASHES);
-		prfmsg(SCAN01A,shipclass[wptr->shpclass].typename);
-		if (wptr->status == GESTAT_USER)
+		if (warsptr->jam_sev < (byte)3)
+			prfmsg(SCAN01A,shipclass[wptr->shpclass].typename);
+		if (wptr->status == GESTAT_USER && warsptr->jam_sev < (byte)3)
 			{
 			prfmsg(SCAN02,username(wptr));
 			if (warusroff(shpnum)->teamcode >0)
 				prfmsg(SCAN02A,teamname(wuptr));
 			}
-		prfmsg(SCAN03,bearing,heading,spr("%ld",(long)ddistance));
+		memset(gechrbuf, 0, 255);
+		sprintf(gechrbuf,"%d",bearing);
+		sprintf(gechrbuf2,"%d",heading);
+		sprintf(gechrbuf3,"%ld",(long)ddistance);
+		if (warsptr->jam_sev > (byte)2)
+			{
+			jam_scramble(gechrbuf, warsptr->jam_sev, &rseed);
+			jam_scramble(gechrbuf2, warsptr->jam_sev, &rseed);
+			jam_scramble(gechrbuf3, warsptr->jam_sev, &rseed);
+			}
+		prfmsg(SCAN03,gechrbuf,gechrbuf2,gechrbuf3);
 		setsect(wptr);
-		prfmsg(SCAN03A,gheading,xsect, ysect);
-		prfmsg(SCAN04,showarp(wptr->speed));
+		sprintf(gechrbuf,"%d",gheading);
+		sprintf(gechrbuf2,"%d %d",xsect,ysect);
+		sprintf(gechrbuf3,"%s",showarp(wptr->speed));
+		if (warsptr->jam_sev > 2)
+			{
+			jam_scramble(gechrbuf, warsptr->jam_sev, &rseed);
+			jam_scramble(gechrbuf2, warsptr->jam_sev, &rseed);
+			jam_scramble(gechrbuf3, warsptr->jam_sev, &rseed);
+			}
+		prfmsg(SCAN03A,gechrbuf,gechrbuf2);
+		prfmsg(SCAN04,gechrbuf3);
 
-		if (warsptr->where != 1 && wptr->where != 1)
+		if (warsptr->where != 1 && wptr->where != 1 && warsptr->jam_sev < (byte)3)
 			{
 			damage = (unsigned) (wptr->damage+.5);
 			damstr(damage);
@@ -2727,17 +2760,20 @@ if (shpnum >= 0)
 
 		ltr = shpltr(shpnum,usrnum);
 		/* if beyond the "scanned" ships range disply this msg */
-		if ((long)ddistance > shipclass[wptr->shpclass].scanrange)
+		if (warsptr->jam_sev < (byte)3)
 			{
-			bearing = (int)(cbearing(&wptr->coord,&warsptr->coord,wptr->heading)+.5);
-			prfmsg(SCAN2,bearing);
+			if ((long)ddistance > shipclass[wptr->shpclass].scanrange)
+				{
+				bearing = (int)(cbearing(&wptr->coord,&warsptr->coord,wptr->heading)+.5);
+				prfmsg(SCAN2,bearing);
+				}
+			else
+				{
+				/* all else get this */
+				prfmsg(SCAN1,ltr,warsptr->shipname);
+				}
+			outprfge(FILTER,shpnum);
 			}
-		else
-			{
-			/* all else get this */
-			prfmsg(SCAN1,ltr,warsptr->shipname);
-			}
-		outprfge(FILTER,shpnum);
 		}
 	else
 		{
@@ -2756,13 +2792,20 @@ void FUNC scan_pl()
 
 {
 unsigned i;
-
+unsigned int rseed = gernd();
 
 /* SCAN PLANET FUNCTION */
 
 if (margc != 3)
 	{
 	prfmsg(FORMAT,"SCAN");
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if (warsptr->jam_sev > (byte)7 || (warsptr->jam_sev > (byte)2 && rseed%(9 - (int)warsptr->jam_sev) == 0))
+	{
+	prfmsg(JAMMER4);
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
@@ -2783,15 +2826,28 @@ if (plnum <= MAXPLANETS && plnum > 0)
 		{
 		bearing = (int)(cbearing(&warsptr->coord,&plptr->coord,warsptr->heading)+.5);
 		ddistance = cdistance(&warsptr->coord,&plptr->coord)*10000;
-		prfmsg(SCAN08,plnum,plptr->name);
+		memset(gechrbuf, 0, 255);
+		sprintf(gechrbuf,"%s",plptr->name);
+		if (warsptr->jam_sev > (byte)2 && warsptr->where - 10 != plnum)
+			jam_scramble(gechrbuf, warsptr->jam_sev, &rseed);
+		prfmsg(SCAN08,plnum,gechrbuf);
 		prfmsg(DASHES);
 
-		if (plptr->userid[0] != 0)
+		if (plptr->userid[0] != 0 && (warsptr->jam_sev < (byte)3 || warsptr->where - 10 == plnum))
 			prfmsg(SCAN09,plptr->userid);
 
-		prfmsg(SCAN10,bearing,spr("%ld",(long)ddistance));
+		memset(gechrbuf2, 0, 20);
+		memset(gechrbuf3, 0, 20);
+		sprintf(gechrbuf2,"%d",bearing);
+		sprintf(gechrbuf3,"%ld",(long)ddistance);
+		if (warsptr->jam_sev > (byte)2 && warsptr->where - 10 != plnum)
+			{
+			jam_scramble(gechrbuf2, warsptr->jam_sev, &rseed);
+			jam_scramble(gechrbuf3, warsptr->jam_sev, &rseed);
+			}
+		prfmsg(SCAN10,gechrbuf2,gechrbuf3);
 
-		if (warsptr->where != 1)
+		if (warsptr->where != 1 && (warsptr->jam_sev < (byte)3 || warsptr->where - 10 == plnum))
 			{
 			prfmsg(SCAN11);
 			if (plptr->enviorn == 0)
@@ -6692,7 +6748,7 @@ prf(mask,'*',xsect,ysect,xcord,ycord,"0",0,
 	(int)warsptr->heading,showarp(warsptr->speed),
 	warsptr->shpclass,shipclass[warsptr->shpclass].typename);
 
-if (warsptr->jam_sev > (byte)0)
+if (warsptr->jam_sev > (byte)2)
 	{
 	prf("** Jammed **\r");
 	outprfge(ALWAYS,usrnum);

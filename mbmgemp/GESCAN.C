@@ -456,3 +456,16 @@ for (; shp < MAXPLANETS && ptab[usrnum].planets[shp].type != 0; ++shp)
 if (shp == 0) /* no planets */
 	prfmsg(SCANNOPL);
 }
+
+void FUNC jam_scramble(char *buf, byte sev, unsigned int *rseed)
+{
+int i;
+for (i = 0; buf[i]; ++i)
+	{
+	*rseed ^= *rseed << 7;
+	*rseed ^= *rseed >> 9;
+	*rseed ^= *rseed << 8;
+	if (buf[i] != ' ' && buf[i] != '-' && (*rseed % (9 - sev) == 0))
+		buf[i] = '?';
+	}
+}
