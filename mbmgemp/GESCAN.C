@@ -84,7 +84,7 @@ void FUNC print_ship_letter(int othusn, char letter)
 {
 int type = shipclass[warshpoff(othusn)->shpclass].max_type;
 
-if (waruptr->options[JAMTEST] > 2 && (gernd()%(10 / waruptr->options[JAMTEST])) == 0)
+if (warsptr->jam_sev > (byte)2 && (gernd()%(10 / warsptr->jam_sev)) == (byte)0)
 	letter = '?';
 
 if (letter == '?')
@@ -107,7 +107,7 @@ int i;
 sprintf(gechrbuf, "%s    %4d    %4d%9s", spr("%6ld", dist), bearing, heading, showarp(speed));
 
 /* heavy jamming: total scramble */
-if (waruptr->options[JAMTEST] > 7)
+if (warsptr->jam_sev > (byte)7)
 	{
 	for (i = 0; gechrbuf[i]; ++i)
 		{
@@ -118,11 +118,11 @@ if (waruptr->options[JAMTEST] > 7)
 
 /* moderate jamming: speckle randomly */
 else
-if (waruptr->options[JAMTEST] > 2)
+if (warsptr->jam_sev > (byte)2)
 	{
 	for (i = 0; gechrbuf[i]; ++i)
 		{
-		if (gechrbuf[i] != ' ' && gechrbuf[i] != '-' && gechrbuf[i] != '\0' && gernd()%(10 - waruptr->options[JAMTEST]) == 0)
+		if (gechrbuf[i] != ' ' && gechrbuf[i] != '-' && gechrbuf[i] != '\0' && gernd()%(10 - warsptr->jam_sev) == (byte)0)
 			gechrbuf[i] = '?';
 		}
 	}
@@ -142,24 +142,24 @@ if (len >= 254)
 memcpy(gechrbuf, username(warshpoff(othusn)), len);
 gechrbuf[len] = '\0';
 
-if (waruptr->options[JAMTEST] > 7)
+if (warsptr->jam_sev > (byte)7)
 	for (k = 0; k < len; k++)
 		gechrbuf[k] = '?';
 else
-if (waruptr->options[JAMTEST] > 2)
+if (warsptr->jam_sev > (byte)2)
 	for (k = 0; k < len; k++)
 		{
 		rseed ^= rseed << 7;
 		rseed ^= rseed >> 9;
 		rseed ^= rseed << 8;
-		if (rseed%(9 - waruptr->options[JAMTEST]) == 0)
+		if (rseed%(9 - warsptr->jam_sev) == (byte)0)
 			gechrbuf[k] = '?';
 		}
 
-if (warsptr->lock == othusn && waruptr->options[JAMTEST] < 3)
+if (warsptr->lock == othusn && warsptr->jam_sev < (byte)3)
 	prf("%s*%s%s%s*", CLR_RED1, CLR_CYAN1, gechrbuf, CLR_RED1);
 else
-if (warshpoff(othusn)->distress != 255 && waruptr->options[JAMTEST] < 3)
+if (warshpoff(othusn)->distress != 255 && warsptr->jam_sev < (byte)3)
 	prf("%s*%s%s%s*", CLR_GREEN2, CLR_CYAN1, gechrbuf, CLR_GREEN2);
 else
 	prf(" %s%s", CLR_CYAN1, gechrbuf);
@@ -171,9 +171,9 @@ unsigned int rseed = gernd();
 int jam_digits, len, k;
 int orbit = (warsptr->where - 11 == shp);
 
-if (rseed%(waruptr->options[JAMTEST]+1) > 6 && !orbit)
+if (rseed%(warsptr->jam_sev+1) > (byte)6 && !orbit)
 	return(FALSE);
-if (rseed%(waruptr->options[JAMTEST]+1) > 3 && !orbit)
+if (rseed%(warsptr->jam_sev+1) > (byte)3 && !orbit)
 	{
 	prf(CLR_WHITE2);
 	sprintf(gechrbuf,"%c",'?');
@@ -191,18 +191,18 @@ sprintf(gechrbuf2, "%d", (int)(cdistance(&warsptr->coord, &ptab[usrnum].planets[
 sprintf(gechrbuf3, "%d", (int)(cbearing(&warsptr->coord, &ptab[usrnum].planets[shp].coord, warsptr->heading) + .5));
 
 /* if jammed, mess up the numbers */
-if (waruptr->options[JAMTEST] > 2 && warsptr->where - 11 != shp)
+if (warsptr->jam_sev > (byte)2 && warsptr->where - 11 != shp)
 	{
-	jam_digits = rseed % (((waruptr->options[JAMTEST] < 6) ?
-		(waruptr->options[JAMTEST] / 2) : (waruptr->options[JAMTEST] - 2)) + 1);
+	jam_digits = rseed % ((((int)warsptr->jam_sev < 6) ?
+		((int)warsptr->jam_sev / 2) : ((int)warsptr->jam_sev - 2)) + 1);
 	len = strlen(gechrbuf2);
 	if (jam_digits > len)
 		jam_digits = len;
 	for (k = len - jam_digits; k < len; k++)
 		gechrbuf2[k] = '?';
 
-	jam_digits = (rseed >> 4) % (((waruptr->options[JAMTEST] < 6) ?
-		(waruptr->options[JAMTEST] / 2) : (waruptr->options[JAMTEST] - 2)) + 1);
+	jam_digits = (rseed >> 4) % ((((int)warsptr->jam_sev < 6) ?
+		((int)warsptr->jam_sev / 2) : ((int)warsptr->jam_sev - 2)) + 1);
 	len = strlen(gechrbuf3);
 	if (jam_digits > len)
 		jam_digits = len;
@@ -279,7 +279,7 @@ while (j < MAXX)
 		prf("%s", gedots(j - start));
 		}
 	else
-	if (waruptr->options[JAMTEST] > 0)
+	if (warsptr->jam_sev > (byte)0)
 		{
 		if (!(map[i][j] == '.' && mapc[i][j] == '4') && map[i][j] != '*') /* don't overwrite out of bounds or player indicator */
 			{
@@ -289,12 +289,12 @@ while (j < MAXX)
 			rseed ^= rseed << 8;
 			if (map[i][j] != ' ')
 				{
-				if (rseed%(waruptr->options[JAMTEST]) > 4) /* jam level increases chance of legit object blanked */
+				if (rseed%(warsptr->jam_sev) > (byte)4) /* jam level increases chance of legit object blanked */
 					map[i][j] = ' ';
 				}
 			if (map[i][j] == ' ') /* scramble empty spaces and blanked objects */
 				{
-				if (rseed%(80/waruptr->options[JAMTEST]) == 0)
+				if (rseed%(80/warsptr->jam_sev) == (byte)0)
 					{
 					map[i][j] = (byte)((rseed%94)+33); /* printable ascii range */
 					if (maptype != LONG && rseed%6 == 0)	/* add color speckles if not sca lo */
@@ -427,7 +427,7 @@ for (; shp < NOSCANTAB; ++shp)
 	if ((long)(sptr->ship[shp].dist) >= dist_filter)
 		continue;
         /* heavy jamming: random chance to skip ship */
-	if (waruptr->options[JAMTEST] > 7 && (gernd() % 2 == 0))
+	if (warsptr->jam_sev > (byte)7 && (gernd() % 2 == 0))
 		continue;
 
 	visible[count++] = shp;
@@ -440,7 +440,7 @@ for (i = 0; i < count; i += 2)
 	print_ship_pair(sptr, left, right, dist_filter);
 	}
 
-if (maptype == RANGENOMAP && count == 0 && waruptr->options[JAMTEST] <= 7)
+if (maptype == RANGENOMAP && count == 0 && warsptr->jam_sev <= (byte)7)
 	prfmsg(SCANNOSH);
 }
 

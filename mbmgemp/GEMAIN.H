@@ -203,7 +203,7 @@
 /* user options */
 
 #define SCANOPTS 0
-#define JAMTEST 1
+#define UNUSED1 1
 #define UNUSED2 2
 #define MSG_FILTER 3
 #define UNUSED4 4
@@ -390,7 +390,9 @@ WARSHP {						/*   user data blocks                        */
 /*188*/
 		unsigned	decout[MAXDECOY];	/*   decoys out                              */
 /*208*/
-		unsigned	jammer;			/*   supper time?                            */
+		byte		jam_sev;		/*   jamming severity                        */
+/*209*/
+		byte		jam_time;		/*   time left in jamming                    */
 /*210*/
 		unsigned	freq[3];		/*   sub space, hyper space, planetary       */
 /*216*/

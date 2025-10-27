@@ -908,7 +908,7 @@ if (ptr->speed > 0)
 				ddist = cdistance(&warsptr->coord,&wptr->coord);
 				ddist *= 10000;
 
-				if (ddist < (shipclass[wptr->shpclass].scanrange/2) && wptr->jammer == 0)
+				if (ddist < (shipclass[wptr->shpclass].scanrange/2) && wptr->jam_sev == (byte)0)
 					{
 					bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading)+.5);
 					/* slop it up +- 10 degrees on either side */
@@ -1087,7 +1087,8 @@ for (i=0; i<MAXPLANETS;++i)
 					ptr->damage+= 5.5;
 					outprfge(ALWAYS,usrn);
 					clearitm(usrn);	 /* clear the tors and missiles */
-					ptr->jammer = 0;
+					ptr->jam_time = (byte)0;
+					ptr->jam_sev = (byte)0;
 					assign_cybs(usrn,0); /* clear current cyb pursuits and pick closest new ones */
 					}
 				}
@@ -1762,7 +1763,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 							}
 						else
 							{
-							if (wptr->jammer == 0)
+							if (wptr->jam_sev == (byte)0)
 								{
 								prfmsg(MINE6,bearing,udist);
 								outprfge(FILTER,zothusn);
@@ -1772,7 +1773,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 							}
 						}
 					else
-					if (mptr->timer == 0 && wptr->jammer == 0)
+					if (mptr->timer == 0 && wptr->jam_sev == (byte)0)
 						{
 						prfmsg(MINE5,bearing);
 						outprfge(FILTER,zothusn);
@@ -2065,11 +2066,12 @@ if (shotdown > 1)
 	outprfge(FILTER,usrn);
 	}
 /* and Jammers too */
-if (ptr->jammer > 0)
+if (ptr->jam_time > (byte)0)
 	{
-	--ptr->jammer;
-	if (ptr->jammer == 0)
+	--ptr->jam_time;
+	if (ptr->jam_time == (byte)0)
 		{
+		ptr->jam_sev = (byte)0;
 		prfmsg(JAMMER5);
 		outprfge(FILTER,usrn);
 		}

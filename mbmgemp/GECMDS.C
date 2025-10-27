@@ -1533,7 +1533,7 @@ if (ptr->firecntl > 0)
 	return(0);
 	}
 
-if (warsptr->jammer > 0)
+if (warsptr->jam_sev > (byte)0)
 	{
 	prfmsg(JAMMER4);
 	outprfge(ALWAYS,usrn);
@@ -1816,29 +1816,53 @@ WARSHP	*ptr;
 int	usrn;
 {
 WARSHP	*wptr;
-int	zothusn;
+int	zothusn, sev, scaled;
 double	ddist;
 
-usrn = usrn;
 for (zothusn=0; zothusn < nships ; zothusn++)
 	{
 	wptr=warshpoff(zothusn);
+	if (!ingegame(zothusn))
+		continue;
+
 	ddist = cdistance(&ptr->coord,&wptr->coord);
 	ddist *= 10000;
-	if (ingegame(zothusn) && ddist < (double)shipclass[warsptr->shpclass].scanrange)
-		{
-		ddist = 1.0-(ddist/(double)shipclass[warsptr->shpclass].scanrange);
-		if (ddist < 0)
-			ddist = 0;
 
-		wptr->jammer = (unsigned)(((double)jamtime)*ddist);
-		if (wptr->jammer > 0)
+	if (ddist > 50000.0)
+		continue;
+
+	sev = 10 - (int)(ddist / 5000.0);
+	if (sev < 1)
+		sev = 1;
+	if (sev > 10)
+		sev = 10;
+
+	if (wptr->jam_sev < (byte)sev)
+		{
+		/* closer jammer, raise severity and reset timer */
+		wptr->jam_sev  = (byte)sev;
+		wptr->jam_time = (byte)jamtime;
+		}
+	else
+		{
+		/* farther/equal jammer, small refresh */
+		if (wptr->jam_sev > 0)
 			{
-			prfmsg(JAMMER3);
-			outprfge(FILTER,zothusn);
+			scaled = (jamtime * sev + wptr->jam_sev/2) / wptr->jam_sev;
+			if (scaled < 1)
+				scaled = 1;
+			if (wptr->jam_time < scaled)
+				wptr->jam_time = (byte)scaled;
 			}
 		}
+
+	if (wptr->jam_time > 0 && usrn != zothusn)
+		{
+		prfmsg(JAMMER3);
+		outprfge(FILTER, zothusn);
+		}
 	}
+
 --ptr->items[I_JAMMERS];
 ptr->cantexit = FIRETICKS;
 ptr->jamload = 1;
@@ -2377,7 +2401,7 @@ if (sameas(margv[1],"ord"))
 				}
 			if (warsptr->ltorps[i].channel == 255)
 				prf("\r  (destroyed)   ");
-			if (warsptr->jammer == 0)
+			if (warsptr->jam_sev == (byte)0)
 				prf("Dist: %u",warsptr->ltorps[i].distance);
 			else
 				prf("Dist: ?????");
@@ -2405,7 +2429,7 @@ if (sameas(margv[1],"ord"))
 				}
 			if (warsptr->lmissl[i].channel == 255)
 				prf("\r  (destroyed)   ");
-			if (warsptr->jammer == 0)
+			if (warsptr->jam_sev == (byte)0)
 				prf("Dist: %u",warsptr->lmissl[i].distance);
 			else
 				prf("Dist: ?????");
@@ -2434,7 +2458,7 @@ if (sameas(margv[1],"ord"))
 							prf(" %s*%s%s%s*%s  ",CLR_RED1,CLR_BLUE2,username(ptr),CLR_RED1,CLR_WHITE2);
 						else
 							prf("  %s%s%s   ",CLR_BLUE2,username(ptr),CLR_WHITE2);
-						if (warsptr->jammer == 0)
+						if (warsptr->jam_sev == (byte)0)
 							prf("Dist: %u",ptr->ltorps[i].distance);
 						else
 							prf("Dist: ?????");
@@ -2465,7 +2489,7 @@ if (sameas(margv[1],"ord"))
 							prf(" %s*%s%s%s*%s  ",CLR_RED1,CLR_BLUE2,username(ptr),CLR_RED1,CLR_WHITE2);
 						else
 							prf("  %s%s%s   ",CLR_BLUE2,username(ptr),CLR_WHITE2);
-						if (warsptr->jammer == 0)
+						if (warsptr->jam_sev == (byte)0)
 							prf("Dist: %u",ptr->lmissl[i].distance);
 						else
 							prf("Dist: ?????");
@@ -2490,7 +2514,7 @@ if (sameas(margv[1],"ord"))
 				ddist = cdistance(&warsptr->coord,&mines[i].coord);
 				ddist *= 10000;
 				bearing = (int)(cbearing(&warsptr->coord,&mines[i].coord,warsptr->heading)+.5);
-				if (warsptr->jammer == 0)
+				if (warsptr->jam_sev == (byte)0)
 					prf("%d %d  T:%2d  Br:%4d  Dist: %s",
 						(int)mines[i].coord.xcoord,(int)mines[i].coord.ycoord,mines[i].timer,bearing,spr("%ld",(long)ddist));
 				else
@@ -2596,13 +2620,6 @@ void FUNC cmd_scan()
 if (warsptr->tactical != 0)
 	{
 	prfmsg(TABROKE);
-	outprfge(ALWAYS,usrnum);
-	return;
-	}
-
-if (warsptr->jammer > 0)
-	{
-	prfmsg(JAMMER4);
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
@@ -3498,14 +3515,14 @@ for (i = 0; i < MAXY + 1; ++i)
 
 	if (maptype == RANGENAMES || maptype == RANGEEXTRA)
 		{
-		while (ff == 0 && waruptr->options[JAMTEST] > 7 && gernd()%2 == 0)
+		while (ff == 0 && warsptr->jam_sev > (byte)7 && gernd()%2 == 0)
 			shp++;
 		shp += print_range_line(sptr, shp, &ff, dist_filter);
 		}
 
 	if (maptype == RANGEFULL)
 		{
-		while (ff == 0 && waruptr->options[JAMTEST] > 7 && gernd()%2 == 0)
+		while (ff == 0 && warsptr->jam_sev > (byte)7 && gernd()%2 == 0)
 			shp++;
 		shp += print_fullrange_line(sptr, shp, dist_filter);
 		}
@@ -5496,7 +5513,8 @@ if (sameas("maint",margv[1]))
 else
 if (sameas("unjam",margv[1]))
 	{
-	warsptr->jammer = 0;
+	warsptr->jam_sev = (byte)0;
+	warsptr->jam_time = (byte)0;
 	prfmsg(JAMMER5);
 	outprfge(ALWAYS,usrnum);
 	return;
@@ -5919,11 +5937,6 @@ if (sameas(margv[1],"filter"))
 		waruptr->options[MSG_FILTER] = FALSE;
 	else
 		invalid = TRUE;
-	}
-else
-if (sameas(margv[1],"jamtest"))
-	{
-	waruptr->options[JAMTEST] = atoi(margv[2]);
 	}
 else
 if (sameas(margv[1],"?"))
@@ -6623,7 +6636,7 @@ if (sameas(margv[2],"report"))
 
 	prf("SD7:%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d*\r",
 		j,
-		warsptr->jammer,
+		(int)warsptr->jam_time,
 		warsptr->kills,
 		warsptr->freq[0],
 		warsptr->freq[1],
@@ -6679,7 +6692,7 @@ prf(mask,'*',xsect,ysect,xcord,ycord,"0",0,
 	(int)warsptr->heading,showarp(warsptr->speed),
 	warsptr->shpclass,shipclass[warsptr->shpclass].typename);
 
-if (warsptr->jammer > 0)
+if (warsptr->jam_sev > (byte)0)
 	{
 	prf("** Jammed **\r");
 	outprfge(ALWAYS,usrnum);
