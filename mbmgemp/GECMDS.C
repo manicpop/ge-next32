@@ -1535,7 +1535,7 @@ if (ptr->firecntl > 0)
 
 if (warsptr->jam_sev > (byte)2)
 	{
-	prfmsg(JAMMER4);
+	prfmsg(JAMMER4W);
 	outprfge(ALWAYS,usrn);
 	return(0);
 	}
