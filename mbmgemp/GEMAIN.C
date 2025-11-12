@@ -3433,7 +3433,6 @@ if (status == CYCLE)
 
 			setmbk(gemb);
 			usrptr->substt = 1;
-			prf(".");
 			disp_main_menu();
 			outprfge(ALWAYS,usrnum);
 			return;

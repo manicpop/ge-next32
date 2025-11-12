@@ -2664,6 +2664,7 @@ WARSHP	*wptr;
 WARUSR	*wuptr;
 char	ltr;
 unsigned int rseed = gernd();
+long	scandist;	/* update_scantab uses ddistance, so we need a local here */
 
 if (margc != 3)
 	{
@@ -2691,8 +2692,8 @@ if (shpnum >= 0)
 	{
 	wptr = warshpoff(shpnum);
 	wuptr = warusroff(shpnum);
-	ddistance = cdistance(&warsptr->coord,&wptr->coord)*10000;
-	if (ddistance < shipclass[warsptr->shpclass].scanrange)
+	scandist = cdistance(&warsptr->coord,&wptr->coord)*10000;
+	if (scandist < shipclass[warsptr->shpclass].scanrange)
 		{
 		bearing = (int)(cbearing(&warsptr->coord,&wptr->coord,warsptr->heading)+.5);
 		heading = (int) (cbearing(&wptr->coord,&warsptr->coord,wptr->heading)+.5);
@@ -2720,7 +2721,7 @@ if (shpnum >= 0)
 		memset(gechrbuf, 0, 255);
 		sprintf(gechrbuf,"%d",bearing);
 		sprintf(gechrbuf2,"%d",heading);
-		sprintf(gechrbuf3,"%ld",(long)ddistance);
+		sprintf(gechrbuf3,"%ld",(long)scandist);
 		if (warsptr->jam_sev > (byte)2)
 			{
 			jam_scramble(gechrbuf, warsptr->jam_sev, &rseed);
@@ -2762,7 +2763,7 @@ if (shpnum >= 0)
 		/* if beyond the "scanned" ships range disply this msg */
 		if (warsptr->jam_sev < (byte)3)
 			{
-			if ((long)ddistance > shipclass[wptr->shpclass].scanrange)
+			if ((long)scandist > shipclass[wptr->shpclass].scanrange)
 				{
 				bearing = (int)(cbearing(&wptr->coord,&warsptr->coord,wptr->heading)+.5);
 				prfmsg(SCAN2,bearing);
@@ -3385,6 +3386,7 @@ WARSHP	*ptr;
 int	usrn;
 {
 int	i,j;
+char	l;
 WARSHP	*wptr;
 SCANTAB	tmp;
 
@@ -3398,7 +3400,9 @@ for (i=0;i<NOSCANTAB;++i)
 	j = scantab[usrn].ship[i].shipno;
 	if (j>= 0 && j < 300)
 		{
-		lettab[j] = scantab[usrn].ship[i].letter;
+		/* only keep A through Z */
+		l = scantab[usrn].ship[i].letter;
+		lettab[j] = (l >= 'A' && l <= 'Z') ? l : 0;
 		}
 	}
 

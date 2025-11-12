@@ -48,6 +48,8 @@ The main focus of 0.3 is enhancements for user ships:
     If upgrading a game from 0.2, users will need to set this.
   - Color code usage has been optimized, so scans might feel
     a little "snappier."
+  - All users need to read HELP SET and set SET SCAN properly,
+    especially if you are upgrading a 0.2 game.
 * Jamming has been overhauled:
   - Instead of jamming causing scanners not to function, a
     "jamming effect" will be applied to your scans if you are
@@ -77,6 +79,9 @@ Other stuff:
 * A bug that caused that invalid planet data to show if the
   planet database has reached its limit (MAXPLREC) has beed
   addressed.
+* Ship letters showing up as '?' should be completely fixed.
+  There were a multitude of reasons this was happening, but
+  they should all be corrected now.
 
 === 0.2.6 === 2025-08-15
 

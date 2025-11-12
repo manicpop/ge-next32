@@ -163,6 +163,8 @@ outwar(FILTER,usrnum,0);
 prfmsg(ENTSHP,waruptr->userid);
 outprfge(ALWAYS,usrnum);
 
+update_scantab(warshpoff(usrnum),usrnum);
+
 if (warsptr->cloak != 10)
 	{
 	prfmsg(ENTWAR, warsptr->shipname);
