@@ -2759,7 +2759,6 @@ if (shpnum >= 0)
 		prfmsg(DASHES);
 		outprfge(ALWAYS,usrnum);
 
-		ltr = shpltr(shpnum,usrnum);
 		/* if beyond the "scanned" ships range disply this msg */
 		if (warsptr->jam_sev < (byte)3)
 			{
@@ -2771,6 +2770,7 @@ if (shpnum >= 0)
 			else
 				{
 				/* all else get this */
+				ltr = shpltr(shpnum,usrnum);
 				prfmsg(SCAN1,ltr,warsptr->shipname);
 				}
 			outprfge(FILTER,shpnum);
@@ -5886,14 +5886,23 @@ COORD	tmp;
 int	x,y;
 double	bear;
 
-if (margc != 3)
+if (margc == 3)
+	{
+	x = atoi(margv[1]);
+	y = atoi(margv[2]);
+	}
+else
+if (margc == 1)
+	{
+	x = 0;
+	y = 0;
+	}
+else
 	{
 	prfmsg(FORMAT,"NAVIGATE");
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
-x = atoi(margv[1]);
-y = atoi(margv[2]);
 
 if (abs(x) > univmax || abs(y) > univmax)
 	{

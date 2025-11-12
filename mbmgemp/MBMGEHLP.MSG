@@ -806,7 +806,8 @@ Examples: [1;37mmissile A 2000   [1;36mfires a missile at ship A which cause m
 
 HLPNAV {
 [1;36mThe [1;37mNAVIGATE[1;36m command will display the bearing and distance to the center of the
-sector you specify. Issue the command as follows:
+sector you specify. If you do not specify a sector, a default of [1;34m0 0[1;36m will be
+used. Issue the command as follows:
 
   [1;37mnavigate [1;32m[sector]
 [1;37m} T GE help navigate message
