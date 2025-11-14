@@ -2980,7 +2980,16 @@ if (plnum <= MAXPLANETS && plnum > 0)
 		prfmsg(SCANWRM,plnum,worm.name);
 		prfmsg(DASHES);
 
-		prfmsg(SCAN10,bearing,spr("%ld",(long)ddistance));
+		memset(gechrbuf2, 0, 20);
+		memset(gechrbuf3, 0, 20);
+		sprintf(gechrbuf2,"%d",bearing);
+		sprintf(gechrbuf3,"%ld",(long)ddistance);
+		if (warsptr->jam_sev > (byte)2 && warsptr->where - 10 != plnum)
+			{
+			jam_scramble(gechrbuf2, warsptr->jam_sev, &rseed);
+			jam_scramble(gechrbuf3, warsptr->jam_sev, &rseed);
+			}
+		prfmsg(SCAN10,gechrbuf2,gechrbuf3);
 		prfmsg(DASHES);
 		outprfge(ALWAYS,usrnum);
 		}
