@@ -196,7 +196,7 @@ ptr->npcmsg = 0;
 for (zothusn=0; zothusn<nterms; zothusn++)
 	{
 	wptr=warshpoff(zothusn);
-	if (ingegame(zothusn) && wptr->jam_sev == (byte)2)
+	if (ingegame(zothusn) && wptr->jam_sev <= (byte)2)
 		{
 		ddist = cdistance(&ptr->coord,&wptr->coord);
 		ddist *= 10000;
@@ -388,7 +388,7 @@ int	zothusn;
 double	ddist;
 
 /* am I being jammed ? */
-if (ptr->jam_sev == (byte)3)
+if (ptr->jam_sev <= (byte)3)
 	{
 	if (ptr->cybmine == 255)
 		{
@@ -454,7 +454,7 @@ double	ddist;
 around = FALSE;
 
 /* am I being jammed ? */
-if (ptr->jam_sev == (byte)3)
+if (ptr->jam_sev <= (byte)3)
 	{
 	if (ptr->cybmine == 255)
 		{
@@ -537,7 +537,7 @@ int	zothusn;
 double	ddist;
 
 /* am I being jammed ? */
-if (ptr->jam_sev == (byte)3)
+if (ptr->jam_sev <= (byte)3)
 	{
 	if (ptr->cybmine == 255)
 		{
@@ -622,7 +622,7 @@ int	zothusn;
 double	ddist;
 
 /* am I being jammed ? */
-if (ptr->jam_sev == (byte)3)
+if (ptr->jam_sev <= (byte)3)
 	{
 	if (ptr->cybmine == 255)
 		{
@@ -709,7 +709,7 @@ low_ship = -1;
 lta = shipclass[ptr->shpclass].lowest_to_attk-1;
 
 /* am I being jammed ? */
-if (ptr->jam_sev == (byte)3)
+if (ptr->jam_sev <= (byte)3)
 	{
 	if (ptr->cybmine == 255)
 		{
@@ -862,7 +862,7 @@ neutsect.xcoord = 0.50001;
 neutsect.ycoord = 0.50001;
 
 /* am I being jammed ? */
-if (ptr->jam_sev == (byte)3)
+if (ptr->jam_sev <= (byte)3)
 	{
 	if (ptr->cybmine == 255)
 		{
