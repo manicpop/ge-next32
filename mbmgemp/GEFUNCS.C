@@ -321,7 +321,8 @@ int	found = 0;
 int	i, j, step, thispage, lastpage;
 int	first_no = 0;
 int	last_no = 0;
-int	first_index = 0;
+int	before = 0;
+int	first_shipno = 0;
 SCANTAB *sptr;
 
 setbtv(gebb1);
@@ -419,15 +420,30 @@ do
 	}
 
 	sptr->ship[found].shipno = warsptr->shipno;
-	if (found == 0)
-		first_index = warsptr->shipno;
 	++found;
 	} while (qnxbtv() && found < NOSCANTAB);
 
 /* display page X of Y if needed */
 if (!quiet && waruptr->noships > NOSCANTAB)
 	{
-	thispage = ((first_index - 1) / NOSCANTAB) + 1;
+	first_shipno = sptr->ship[0].shipno;
+	before = 0;
+
+	if (first_shipno != 0 && gepdb(GEGET, usaptr->userid, first_shipno, warsptr))
+		{
+		while (qprbtv())
+			{
+			gcrbtv(warsptr,0);
+			if (!sameas(usaptr->userid, warsptr->userid))
+				break;
+			++before;
+			}
+
+		/* restore cursor to this page's first ship */
+		gepdb(GEGET, usaptr->userid, first_shipno, warsptr);
+	        }
+
+	thispage = (before / NOSCANTAB) + 1;
 	lastpage = (waruptr->noships + NOSCANTAB - 1) / NOSCANTAB;
 	prf("%sPage %d of %d, ", CLR_CYAN2, thispage, lastpage);
 	if (thispage == 1)
@@ -493,7 +509,7 @@ if (sameas(margv[0], "N") || sameas(margv[0], "n"))
 
 if (sameas(margv[0], "P") || sameas(margv[0], "p"))
 	{
-	page_count = findships(-1, 1);
+	page_count = findships(-1, 0);
 	if (page_count == 0)
 		{
 		prfmsg(FLEET4);

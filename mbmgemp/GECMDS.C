@@ -2984,7 +2984,7 @@ if (plnum <= MAXPLANETS && plnum > 0)
 		memset(gechrbuf3, 0, 20);
 		sprintf(gechrbuf2,"%d",bearing);
 		sprintf(gechrbuf3,"%ld",(long)ddistance);
-		if (warsptr->jam_sev > (byte)2 && warsptr->where - 10 != plnum)
+		if (warsptr->jam_sev > (byte)2)
 			{
 			jam_scramble(gechrbuf2, warsptr->jam_sev, &rseed);
 			jam_scramble(gechrbuf3, warsptr->jam_sev, &rseed);
