@@ -42,11 +42,11 @@
 */
 
 #ifdef GETRAINER
-#define VERSION "ge-next 0.3-pre1 Trainer"
+#define VERSION "ge-next 0.3-pre2 Trainer"
 #define GEHELP  "MBMG2HLP.MCV"
 #define GEMSG   "MBMG2MSG.MCV"
 #else
-#define VERSION "ge-next 0.3-pre1"
+#define VERSION "ge-next 0.3-pre2"
 #define GEHELP  "MBMGEHLP.MCV"
 #define GEMSG   "MBMGEMSG.MCV"
 #endif
@@ -63,7 +63,7 @@
 
 /* workarounds for mbbsemu math functions */
 /* hopefully not necessary much longer */
-/* #define MBBSEMU 1 */
+#define MBBSEMU 1
 
 
 /***************************************************************************/
