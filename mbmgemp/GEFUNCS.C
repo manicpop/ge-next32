@@ -926,7 +926,7 @@ if (ptr->speed > 0)
 				ddist = cdistance(&warsptr->coord,&wptr->coord);
 				ddist *= 10000;
 
-				if (ddist < (shipclass[wptr->shpclass].scanrange/2) && wptr->jam_sev == (byte)2)
+				if (ddist < (shipclass[wptr->shpclass].scanrange/2) && wptr->jam_sev <= (byte)2)
 					{
 					bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading)+.5);
 					/* slop it up +- 10 degrees on either side */
@@ -1781,7 +1781,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 							}
 						else
 							{
-							if (wptr->jam_sev == (byte)2)
+							if (wptr->jam_sev <= (byte)2)
 								{
 								prfmsg(MINE6,bearing,udist);
 								outprfge(FILTER,zothusn);
@@ -1791,7 +1791,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 							}
 						}
 					else
-					if (mptr->timer == 0 && wptr->jam_sev == (byte)2)
+					if (mptr->timer == 0 && wptr->jam_sev <= (byte)2)
 						{
 						prfmsg(MINE5,bearing);
 						outprfge(FILTER,zothusn);

@@ -2401,7 +2401,7 @@ if (sameas(margv[1],"ord"))
 				}
 			if (warsptr->ltorps[i].channel == 255)
 				prf("\r  (destroyed)   ");
-			if (warsptr->jam_sev == (byte)2)
+			if (warsptr->jam_sev <= (byte)2)
 				prf("Dist: %u",warsptr->ltorps[i].distance);
 			else
 				prf("Dist: ?????");
@@ -2429,7 +2429,7 @@ if (sameas(margv[1],"ord"))
 				}
 			if (warsptr->lmissl[i].channel == 255)
 				prf("\r  (destroyed)   ");
-			if (warsptr->jam_sev == (byte)2)
+			if (warsptr->jam_sev <= (byte)2)
 				prf("Dist: %u",warsptr->lmissl[i].distance);
 			else
 				prf("Dist: ?????");
@@ -2458,7 +2458,7 @@ if (sameas(margv[1],"ord"))
 							prf(" %s*%s%s%s*%s  ",CLR_RED1,CLR_BLUE2,username(ptr),CLR_RED1,CLR_WHITE2);
 						else
 							prf("  %s%s%s   ",CLR_BLUE2,username(ptr),CLR_WHITE2);
-						if (warsptr->jam_sev == (byte)2)
+						if (warsptr->jam_sev <= (byte)2)
 							prf("Dist: %u",ptr->ltorps[i].distance);
 						else
 							prf("Dist: ?????");
@@ -2489,7 +2489,7 @@ if (sameas(margv[1],"ord"))
 							prf(" %s*%s%s%s*%s  ",CLR_RED1,CLR_BLUE2,username(ptr),CLR_RED1,CLR_WHITE2);
 						else
 							prf("  %s%s%s   ",CLR_BLUE2,username(ptr),CLR_WHITE2);
-						if (warsptr->jam_sev == (byte)2)
+						if (warsptr->jam_sev <= (byte)2)
 							prf("Dist: %u",ptr->lmissl[i].distance);
 						else
 							prf("Dist: ?????");
@@ -2514,7 +2514,7 @@ if (sameas(margv[1],"ord"))
 				ddist = cdistance(&warsptr->coord,&mines[i].coord);
 				ddist *= 10000;
 				bearing = (int)(cbearing(&warsptr->coord,&mines[i].coord,warsptr->heading)+.5);
-				if (warsptr->jam_sev == (byte)2)
+				if (warsptr->jam_sev <= (byte)2)
 					prf("%d %d  T:%2d  Br:%4d  Dist: %s",
 						(int)mines[i].coord.xcoord,(int)mines[i].coord.ycoord,mines[i].timer,bearing,spr("%ld",(long)ddist));
 				else
