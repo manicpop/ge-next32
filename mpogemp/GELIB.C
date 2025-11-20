@@ -53,7 +53,6 @@
 
 #include "math.h"
 #include "majorbbs.h"
-#include "message.h"
 
 #include "gemain.h"
 #include "geglobal.h"

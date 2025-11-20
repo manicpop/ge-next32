@@ -216,6 +216,9 @@
 #define	GEMSGSIZ 784
 #define FIXEDMSGSIZ sizeof(struct message)+GEMSGSIZ
 
+#define HSTSIZ 57
+#define TPCSIZ 51
+
 #define	ALWAYS 1
 #define	FILTER 2
 #define	BLOCK 3
@@ -275,6 +278,23 @@
 #ifndef byte
 #define byte unsigned char
 #endif
+
+/* message structure from GME.H, Copyright (c) 1994-1995 GALACTICOMM, Inc. */
+
+struct message {
+    long msgno;
+    char userto[UIDSIZ];
+    char from[UIDSIZ];
+    char to[UIDSIZ];
+    char topic[TPCSIZ];
+    char auxtpc[HSTSIZ];
+    unsigned crdate;
+    unsigned crtime;
+    int nreply;
+    int flags;
+    char spare[5];
+    char text[1];
+};
 
 #define COORD struct _coord
 extern

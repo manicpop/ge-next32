@@ -57,7 +57,6 @@
 #include "math.h"
 #include "stdlib.h"
 #include "majorbbs.h"
-#include "message.h"
 
 #include "gemain.h"
 
