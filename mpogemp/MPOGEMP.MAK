@@ -12,13 +12,13 @@
 ###############################################################################
 #####                           Build DLL's                               #####
 ###############################################################################
-mbmgemp.dll: \
-     mbmgemsg.h    mbmgehlp.h    mbmgeshp.h                            \
+mpogemp.dll: \
+     mpogemsg.h    mpogehlp.h    mpogeshp.h                            \
      gemain.obj     gefuncs.obj   gecmds.obj    gecybs.obj   geplanet.obj \
      gelib.obj      gedroids.obj  gescan.obj\
      \wgserv\dlib\galimp.lib        \wgserv\dlib\gsblimp.lib                 \
      \run286\bc3\lib\phapi.lib     \wgserv\dlib\nodef.def
-     ltdll mbmgemp
+     ltdll mpogemp
 
 
 ###############################################################################
@@ -46,15 +46,15 @@ gescan.obj: gescan.c
 #####               Generate Headers for Compilation                      #####
 ###############################################################################
 
-mbmgemsg.h: mbmgemsg.msg
+mpogemsg.h: mpogemsg.msg
      cd \wgserv
-     wgsmsx mbmgemsg -osrc
+     wgsmsx mpogemsg -osrc
      cd \wgserv\src
-mbmgehlp.h: mbmgehlp.msg
+mpogehlp.h: mpogehlp.msg
      cd \wgserv
-     wgsmsx mbmgehlp -osrc
+     wgsmsx mpogehlp -osrc
      cd \wgserv\src
-mbmgeshp.h: mbmgeshp.msg
+mpogeshp.h: mpogeshp.msg
      cd \wgserv
-     wgsmsx mbmgeshp -osrc
+     wgsmsx mpogeshp -osrc
      cd \wgserv\src

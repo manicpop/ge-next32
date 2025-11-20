@@ -8,8 +8,8 @@
 \wgserv\phobj\geplanet +
 \wgserv\phobj\gelib +
 \wgserv\phobj\gescan
-\wgserv\mbmgemp
-/MAP:\wgserv\mbmgemp.map
+\wgserv\mpogemp
+/MAP:\wgserv\mpogemp.map
 \run286\bc3\lib\phapi +
 \wgserv\dlib\galimp +
 \wgserv\dlib\msgimp +

@@ -1,8 +1,8 @@
-; MBMGEMP.MDF
+; MPOGEMP.MDF
 
-Module Name: Galactic Empire
+Module Name: Galactic Empire ge-next
 
-Developer: M.B. Murdock & Associates
+Developer: ManicPop.org
 
 
 Requires:
@@ -10,10 +10,10 @@ Replaces:
 
 Install:
 
-Online user manual:MBMGEMP.DOC
+Online user manual:MPOGEMP.DOC
 
-DLLs:MBMGEMP
-MSGs:MBMGEHLP  MBMGEMSG MBMGESHP
+DLLs:MPOGEMP
+MSGs:MPOGEHLP  MPOGEMSG MPOGESHP
 
 
 Btrieve page size:    2048

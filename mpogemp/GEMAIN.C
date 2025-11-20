@@ -80,7 +80,7 @@ int dfsthn();
 int gestt;
 
 
-struct module mbmge={		/* module interface block			*/
+struct module mpoge={		/* module interface block			*/
 	"",			/*	description for main menu		*/
 	gelogon,		/*	user logon supplemental routine		*/
 	galemp,			/*	input routine if selected		*/
@@ -322,13 +322,13 @@ void EXPORT init__galemp(void)
 
 {
 #ifdef GETRAINER
-stzcpy(mbmge.descrp,gmdnam("MBMG2.MDF"),MNMSIZ);
+stzcpy(mpoge.descrp,gmdnam("MPOG2.MDF"),MNMSIZ);
 #else
-stzcpy(mbmge.descrp,gmdnam("MBMGEMP.MDF"),MNMSIZ);
+stzcpy(mpoge.descrp,gmdnam("MPOGEMP.MDF"),MNMSIZ);
 #endif
 
 iniwara();
-gestt=register_module(&mbmge);
+gestt=register_module(&mpoge);
 return;
 }
 #else
@@ -354,7 +354,7 @@ gemb	= opnmsg(GEMSG);
 endmark	= stgopt(ENDMARK);
 if (!sameas(endmark,"ENDMARK"))
 	{
-	catastro("GE:ERR:MBMGEMSG.MCV Corrupted");
+	catastro("GE:ERR:MPOGEMSG.MCV Corrupted");
 	}
 
 
@@ -1662,7 +1662,7 @@ for (i=0;i<MAXTEAMS;++i)
 
 logthis("Loading Team Table");
 
-if ((mzfp=fopen("MBMGETEA.DAT","r")) != NULL)
+if ((mzfp=fopen("MPOGETEA.DAT","r")) != NULL)
 	{
 	i = 0;
 	while(fgets(buffer,sizeof(buffer),mzfp) != NULL)
@@ -1715,7 +1715,7 @@ void FUNC update_team_tab()
 FILE	*hdl;
 int	i;
 
-hdl = fopen("mbmgetea.dat","wt");
+hdl = fopen("mpogetea.dat","wt");
 
 if(hdl != (FILE *)0)
 	{
@@ -3364,11 +3364,11 @@ static FILE *hdl = (FILE *)0;
 
 if (hdl == (FILE *)0)
 	{
-	hdl = fopen("mbmgemnu.txt","rt");
+	hdl = fopen("mpogemnu.txt","rt");
 	if (hdl == (FILE *)0)
-		geshocst(0,"GE:ERR MBMGEMNU.TXT Open Failed");
+		geshocst(0,"GE:ERR MPOGEMNU.TXT Open Failed");
 	else
-		logthis("optdisp: mbmgemnu.txt opened");
+		logthis("optdisp: mpogemnu.txt opened");
 	}
 
 if (hdl != (FILE *)0)

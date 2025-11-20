@@ -3,7 +3,7 @@ Version ge-next 0.3
 
 LEVEL0 {}
 
-FILE01 {MBMGEMSG.MSG} Galactic Empire
+FILE01 {MPOGEMSG.MSG} Galactic Empire
 
 LEVEL3 {}
 
@@ -138,32 +138,32 @@ This option specifies the filename of the user database. It
 is provided to you in case you wish to store the datafiles
 in a separate directory.
 
-GEUSER {MBMGEUSR.DAT} S 40 GE User Filename
+GEUSER {MPOGEUSR.DAT} S 40 GE User Filename
 
 This option specifies the filename of the Ship database. It
 is provided to you in case you wish to store the datafiles
 in a separate directory.
 
-GESHIP {MBMGESHP.DAT} S 40 GE Ship Filename
+GESHIP {MPOGESHP.DAT} S 40 GE Ship Filename
 
 This option specifies the filename of the Mail database. It
 is provided to you in case you wish to store the datafiles
 in a separate directory.
 
-GEMAIL {MBMGEMAL.DAT} S 40 GE Mail Filename
+GEMAIL {MPOGEMAL.DAT} S 40 GE Mail Filename
 
 This option specifies the filename of the planet database.
 It is provided to you in case you wish to store the
 datafiles in a separate directory.
 
-GEPLNT {MBMGEPLT.DAT} S 40 GE Planet Filename
+GEPLNT {MPOGEPLT.DAT} S 40 GE Planet Filename
 
 This option specifies the filename of the current active
 ship class table. Do not change this filename in the 
 middle of a contest. If you do change it you must reset
-the MBMGESHP.DAT and MBMGEUSR.DAT databases.
+the MPOGESHP.DAT and MPOGEUSR.DAT databases.
 
-GESHIPCL {MBMGESHP.MCV} S 28 GE Ship Class Message Filename
+GESHIPCL {MPOGESHP.MCV} S 28 GE Ship Class Message Filename
 
 This option controls if a player is allowed to transfer
 goods to a planet which they do not own. If YES a player
@@ -226,9 +226,9 @@ side to side.
 
 UNIVWRAP {Does the Galaxy wrap around? NO} B
 
-This value controls how large the MBMGEPLT.DAT data file
+This value controls how large the MPOGEPLT.DAT data file
 will grow to. Each time a sector is "terraformed" the 
-MBMGEPLT.DAT database grows by the following formula; 
+MPOGEPLT.DAT database grows by the following formula; 
 space added = (number planets * 512) + 512
 
 In order to prevent your disk from filling up you can
@@ -237,7 +237,7 @@ Kbytes. When the maximum is reached no more planets will be
 created. Note: a 32,767 database will hold 65,535 planets
 and sectors. That should keep most players busy for awhile.
 
-MAXPLREC {Max size of MBMGEPLT.DAT in Kbytes: 32767} N 10 32767
+MAXPLREC {Max size of MPOGEPLT.DAT in Kbytes: 32767} N 10 32767
 
 This option controls the range of the Torpedo Lock-on
 function. It functions as a divisor to reduce the effective

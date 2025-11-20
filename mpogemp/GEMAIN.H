@@ -43,27 +43,27 @@
 
 #ifdef GETRAINER
 #define VERSION "ge-next 0.3-pre2 Trainer"
-#define GEHELP  "MBMG2HLP.MCV"
-#define GEMSG   "MBMG2MSG.MCV"
+#define GEHELP  "MPOG2HLP.MCV"
+#define GEMSG   "MPOG2MSG.MCV"
 #else
 #define VERSION "ge-next 0.3-pre2"
-#define GEHELP  "MBMGEHLP.MCV"
-#define GEMSG   "MBMGEMSG.MCV"
+#define GEHELP  "MPOGEHLP.MCV"
+#define GEMSG   "MPOGEMSG.MCV"
 #endif
 
 #ifdef GETRAINER
-#include "mbmg2msg.h"
-#include "mbmg2hlp.h"
-#include "mbmgeshp.h"
+#include "mpog2msg.h"
+#include "mpog2hlp.h"
+#include "mpogeshp.h"
 #else
-#include "mbmgemsg.h"
-#include "mbmgehlp.h"
-#include "mbmgeshp.h"
+#include "mpogemsg.h"
+#include "mpogehlp.h"
+#include "mpogeshp.h"
 #endif
 
 /* workarounds for mbbsemu math functions */
 /* hopefully not necessary much longer */
-#define MBBSEMU 1
+/* #define MBBSEMU 1 */
 
 
 /***************************************************************************/

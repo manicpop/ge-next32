@@ -3109,7 +3109,7 @@ char	*c_date,*c_time;
 if (!logflag)
 	return;
 
-hdl = fopen("geout.log","at+");
+hdl = fopen("mpogeout.log","at+");
 
 if(hdl != (FILE *)0)
 	{
