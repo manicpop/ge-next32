@@ -6925,13 +6925,27 @@ int	item;
 
 {
 unsigned long amt;
+int	defuse = FALSE;
+
+if (item == I_MEN || item == I_TROOPS || item == I_SPY)
+	{
+	prfmsg(JETT2,item_name[item]);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if (item == I_TORPEDO || item == I_MINE)
+	defuse = TRUE;
 
 if (sameas("ALL",margv[1]) > 0L)
 	{
 	amt = warsptr->items[item];
 	warsptr->items[item] = 0;
 	sprintf(gechrbuf,"%ld",amt);
-	prfmsg(JETT3,gechrbuf,item_name[item]);
+	if (defuse == TRUE)
+		prfmsg(JETT3D,gechrbuf,item_name[item]);
+	else
+		prfmsg(JETT3,gechrbuf,item_name[item]);
 	outprfge(ALWAYS,usrnum);
 	gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
 	return;
@@ -6943,7 +6957,10 @@ if ((amt = atol(margv[1])) > 0L)
 		{
 		warsptr->items[item] -= amt;
 		sprintf(gechrbuf,"%ld",amt);
-		prfmsg(JETT3,gechrbuf,item_name[item]);
+		if (defuse == TRUE)
+			prfmsg(JETT3D,gechrbuf,item_name[item]);
+		else
+			prfmsg(JETT3,gechrbuf,item_name[item]);
 		outprfge(ALWAYS,usrnum);
 		gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
 		return;

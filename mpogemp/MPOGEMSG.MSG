@@ -4215,8 +4215,16 @@ JETT1 {
 [0;37m[[1;31mERROR[0;37m] There are not that many on-board.[1;37m
 } T GE not enough to jettison message
 
+JETT2 {
+[1;36mYou can't jettison %s![1;37m
+} T GE you can't jettison people message
+
 JETT3 {
 [1;37m%s %s[0;37m have been jettisoned.[1;37m
+} T GE jettison message
+
+JETT3D {
+[1;37m%s %s[0;37m have been defused and jettisoned.[1;37m
 } T GE jettison message
 
 FORMAT {
