@@ -472,7 +472,7 @@ if (genearas(margv[1],"class"))
 	if (margc == 3)
 		{
 		i = atoi(margv[2])-1;
-		if ((i > 0 || i < cyb_class) && shipclass[i].max_type == CLASSTYPE_USER)
+		if (i >= 0 && i < cyb_class && shipclass[i].max_type == CLASSTYPE_USER)
 			{
 			setmbk(geshmb);
 			prfmsg(shipclass[i].hlpmsg);
