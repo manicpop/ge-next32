@@ -764,6 +764,9 @@ trade password set, it will be required.
 
 Maintenance crews will not operate on any ship that is determined to be
 engaged in hostilities, as defined by the Galactic Codes of Engagement.
+
+Cloaked ships will not be serviced unless the ship owner and planet owner are
+the same.
 [1;37m} T GE help maintenance message
 
 HLPMIN {

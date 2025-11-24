@@ -5128,6 +5128,13 @@ if (warsptr->cantexit > 0)
 	return;
 	}
 
+if (warsptr->cloak > 0 && !sameas(plptr->userid,warsptr->userid))
+	{
+	prfmsg(MAINT12);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
 if (warsptr->repair > 0)
 	{
 	prfmsg(MAINT11);

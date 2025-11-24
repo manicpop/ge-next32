@@ -3596,6 +3596,10 @@ MAINT11 {
 [1;36mMaintenance is already in progress.[1;37m
 } T GE no maint if planet not populated message
 
+MAINT12 {
+[1;36mThe maintenance team is requesting you deactivate your cloaking device.[1;37m
+} T GE can't maint cloaked message
+
 JAMMER0 {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with a jammer launcher.[1;37m
 } T GE no jammer launcher message
