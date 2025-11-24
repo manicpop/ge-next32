@@ -5242,6 +5242,11 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 			prfmsg(NEW12);
 			}
 		else
+		if (warsptr->shieldtype == type)
+			{
+			prfmsg(NEW15S,type);
+			}
+		else
 		if (shipclass[warsptr->shpclass].max_shlds >= type)
 			{
 			ctype = warsptr->shieldtype;
@@ -5315,6 +5320,11 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 		if (type <= 0 || type >TOPPHASOR)
 			{
 			prfmsg(NEW12);
+			}
+		else
+		if (warsptr->phasrtype == type)
+			{
+			prfmsg(NEW15P,type);
 			}
 		else
 		if (shipclass[warsptr->shpclass].max_phasr >= type)

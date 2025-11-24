@@ -42,11 +42,11 @@
 */
 
 #ifdef GETRAINER
-#define VERSION "ge-next 0.3-pre2 Trainer"
+#define VERSION "ge-next 0.3-pre3 Trainer"
 #define GEHELP  "MPOG2HLP.MCV"
 #define GEMSG   "MPOG2MSG.MCV"
 #else
-#define VERSION "ge-next 0.3-pre2"
+#define VERSION "ge-next 0.3-pre3"
 #define GEHELP  "MPOGEHLP.MCV"
 #define GEMSG   "MPOGEMSG.MCV"
 #endif

@@ -3708,6 +3708,14 @@ NEW14 {
 [1;36mYour ship now has a Mark-%d phaser.[1;37m
 } T GE new phaser message
 
+NEW15S {
+[1;36mYour ship already has a Mark-%d shield.[1;37m
+} T GE new phaser message
+
+NEW15P {
+[1;36mYour ship already has a Mark-%d phaser.[1;37m
+} T GE new phaser message
+
 NEW16 {
 [1;36mYou already have %d ships, the maximum amount permitted by galactic law.[1;37m
 } T GE you have too many ships message
