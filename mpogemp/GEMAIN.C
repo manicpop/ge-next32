@@ -824,9 +824,24 @@ for(i=0;i<nmods;i++)
 int FUNC gelogon(void)
 {
 
+int i;
+int other_ge_present = FALSE;
+
+for (i = 0; i < nmods; ++i)
+	{
+	if (module[i] == &mpoge)	/* we see ourself */
+		continue;
+
+	if (sameas((char *)module[i]->descrp, "Galactic Empire"))	/* hello there */
+		{
+		other_ge_present = TRUE;
+		break;
+		}
+	}
+
 setmbk(gemb);
 
-if (!hasmkey(PLAYKEY))
+if (!hasmkey(PLAYKEY) || other_ge_present == TRUE)
 	return(0);
 
  /* BJ CHANGED FROM USRACC */
