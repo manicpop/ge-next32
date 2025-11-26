@@ -1564,13 +1564,6 @@ if (neutral(&(wptr->coord)))
 dist = cdistance(&ptr->coord,&(wptr->coord));
 if (wptr->cloak < 10 && (dist*10000.0) < (double)shipclass[warsptr->shpclass].scanrange)
 	{
-	if (wptr->status == GESTAT_AUTO)	/* if npc... */
-		{
-		wptr->cybmine = usrn;	/* engage user */
-		wptr->tick = 2;		/* do it fast */
-		wptr->npcmsg = 255;	/* reset annoy msg tracking */
-		}
-
 	speed = ptr->speed + wptr->speed;
 
 	if (type == 0) /* torpedo */
@@ -1598,6 +1591,12 @@ if (wptr->cloak < 10 && (dist*10000.0) < (double)shipclass[warsptr->shpclass].sc
 			outprfge(FILTER,ship);
 			}
 		lockwarn = TRUE;
+		if (wptr->status == GESTAT_AUTO)	/* if npc... */
+			{
+			wptr->cybmine = usrn;	/* engage user */
+			wptr->tick = 2;		/* do it fast */
+			wptr->npcmsg = 255;	/* reset annoy msg tracking */
+			}
 		return(1);
 		}
 	else
