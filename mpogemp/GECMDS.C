@@ -532,6 +532,13 @@ if (warsptr->where == 1)
 	return;
 	}
 
+if (warsptr->damage >= 100)
+	{
+	prfmsg(RNDNAVG);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
 if (margc == 3)
 	strcpy(gechrbuf,margv[2]);
 else
@@ -610,6 +617,12 @@ if (warsptr->topspeed == 0 && atoi(margv[1]) != 0)
 	return;
 	}
 
+if (warsptr->damage >= 100)
+	{
+	prfmsg(RNDNAVG);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
 
 if (margc < 2 || margc > 3)
 	{
@@ -1007,7 +1020,7 @@ if (ptr->cloak > 0 )
 
 if (ptr->damage >= 100) /* no firing in the brief period between going over 100 and blowing up */
 	{
-	prfmsg(FRCTER);
+	prfmsg(RNDPHSR);
 	outprfge(ALWAYS,usrn);
 	return;
 	}
@@ -1140,7 +1153,7 @@ double factor;
 
 if (ptr->damage >= 100)
 	{
-	prfmsg(FRCTER);
+	prfmsg(RNDPHSR);
 	outprfge(ALWAYS,usrn);
 	return;
 	}
@@ -1338,7 +1351,7 @@ int	i;
 
 if (ptr->damage >= 100)
 	{
-	prfmsg(FRCTER);
+	prfmsg(RNDFCNT);
 	outprfge(ALWAYS,usrn);
 	return(0);
 	}
@@ -1483,7 +1496,7 @@ int i;
 
 if (ptr->damage >= 100)
 	{
-	prfmsg(FRCTER);
+	prfmsg(RNDFCNT);
 	outprfge(ALWAYS,usrnum);
 	return(0);
 	}
@@ -1746,6 +1759,13 @@ if (warsptr->cloak > 0 )
 	return;
 	}
 
+if (warsptr->damage >= 100)
+	{
+	prfmsg(RNDDECY);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
 if (warsptr->items[I_DECOYS] == 0)
 	{
 	prfmsg(NODECOYS);
@@ -1794,6 +1814,13 @@ if (!shipclass[warsptr->shpclass].has_jam)
 if (warsptr->items[I_JAMMERS] == 0)
 	{
 	prfmsg(JAMMER1);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if (warsptr->damage >= 100)
+	{
+	prfmsg(RNDJAMR);
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
@@ -1891,6 +1918,13 @@ if (warsptr->cloak > 0 )
 	return;
 	}
 
+if (warsptr->damage >= 100)
+	{
+	prfmsg(RNDZIPR);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
 if (warsptr->items[I_ZIPPERS] == 0)
 	{
 	prfmsg(ZIPPER1);
@@ -1968,6 +2002,13 @@ if (neutral(&warsptr->coord))
 if (warsptr->cloak > 0 )
 	{
 	prfmsg(PCLOKUP,"The mine launcher is");
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if (warsptr->damage >= 100)
+	{
+	prfmsg(RNDMINE);
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
@@ -2547,7 +2588,7 @@ int damage;
 
 {
 if (damage < 2)
-	strcpy(gechrbuf,"no");
+	strcpy(gechrbuf,"negligible");
 else
 if (damage < 12)
 	strcpy(gechrbuf,"very light");
@@ -2619,6 +2660,13 @@ void FUNC cmd_scan()
 if (warsptr->tactical != 0)
 	{
 	prfmsg(TABROKE);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if (warsptr->damage >= 100)
+	{
+	prfmsg(RNDTACT);
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
@@ -3651,6 +3699,13 @@ if (warsptr->where == 1)
 	return;
 	}
 
+if (warsptr->damage >= 100)
+	{
+	prfmsg(RNDSHLD);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
 if (margc != 2)
 	{
 	prfmsg(FORMAT,"SHIELD");
@@ -3718,10 +3773,16 @@ if (margc != 2)
 	return;
 	}
 
-
 if (warsptr->where == 1)
 	{
 	prfmsg(CLOK1);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if (warsptr->damage >= 100)
+	{
+	prfmsg(RNDCLOK);
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
@@ -5748,41 +5809,6 @@ if (sameas("assigncybs",margv[1]) && margc == 2)
 	assign_cybs(usrnum,0);
 	prfmsg(SYSACY);
 	outprfge(ALWAYS,usrnum);
-	return;
-	}
-else
-if (sameas("tl",margv[1]) && margc == 2)
-	{
-	warsptr->coord.xcoord = -300.0000;
-	warsptr->coord.ycoord = -300.0000;
-	return;
-	}
-else
-if (sameas("tr",margv[1]) && margc == 2)
-	{
-	warsptr->coord.xcoord = 300.9999;
-	warsptr->coord.ycoord = -300.0000;
-	return;
-	}
-else
-if (sameas("bl",margv[1]) && margc == 2)
-	{
-	warsptr->coord.xcoord = -300.0000;
-	warsptr->coord.ycoord = 300.9999;
-	return;
-	}
-else
-if (sameas("br",margv[1]) && margc == 2)
-	{
-	warsptr->coord.xcoord = 300.9999;
-	warsptr->coord.ycoord = 300.9999;
-	return;
-	}
-else
-if (sameas("pos", margv[1]) && margc == 3)
-	{
-	warsptr->coord.xcoord = 0.5 + (99999.0 / 10000.0) * sin(atoi(margv[2]) * PI / 180.0);
-	warsptr->coord.ycoord = 0.5 - (99999.0 / 10000.0) * cos(atoi(margv[2]) * PI / 180.0);
 	return;
 	}
 else

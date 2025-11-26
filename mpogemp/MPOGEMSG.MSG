@@ -2334,6 +2334,22 @@ RNDFCNT {***
 [0;37m[[0;31mWARNING![0;37m] The fire control systems have been damaged! Damage Control notified![1;37m
 } T GE fire control knocked out message
 
+RNDJAMR {***
+[0;37m[[0;31mWARNING![0;37m] The jammer launcher has been damaged! Damage Control notified![1;37m
+} T GE fire control knocked out message
+
+RNDMINE {***
+[0;37m[[0;31mWARNING![0;37m] The mine launcher has been damaged! Damage Control notified![1;37m
+} T GE fire control knocked out message
+
+RNDZIPR {***
+[0;37m[[0;31mWARNING![0;37m] The zipper launcher has been damaged! Damage Control notified![1;37m
+} T GE fire control knocked out message
+
+RNDDECY {***
+[0;37m[[0;31mWARNING![0;37m] The decoy launcher has been damaged! Damage Control notified![1;37m
+} T GE fire control knocked out message
+
 RNDXX1 {***
 [0;37m[[1;31mCAUTION[0;37m] The mess hall has been damaged! Damage Control notified![1;37m
 } T GE display only knock out message 1
