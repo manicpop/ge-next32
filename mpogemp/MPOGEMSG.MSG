@@ -2082,6 +2082,10 @@ PDEFLECT {
 [0;37mThe phasers were deflected by [0;36m%s[0;37m's ship's shields![1;37m
 } T GE phasers you fired deflected message
 
+PDEFNEUT {
+[0;37mThe neutral zone protected [0;36m%s[0;37m's ship from the phasers![1;37m
+} T GE phasers you fired deflected message
+
 PDEFLNPC {
 [0;37mThe phasers were deflected by [0;36m%s[0;37m's shields![1;37m
 } T GE phasers you fired deflected message

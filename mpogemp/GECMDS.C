@@ -1047,79 +1047,83 @@ if (ptr->phasr >=PMINFIRE)
 		wptr=warshpoff(othusn);
 		if (ingegame(othusn) && (wptr->where != 1 || ptr->phasrtype >= phatowrp))
 			{
-			if (othusn != usrn && !neutral(&wptr->coord) && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
+			if (othusn != usrn && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
 				|| shipclass[ptr->shpclass].faction == 0) && (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn))
 				{
 				heading = (unsigned)vector(&ptr->coord,&wptr->coord);
 				if (smallest(heading,deg) < ptr->percent+PHABIAS)
 					{
-					damage = pdamage(ptr,cdistance(&ptr->coord,&wptr->coord)*10000,ptr->percent);
-
-					factor = (double)(damage*(1+ptr->phasrtype/2));
+					factor = pdamage(ptr,cdistance(&ptr->coord,&wptr->coord)*10000,ptr->percent);
+					factor *= 1.0 + (double)ptr->phasrtype / 2.0;
 					factor = ton_fact(wptr,factor);
 
 					/* lower it for hyper */
 					if (wptr->where == 1)
 						factor = factor /2.0;
 
-					damage = (int)(factor);
-
-					/* sysop phaser */
-					if (ptr->phasrtype == 20)
-						damage = 101;
-					if (damage >= 1)
+					if (factor > 0.0)
 						{
-						hitone = TRUE;
-						/* prioritize user hits over npcs so users get credit */
-						if (wptr->damage < 100 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
-							wptr->lastfired = usrn;
-						wptr->cantexit = FIRETICKS;
-						ptr->cantexit = FIRETICKS;
-						if (wptr->status == GESTAT_AUTO)	/* if npc... */
+						if (neutral(&wptr->coord))
 							{
-							wptr->cybmine = usrn;	/* engage user */
-							wptr->tick = 2;		/* do it fast */
-							wptr->npcmsg = 255;	/* reset annoy msg tracking */
-							}
-						if (wptr->shieldstat != SHIELDUP)
-							{
-							damstr(damage);
-							if (wptr->status == GESTAT_AUTO)
-								prfmsg(PHITNPC,gechrbuf,username(wptr));
-							else
-								prfmsg(PHITHIM,gechrbuf,username(wptr));
+							prfmsg(PDEFNEUT,username(wptr));
 							outprfge(ALWAYS,usrn);
-							if (ptr->status == GESTAT_AUTO)
-								prfmsg(PNPCHIT,username(ptr),gechrbuf);
-							else
-								prfmsg(PHITYOU,username(ptr),gechrbuf);
-							outprfge(ALWAYS,othusn);
-							/* cap npc-on-npc phasers so big ships don't get one shot kills */
-							if (ptr->status == GESTAT_AUTO && wptr->status == GESTAT_AUTO &&
-								damage >= ((shipclass[ptr->shpclass].tough_factor+1)*5+5))
-								wptr->damage += (double)((shipclass[ptr->shpclass].tough_factor+1)*5+(gernd()%5)+1);
-							else
-								wptr->damage += (double)damage;
-							wuptr = warusroff(usrn);
-							set_dislike(wuptr,shipclass[wptr->shpclass].faction,damage);
 							}
 						else
 							{
-							shieldhit(wptr,othusn,damage); /* modify the damage */
-							wuptr = warusroff(usrn);
-							set_dislike(wuptr,shipclass[wptr->shpclass].faction,2);
-							if (wptr->status == GESTAT_AUTO)
-								prfmsg(PDEFLNPC,username(wptr));
+							if (factor < 1.0)	/* hit, but no damage */
+								factor = 0.0;
+							hitone = TRUE;
+							/* prioritize user hits over npcs so users get credit */
+							if (wptr->damage < 100 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
+								wptr->lastfired = usrn;
+							wptr->cantexit = FIRETICKS;
+							ptr->cantexit = FIRETICKS;
+							if (wptr->status == GESTAT_AUTO)	/* if npc... */
+								{
+								wptr->cybmine = usrn;	/* engage user */
+								wptr->tick = 2;		/* do it fast */
+								wptr->npcmsg = 255;	/* reset annoy msg tracking */
+								}
+							if (wptr->shieldstat != SHIELDUP)
+								{
+								damstr((int)factor);
+								if (wptr->status == GESTAT_AUTO)
+									prfmsg(PHITNPC,gechrbuf,username(wptr));
+								else
+									prfmsg(PHITHIM,gechrbuf,username(wptr));
+								outprfge(ALWAYS,usrn);
+								if (ptr->status == GESTAT_AUTO)
+									prfmsg(PNPCHIT,username(ptr),gechrbuf);
+								else
+									prfmsg(PHITYOU,username(ptr),gechrbuf);
+								outprfge(ALWAYS,othusn);
+								/* cap npc-on-npc phasers so big ships don't get one shot kills */
+								if (ptr->status == GESTAT_AUTO && wptr->status == GESTAT_AUTO &&
+									factor >= (double)((shipclass[ptr->shpclass].tough_factor+1)*5+5))
+									wptr->damage += (double)((shipclass[ptr->shpclass].tough_factor+1)*5+(gernd()%5)+1);
+								else
+									wptr->damage += factor;
+								wuptr = warusroff(usrn);
+								set_dislike(wuptr,shipclass[wptr->shpclass].faction,(int)factor);
+								}
 							else
-								prfmsg(PDEFLECT,username(wptr));
-							outprfge(ALWAYS,usrn);
-							if (ptr->status == GESTAT_AUTO)
-								prfmsg(PNPCDEF,username(ptr),(int)damage);
-							else
-								prfmsg(PHITDEF,username(ptr),(int)damage);
-							outprfge(ALWAYS,othusn);
+								{
+								shieldhit(wptr,othusn,(int)factor); /* modify the damage */
+								wuptr = warusroff(usrn);
+								set_dislike(wuptr,shipclass[wptr->shpclass].faction,2);
+								if (wptr->status == GESTAT_AUTO)
+									prfmsg(PDEFLNPC,username(wptr));
+								else
+									prfmsg(PDEFLECT,username(wptr));
+								outprfge(ALWAYS,usrn);
+								if (ptr->status == GESTAT_AUTO)
+									prfmsg(PNPCDEF,username(ptr),(int)factor);
+								else
+									prfmsg(PHITDEF,username(ptr),(int)factor);
+								outprfge(ALWAYS,othusn);
+								}
+							randamage(wptr,othusn); /*assess any random damage */
 							}
-						randamage(wptr,othusn); /*assess any random damage */
 						}
 					}
 				}
@@ -1133,10 +1137,6 @@ else
 	{
 	prfmsg(PHANONE);
 	outprfge(ALWAYS,usrn);
-	}
-if (ptr->shieldstat == SHIELDUP)
-	{
-	shieldup(ptr,usrn);
 	}
 }
 
@@ -1177,7 +1177,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 		wptr=warshpoff(othusn);
 		if (ingegame(othusn) && wptr->where == 1)
 			{
-			if (othusn != usrn && !neutral(&wptr->coord) && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
+			if (othusn != usrn && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
 				|| shipclass[ptr->shpclass].faction == 0) && (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn))
 				{
 				heading = (unsigned)vector(&ptr->coord,&wptr->coord);
@@ -1188,52 +1188,54 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 					if (ddistance < (double)shipclass[ptr->shpclass].scanrange)
 						{
 
-						damage = pdamage(ptr,ddistance,0);
-
-						factor = (double)(damage*(1+ptr->phasrtype/2));
-
+						factor = pdamage(ptr,ddistance,0);
+						factor *= 1.0 + (double)ptr->phasrtype / 2.0;
 						factor = ton_fact(wptr,factor);
 
-						damage = (int)(factor);
-
-						/* sysop phaser */
-						if (ptr->phasrtype == 20)
-							damage = 101;
-
-						damstr(damage);
-
-						if (wptr->status == GESTAT_AUTO)
-							prfmsg(HPHITN,gechrbuf,username(wptr));
-						else
-							prfmsg(HPHITM,gechrbuf,username(wptr));
-						outprfge(ALWAYS,usrn);
-						if (ptr->status == GESTAT_AUTO)
-							prfmsg(HPNHITU,username(ptr),gechrbuf);
-						else
-							prfmsg(HPHITU,username(ptr),gechrbuf);
-						outprfge(ALWAYS,othusn);
-						if (damage >= 1)
+						if (factor > 0.0)
 							{
-							/* prioritize user hits over npcs so users get credit */
-							if (wptr->damage < 100 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
-								wptr->lastfired = usrn;
-							/* cap npc-on-npc phasers so big ships don't get one shot kills */
-							if (ptr->status == GESTAT_AUTO && wptr->status == GESTAT_AUTO &&
-								damage >= ((shipclass[ptr->shpclass].tough_factor+1)*5+5))
-								wptr->damage += (double)((shipclass[ptr->shpclass].tough_factor+1)*5+(gernd()%5)+1);
-							else
-								wptr->damage += (double)damage;
-							wuptr = warusroff(usrn);
-							set_dislike(wuptr,shipclass[wptr->shpclass].faction,damage);
-							if (wptr->status == GESTAT_AUTO)	/* if npc... */
+							if (neutral(&wptr->coord))
 								{
-								wptr->cybmine = usrn;	/* engage user */
-								wptr->tick = 2;		/* do it fast */
-								wptr->npcmsg = 255;	/* reset annoy msg tracking */
+								prfmsg(PDEFNEUT,username(wptr));
+								outprfge(ALWAYS,usrn);
 								}
-							wptr->cantexit = FIRETICKS;
-							ptr->cantexit = FIRETICKS;
-							randamage(wptr,othusn); /*assess any random damage */
+							else
+								{
+								if (factor < 1.0)	/* hit, but no damage */
+									factor = 0.0;
+								damstr((int)factor);
+
+								if (wptr->status == GESTAT_AUTO)
+									prfmsg(HPHITN,gechrbuf,username(wptr));
+								else
+									prfmsg(HPHITM,gechrbuf,username(wptr));
+								outprfge(ALWAYS,usrn);
+								if (ptr->status == GESTAT_AUTO)
+									prfmsg(HPNHITU,username(ptr),gechrbuf);
+								else
+									prfmsg(HPHITU,username(ptr),gechrbuf);
+								outprfge(ALWAYS,othusn);
+								/* prioritize user hits over npcs so users get credit */
+								if (wptr->damage < 100 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
+									wptr->lastfired = usrn;
+								/* cap npc-on-npc phasers so big ships don't get one shot kills */
+								if (ptr->status == GESTAT_AUTO && wptr->status == GESTAT_AUTO &&
+									factor >= (double)((shipclass[ptr->shpclass].tough_factor+1)*5+5))
+									wptr->damage += (double)((shipclass[ptr->shpclass].tough_factor+1)*5+(gernd()%5)+1);
+								else
+									wptr->damage += factor;
+								wuptr = warusroff(usrn);
+								set_dislike(wuptr,shipclass[wptr->shpclass].faction,(int)factor);
+								if (wptr->status == GESTAT_AUTO)	/* if npc... */
+									{
+									wptr->cybmine = usrn;	/* engage user */
+									wptr->tick = 2;		/* do it fast */
+									wptr->npcmsg = 255;	/* reset annoy msg tracking */
+									}
+								wptr->cantexit = FIRETICKS;
+								ptr->cantexit = FIRETICKS;
+								randamage(wptr,othusn); /*assess any random damage */
+								}
 							}
 						}
 					}
@@ -2586,6 +2588,9 @@ void FUNC damstr(damage)
 int damage;
 
 {
+if (damage == 0)
+	strcpy(gechrbuf,"no");
+else
 if (damage < 2)
 	strcpy(gechrbuf,"negligible");
 else

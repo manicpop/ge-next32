@@ -146,7 +146,7 @@
 /*    2082 */ int FUNC valpcnt P((char *ptr , unsigned minnum , unsigned maxnum ));
 /*    2113 */ int FUNC valdegree P((char *ptr ));
 /*    2136 */ void FUNC randamage P((WARSHP *ptr , int usrn ));
-/*    2240 */ unsigned FUNC pdamage P((WARSHP *wptr , double dist , int foc ));
+/*    2240 */ double FUNC pdamage P((WARSHP *wptr , double dist , int foc ));
 /*    2317 */ void FUNC setsect P((WARSHP *ptr ));
 /*    2333 */ void FUNC movecoord P((COORD *pointb , COORD *pointa ));
 /*    2346 */ int FUNC samesect P((COORD *pointb , COORD *pointa ));

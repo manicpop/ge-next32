@@ -2516,14 +2516,14 @@ if (ptr->damage > 20.0)
 ** Determine the damage amount                                           **
 **************************************************************************/
 
-unsigned FUNC pdamage(wptr,dist,foc)
+double FUNC pdamage(wptr,dist,foc)
 WARSHP	*wptr;
 double	dist;
 int	foc;
 
 {
-double dd,fd,dp,factor,disfact;
-unsigned dam;
+double dd,fd,dp,factor,disfact,dam;
+
 #ifdef MBBSEMU
 int i;
 double fractional;
@@ -2532,22 +2532,22 @@ double fractional;
 if (wptr->where == 1)
 	{
 	factor = hpfirdst;
-	dd = 1-(dist/40000.0);
-	if (dd<0)
-		dd = 0;
+	dd = 1.0 - (dist / 40000.0);
+	if (dd < 0.0)
+		dd = 0.0;
 
 #ifdef MBBSEMU
 	dp = 1.0;
-	if (factor > 0)
+	if (factor > 0.0)
 		{
 		for (i = 0; i < (int)factor; ++i)
 			dp *= dd;
 		fractional = factor - (int)factor;
-		if (fractional > 0 && dd > 0)
-			dp *= 1 + fractional * (dd - 1);
+		if (fractional > 0.0 && dd > 0.0)
+			dp *= 1.0 + fractional * (dd - 1.0);
 		}
 	else
-		dp = 0;
+		dp = 0.0;
 #else
 	dp = pow(dd,factor);
 #endif
@@ -2556,34 +2556,38 @@ if (wptr->where == 1)
 else
 	{
 	factor = pfirdist;
-	disfact = 20000.0+((double)wptr->phasrtype*4000.0);
-	dd = 1-(dist/disfact);
-	if (dd<0)
-		dd=0;
-	fd = 1 - ((double)foc/11);
+	disfact = 20000.0 + ((double)wptr->phasrtype * 4000.0);
+	dd = 1.0 - (dist/disfact);
+	if (dd < 0.0)
+		dd = 0.0;
+	fd = 1.0 - ((double)foc / 11.0);
 
 #ifdef MBBSEMU
 	dp = 1.0;
-	if (factor > 0)
+	if (factor > 0.0)
 		{
 		for (i = 0; i < (int)factor; ++i)
-		dp *= dd;
+			dp *= dd;
 		fractional = factor - (int)factor;
-		if (fractional > 0 && dd > 0)
-		dp *= 1 + fractional * (dd - 1);
+		if (fractional > 0.0 && dd > 0.0)
+			dp *= 1.0 + fractional * (dd - 1.0);
 		}
 	else
 		{
-		dp = 0;
+		dp = 0.0;
 		}
-	dp *= (fd * fd) * (wptr->phasr / 100);
+	dp *= (fd * fd) * (wptr->phasr / 100.0);
 #else
-	dp = (pow(dd,factor)) * (fd*fd) * (wptr->phasr/100);
+	dp = (pow(dd,factor)) * (fd*fd) * (wptr->phasr/100.0);
 #endif
 	dam = pdammax * dp;
 	}
 
-logthis(spr("Pdamage %s %ld %d",wptr->userid,(long)dist,dam));
+sprintf(gechrbuf3,"%f",dam);
+prf("pdamage returns: %s\r",gechrbuf3);
+outprfge(ALWAYS,0);
+
+logthis(spr("Pdamage %s %ld %d",wptr->userid,(long)dist,(unsigned)dam));
 return (dam);
 
 }
