@@ -358,7 +358,7 @@ to reduce. Because this is factored down by range and
 phaser type you can set the value to numbers greater
 than 100.
 
-HPDAMMAX {Hyperphaser maximum damage: 50} N 1 200
+HPDAMMAX {Hyperphaser maximum damage: 40} N 1 200
 
 This option controls the effective distance of the 
 Hyperphasers. Decrease to extend their range, 
@@ -372,7 +372,7 @@ to reduce. Because this is factored down by range and
 phaser type you can set the value to numbers greater
 than 100.
 
-PDAMMAX {Phaser maximum damage: 50} N 1 200
+PDAMMAX {Phaser maximum damage: 40} N 1 200
 
 This option controls what class of phasers can fire
 from Impulse to Warp. The default is 3. To make all

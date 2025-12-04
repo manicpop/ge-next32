@@ -2583,11 +2583,7 @@ else
 	dam = pdammax * dp;
 	}
 
-sprintf(gechrbuf3,"%f",dam);
-prf("pdamage returns: %s\r",gechrbuf3);
-outprfge(ALWAYS,0);
-
-logthis(spr("Pdamage %s %ld %d",wptr->userid,(long)dist,(unsigned)dam));
+logthis(spr("Pdamage %s %ld %d",wptr->userid,(long)dist,(int)dam));
 return (dam);
 
 }

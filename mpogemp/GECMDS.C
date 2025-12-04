@@ -1045,7 +1045,8 @@ if (ptr->phasr >=PMINFIRE)
 	for (othusn=0 ; othusn < nships ; othusn++)
 		{
 		wptr=warshpoff(othusn);
-		if (ingegame(othusn) && (wptr->where != 1 || ptr->phasrtype >= phatowrp))
+		ddistance = cdistance(&ptr->coord,&wptr->coord)*10000;
+		if (ingegame(othusn) && (wptr->where != 1 || ptr->phasrtype >= phatowrp) && ddistance < 100000.0)
 			{
 			if (othusn != usrn && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
 				|| shipclass[ptr->shpclass].faction == 0) && (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn))
@@ -1053,9 +1054,21 @@ if (ptr->phasr >=PMINFIRE)
 				heading = (unsigned)vector(&ptr->coord,&wptr->coord);
 				if (smallest(heading,deg) < ptr->percent+PHABIAS)
 					{
-					factor = pdamage(ptr,cdistance(&ptr->coord,&wptr->coord)*10000,ptr->percent);
-					factor *= 1.0 + (double)ptr->phasrtype / 2.0;
+					factor = pdamage(ptr,ddistance,ptr->percent);
+
+					/* sprintf(gechrbuf3,"%f",factor);
+					prf("pdamage returns: %s\r",gechrbuf3); */
+
+					factor *= 0.5 + (double)ptr->phasrtype / 2.0;
+
+					/* sprintf(gechrbuf3,"%f",factor);
+					prf("after phasrtype adjustment: %s\r",gechrbuf3); */
+
 					factor = ton_fact(wptr,factor);
+
+					/* sprintf(gechrbuf3,"%f",factor);
+					prf("after ton_fact adjustment: %s\r",gechrbuf3);
+					outprfge(ALWAYS,usrn); */
 
 					/* lower it for hyper */
 					if (wptr->where == 1)
@@ -1175,7 +1188,8 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 	for (othusn=0 ; othusn < nships ; othusn++)
 		{
 		wptr=warshpoff(othusn);
-		if (ingegame(othusn) && wptr->where == 1)
+		ddistance = cdistance(&ptr->coord,&wptr->coord)*10000;
+		if (ingegame(othusn) && wptr->where == 1 && ddistance < 100000.0)
 			{
 			if (othusn != usrn && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
 				|| shipclass[ptr->shpclass].faction == 0) && (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn))
@@ -1183,14 +1197,23 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 				heading = (unsigned)vector(&ptr->coord,&wptr->coord);
 				if (smallest(heading,deg) < HPBEAMW)
 					{
-					/* calculate the relative damage done */
-					ddistance = cdistance(&ptr->coord,&wptr->coord)*10000;
 					if (ddistance < (double)shipclass[ptr->shpclass].scanrange)
 						{
-
 						factor = pdamage(ptr,ddistance,0);
-						factor *= 1.0 + (double)ptr->phasrtype / 2.0;
+
+						/* sprintf(gechrbuf3,"%f",factor);
+						prf("pdamage returns: %s\r",gechrbuf3); */
+
+						factor *= 0.5 + (double)ptr->phasrtype / 2.0;
+
+						/* sprintf(gechrbuf3,"%f",factor);
+						prf("after phasrtype adjustment: %s\r",gechrbuf3); */
+
 						factor = ton_fact(wptr,factor);
+
+						/* sprintf(gechrbuf3,"%f",factor);
+						prf("after ton_fact adjustment: %s\r",gechrbuf3);
+						outprfge(ALWAYS,usrn); */
 
 						if (factor > 0.0)
 							{
