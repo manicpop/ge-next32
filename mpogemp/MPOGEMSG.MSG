@@ -2066,6 +2066,10 @@ PHITHIM {
 [0;37mThe phasers caused [0;31m%s[0;37m damage to [0;36m%s[0;37m's ship![1;37m
 } T GE phaser hit someone message
 
+PHITHIMC {
+[0;37mThe phasers caused [0;31m%s[0;37m damage to a cloaked ship![1;37m
+} T GE phaser hit someone message
+
 PHITNPC {
 [0;37mThe phasers caused [0;31m%s[0;37m damage to [0;36m%s[0;37m![1;37m
 } T GE phaser hit someone message
@@ -2080,6 +2084,10 @@ PNPCHIT {***
 
 PDEFLECT {
 [0;37mThe phasers were deflected by [0;36m%s[0;37m's ship's shields![1;37m
+} T GE phasers you fired deflected message
+
+PDEFLECC {
+[0;37mThe phasers were deflected by a cloaked ship's shields![1;37m
 } T GE phasers you fired deflected message
 
 PDEFNEUT {

@@ -1055,20 +1055,8 @@ if (ptr->phasr >=PMINFIRE)
 				if (smallest(heading,deg) < ptr->percent+PHABIAS)
 					{
 					factor = pdamage(ptr,ddistance,ptr->percent);
-
-					/* sprintf(gechrbuf3,"%f",factor);
-					prf("pdamage returns: %s\r",gechrbuf3); */
-
 					factor *= 0.5 + (double)ptr->phasrtype / 2.0;
-
-					/* sprintf(gechrbuf3,"%f",factor);
-					prf("after phasrtype adjustment: %s\r",gechrbuf3); */
-
 					factor = ton_fact(wptr,factor);
-
-					/* sprintf(gechrbuf3,"%f",factor);
-					prf("after ton_fact adjustment: %s\r",gechrbuf3);
-					outprfge(ALWAYS,usrn); */
 
 					/* lower it for hyper */
 					if (wptr->where == 1)
@@ -1100,6 +1088,9 @@ if (ptr->phasr >=PMINFIRE)
 							if (wptr->shieldstat != SHIELDUP)
 								{
 								damstr((int)factor);
+								if (wptr->cloak == 10)
+									prfmsg(PHITHIMC,gechrbuf);
+								else
 								if (wptr->status == GESTAT_AUTO)
 									prfmsg(PHITNPC,gechrbuf,username(wptr));
 								else
@@ -1124,6 +1115,9 @@ if (ptr->phasr >=PMINFIRE)
 								shieldhit(wptr,othusn,(int)factor); /* modify the damage */
 								wuptr = warusroff(usrn);
 								set_dislike(wuptr,shipclass[wptr->shpclass].faction,2);
+								if (wptr->cloak == 10)
+									prfmsg(PDEFLECC);
+								else
 								if (wptr->status == GESTAT_AUTO)
 									prfmsg(PDEFLNPC,username(wptr));
 								else
@@ -1200,20 +1194,8 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 					if (ddistance < (double)shipclass[ptr->shpclass].scanrange)
 						{
 						factor = pdamage(ptr,ddistance,0);
-
-						/* sprintf(gechrbuf3,"%f",factor);
-						prf("pdamage returns: %s\r",gechrbuf3); */
-
 						factor *= 0.5 + (double)ptr->phasrtype / 2.0;
-
-						/* sprintf(gechrbuf3,"%f",factor);
-						prf("after phasrtype adjustment: %s\r",gechrbuf3); */
-
 						factor = ton_fact(wptr,factor);
-
-						/* sprintf(gechrbuf3,"%f",factor);
-						prf("after ton_fact adjustment: %s\r",gechrbuf3);
-						outprfge(ALWAYS,usrn); */
 
 						if (factor > 0.0)
 							{
