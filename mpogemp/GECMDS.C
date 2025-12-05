@@ -1039,7 +1039,7 @@ if (ptr->phasr >=PMINFIRE)
 		outprfge(ALWAYS,usrn);
 		return;
 		}
-	deg = (unsigned)normal(ptr->heading + (double)ptr->degrees);
+	deg = (unsigned)(normal(ptr->heading + (double)ptr->degrees) + 0.5);
 	prfmsg(PFIRED,(int)ptr->phasr,ptr->percent);
 	outprfge(FILTER,usrn);
 	for (othusn=0 ; othusn < nships ; othusn++)
@@ -1051,7 +1051,7 @@ if (ptr->phasr >=PMINFIRE)
 			if (othusn != usrn && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
 				|| shipclass[ptr->shpclass].faction == 0) && (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn))
 				{
-				heading = (unsigned)vector(&ptr->coord,&wptr->coord);
+				heading = (unsigned)(vector(&ptr->coord,&wptr->coord) + 0.5);
 				if (smallest(heading,deg) < ptr->percent+PHABIAS)
 					{
 					factor = pdamage(ptr,ddistance,ptr->percent);
