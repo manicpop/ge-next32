@@ -428,27 +428,25 @@ if (genearas(margv[1],"class"))
 					sprintf(gechrbuf4,"%d",shipclass[i].max_accel);
 
 				if (shipclass[i].max_warp == 0)
-					sprintf(gechrbuf5,"%s N",CLR_RED1);
+					sprintf(gechrbuf5,"%sN",CLR_RED1);
 				else
-					sprintf(gechrbuf5,"%d",shipclass[i].max_warp);
+					sprintf(gechrbuf5,"%s%d",CLR_WHITE2,shipclass[i].max_warp);
 
 				if (shipclass[i].max_shlds == 0)
-					sprintf(gechrbuf6,"%s N",CLR_RED1);
+					sprintf(gechrbuf6,"%sN",CLR_RED1);
 				else
-					sprintf(gechrbuf6,"%d",shipclass[i].max_shlds);
+					sprintf(gechrbuf6,"%s%d",CLR_WHITE2,shipclass[i].max_shlds);
 
 				if (shipclass[i].max_phasr == 0)
-					sprintf(gechrbuf7,"%s N",CLR_RED1);
+					sprintf(gechrbuf7,"%sN",CLR_RED1);
 				else
-					sprintf(gechrbuf7,"%d",shipclass[i].max_phasr);
+					sprintf(gechrbuf7,"%s%d",CLR_WHITE2,shipclass[i].max_phasr);
 
-				prf("%s%2d %s%-24s %s%5s %s%2s %2s %2s %s %s %s %s %s %s %s %s %s%3s %4s %4s %5d\r",
+				prf("%s%2d %s%-24s %s%5s %9s %9s %9s %s %s %s %s %s %s %s %s %s%3s %4s %4s %5d\r",
 					CLR_CYAN2, i+1,
 					CLR_CYAN1, shipclass[i].typename,
 					CLR_YELLOW1, gechrbuf2,
-					CLR_WHITE2, gechrbuf5,
-					gechrbuf6,
-					gechrbuf7,
+					gechrbuf5, gechrbuf6, gechrbuf7,
 					shipclass[i].max_torps ? CLR_GREEN2 "Y" : CLR_RED1 "N",
 					shipclass[i].max_missl ? CLR_GREEN2 "Y" : CLR_RED1 "N",
 					shipclass[i].has_mine ? CLR_GREEN2 "Y" : CLR_RED1 "N",
