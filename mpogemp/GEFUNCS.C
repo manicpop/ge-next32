@@ -1747,32 +1747,30 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 								{
 								damfact = (double)(ddist*minedammax);
 								damfact = ton_fact(wptr,damfact); /* adjust for weight */
-								damage = damfact;
-
-								damage = damage/(gernd()%5+wptr->shieldtype);
-								damstr(damage);
+								damfact = damfact/(gernd()%5+wptr->shieldtype);
+								damstr((int)damfact);
 								prfmsg(MINE4,bearing,udist,gechrbuf);
 								outprfge(FILTER,zothusn);
-								shieldhit(wptr,zothusn,damage+20);
+								shieldhit(wptr,zothusn,(int)damfact+20);
 								}
 							else
 								{
 								damfact = (double)(ddist*minedammax);
 								damfact = ton_fact(wptr,damfact); /* adjust for weight */
-								damage = damfact;
 
-								damstr(damage);
+								damstr((int)damfact);
 								prfmsg(MINE4,bearing,udist,gechrbuf);
 								outprfge(FILTER,zothusn);
 								}
-							wptr->damage += (double)damage;
+							wptr->damage += damfact;
+							randamage(wptr,zothusn,damfact);
 							/* don't set lastfired if NPC blows up its own kind or user blows up self */
 							if ((shipclass[wptr->shpclass].faction != shipclass[warshpoff((int)mptr->channel)->shpclass].faction ||
 								shipclass[wptr->shpclass].faction == 0 || shipclass[warshpoff((int)mptr->channel)->shpclass].faction == 0) &&
 								zothusn != (int)mptr->channel)
 								wptr->lastfired = (int)mptr->channel;
 							wuptr = warusroff((int)mptr->channel);
-							set_dislike(wuptr,shipclass[wptr->shpclass].faction,damage);
+							set_dislike(wuptr,shipclass[wptr->shpclass].faction,(int)damfact);
 							wptr->minesnear = FALSE;
 							/*DEBUG
 							prf("MINE: chn # %d gets credit\r",wptr->lastfired);
@@ -1890,7 +1888,7 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 				outprfge(ALWAYS,usrn);
 				acctm(ptr,usrn,0,tptr->channel);
 				}
-			randamage(ptr,usrn); /*assess any random damage */
+			randamage(ptr,usrn,damfact); /*assess any random damage */
 			}
 		else	/* still flying */
 			{
@@ -1995,7 +1993,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 					}
 				acctm(ptr,usrn,1,mptr->channel);
 				}
-			randamage(ptr,usrn); /*assess any random damage */
+			randamage(ptr,usrn,damfact); /*assess any random damage */
 			}
 		else
 			{
@@ -2410,17 +2408,15 @@ return(0);
 ** Assess any random damage                                              **
 **************************************************************************/
 
-void FUNC randamage(ptr,usrn)
+void FUNC randamage(ptr,usrn,hitdam)
 
 WARSHP	*ptr;
 int	usrn;
+double	hitdam;
 {
 int	a;
 
-if (ptr->shieldtype == 20)
-	return;
-
-if (ptr->damage > 20.0)
+if (hitdam > 10.0 && ptr->damage > 20.0)
 	{
 	/* toss dice to see if a system has been damaged */
 
@@ -2902,7 +2898,7 @@ wptr->shieldstat = SHIELDDN;
 }
 
 
-int FUNC shieldhit(wptr,usrn,dam)
+void FUNC shieldhit(wptr,usrn,dam)
 WARSHP	*wptr;
 int	usrn;
 int	dam;   /* 0% to 100% damage */
@@ -2911,15 +2907,10 @@ int	knock;
 
 double	dmax, ddam;
 
-/* There are 20 kinds of shields Mark-1 to Mark-20 */
-usrn = usrn; /* avoid the warning */
-
 dmax = (double)( 80 - ((int)wptr->shieldtype * SHIELD_FACTOR));
 
-if (wptr->shieldtype == 20)
+if (dmax < 0)
 	dmax = 0;
-
-if (dmax < 0) dmax = 0;
 
 ddam = dam;
 ddam /=100;	/* make it a percentile */
@@ -2940,7 +2931,6 @@ if (wptr->shield < SHMINCHG )
 	prfmsg(SHKNKDN);
 	outprfge(ALWAYS,usrn);
 	}
-return (knock);
 }
 
 
@@ -2949,9 +2939,6 @@ WARSHP	*wptr;
 int	usrn;
 {
 wptr->shield += (int)(wptr->shieldtype);
-
-if (wptr->shieldtype == 20)
-	wptr->shield = 1;
 
 if (wptr->shield > 0)
 	{
@@ -2973,14 +2960,9 @@ int		type;
 
 type = wptr->shieldtype;
 
-if (type < 20)
-	wptr->energy -=  (type*SHENGUSE);
-
+wptr->energy -=  (type*SHENGUSE);
 
 charge(wptr,&maxcharge,&pcnt); /* go figure maxcharge and percent */
-
-if (wptr->shieldtype == 20 && wptr->shield < maxcharge)
-	wptr->shield = maxcharge -1;
 
 if (wptr->shield < maxcharge)
 	{

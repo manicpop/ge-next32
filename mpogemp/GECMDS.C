@@ -1127,7 +1127,7 @@ if (ptr->phasr >=PMINFIRE)
 									prfmsg(PHITDEF,username(ptr),(int)factor);
 								outprfge(ALWAYS,othusn);
 								}
-							randamage(wptr,othusn); /*assess any random damage */
+							randamage(wptr,othusn,factor); /*assess any random damage */
 							}
 						}
 					}
@@ -1237,7 +1237,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 									}
 								wptr->cantexit = FIRETICKS;
 								ptr->cantexit = FIRETICKS;
-								randamage(wptr,othusn); /*assess any random damage */
+								randamage(wptr,othusn,factor); /*assess any random damage */
 								}
 							}
 						}

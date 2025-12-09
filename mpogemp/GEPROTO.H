@@ -145,7 +145,7 @@
 /*    1996 */ void FUNC destruct P((WARSHP *ptr , int usrn ));
 /*    2082 */ int FUNC valpcnt P((char *ptr , unsigned minnum , unsigned maxnum ));
 /*    2113 */ int FUNC valdegree P((char *ptr ));
-/*    2136 */ void FUNC randamage P((WARSHP *ptr , int usrn ));
+/*    2136 */ void FUNC randamage P((WARSHP *ptr , int usrn , double hitdam ));
 /*    2240 */ double FUNC pdamage P((WARSHP *wptr , double dist , int foc ));
 /*    2317 */ void FUNC setsect P((WARSHP *ptr ));
 /*    2333 */ void FUNC movecoord P((COORD *pointb , COORD *pointa ));
@@ -159,7 +159,7 @@
 /*    2585 */ int FUNC sendgemsg P((struct message *msgptr , char *usrid ));
 /*    2605 */ void FUNC shieldup P((WARSHP *wptr , int usrn ));
 /*    2615 */ void FUNC shielddn P((WARSHP *wptr , int usrn ));
-/*    2626 */ int FUNC shieldhit P((WARSHP *wptr , int usrn , int dam ));
+/*    2626 */ void FUNC shieldhit P((WARSHP *wptr , int usrn , int dam ));
 /*    2668 */ void FUNC shieldrep P((WARSHP *wptr , int usrn ));
 /*    2686 */ void FUNC shieldchg P((WARSHP *wptr , int usrn ));
 /*    2725 */ void FUNC charge P((WARSHP *wptr , int *max , int *pct ));
