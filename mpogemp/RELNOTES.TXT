@@ -22,6 +22,8 @@ The main focus of 0.3 is enhancements for user ships:
   warp damage is also saved, so drops in cruising speed can't
   be avoided by lowering speed right before a drop, then
   raising it again.
+* A new "negligible" damage string has been added for damage
+  between 0 and 2. Previously this was displayed as "no" damage.
 * Scans have been overhauled:
   - SCAN RA (which is a circular scan) has red highlighting
     showing where the scan doesn't reach.
@@ -70,6 +72,29 @@ The main focus of 0.3 is enhancements for user ships:
     jammed (however, if you are only lightly jammed, you are
     probably not in weapons range of the ship doing the jamming).
   - NPCs will still get confused by moderate to severe jamming.
+* Phasers have been overhauled:
+  - In classic GE, the spread of the phaser beam is biased to
+    to the port side. It's now realigned and centered.
+  - In classic GE, even-numbered phaser classes are no powerful
+    than the previous odd class (e.g. phaser 6 is just as
+    powerful as phaser 5). That missing half step has been added.
+  - The routine that determines phaser damage has reworked with
+    more floating point math. Phaser range is now smoother and
+    no longer "stair steps."
+  - This made the phasers a bit hotter so HPDAMMAX and PDAMMAX
+    defaults have been lowered from 50 to 40.
+  - What is a "hit" and is not has been reworked. Both phasers
+    and hyperphasers now have three ranges, no hit (and no
+    message), hit but no damage, and hit with damage. You will
+    no longer see hyperphaser hit messages for ships way out of
+    range, and you will see messages on 0 damage phaser hits
+    unless they are way out of range. NPCs will react to no
+    damage hits, but not no hits.
+  - Hitting a cloaked ship with a phaser will no longer reveal
+    its name.
+  - If a ship is in the path of your phaser but is protected
+    by the neutral zone, you will get a message. The other
+    ship won't though.
 
 Other stuff:
 * The list of ships presented at the start of the game will now
@@ -87,6 +112,8 @@ Other stuff:
   There were a multitude of reasons this was happening, but
   they should all be corrected now.
 * You can no longer jettison men, troops, or spies.
+* The all-powerful SYSOP level (20) of phasers and shields has
+  been removed.
 
 === 0.2.6 === 2025-08-15
 
