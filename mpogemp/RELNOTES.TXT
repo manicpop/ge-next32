@@ -114,6 +114,10 @@ Other stuff:
 * You can no longer jettison men, troops, or spies.
 * The all-powerful SYSOP level (20) of phasers and shields has
   been removed.
+* The random damage routine that determines if ship systems
+  are damaged after a hit has been reworked to include more
+  ship systems, and can also result in loss to onboard items.
+  Mine and ion cannon damage can now also trigger this routine.
 
 === 0.2.6 === 2025-08-15
 

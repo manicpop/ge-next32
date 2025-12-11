@@ -1107,6 +1107,7 @@ if (ptr->phasr >=PMINFIRE)
 									wptr->damage += factor;
 								wuptr = warusroff(usrn);
 								set_dislike(wuptr,shipclass[wptr->shpclass].faction,(int)factor);
+								randamage(wptr,othusn,factor); /*assess any random damage */
 								}
 							else
 								{
@@ -1127,7 +1128,6 @@ if (ptr->phasr >=PMINFIRE)
 									prfmsg(PHITDEF,username(ptr),(int)factor);
 								outprfge(ALWAYS,othusn);
 								}
-							randamage(wptr,othusn,factor); /*assess any random damage */
 							}
 						}
 					}
@@ -1356,7 +1356,7 @@ int	i;
 
 if (ptr->damage >= 100)
 	{
-	prfmsg(RNDFCNT);
+	prfmsg(RNDTORP);
 	outprfge(ALWAYS,usrn);
 	return(0);
 	}
@@ -1501,7 +1501,7 @@ int i;
 
 if (ptr->damage >= 100)
 	{
-	prfmsg(RNDFCNT);
+	prfmsg(RNDMISL);
 	outprfge(ALWAYS,usrnum);
 	return(0);
 	}
@@ -1543,9 +1543,16 @@ WARSHP	*wptr;
 
 double dist,speed,fact=0.0;
 
-if (ptr->firecntl > 0)
+if (type == 0 && ptr->torpcntl > 0)
 	{
-	prfmsg(FCBROKE);
+	prfmsg(TRBROKE);
+	outprfge(ALWAYS,usrn);
+	return(0);
+	}
+
+if (type == 1 && ptr->mislcntl > 0)
+	{
+	prfmsg(MIBROKE);
 	outprfge(ALWAYS,usrn);
 	return(0);
 	}
@@ -1777,6 +1784,13 @@ if (warsptr->items[I_DECOYS] == 0)
 	return;
 	}
 
+if (warsptr->decload < 0)
+	{
+	prfmsg(DEBROKE);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
 for (i=0; i<10;++i)
 	{
 	if (warsptr->decout[i] == 0)
@@ -1832,6 +1846,13 @@ if (warsptr->damage >= 100)
 if (warsptr->jamload > 0 )
 	{
 	prfmsg(JAMMER6);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if (warsptr->jamload < 0)
+	{
+	prfmsg(JMBROKE);
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
@@ -1943,6 +1964,13 @@ if (warsptr->zipload > 0 )
 	return;
 	}
 
+if (warsptr->zipload < 0)
+	{
+	prfmsg(ZPBROKE);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
 prfmsg(ZIPPER2);
 outprfge(FILTER,usrnum);
 zip(warsptr,usrnum);
@@ -1992,6 +2020,13 @@ int i;
 if (!shipclass[warsptr->shpclass].has_mine)
 	{
 	prfmsg(MINE0);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if (warsptr->mineload < 0)
+	{
+	prfmsg(MNBROKE);
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
@@ -2355,8 +2390,18 @@ if (sameas(margv[1],"sys"))
 		prfmsg(REP18);
 	if (warsptr->phasr < 0 )
 		prfmsg(REP21);
-	if (warsptr->firecntl > 0)
-		prfmsg(REP22);
+	if (warsptr->torpcntl > 0)
+		prfmsg(REP22T);
+	if (warsptr->mislcntl > 0)
+		prfmsg(REP22M);
+	if (warsptr->mineload < 0)
+		prfmsg(REP22MN);
+	if (warsptr->zipload < 0)
+		prfmsg(REP22Z);
+	if (warsptr->jamload < 0)
+		prfmsg(REP22J);
+	if (warsptr->decload < 0)
+		prfmsg(REP22D);
 
 	if (shipclass[warsptr->shpclass].max_warp != 0)
 		{
@@ -3708,7 +3753,7 @@ if (warsptr->where == 1)
 
 if (warsptr->damage >= 100)
 	{
-	prfmsg(RNDSHLD);
+	prfmsg(SHDAMAG);
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
@@ -6761,7 +6806,7 @@ if (sameas(margv[2],"report"))
 		if (warsptr->decout[i] > 0)
 			++j;
 
-	prf("SD7:%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d*\r",
+	prf("SD7:%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d*\r",
 		j,
 		(int)warsptr->jam_time,
 		warsptr->kills,
@@ -6772,7 +6817,8 @@ if (sameas(margv[2],"report"))
 		warsptr->cantexit,
 		warsptr->repair,
 		warsptr->hypha,
-		warsptr->firecntl,
+		(int)warsptr->torpcntl,
+		(int)warsptr->mislcntl,
 		warsptr->destruct,
 		warsptr->status);
 

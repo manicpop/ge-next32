@@ -390,7 +390,7 @@ WARSHP {						/*   user data blocks                        */
 /*148*/
 		int		shield;			/*   shield charge                           */
 /*150*/
-		int		cloak;			/*   cloak flag  -1 = up 0 = down + = time   */
+		int		cloak;			/*   cloak flag 0 = down, 10 = up, neg = dmg */
 /*152*/
 		int		degrees;		/*   work fields for calculating degrees     */
 /*154*/
@@ -428,7 +428,9 @@ WARSHP {						/*   user data blocks                        */
 /*280*/
 		unsigned	hypha;			/*   hyper-phasers cooling flag              */
 /*282*/
-		unsigned	firecntl;		/*   fire-control damage flag                */
+		byte		torpcntl;		/*   torpedo damage flag                     */
+/*283*/
+		byte		mislcntl;		/*   misl damage flag                        */
 /*284*/
 		byte		destruct;		/*   self destruct countdown                 */
 /*285*/
@@ -456,11 +458,15 @@ WARSHP {						/*   user data blocks                        */
 /*298*/
 		unsigned long	overspeed;		/*   counter for over maximum warp           */
 /*302*/
-		byte		zipload;		/*   zipper launch throttle                  */
-/*303*/
-		byte		jamload;		/*   jam launch throttle                     */
+		int		zipload;		/*   zipper launch throttle                  */
 /*304*/
-		char		filler[514-274-UIDSIZ]; /*   WARSHP in GE classic is 514             */
+		int		jamload;		/*   jam launch throttle                     */
+/*306*/
+		int		decload;		/*   decoy launch throttle                   */
+/*308*/
+		int		mineload;		/*   mine launch throttle                    */
+/*310*/
+		char		filler[514-280-UIDSIZ]; /*   WARSHP in GE classic is 514             */
 };
 
 /*

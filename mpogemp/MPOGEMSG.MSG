@@ -2321,10 +2321,6 @@ CLOK3 {***
 [0;37mSensors indicate some background ion field displacement bearing [1;37m%d[0;37m![1;37m
 } T GE ship cloaked near you message
 
-RNDSHLD {***
-[0;37m[[0;31mWARNING![0;37m] The shields are no longer functioning! Damage Control notified![1;37m
-} T GE shields knocked out message
-
 RNDPHSR {***
 [0;37m[[0;31mWARNING![0;37m] The phaser systems appear to be damaged! Damage Control notified![1;37m
 } T GE phasers knocked out message
@@ -2342,25 +2338,29 @@ RNDNAVG {***
 notified![1;37m
 } T GE nav knocked out message
 
-RNDFCNT {***
-[0;37m[[0;31mWARNING![0;37m] The fire control systems have been damaged! Damage Control notified![1;37m
-} T GE fire control knocked out message
+RNDTORP {***
+[0;37m[[0;31mWARNING![0;37m] The torpedo launchers have been damaged! Damage Control notified![1;37m
+} T GE torpedoes knocked out message
+
+RNDMISL {***
+[0;37m[[0;31mWARNING![0;37m] The missile launchers have been damaged! Damage Control notified![1;37m
+} T GE missiles knocked out message
 
 RNDJAMR {***
 [0;37m[[0;31mWARNING![0;37m] The jammer launcher has been damaged! Damage Control notified![1;37m
-} T GE fire control knocked out message
+} T GE jammers knocked out message
 
 RNDMINE {***
 [0;37m[[0;31mWARNING![0;37m] The mine launcher has been damaged! Damage Control notified![1;37m
-} T GE fire control knocked out message
+} T GE mines knocked out message
 
 RNDZIPR {***
 [0;37m[[0;31mWARNING![0;37m] The zipper launcher has been damaged! Damage Control notified![1;37m
-} T GE fire control knocked out message
+} T GE zippers knocked out message
 
 RNDDECY {***
 [0;37m[[0;31mWARNING![0;37m] The decoy launcher has been damaged! Damage Control notified![1;37m
-} T GE fire control knocked out message
+} T GE decoys knocked out message
 
 RNDXX1 {***
 [0;37m[[1;31mCAUTION[0;37m] The mess hall has been damaged! Damage Control notified![1;37m
@@ -2397,17 +2397,57 @@ HLBROKE {
 HLBROKE2 {[0;37mType STOP to issue emergency engine shutdown.[1;37m
 } T GE helm being repaired message
 
-FCBROKE {
-[0;37m[[1;31mERROR[0;37m] Damage Control is repairing the fire control systems.[1;37m
-} T GE fire control being repaired message
+TRBROKE {
+[0;37m[[1;31mERROR[0;37m] Damage Control is repairing the torpedo launchers.[1;37m
+} T GE torpedoes being repaired message
+
+MIBROKE {
+[0;37m[[1;31mERROR[0;37m] Damage Control is repairing the missile launchers.[1;37m
+} T GE missiles being repaired message
 
 PHBROKE {
 [0;37m[[1;31mERROR[0;37m] Damage Control is repairing the phasers.[1;37m
 } T GE phasers being repaired message
 
-FCREPR {***
-[1;32mDamage Control reports fire control systems are now functional![1;37m
-} T GE fire control fixed message
+MNBROKE {
+[0;37m[[1;31mERROR[0;37m] Damage Control is repairing the mine launcher.[1;37m
+} T GE mines being repaired message
+
+ZPBROKE {
+[0;37m[[1;31mERROR[0;37m] Damage Control is repairing the zipper launcher.[1;37m
+} T GE zippers being repaired message
+
+JMBROKE {
+[0;37m[[1;31mERROR[0;37m] Damage Control is repairing the jammer launcher.[1;37m
+} T GE jammers being repaired message
+
+DEBROKE {
+[0;37m[[1;31mERROR[0;37m] Damage Control is repairing the decoy launcher.[1;37m
+} T GE decoys being repaired message
+
+FCREPRT {***
+[1;32mDamage Control reports the torpedo launchers are now functional![1;37m
+} T GE torpedoes fixed message
+
+FCREPRM {***
+[1;32mDamage Control reports the missile launchers are now functional![1;37m
+} T GE missiles fixed message
+
+REPRZ {***
+[1;32mDamage Control reports the zipper launcher is now functional![1;37m
+} T GE zippers fixed message
+
+REPRJ {***
+[1;32mDamage Control reports the jammer launcher is now functional![1;37m
+} T GE jammers fixed message
+
+REPRMN {***
+[1;32mDamage Control reports the mine launcher is now functional![1;37m
+} T GE mines fixed message
+
+REPRD {***
+[1;32mDamage Control reports the decoy launcher is now functional![1;37m
+} T GE decoys fixed message
 
 FCNONO {
 [0;37m[[1;31mERROR[0;37m] The fire control system can't lock onto a ship in the neutral zone.[1;37m
@@ -3224,7 +3264,22 @@ REP20A {[0;31m   Warp engines above cruising speed[1;37m
 REP21 {[0;31m   Phasers damaged[1;37m
 } T GE report 21
 
-REP22 {[0;31m   Fire control damaged[1;37m
+REP22T {[0;31m   Torpedo launchers damaged[1;37m
+} T GE report 22
+
+REP22M {[0;31m   Missile launchers damaged[1;37m
+} T GE report 22
+
+REP22MN {[0;31m   Mine launcher damaged[1;37m
+} T GE report 22
+
+REP22Z {[0;31m   Zipper launcher damaged[1;37m
+} T GE report 22
+
+REP22J {[0;31m   Jammer launcher damaged[1;37m
+} T GE report 22
+
+REP22D {[0;31m   Decoy launcher damaged[1;37m
 } T GE report 22
 
 REP23 {[1;37mPhasers (Mark-%d)...... [1;32m<operative>[1;37m

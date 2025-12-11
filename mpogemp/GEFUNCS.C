@@ -240,7 +240,8 @@ tmpshp.where		= 0;
 tmpshp.hostile		= 0;
 tmpshp.repair		= 0;
 tmpshp.hypha		= 0;
-tmpshp.firecntl		= 0;
+tmpshp.torpcntl		= 0;
+tmpshp.mislcntl		= 0;
 tmpshp.cantexit		= 0;
 tmpshp.items[I_TORPEDO]	= 0;
 tmpshp.items[I_MISSILE]	= 0;
@@ -263,6 +264,11 @@ tmpshp.upgrade		= 0;	/*UNUSED ATM*/
 tmpshp.cybupdate	= 0;
 tmpshp.distress		= 255;
 tmpshp.lock		= -1;
+
+tmpshp.zipload		= 0;
+tmpshp.jamload		= 0;
+tmpshp.decload		= 0;
+tmpshp.mineload		= 0;
 
 tmpshp.shipno = waruptr->topshipno+1;
 
@@ -563,7 +569,13 @@ if (ptr->repair > 0)
 		ptr->helm = 0;
 		if (ptr->cloak < 1)	/* this is for oliver */
 			ptr->cloak = 0;
-		ptr->firecntl = 0;
+		ptr->torpcntl = 0;
+		ptr->mislcntl = 0;
+		ptr->zipload = 0;
+		ptr->jamload = 0;
+		ptr->decload = 0;
+		ptr->mineload = 0;
+
 		if (ptr->shieldstat == SHIELDDM)
 			ptr->shieldstat = SHIELDDN;
 		if (ptr->shield < 1)
@@ -1279,12 +1291,62 @@ if (ptr->helm < 0)
 		}
 	}
 /* repair fire control systems */
-if (ptr->firecntl > 0)
+if (ptr->torpcntl > 0)
 	{
-	--ptr->firecntl;
-	if (ptr->firecntl == 0)
+	--ptr->torpcntl;
+	if (ptr->torpcntl == 0)
 		{
-		prfmsg(FCREPR);
+		prfmsg(FCREPRT);
+		outprfge(ALWAYS,usrn);
+		}
+	}
+
+if (ptr->mislcntl > 0)
+	{
+	--ptr->mislcntl;
+	if (ptr->mislcntl == 0)
+		{
+		prfmsg(FCREPRM);
+		outprfge(ALWAYS,usrn);
+		}
+	}
+
+if (ptr->zipload < 0)
+	{
+	++ptr->zipload;
+	if (ptr->zipload == 0)
+		{
+		prfmsg(REPRZ);
+		outprfge(ALWAYS,usrn);
+		}
+	}
+
+if (ptr->jamload < 0)
+	{
+	++ptr->jamload;
+	if (ptr->jamload == 0)
+		{
+		prfmsg(REPRJ);
+		outprfge(ALWAYS,usrn);
+		}
+	}
+
+if (ptr->decload < 0)
+	{
+	++ptr->decload;
+	if (ptr->decload == 0)
+		{
+		prfmsg(REPRD);
+		outprfge(ALWAYS,usrn);
+		}
+	}
+
+if (ptr->mineload < 0)
+	{
+	++ptr->mineload;
+	if (ptr->mineload == 0)
+		{
+		prfmsg(FCREPRM);
 		outprfge(ALWAYS,usrn);
 		}
 	}
@@ -2239,6 +2301,8 @@ WARSHP	*ptr;
 int	usrn;
 {
 
+double	hitdam;
+
 if (ptr->hostile > 1)
 	{
 	plnum = ptr->hostile - 10;
@@ -2248,17 +2312,20 @@ if (ptr->hostile > 1)
 		ptr->lastfired = -1;
 		if (ptr->shieldstat == SHIELDUP)
 			{
-			ptr->damage += (idammax * rndm(.15));
+			hitdam = (idammax * rndm(.15));
+			ptr->damage += hitdam;
 			prfmsg(IHIT1);
 			outprfge(ALWAYS,usrn);
 			shieldhit(ptr,usrn,(gernd()%50)+40);
 			}
 		else
 			{
+			hitdam = (idammax * (rndm(.50) + .50));
+			ptr->damage += hitdam;
 			prfmsg(IHIT2);
 			outprfge(ALWAYS,usrn);
-			ptr->damage += (idammax * (rndm(.50) + .50));
 			}
+		randamage(ptr,usrn,hitdam);
 		}
 	}
 }
@@ -2415,31 +2482,39 @@ int	usrn;
 double	hitdam;
 {
 int	a;
+int	damcomb;
 
-if (hitdam > 10.0 && ptr->damage > 20.0)
+/* already dead */
+if (ptr->damage > 100.0)
+	return;
+
+/* hit must be over 10 and damage before hit must be over 20 */
+if (hitdam > 10.0 && (ptr->damage - hitdam) > 20.0)
 	{
+	/* weight toward big single hits */
+	damcomb = (int)(ptr->damage * 0.6 + hitdam * (1.0 + hitdam * 0.015));
+
+	/* cap to ensure that a (below) is never less than 11 */
+	if (damcomb > 88)
+		damcomb = 88;
+
 	/* toss dice to see if a system has been damaged */
 
-	a = (int)rndm((101.0 - ptr->damage)/1.5);
-	if (a == 0)
+	a = gernd() % (100 - damcomb);
+	if (a < 16)
 		{
-		/* ok so there is damage - what system is it */
-		a = gernd()%6;
 		switch (a)
 			{
 			case 0:	/* shields */
 				if (shipclass[ptr->shpclass].max_shlds > 0)
 					{
-					prfmsg(RNDSHLD);
+					prfmsg(SHDAMAG);
 					outprfge(ALWAYS,usrn);
-					ptr->shield = 0 - (int)rndm((ptr->damage+10.0));
+					ptr->shield = -2 - gernd()%(damcomb/3);
 					ptr->shieldstat = SHIELDDM;
 					}
 				else
-					{
-					prfmsg(RNDXX1);
-					outprfge(ALWAYS,usrn);
-					}
+					a = 11;	/* gag message */
 				break;
 
 			case 1:	/* phasers */
@@ -2447,28 +2522,21 @@ if (hitdam > 10.0 && ptr->damage > 20.0)
 					{
 					prfmsg(RNDPHSR);
 					outprfge(ALWAYS,usrn);
-					ptr->phasr = 0 - (int)rndm((ptr->damage+10.0));
+					ptr->phasr = -2 - gernd()%(damcomb/3);
 					}
 				else
-					{
-					prfmsg(RNDXX2);
-					outprfge(ALWAYS,usrn);
-					}
+					a = 11;
 				break;
 
-			case 2:	/* dummy next */
-				if (shipclass[ptr->shpclass].max_torps > 0 ||
-					 shipclass[ptr->shpclass].max_missl > 0)
+			case 2:	/* torpedoes */
+				if (shipclass[ptr->shpclass].max_torps > 0)
 					{
-					prfmsg(RNDFCNT);
+					prfmsg(RNDTORP);
 					outprfge(ALWAYS,usrn);
-					ptr->firecntl = gernd()%20;
+					ptr->torpcntl = 2 + gernd()%(damcomb/3);
 					}
 				else
-					{
-					prfmsg(RNDXX3);
-					outprfge(ALWAYS,usrn);
-					}
+					a = 11;
 				break;
 
 			case 3:	/* cloak next */
@@ -2476,35 +2544,92 @@ if (hitdam > 10.0 && ptr->damage > 20.0)
 					{
 					prfmsg(RNDCLOK);
 					outprfge(ALWAYS,usrn);
-					ptr->cloak = 0 - (int)rndm((ptr->damage+10.0));
+					ptr->cloak = -2 - gernd()%(damcomb/3);
 					}
 				else
-					{
-					prfmsg(RNDXX4);
-					outprfge(ALWAYS,usrn);
-					}
+					a = 11;
 				break;
 
 			case 4:	/* tactical display next */
-
 				prfmsg(RNDTACT);
 				outprfge(ALWAYS,usrn);
-				ptr->tactical = 0 - (int)rndm((ptr->damage+10.0));
+				ptr->tactical = -2 - gernd()%(damcomb/6);
 				break;
 
 			case 5:	/* navigational */
 				prfmsg(RNDNAVG);
 				outprfge(ALWAYS,usrn);
-				ptr->helm = 0 - (int)rndm((ptr->damage+10.0));
-				if (ptr->helm < -8)	/* this is hacky, but this whole routine needs work */
-					ptr->helm = -8;
+				ptr->helm = -2 - gernd()%(damcomb/9);
 				break;
 
-			case 6:	/* not used */
+			case 6:	/* mines */
+				if (shipclass[ptr->shpclass].has_mine > 0)
+					{
+					prfmsg(RNDMINE);
+					outprfge(ALWAYS,usrn);
+					ptr->mineload = -2 - gernd()%(damcomb/3);
+					}
+				else
+					a = 11;
 				break;
+			case 7:	/* zippers */
+				if (shipclass[ptr->shpclass].has_zip > 0)
+					{
+					prfmsg(RNDZIPR);
+					outprfge(ALWAYS,usrn);
+					ptr->zipload = -2 - gernd()%(damcomb/3);
+					}
+				else
+					a = 11;
+				break;
+			case 8:	/* jammers */
+				if (shipclass[ptr->shpclass].has_jam > 0)
+					{
+					prfmsg(RNDJAMR);
+					outprfge(ALWAYS,usrn);
+					ptr->jamload = -2 - gernd()%(damcomb/3);
+					}
+				else
+					a = 11;
+				break;
+
+			case 9:	/* decoy */
+				if (shipclass[ptr->shpclass].has_decoy > 0)
+					{
+					prfmsg(RNDDECY);
+					outprfge(ALWAYS,usrn);
+					ptr->decload = -2 - gernd()%(damcomb/3);
+					}
+				else
+					a = 11;
+				break;
+
+			case 10: /* missiles */
+				if (shipclass[ptr->shpclass].max_missl > 0)
+					{
+					prfmsg(RNDMISL);
+					outprfge(ALWAYS,usrn);
+					ptr->mislcntl = 2 + gernd()%(damcomb/3);
+					}
+				else
+					a = 11;
+				break;
+
+			default: /* gag */
+				break;
+			}
 		 }
-	 }
-  }
+	/* if the roll hit exactly 11 or system is non-present, chance of gag */
+	if (a == 11)
+		a = gernd()%16;
+	/* if we hit 12-15 on the damcomb roll or on the a=11 roll, one of four gags */
+	if (a >= 12 && a <= 15)
+		{
+		a -= 12;
+		prfmsg(RNDXX1+a);
+		outprfge(ALWAYS,usrn);
+		}
+	}
 }
 
 
