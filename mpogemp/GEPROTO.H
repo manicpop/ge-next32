@@ -322,12 +322,9 @@
 /*     134 */ double cbearing P((COORD *ptr1 , COORD *ptr2 , double heading ));
 /*     141 */ double cdistance P((COORD *ptr1 , COORD *ptr2 ));
 /*     156 */ double vector P((COORD *ptr1 , COORD *ptr2 ));
-/*     199 */ double angleb P((COORD *ptr1 , COORD *ptr2 ));
-/*     229 */ double anglec P((COORD *ptr1 , COORD *ptr2 ));
 /*     259 */ double normal P((double angle ));
 /*     280 */ double degtorad P((double value ));
 /*     290 */ double radtodeg P((double value ));
-/*     300 */ double absol P((double value ));
 
 /* gescan.c */
 void FUNC set_map_color P((int color ));

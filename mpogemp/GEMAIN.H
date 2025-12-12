@@ -103,6 +103,7 @@
 #define SLCAP 2147483647L	/* maximum value of signed long */
 #define ULCAP 4294967295UL	/* maximum value of unsigned long */
 #define FARSPEED 54321L		/* speed constant for cyb long pursuit */
+#define VEC_EPS 1e-9
 
 #define GELOOKUP 1
 #define GEADD 2

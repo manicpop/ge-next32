@@ -605,8 +605,8 @@ rotamt = (double)(shipclass[ptr->shpclass].max_accel/10.0);
 
 if (ptr->heading != ptr->head2b)
 	{
-	if (absol(normal(ptr->heading - ptr->head2b)) >= (360.0-rotamt) ||
-		absol(normal(ptr->heading - ptr->head2b)) <= rotamt)
+	if (fabs(normal(ptr->heading - ptr->head2b)) >= (360.0-rotamt) ||
+		fabs(normal(ptr->heading - ptr->head2b)) <= rotamt)
 		{
 		ptr->heading = ptr->head2b;
 		angle = (int)ptr->heading;
@@ -638,7 +638,6 @@ WARSHP	*ptr;
 int	usrn;
 {
 int	usage;
-double	absol();
 double	accelrate,decelrate;
 
 if (ptr->speed < ptr->speed2b)
@@ -646,7 +645,7 @@ if (ptr->speed < ptr->speed2b)
 	accelrate = (double)shipclass[ptr->shpclass].max_accel;
 	if ((ptr->speed2b >= 1000) && (ptr->speed/1000 < 1) && ((ptr->speed+accelrate)/1000 >=1))
 		hyperspace(ptr,usrn,1);
-	if (absol(ptr->speed - ptr->speed2b) <= accelrate)
+	if (fabs(ptr->speed - ptr->speed2b) <= accelrate)
 		{
 		ptr->speed = ptr->speed2b;
 
@@ -685,7 +684,7 @@ if (ptr->speed > ptr->speed2b)
 	if ((ptr->speed2b < 1000) && (ptr->speed/1000 >=1) && ((ptr->speed-decelrate)/1000 <1))
 		hyperspace(ptr,usrn,0);
 
-	if (absol(ptr->speed - ptr->speed2b) <= decelrate)
+	if (fabs(ptr->speed - ptr->speed2b) <= decelrate)
 		{
 		ptr->speed = ptr->speed2b;
 		if (ptr->speed > 0)

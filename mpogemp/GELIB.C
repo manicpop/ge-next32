@@ -96,180 +96,109 @@ unsigned int gernd()
 return(rand());
 }
 
+
+double clamp_acos(v)
+double v;
+{
+if (v > 1.0)
+	return 1.0;
+if (v < -1.0)
+	return -1.0;
+return v;
+}
+
 /**************************************************************************
 ** Calculate ship bearing between two objects                            **
 **************************************************************************/
 
-double cbearing(ptr1, ptr2, heading)
+double	cbearing(ptr1, ptr2, heading)
 COORD	*ptr1,*ptr2;
 double	heading;
+
 {
-double	vector(), absol(), normal();
-double	b;
+double b;
 
-ptr1->xcoord += .000001;
-ptr1->ycoord += .000001;
+b = vector(ptr1, ptr2);
+b = normal(360.0 - heading + b);
 
-b =  vector(ptr1,ptr2);
-/*	sprintf(gechrbuf,"vector = %f",b);
-	logthis(gechrbuf);*/
+if (b > 180.0)
+	b -= 360.0;
+else
+if (b < -180.0)
+	b += 360.0;
 
-b =  normal(360 - heading + b);
-/*	sprintf(gechrbuf,"normal = %f",b);
-	logthis(gechrbuf);*/
-
-if (b > 180)
-	b = b-360;
-/*	sprintf(gechrbuf,"+-180 = %f",b);
-	logthis(gechrbuf);*/
-return (b);
-
+return b;
 }
 
 /**************************************************************************
 ** Calculate the distance between two ships                              **
 **************************************************************************/
 
-double cdistance(ptr1,ptr2)
+double	cdistance(ptr1,ptr2)
 COORD	*ptr1,*ptr2;
 {
-double	a, b, c;
+double dx, dy;
 
-b = (ptr1->xcoord - ptr2->xcoord);
+dx = ptr1->xcoord - ptr2->xcoord;
+dy = ptr1->ycoord - ptr2->ycoord;
 
-c = (ptr1->ycoord - ptr2->ycoord);
-
-b = absol(b);
-
-c = absol(c);
-
-a = sqrt((b*b) + (c*c));
-
-return (a);
+return sqrt((dx * dx) + (dy * dy));
 }
 
 /**************************************************************************
 ** Calculate the angle from one ship to another                          **
 **************************************************************************/
 
-double vector(ptr1,ptr2)
+double	vector(ptr1,ptr2)
 COORD	*ptr1, *ptr2;
 
 {
-double	a;
-double	angleb(),anglec(),normal();
+double	da, dx, dy, raw;
 
-if (ptr1->xcoord >= ptr2->xcoord && ptr1->ycoord <= ptr2->ycoord)
+/* handle exact alignment on an axis */
+if (fabs(ptr1->ycoord - ptr2->ycoord) <= VEC_EPS)
 	{
-	a = angleb(ptr1,ptr2);
-	a = 270.0 - a;
-	return(a);
+	if (ptr1->xcoord < ptr2->xcoord)
+		return 90.0;
+	else
+	if (ptr1->xcoord > ptr2->xcoord)
+		return 270.0;
+	else
+		return 0.0;
 	}
+
+if (fabs(ptr1->xcoord - ptr2->xcoord) <= VEC_EPS)
+	{
+	if (ptr1->ycoord < ptr2->ycoord)
+		return 180.0;
+	else
+		return 0.0;
+	}
+
+dx = ptr2->xcoord - ptr1->xcoord;
+dy = ptr2->ycoord - ptr1->ycoord;
+da = sqrt((dx*dx) + (dy*dy));
+
+raw = radtodeg(acos(clamp_acos((-dy) / da)));
+
+if (dx >= 0.0)
+	return raw;
 else
-if (ptr1->xcoord >= ptr2->xcoord && ptr1->ycoord >= ptr2->ycoord)
-	{
-	a = angleb(ptr1,ptr2);
-	a = 270.0 + a;
-	return(a);
-	}
-else
-if (ptr1->xcoord <= ptr2->xcoord && ptr1->ycoord <= ptr2->ycoord)
-	{
-	a = anglec(ptr1,ptr2);
-	a = 180.0 - a;
-	return(a);
-	}
-else
-if (ptr1->xcoord <= ptr2->xcoord && ptr1->ycoord >= ptr2->ycoord)
-	{
-	a = anglec(ptr1,ptr2);
-	a = 0.0 + a;
-	return(a);
-	}
-
-
-return(99999L);
-}
-
-/**************************************************************************
-** Calculate the angle from the center to the other ship                 **
-**************************************************************************/
-
-double angleb (ptr1, ptr2)
-COORD	*ptr1, *ptr2;
-
-{
-
-double	da,db,dc,angle;
-
-da = cdistance(ptr1, ptr2);
-dc = absol(ptr1->xcoord - ptr2->xcoord);
-db = absol(ptr1->ycoord - ptr2->ycoord);
-
-if ((da*dc) > 0)
-	{
-	angle = (double) acos( ((da*da) + (dc*dc) - (db*db)) / (2*da*dc));
-	angle = radtodeg(angle);
-	}
-else
-if (da == 0.0)	/* same exact position */
-	angle = 0.0;
-else		/* must be vertically aligned */
-	angle = 90.0;
-
-return (angle);
-
-}
-
-/**************************************************************************
-** Calculate the angle from the center to the other ship                 **
-**************************************************************************/
-
-double anglec (ptr1, ptr2)
-COORD	*ptr1, *ptr2;
-
-{
-
-double	da,db,dc,angle;
-
-da = cdistance(ptr1, ptr2);
-dc = absol(ptr1->xcoord - ptr2->xcoord);
-db = absol(ptr1->ycoord - ptr2->ycoord);
-
-if ((da*db) > 0)
-	{
-	angle = (double) acos( ((da*da) + (db*db) - (dc*dc)) / (2*da*db));
-	angle = radtodeg(angle);
-	}
-else
-if (da == 0.0)	/* same exact position */
-	angle = 0.0;
-else		/* must be horizontally aligned */
-	angle = 180.0;
-
-return (angle);
-
+	return 360.0 - raw;
 }
 
 /**************************************************************************
 ** Bring an angle back into the range 0 - 360                            **
 **************************************************************************/
 
-double normal (angle)
+double	normal (angle)
 double	angle;
 {
-
-
-if (angle < 0)
-	{
-	angle = normal(angle+360);
-	}
-
-if (angle >= 360)
-	{
-	angle = normal(angle-360);
-	}
-return (angle);
+while (angle < 0.0)
+	angle += 360.0;
+while (angle >= 360.0)
+	angle -= 360.0;
+return angle;
 }
 
 /**************************************************************************
@@ -290,17 +219,4 @@ double radtodeg(value)
 double value;
 {
 return (value*(180/PI));
-}
-
-/**************************************************************************
-** double absolute function                                              **
-**************************************************************************/
-
-double absol(value)
-double value;
-{
-if (value < 0)
-	value = value * -1;
-
-return (value);
 }
