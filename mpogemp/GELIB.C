@@ -127,6 +127,12 @@ else
 if (b < -180.0)
 	b += 360.0;
 
+/* do the rounding here so we can cast to int cleanly elsewhere */
+if (b < 0.0)
+        b -= 0.4999;
+    else
+        b += 0.4999;
+
 return b;
 }
 

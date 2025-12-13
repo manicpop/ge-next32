@@ -938,7 +938,7 @@ if (ptr->speed > 0)
 
 				if (ddist < (shipclass[wptr->shpclass].scanrange/2) && wptr->jam_sev <= (byte)2)
 					{
-					bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading)+.5);
+					bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading));
 					/* slop it up +- 10 degrees on either side */
 					bearing = bearing + (gernd()%20)-10;
 					prfmsg(CLOK3,bearing);
@@ -1055,7 +1055,6 @@ WARSHP	*ptr;
 int	usrn;
 {
 int	i;
-double	cdistance(),cbearing();
 unsigned dist;
 
 refresh(ptr, usrn);
@@ -1134,7 +1133,6 @@ WARSHP	*ptr;
 int	usrn;
 {
 int	i;
-double	cdistance(),cbearing();
 unsigned dist;
 
 refresh(ptr, usrn);
@@ -1767,7 +1765,7 @@ int	i, mineset;
 int	zothusn;	/* general purpose other-user channel number */
 WARSHP	*wptr;
 WARUSR	*wuptr;
-double	ddist, cdistance(), cbearing(), damfact;
+double	ddist, damfact;
 unsigned udist;
 MINE	*mptr;
 setmbk(gemb);
@@ -1793,7 +1791,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 						wptr->minesnear = FALSE;
 					ddist = cdistance(&mptr->coord,&wptr->coord);
 					ddist *= 10000;
-					bearing = (int)(cbearing(&wptr->coord,&mptr->coord,wptr->heading)+.5);
+					bearing = (int)(cbearing(&wptr->coord,&mptr->coord,wptr->heading));
 					setsect(wptr);
 					if (ddist < ((double)MINERANGE) && (xsect != 0 || ysect != 0))
 						{

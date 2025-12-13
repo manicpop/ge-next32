@@ -2602,7 +2602,7 @@ if (sameas(margv[1],"ord"))
 				prf("\r ");
 				ddist = cdistance(&warsptr->coord,&mines[i].coord);
 				ddist *= 10000;
-				bearing = (int)(cbearing(&warsptr->coord,&mines[i].coord,warsptr->heading)+.5);
+				bearing = (int)(cbearing(&warsptr->coord,&mines[i].coord,warsptr->heading));
 				if (warsptr->jam_sev <= (byte)2)
 					prf("%d %d  T:%2d  Br:%4d  Dist: %s",
 						(int)mines[i].coord.xcoord,(int)mines[i].coord.ycoord,mines[i].timer,bearing,spr("%ld",(long)ddist));
@@ -2794,8 +2794,8 @@ if (shpnum >= 0)
 	scandist = cdistance(&warsptr->coord,&wptr->coord)*10000;
 	if (scandist < shipclass[warsptr->shpclass].scanrange)
 		{
-		bearing = (int)(cbearing(&warsptr->coord,&wptr->coord,warsptr->heading)+.5);
-		heading = (int) (cbearing(&wptr->coord,&warsptr->coord,wptr->heading)+.5);
+		bearing = (int)(cbearing(&warsptr->coord,&wptr->coord,warsptr->heading));
+		heading = (int) (cbearing(&wptr->coord,&warsptr->coord,wptr->heading));
 		gheading = (int) (wptr->heading+.5);
 
 		speed = ((unsigned)(wptr->speed+.5));
@@ -2863,7 +2863,7 @@ if (shpnum >= 0)
 			{
 			if ((long)scandist > shipclass[wptr->shpclass].scanrange)
 				{
-				bearing = (int)(cbearing(&wptr->coord,&warsptr->coord,wptr->heading)+.5);
+				bearing = (int)(cbearing(&wptr->coord,&warsptr->coord,wptr->heading));
 				prfmsg(SCAN2,bearing);
 				}
 			else
@@ -2924,7 +2924,7 @@ if (plnum <= MAXPLANETS && plnum > 0)
 	else
 	if (plptr->type == PLTYPE_PLNT)
 		{
-		bearing = (int)(cbearing(&warsptr->coord,&plptr->coord,warsptr->heading)+.5);
+		bearing = (int)(cbearing(&warsptr->coord,&plptr->coord,warsptr->heading));
 		ddistance = cdistance(&warsptr->coord,&plptr->coord)*10000;
 		memset(gechrbuf, 0, 255);
 		sprintf(gechrbuf,"%s",plptr->name);
@@ -3074,7 +3074,7 @@ if (plnum <= MAXPLANETS && plnum > 0)
 	if (plptr->type == PLTYPE_WORM)
 		{
 		memcpy(&worm,plptr,sizeof(GALWORM));
-		bearing = (int)(cbearing(&warsptr->coord,&worm.coord,warsptr->heading)+.5);
+		bearing = (int)(cbearing(&warsptr->coord,&worm.coord,warsptr->heading));
 		ddistance = cdistance(&warsptr->coord,&worm.coord)*10000;
 		prfmsg(SCANWRM,plnum,worm.name);
 		prfmsg(DASHES);
@@ -3581,8 +3581,8 @@ for (i=0;i<NOSCANTAB;++i)
 		{
 		j = tmp.ship[i].shipno;
 		wptr=warshpoff(j);
-		tmp.ship[i].bearing = (int)(cbearing(&ptr->coord,&(wptr->coord),ptr->heading)+.5);
-		tmp.ship[i].heading = (int)(cbearing(&(wptr->coord),&ptr->coord,wptr->heading)+.5);
+		tmp.ship[i].bearing = (int)(cbearing(&ptr->coord,&(wptr->coord),ptr->heading));
+		tmp.ship[i].heading = (int)(cbearing(&(wptr->coord),&ptr->coord,wptr->heading));
 		tmp.ship[i].speed = wptr->speed;
 		}
 	}
@@ -6023,7 +6023,7 @@ tmp.ycoord +=.50001;
 
 ddistance = cdistance(&(warsptr->coord),&tmp)*10000;
 
-bear = cbearing(&(warsptr->coord),&tmp,warsptr->heading)+.5;
+bear = cbearing(&(warsptr->coord),&tmp,warsptr->heading);
 bearing = (int)(cbearing(&(warsptr->coord),&tmp,warsptr->heading));
 
 sprintf(gechrbuf,"NAV from X:%f Y:%f",warsptr->coord.xcoord,warsptr->coord.ycoord);
