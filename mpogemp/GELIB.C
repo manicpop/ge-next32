@@ -111,7 +111,7 @@ return v;
 ** Calculate ship bearing between two objects                            **
 **************************************************************************/
 
-double	cbearing(ptr1, ptr2, heading)
+int	cbearing(ptr1, ptr2, heading)
 COORD	*ptr1,*ptr2;
 double	heading;
 
@@ -133,7 +133,11 @@ if (b < 0.0)
     else
         b += 0.4999;
 
-return b;
+/* never show 180 as negative */
+if (b <= -180)
+	b = 180;
+
+return (int)b;
 }
 
 /**************************************************************************

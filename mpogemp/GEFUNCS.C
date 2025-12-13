@@ -938,7 +938,7 @@ if (ptr->speed > 0)
 
 				if (ddist < (shipclass[wptr->shpclass].scanrange/2) && wptr->jam_sev <= (byte)2)
 					{
-					bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading));
+					bearing = cbearing(&wptr->coord,&ptr->coord,wptr->heading);
 					/* slop it up +- 10 degrees on either side */
 					bearing = bearing + (gernd()%20)-10;
 					prfmsg(CLOK3,bearing);
@@ -1791,7 +1791,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 						wptr->minesnear = FALSE;
 					ddist = cdistance(&mptr->coord,&wptr->coord);
 					ddist *= 10000;
-					bearing = (int)(cbearing(&wptr->coord,&mptr->coord,wptr->heading));
+					bearing = cbearing(&wptr->coord,&mptr->coord,wptr->heading);
 					setsect(wptr);
 					if (ddist < ((double)MINERANGE) && (xsect != 0 || ysect != 0))
 						{

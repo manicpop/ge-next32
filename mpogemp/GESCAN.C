@@ -187,7 +187,7 @@ else
 	}
 
 sprintf(gechrbuf2, "%d", (int)(cdistance(&warsptr->coord, &ptab[usrnum].planets[shp].coord) * 10000));
-sprintf(gechrbuf3, "%d", (int)(cbearing(&warsptr->coord, &ptab[usrnum].planets[shp].coord, warsptr->heading)));
+sprintf(gechrbuf3, "%d", cbearing(&warsptr->coord, &ptab[usrnum].planets[shp].coord, warsptr->heading));
 
 /* if jammed, mess up the numbers */
 if (warsptr->jam_sev > (byte)2 && warsptr->where - 11 != shp)

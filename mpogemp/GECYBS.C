@@ -233,7 +233,7 @@ if (geudb(GELOOKUP,cybname, waruptr))
 				ddist *= 10000;
 				if (ddist > shipclass[wptr->shpclass].scanrange)
 					{
-					bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading));
+					bearing = cbearing(&wptr->coord,&ptr->coord,wptr->heading);
 					prfmsg(CYBNEW,bearing);
 					outprfge(FILTER,zothusn);
 					}
@@ -336,7 +336,7 @@ if (ptr->jam_sev <= (byte)3)
 									misl(ptr,usrn,zothusn,(shipclass[ptr->shpclass].tough_factor+1)*4000,0);
 								else
 									{
-									ptr->degrees = (int)(cbearing(&ptr->coord,&wptr->coord,ptr->heading));
+									ptr->degrees = cbearing(&ptr->coord,&wptr->coord,ptr->heading);
 									if (ptr->where == 1)
 										firehp(ptr,usrn);
 									if (ptr->where == 0 && shipclass[ptr->shpclass].max_phasr >= phatowrp && ptr->phasr >= PMINFIRE)
@@ -580,7 +580,7 @@ acted = 0;
 
 if (ptr->phasr >= PMINFIRE && gernd()%(4-(shipclass[ptr->shpclass].tough_factor/2)) == 0)
 	{
-	ptr->degrees = (int)(cbearing(&ptr->coord,&wptr->coord,ptr->heading));
+	ptr->degrees = cbearing(&ptr->coord,&wptr->coord,ptr->heading);
 	ptr->percent = 2;
 	firep(ptr,usrn);
 	acted = 1;

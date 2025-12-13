@@ -319,7 +319,7 @@
 /*      65 */ unsigned smallest P((unsigned a1 , unsigned a2 ));
 /*      84 */ double rndm P((double mod ));
 /*      94 */ unsigned int gernd P((void ));
-/*     134 */ double cbearing P((COORD *ptr1 , COORD *ptr2 , double heading ));
+/*     134 */ int cbearing P((COORD *ptr1 , COORD *ptr2 , double heading ));
 /*     141 */ double cdistance P((COORD *ptr1 , COORD *ptr2 ));
 /*     156 */ double vector P((COORD *ptr1 , COORD *ptr2 ));
 /*     259 */ double normal P((double angle ));
