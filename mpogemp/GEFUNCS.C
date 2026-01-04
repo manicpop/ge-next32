@@ -11,7 +11,7 @@
  *                                                                         *
  *   ge-next                                                               *
  *                                                                         *
- *   Copyright (C) 2024-2025 Anthony Schmidt, anthony@manicpop.org         *
+ *   Copyright (C) 2024-2026 Anthony Schmidt, anthony@manicpop.org         *
  *                                                                         *
  *   https://manicpop.org/ge-next/  https://github.com/manicpop/ge-next    *
  *                                                                         *
@@ -1343,7 +1343,7 @@ if (ptr->mineload < 0)
 	++ptr->mineload;
 	if (ptr->mineload == 0)
 		{
-		prfmsg(FCREPRM);
+		prfmsg(REPRMN);
 		outprfge(ALWAYS,usrn);
 		}
 	}
@@ -2472,163 +2472,446 @@ return(0);
 ** Assess any random damage                                              **
 **************************************************************************/
 
+static int rd_item(WARSHP *ptr, unsigned int r, int itemnum, int damcomb)
+{
+int maxloss, qty, ifloor;
+unsigned long have;
+
+have = ptr->items[itemnum];
+maxloss = damcomb / 5 + 1;
+
+if ((unsigned long)maxloss > have)
+	maxloss = (int)have;
+
+if (maxloss < 1)
+	maxloss = 1;
+
+qty = 1 + (r % maxloss);
+
+if (qty > (int)(have - 5))
+	{
+	ifloor = (have - 1 < 5UL) ? (int)(have - 1) : 5;
+	if (ifloor < 1)
+		ifloor = 1;
+	qty = 1 + (r % ifloor);
+	}
+
+if (qty > maxloss)
+	qty = maxloss;
+
+if (qty < 1)
+	qty = 1;
+
+ptr->items[itemnum] = have - qty;
+return qty;
+}
+
+static void append_counter(char *buf, byte *comma, int qty, const char *sing, const char *plur)
+{
+if (qty <= 0)
+	return;
+
+if (*comma > 0)
+	sprintf(buf + strlen(buf), ", ");
+
+sprintf(buf + strlen(buf), "%d %s", qty, qty == 1 ? sing : plur);
+(*comma)++;
+}
+
+static void add_item(WARSHP *ptr, unsigned int r, int itemnum, int damcomb,
+	char *buf, byte *comma, const char *sing, const char *plur)
+{
+int qty = rd_item(ptr, r, itemnum, damcomb);
+if (qty <= 0)
+	return;
+
+if (*comma > 0)
+	sprintf(buf + strlen(buf), ", ");
+
+if (qty == 1 && *comma == 0)
+	sprintf(buf + strlen(buf), "%d %s", qty, sing);
+else
+	sprintf(buf + strlen(buf), "%d %s", qty, plur);
+
+(*comma)++;
+}
+
 void FUNC randamage(ptr,usrn,hitdam)
 
 WARSHP	*ptr;
 int	usrn;
 double	hitdam;
 {
-int	a;
-int	damcomb;
+int	a, i, damcomb, qty, types, idx, item;
+byte	comma = 0;
+int	doitems, dosys;	/* 0 don't, 1 do, 2 done */
+unsigned int r, r2;
+
+gechrbuf[0] = '\0';
 
 /* already dead */
 if (ptr->damage > 100.0)
 	return;
 
 /* hit must be over 10 and damage before hit must be over 20 */
-if (hitdam > 10.0 && (ptr->damage - hitdam) > 20.0)
+if (hitdam < 10.0 || (ptr->damage - hitdam) < 20.0)
+	return;
+
+/* weight toward big single hits */
+damcomb = (int)(ptr->damage * 0.5 + hitdam * (1.0 + hitdam * 0.015));
+
+/* cap to ensure that all 11 options are possible */
+if (damcomb > 74)
+	damcomb = 74;
+
+r = gernd();
+r2 = gernd();
+
+doitems = r & 1;
+dosys = (r >> 1) & 1;
+if (doitems == 0 && dosys == 0)
 	{
-	/* weight toward big single hits */
-	damcomb = (int)(ptr->damage * 0.6 + hitdam * (1.0 + hitdam * 0.015));
+	doitems = 1;
+	dosys = 1;
+	}
 
-	/* cap to ensure that a (below) is never less than 11 */
-	if (damcomb > 88)
-		damcomb = 88;
+a = r % (85 - damcomb);
+if (a > 10)	/* no effect */
+	return;
 
-	/* toss dice to see if a system has been damaged */
-
-	a = gernd() % (100 - damcomb);
-	if (a < 16)
-		{
-		switch (a)
+switch (a)
+	{
+	case 0: /* missiles */
+		if (shipclass[ptr->shpclass].max_missl > 0)
 			{
-			case 0:	/* shields */
-				if (shipclass[ptr->shpclass].max_shlds > 0)
-					{
-					prfmsg(SHDAMAG);
-					outprfge(ALWAYS,usrn);
-					ptr->shield = -2 - gernd()%(damcomb/3);
-					ptr->shieldstat = SHIELDDM;
-					}
-				else
-					a = 11;	/* gag message */
-				break;
+			if (dosys == 1 && ptr->mislcntl == 0)
+				{
+				ptr->mislcntl = 2 + r % (damcomb/3);
+				prfmsg(RNDMISL);
+				dosys = 2;
+				}
+			if (doitems == 1 && ptr->items[I_MISSILE] > 0)
+				{
+				qty = rd_item(ptr, r, I_MISSILE, damcomb);
+				prfmsg(RNDITEM,qty,qty == 1 ? "missile was" : "missiles were");
+				doitems = 2;
+				}
+			break;
 
-			case 1:	/* phasers */
-				if (shipclass[ptr->shpclass].max_phasr > 0)
+		case 1:	/* torpedoes */
+			if (shipclass[ptr->shpclass].max_torps > 0)
+				{
+				if (dosys == 1 && ptr->torpcntl == 0)
 					{
-					prfmsg(RNDPHSR);
-					outprfge(ALWAYS,usrn);
-					ptr->phasr = -2 - gernd()%(damcomb/3);
-					}
-				else
-					a = 11;
-				break;
-
-			case 2:	/* torpedoes */
-				if (shipclass[ptr->shpclass].max_torps > 0)
-					{
+					ptr->torpcntl = 2 + r % (damcomb/3);
 					prfmsg(RNDTORP);
-					outprfge(ALWAYS,usrn);
-					ptr->torpcntl = 2 + gernd()%(damcomb/3);
+					dosys = 2;
 					}
-				else
-					a = 11;
-				break;
-
-			case 3:	/* cloak next */
-				if (shipclass[ptr->shpclass].max_cloak > 0)
+				if (doitems == 1 && ptr->items[I_TORPEDO] > 0)
 					{
-					prfmsg(RNDCLOK);
-					outprfge(ALWAYS,usrn);
-					ptr->cloak = -2 - gernd()%(damcomb/3);
+					qty = rd_item(ptr, r, I_TORPEDO, damcomb);
+					prfmsg(RNDITEM,qty,qty == 1 ? "torpedo was" : "torpedoes were");
+					doitems = 2;
 					}
-				else
-					a = 11;
-				break;
+				}
+			break;
 
-			case 4:	/* tactical display next */
+		case 2:	/* decoys */
+			if (shipclass[ptr->shpclass].has_decoy > 0)
+				{
+				if (dosys == 1 && ptr->decload >= 0)
+					{
+					ptr->decload = -2 - r % (damcomb/3);
+					prfmsg(RNDDECY);
+					dosys = 2;
+					}
+				if (doitems == 1 && ptr->items[I_DECOYS] > 0)
+					{
+					qty = rd_item(ptr, r, I_DECOYS, damcomb);
+					prfmsg(RNDITEM,qty,qty == 1 ? "decoy was" : "decoys were");
+					doitems = 2;
+					}
+				}
+			break;
+
+		case 3:	/* zippers */
+			if (shipclass[ptr->shpclass].has_zip > 0)
+				{
+				if (dosys == 1 && ptr->zipload >= 0)
+					{
+					ptr->zipload = -2 - r % (damcomb/3);
+					prfmsg(RNDZIPR);
+					dosys = 2;
+					}
+				if (doitems == 1 && ptr->items[I_ZIPPERS] > 0)
+					{
+					qty = rd_item(ptr, r, I_ZIPPERS, damcomb);
+					prfmsg(RNDITEM,qty,qty == 1 ? "zipper was" : "zippers were");
+					doitems = 2;
+					}
+				}
+			break;
+
+		case 4:	/* jammers */
+			if (shipclass[ptr->shpclass].has_jam > 0)
+				{
+				if (dosys == 1 && ptr->jamload >= 0)
+					{
+					ptr->jamload = -2 - r % (damcomb/3);
+					prfmsg(RNDJAMR);
+					dosys = 2;
+					}
+				if (doitems == 1 && ptr->items[I_JAMMERS] > 0)
+					{
+					qty = rd_item(ptr, r, I_JAMMERS, damcomb);
+					prfmsg(RNDITEM,qty,qty == 1 ? "jammer was" : "jammers were");
+					doitems = 2;
+					}
+				}
+			break;
+
+		case 5:	/* mines */
+			if (shipclass[ptr->shpclass].has_mine > 0)
+				{
+				if (dosys == 1 && ptr->mineload >= 0)
+					{
+					ptr->mineload = -2 - r % (damcomb/3);
+					prfmsg(RNDMINE);
+					dosys = 2;
+					}
+				if (doitems == 1 && ptr->items[I_MINE] > 0)
+					{
+					qty = rd_item(ptr, r, I_MINE, damcomb);
+					prfmsg(RNDITEM,qty,qty == 1 ? "mine was" : "mines were");
+					doitems = 2;
+					}
+				}
+			break;
+
+		case 6:	/* shields */
+			if (shipclass[ptr->shpclass].max_shlds > 0 && ptr->shieldstat != SHIELDDM && dosys == 1)
+				{
+				prfmsg(SHDAMAG);
+				outprfge(ALWAYS,usrn);
+				ptr->shield = (int)(-2 - r % (damcomb/3));
+				ptr->shieldstat = SHIELDDM;
+				dosys = 2;
+				}
+			break;
+
+		case 7:	/* phasers */
+			if (shipclass[ptr->shpclass].max_phasr > 0 && ptr->phasr >= 0 && dosys == 1)
+				{
+				prfmsg(RNDPHSR);
+				outprfge(ALWAYS,usrn);
+				ptr->phasr = (int)(-2 - r % (damcomb/3));
+				dosys = 2;
+				}
+			break;
+
+		case 8:	/* cloak */
+			if (shipclass[ptr->shpclass].max_cloak > 0 && ptr->cloak >= 0 && dosys == 1)
+				{
+				prfmsg(RNDCLOK);
+				outprfge(ALWAYS,usrn);
+				ptr->cloak = -2 - r % (damcomb/3);
+				dosys = 2;
+				}
+			break;
+
+		case 9:	/* scanners */
+			if (ptr->tactical == 0 && dosys == 1)
+				{
 				prfmsg(RNDTACT);
 				outprfge(ALWAYS,usrn);
-				ptr->tactical = -2 - gernd()%(damcomb/6);
-				break;
+				ptr->tactical = -2 - r % (damcomb/6);
+				dosys = 2;
+				}
+			break;
 
-			case 5:	/* navigational */
+		case 10: /* helm */
+			if (ptr->helm == 0 && dosys == 1)
+				{
 				prfmsg(RNDNAVG);
 				outprfge(ALWAYS,usrn);
-				ptr->helm = -2 - gernd()%(damcomb/9);
+				ptr->helm = -2 - r % (damcomb/9);
+				dosys = 2;
+				}
+			break;
+
+		default:
+			break;
+		}
+	/* if we didn't blow up a system or that system's items, and still need to do items */
+	if (doitems == 1 && dosys != 2)
+		{
+		a = r2 % 7;
+		if (a == 5)
+			a = 0;
+		if (a == 6)
+			a = 1;
+
+		switch (a)
+			{
+			case 0:	/* cargo bay */
+				{
+				byte allowed[NUMITEMS-4];
+				int count = 0;
+
+				prfmsg(RNDCRGO);
+
+				for (i = 0; i < NUMITEMS; i++)
+					{
+					if (i == I_MEN || i == I_TROOPS || i == I_SPY || i == I_GOLD || ptr->items[i] < 2UL)
+						continue;
+
+					allowed[count++] = (byte)i;
+					}
+
+				if (count < 1)		/* nothing to damage */
+					break;
+
+				types = 1 + (damcomb / 20);	/* how many types of items to damage */
+				if (types > 4)
+					types = 4;
+
+				if (types > count)
+					types = count;
+
+				for (i = 0; i < types; ++i)
+					{
+					idx = (r2 >> (i*4)) % count; /* each 4 bits gives new entropy slice */
+				        item = allowed[idx];
+
+					/* swap-remove to prevent repeats without looping */
+					allowed[idx] = allowed[--count];
+
+					add_item(ptr, r2 >> i, item, damcomb, gechrbuf, &comma, item_name[item], item_name[item]);
+					}
+				prfmsg(RNDITEM2, gechrbuf);
+				}
+				break;
+			case 1:	/* living quarters */
+				{
+				prfmsg(RNDLVNG);
+
+				if (ptr->items[I_MEN] > 0)
+					add_item(ptr, r2, I_MEN, damcomb, gechrbuf, &comma, "man", "men");
+				if (ptr->items[I_TROOPS] > 0)
+					add_item(ptr, r2 >> 1, I_TROOPS, damcomb, gechrbuf, &comma, "troop", "troops");
+				if (ptr->items[I_SPY] > 0)
+					add_item(ptr, r2 >> 2, I_SPY, damcomb, gechrbuf, &comma, "spy", "spies");
+
+				if (comma == 0)
+					break;
+				else
+				if (comma == 1 && types == 1)
+					sprintf(gechrbuf + strlen(gechrbuf)," was");
+				else
+					sprintf(gechrbuf + strlen(gechrbuf)," were");
+
+				prfmsg(RNDITEM2,gechrbuf);
+				}
 				break;
 
-			case 6:	/* mines */
-				if (shipclass[ptr->shpclass].has_mine > 0)
-					{
-					prfmsg(RNDMINE);
-					outprfge(ALWAYS,usrn);
-					ptr->mineload = -2 - gernd()%(damcomb/3);
-					}
-				else
-					a = 11;
-				break;
-			case 7:	/* zippers */
-				if (shipclass[ptr->shpclass].has_zip > 0)
-					{
-					prfmsg(RNDZIPR);
-					outprfge(ALWAYS,usrn);
-					ptr->zipload = -2 - gernd()%(damcomb/3);
-					}
-				else
-					a = 11;
-				break;
-			case 8:	/* jammers */
-				if (shipclass[ptr->shpclass].has_jam > 0)
-					{
-					prfmsg(RNDJAMR);
-					outprfge(ALWAYS,usrn);
-					ptr->jamload = -2 - gernd()%(damcomb/3);
-					}
-				else
-					a = 11;
-				break;
+			case 2:	/* head */
+				{
+				byte allowed[3];
+				int count = 0;
+				prfmsg(RNDHEAD);
 
-			case 9:	/* decoy */
-				if (shipclass[ptr->shpclass].has_decoy > 0)
-					{
-					prfmsg(RNDDECY);
-					outprfge(ALWAYS,usrn);
-					ptr->decload = -2 - gernd()%(damcomb/3);
-					}
-				else
-					a = 11;
-				break;
+				if (ptr->items[I_MEN] > 0UL)
+					allowed[count++] = 0;
+				if (ptr->items[I_TROOPS] > 0UL)
+					allowed[count++] = 1;
+				if (ptr->items[I_SPY] > 0UL)
+					allowed[count++] = 2;
 
-			case 10: /* missiles */
-				if (shipclass[ptr->shpclass].max_missl > 0)
-					{
-					prfmsg(RNDMISL);
-					outprfge(ALWAYS,usrn);
-					ptr->mislcntl = 2 + gernd()%(damcomb/3);
-					}
-				else
-					a = 11;
-				break;
+				if (count < 1)
+					break;
 
-			default: /* gag */
+				item = allowed[r2 % count];
+
+				if (item == 0)
+					{
+					ptr->items[I_MEN]--;
+					prfmsg(RNDITEM2,"1 man was");
+					}
+				if (item == 1)
+					{
+					ptr->items[I_TROOPS]--;
+					prfmsg(RNDITEM2,"1 troop was");
+					}
+				if (item == 2)
+					{
+					ptr->items[I_SPY]--;
+					prfmsg(RNDITEM2,"1 spy was");
+					}
+				}
+				break;
+			case 3:	/* mess hall */
+				{
+				byte allowed[3];
+				int counter[3] = {0,0,0}, count = 0;
+				prfmsg(RNDMESS);
+
+				if (ptr->items[I_MEN] > 0UL)
+					allowed[count++] = 0;
+				if (ptr->items[I_TROOPS] > 0UL)
+					allowed[count++] = 1;
+				if (ptr->items[I_SPY] > 0UL)
+					allowed[count++] = 2;
+
+				if (count < 1)
+					break;
+
+				types = 1 + (r2 % 5);
+				if (types > 5)
+					types = 5;
+
+				for (i = 0; i < types; ++i)
+					{
+					idx = (r2 >> (i * 3)) % count;  /* shift entropy slice a bit each time */
+					item = allowed[idx];
+
+					if (item == 0 && ptr->items[I_MEN] > 0UL)
+						{
+						ptr->items[I_MEN]--;
+						counter[0]++;
+						}
+					else
+					if (item == 1 && ptr->items[I_TROOPS] > 0UL)
+						{
+						ptr->items[I_TROOPS]--;
+						counter[1]++;
+						}
+					else
+					if (item == 2 && ptr->items[I_SPY] > 0UL)
+						{
+						ptr->items[I_SPY]--;
+						counter[2]++;
+						}
+					}
+
+				append_counter(gechrbuf, &comma, counter[0], "man", "men");
+				append_counter(gechrbuf, &comma, counter[1], "troop", "troops");
+				append_counter(gechrbuf, &comma, counter[2], "spy", "spies");
+
+				if (comma == 0)
+					break;
+				else
+				if (comma == 1 && qty == 1)
+					sprintf(gechrbuf + strlen(gechrbuf)," was");
+				else
+					sprintf(gechrbuf + strlen(gechrbuf)," were");
+				prfmsg(RNDITEM2,gechrbuf);
+				}
 				break;
 			}
-		 }
-	/* if the roll hit exactly 11 or system is non-present, chance of gag */
-	if (a == 11)
-		a = gernd()%16;
-	/* if we hit 12-15 on the damcomb roll or on the a=11 roll, one of four gags */
-	if (a >= 12 && a <= 15)
-		{
-		a -= 12;
-		prfmsg(RNDXX1+a);
 		outprfge(ALWAYS,usrn);
 		}
 	}
 }
-
 
 /**************************************************************************
 ** Determine the damage amount                                           **

@@ -11,7 +11,7 @@
  *                                                                         *
  *   ge-next                                                               *
  *                                                                         *
- *   Copyright (C) 2024-2025 Anthony Schmidt, anthony@manicpop.org         *
+ *   Copyright (C) 2024-2026 Anthony Schmidt, anthony@manicpop.org         *
  *                                                                         *
  *   https://manicpop.org/ge-next/  https://github.com/manicpop/ge-next    *
  *                                                                         *
@@ -42,11 +42,11 @@
 */
 
 #ifdef GETRAINER
-#define VERSION "ge-next 0.3-pre3 Trainer"
+#define VERSION "ge-next 0.3-pre4 Trainer"
 #define GEHELP  "MPOG2HLP.MCV"
 #define GEMSG   "MPOG2MSG.MCV"
 #else
-#define VERSION "ge-next 0.3-pre3"
+#define VERSION "ge-next 0.3-pre4"
 #define GEHELP  "MPOGEHLP.MCV"
 #define GEMSG   "MPOGEMSG.MCV"
 #endif

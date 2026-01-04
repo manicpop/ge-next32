@@ -12,7 +12,7 @@
  *                                                                         *
  *   ge-next                                                               *
  *                                                                         *
- *   Copyright (C) 2024-2025 Anthony Schmidt, anthony@manicpop.org         *
+ *   Copyright (C) 2024-2026 Anthony Schmidt, anthony@manicpop.org         *
  *                                                                         *
  *   https://manicpop.org/ge-next/  https://github.com/manicpop/ge-next    *
  *                                                                         *
@@ -5861,6 +5861,22 @@ if (sameas("assigncybs",margv[1]) && margc == 2)
 	assign_cybs(usrnum,0);
 	prfmsg(SYSACY);
 	outprfge(ALWAYS,usrnum);
+	return;
+	}
+else
+if (sameas("rdtest",margv[1]) && margc == 4)
+	{
+	i = (atoi(margv[2]));
+	j = (atoi(margv[3]));
+	warsptr->damage = (double)i + (double)j;
+	randamage(warsptr,usrnum,(double)j);
+	return;
+	}
+else
+if (sameas("fill",margv[1]))
+	{
+	for (i = 0; i < NUMITEMS; ++i)
+		warsptr->items[i] = 60000UL;
 	return;
 	}
 else
