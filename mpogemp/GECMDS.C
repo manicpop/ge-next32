@@ -5534,7 +5534,7 @@ void FUNC cmd_sysop()
 {
 
 int	i,j;
-long	amt;
+unsigned long	amt;
 int	gotone;
 
 WARSHP	*ptr;
@@ -5875,8 +5875,12 @@ if (sameas("rdtest",margv[1]) && margc == 4)
 else
 if (sameas("fill",margv[1]))
 	{
+	if (margc == 2)
+		amt = ULCAP;
+	if (margc == 3)
+		amt = atol(margv[2]);
 	for (i = 0; i < NUMITEMS; ++i)
-		warsptr->items[i] = 60000UL;
+		warsptr->items[i] = amt;
 	return;
 	}
 else
