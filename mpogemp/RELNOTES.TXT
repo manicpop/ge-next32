@@ -118,6 +118,9 @@ Other stuff:
   are damaged after a hit has been reworked to include more
   ship systems, and can also result in loss to onboard items.
   Mine and ion cannon damage can now also trigger this routine.
+* The amount of time a damaged system will stay damaged has
+  been lowered, but all ship systems (other than shields) will
+  now only be repaired one at a time.
 
 === 0.2.6 === 2025-08-15
 

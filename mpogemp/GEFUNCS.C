@@ -1192,6 +1192,7 @@ int	usrn;
 {
 
 double	preload;
+
 logthis(spr("GE:Chn %d checkdam %s",usrn,ptr->userid));
 
 if (ptr->damage >= 100.0)
@@ -1223,24 +1224,14 @@ if (ptr->damage >= 100.0)
 	return;
 	}
 
+/* repair ship, always */
 if (ptr->damage > 0.0)
 	ptr->damage = ptr->damage - repairrate;
 else
 	ptr->damage = 0.0;
 
-
-/* repair & recharge phasers */
-if (ptr->phasr < 0)
-	{
-	ptr->phasr += 1;
-	if (ptr->phasr == 0)
-		{
-		prfmsg(PHREPR);
-		outprfge(ALWAYS,usrn);
-		}
-	}
-else
-if (ptr->phasr < 100)
+/* charge phaser if not damaged */
+if (ptr->phasr < 100 && ptr->phasr >= 0)
 	{
 	if (fluxstat(ptr,usrn,PENGUSE) == 1)
 		{
@@ -1266,16 +1257,7 @@ if (ptr->phasr < 100)
 		}
 	}
 
-/* repair tactical display */
-if (ptr->tactical < 0)
-	{
-	++ptr->tactical;
-	if (ptr->tactical == 0)
-		{
-		prfmsg(TAREPR);
-		outprfge(ALWAYS,usrn);
-		}
-	}
+/* only repair one system at a time (shields are separate), ranked by importance */
 
 /* repair helm */
 if (ptr->helm < 0)
@@ -1286,8 +1268,34 @@ if (ptr->helm < 0)
 		prfmsg(HLREPR);
 		outprfge(ALWAYS,usrn);
 		}
+	return;
 	}
-/* repair fire control systems */
+
+/* repair tactical display */
+if (ptr->tactical < 0)
+	{
+	++ptr->tactical;
+	if (ptr->tactical == 0)
+		{
+		prfmsg(TAREPR);
+		outprfge(ALWAYS,usrn);
+		}
+	return;
+	}
+
+/* repair phaser */
+if (ptr->phasr < 0)
+	{
+	ptr->phasr += 1;
+	if (ptr->phasr == 0)
+		{
+		prfmsg(PHREPR);
+		outprfge(ALWAYS,usrn);
+		}
+	return;
+	}
+
+/* repair torpedo launchers */
 if (ptr->torpcntl > 0)
 	{
 	--ptr->torpcntl;
@@ -1296,8 +1304,10 @@ if (ptr->torpcntl > 0)
 		prfmsg(FCREPRT);
 		outprfge(ALWAYS,usrn);
 		}
+	return;
 	}
 
+/* repair missile launchers */
 if (ptr->mislcntl > 0)
 	{
 	--ptr->mislcntl;
@@ -1306,18 +1316,22 @@ if (ptr->mislcntl > 0)
 		prfmsg(FCREPRM);
 		outprfge(ALWAYS,usrn);
 		}
+	return;
 	}
 
-if (ptr->zipload < 0)
+/* repair cloak */
+if (ptr->cloak < 0)
 	{
-	++ptr->zipload;
-	if (ptr->zipload == 0)
+	++ptr->cloak;
+	if (ptr->cloak == 0)
 		{
-		prfmsg(REPRZ);
+		prfmsg(CLREPR);
 		outprfge(ALWAYS,usrn);
 		}
+	return;
 	}
 
+/* repair jammer launcher */
 if (ptr->jamload < 0)
 	{
 	++ptr->jamload;
@@ -1326,8 +1340,10 @@ if (ptr->jamload < 0)
 		prfmsg(REPRJ);
 		outprfge(ALWAYS,usrn);
 		}
+	return;
 	}
 
+/* repair decoy launcher */
 if (ptr->decload < 0)
 	{
 	++ptr->decload;
@@ -1336,8 +1352,22 @@ if (ptr->decload < 0)
 		prfmsg(REPRD);
 		outprfge(ALWAYS,usrn);
 		}
+	return;
 	}
 
+/* repair zipper launcher */
+if (ptr->zipload < 0)
+	{
+	++ptr->zipload;
+	if (ptr->zipload == 0)
+		{
+		prfmsg(REPRZ);
+		outprfge(ALWAYS,usrn);
+		}
+	return;
+	}
+
+/* repair mine launcher */
 if (ptr->mineload < 0)
 	{
 	++ptr->mineload;
@@ -1346,6 +1376,7 @@ if (ptr->mineload < 0)
 		prfmsg(REPRMN);
 		outprfge(ALWAYS,usrn);
 		}
+	return;
 	}
 return;
 }
@@ -1743,16 +1774,6 @@ if (ptr->cloak > 0)
 	 else
 		ptr->energy -= clenguse;
 	 }
-else
-if (ptr->cloak < 0)
-	{
-	++ptr->cloak;
-	if (ptr->cloak == 0)
-		{
-		prfmsg(CLREPR);
-		outprfge(ALWAYS,usrn);
-		}
-	}
 }
 
 /**************************************************************************

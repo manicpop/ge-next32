@@ -2380,28 +2380,29 @@ if (sameas(margv[1],"sys"))
 	damstr(damage);
 
 	prfmsg(REP14,gechrbuf);
+	/* in order of how they're repaired */
 	if (warsptr->shieldstat == SHIELDDM)
 		prfmsg(REP15);
-	if (warsptr->helm < 0 )
+	if (warsptr->helm < 0)
 		prfmsg(REP16);
-	if (warsptr->cloak < 0 )
-		prfmsg(REP17);
-	if (warsptr->tactical < 0 )
+	if (warsptr->tactical < 0)
 		prfmsg(REP18);
-	if (warsptr->phasr < 0 )
+	if (warsptr->phasr < 0)
 		prfmsg(REP21);
 	if (warsptr->torpcntl > 0)
 		prfmsg(REP22T);
 	if (warsptr->mislcntl > 0)
 		prfmsg(REP22M);
-	if (warsptr->mineload < 0)
-		prfmsg(REP22MN);
-	if (warsptr->zipload < 0)
-		prfmsg(REP22Z);
+	if (warsptr->cloak < 0)
+		prfmsg(REP17);
 	if (warsptr->jamload < 0)
 		prfmsg(REP22J);
+	if (warsptr->zipload < 0)
+		prfmsg(REP22Z);
 	if (warsptr->decload < 0)
 		prfmsg(REP22D);
+	if (warsptr->mineload < 0)
+		prfmsg(REP22MN);
 
 	if (shipclass[warsptr->shpclass].max_warp != 0)
 		{
