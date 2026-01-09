@@ -2973,16 +2973,16 @@ if (plnum <= MAXPLANETS && plnum > 0)
 
 			prfmsg(SCAN18);
 			if (plptr->resource == 0)
-				prfmsg(SCAN12);
-			else
-			if (plptr->resource == 1)
-				prfmsg(SCAN13);
-			else
-			if (plptr->resource == 2)
 				prfmsg(SCAN14);
 			else
-			if (plptr->resource == 3)
+			if (plptr->resource == 1)
 				prfmsg(SCAN15);
+			else
+			if (plptr->resource == 2)
+				prfmsg(SCAN16);
+			else
+			if (plptr->resource == 3)
+				prfmsg(SCAN17);
 			/*DEBUG
 			prf("plptr->userid=%s\rwarsptr->userid=%s\r",plptr->userid,warsptr->userid);*/
 
