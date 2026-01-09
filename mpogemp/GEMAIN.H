@@ -335,7 +335,7 @@ WARUSR {						/* user data blocks                       */
 		char		waste[40];
 		unsigned	noships;		/*   Number of ships                      */
 		int		topshipno;		/*   Top ship number used                 */
-		int		kills;			/*   No kills                             */
+		unsigned	kills;			/*   No kills                             */
 		unsigned	rospos;
 		int		planets;		/*   Planets owned                        */
 		unsigned long	cash;			/*   cash on hand                         */
@@ -346,7 +346,8 @@ WARUSR {						/* user data blocks                       */
 		byte		options[30];
 		unsigned long	teamcode;
 		byte		factions[8];		/* do NPCs like me */
-		char		filler[256-117-UIDSIZ];
+		unsigned	ukills;			/* just user kills */
+		char		filler[256-115-UIDSIZ];
 };
 
 
@@ -381,7 +382,7 @@ WARSHP {						/*   user data blocks                        */
 /*141*/
 		byte		phasrtype;		/*   Type of Phasor system                   */
 /*142*/
-		int		kills;			/*   No kills                                */
+		unsigned	kills;			/*   No kills                                */
 /*144*/
 		int		lastfired;		/*   usernumber of last user to fire on you  */
 /*146*/
@@ -467,7 +468,9 @@ WARSHP {						/*   user data blocks                        */
 /*308*/
 		int		mineload;		/*   mine launch throttle                    */
 /*310*/
-		char		filler[514-280-UIDSIZ]; /*   WARSHP in GE classic is 514             */
+		unsigned	ukills;			/*   just user kills                         */
+/*312*/
+		char		filler[514-278-UIDSIZ]; /*   WARSHP in GE classic is 514             */
 };
 
 /*

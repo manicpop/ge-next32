@@ -1419,7 +1419,15 @@ if (who >= 0 && who < nships && who != usrn)
 	else
 		prfmsg(KILLEDBY,username(ptr),username(wptr));
 	outwar(FILTER,usrn,0);
-	++(wuptr->kills);
+
+	++wuptr->kills;
+	++wptr->kills;
+
+	if (ptr->status == GESTAT_USER && wptr->status == GESTAT_USER)
+		{
+		++wuptr->ukills;
+		++wptr->ukills;
+		}
 
 	if (ptr->status == GESTAT_AUTO)
 		prfmsg(KILLGOTN,ptr->shipname);

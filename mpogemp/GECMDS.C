@@ -2299,7 +2299,7 @@ if (sameas(margv[1],"nav"))
 
 	setsect(warsptr);
 
-	prfmsg(REP32,xsect,ysect,xcord,ycord);
+	prfmsg(REP34,xsect,ysect,xcord,ycord);
 	if (warsptr->status == GESTAT_AUTO)
 		{
 		prfmsg(REP40,warsptr->status,warsptr->cybmine,warsptr->cybupdate);
@@ -2462,11 +2462,13 @@ if (sameas(margv[1],"acc"))
 
 	prfmsg(REP30,gechrbuf);
 
-	prfmsg(REP31,waruptr->kills);
+	prfmsg(REP31,waruptr->kills,waruptr->ukills);
+
+	prfmsg(REP32,warsptr->kills,waruptr->ukills);
 
 	if (waruptr->teamcode > 0)
 		{
-		prfmsg(REP31A,teamname(waruptr));
+		prfmsg(REP33,teamname(waruptr));
 		}
 	}
 else
@@ -2853,7 +2855,13 @@ if (shpnum >= 0)
 			else
 				prfmsg(SCAN07);
 
-			prfmsg(SCAN07A,wuptr->kills);
+			if (wptr->status == GESTAT_AUTO)
+				prfmsg(SCAN08,wptr->kills);
+			else
+				{
+				prfmsg(SCAN09,wptr->shipname,wptr->kills,wptr->ukills);
+				prfmsg(SCAN09,wuptr->userid,wuptr->kills,wuptr->ukills);
+				}
 			}
 
 		prfmsg(DASHES);
@@ -2931,11 +2939,11 @@ if (plnum <= MAXPLANETS && plnum > 0)
 		sprintf(gechrbuf,"%s",plptr->name);
 		if (warsptr->jam_sev > (byte)2 && warsptr->where - 10 != plnum)
 			jam_scramble(gechrbuf, warsptr->jam_sev, &rseed);
-		prfmsg(SCAN08,plnum,gechrbuf);
+		prfmsg(SCAN10,plnum,gechrbuf);
 		prfmsg(DASHES);
 
 		if (plptr->userid[0] != 0 && (warsptr->jam_sev < (byte)3 || warsptr->where - 10 == plnum))
-			prfmsg(SCAN09,plptr->userid);
+			prfmsg(SCAN11,plptr->userid);
 
 		memset(gechrbuf2, 0, 20);
 		memset(gechrbuf3, 0, 20);
@@ -2946,24 +2954,24 @@ if (plnum <= MAXPLANETS && plnum > 0)
 			jam_scramble(gechrbuf2, warsptr->jam_sev, &rseed);
 			jam_scramble(gechrbuf3, warsptr->jam_sev, &rseed);
 			}
-		prfmsg(SCAN10,gechrbuf2,gechrbuf3);
+		prfmsg(SCAN12,gechrbuf2,gechrbuf3);
 
 		if (warsptr->where != 1 && (warsptr->jam_sev < (byte)3 || warsptr->where - 10 == plnum))
 			{
-			prfmsg(SCAN11);
+			prfmsg(SCAN13);
 			if (plptr->enviorn == 0)
-				prfmsg(SCAN12);
-			else
-			if (plptr->enviorn == 1)
-				prfmsg(SCAN13);
-			else
-			if (plptr->enviorn == 2)
 				prfmsg(SCAN14);
 			else
-			if (plptr->enviorn == 3)
+			if (plptr->enviorn == 1)
 				prfmsg(SCAN15);
+			else
+			if (plptr->enviorn == 2)
+				prfmsg(SCAN16);
+			else
+			if (plptr->enviorn == 3)
+				prfmsg(SCAN17);
 
-			prfmsg(SCAN16);
+			prfmsg(SCAN18);
 			if (plptr->resource == 0)
 				prfmsg(SCAN12);
 			else
@@ -4717,7 +4725,7 @@ if (qhibtv(1))
 			++i;
 			sprintf(gechrbuf,"%11lu",tmpusr.score);
 			sprintf(gechrbuf2," %10.2fm",((float)tmpusr.population)/100.0);
-			prf("%-29s%s%6d%4d%s\r",tmpusr.userid,gechrbuf,tmpusr.kills,tmpusr.planets,gechrbuf2);
+			prf("%-29s%s%6u%6u%4d%s\r",tmpusr.userid,gechrbuf,tmpusr.kills,tmpusr.ukills,tmpusr.planets,gechrbuf2);
 			outprfge(ALWAYS,usrnum);
 			}
 		} while (qprbtv() && i < j);

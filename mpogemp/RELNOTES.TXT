@@ -129,6 +129,10 @@ Other stuff:
 * The amount of time a damaged system will stay damaged has
   been lowered, but all ship systems (other than shields) will
   now only be repaired one at a time.
+* Total kills by a user and total kills in a particular ship are
+  now tracked separately, and user-on-user kills are tracked
+  separately from all others. More opportunties for bragging
+  rights.
 
 === 0.2.6 === 2025-08-15
 

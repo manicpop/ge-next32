@@ -3106,14 +3106,14 @@ IHIT2 {***
 
 ROSTER1 {
 [1;36mComplete roster list
-[0;31m--------------------------------------------------------------
-[1;34mPlayer                             Score Kills Pla Empire Size[1;37m
+[0;31m--------------------------------------------------------------------
+[1;34mPlayer                             Score Kills Users Pla Empire Size[1;37m
 } T GE complete roster list message
 
 ROSTER2 {
 [1;36mTop %d roster list
-[0;31m--------------------------------------------------------------
-[1;34mPlayer                             Score Kills Pla Empire Size[1;37m
+[0;31m--------------------------------------------------------------------
+[1;34mPlayer                             Score Kills Users Pla Empire Size[1;37m
 } T GE incomplete roster list message
 
 BUYPAS1 {
@@ -3311,13 +3311,16 @@ REP29S {[1;37mPhasers (Mark-%d)..... [1;33m< charging >[1;37m
 REP30 {[1;37mScore................. %s
 } T GE report 30
 
-REP31 {[1;37mKills................. %d
+REP31 {[1;37mTotal kills........... %u (%u)
 } T GE report 31
 
-REP31A {[1;37m   Team: %s
+REP32 {[1;37mKills in this ship.... %u (%u)
+} T GE report 31
+
+REP33 {[1;37m   Team: %s
 } T GE report 31A
 
-REP32 {[1;37mGalactic position..... X:%d Y:%d
+REP34 {[1;37mGalactic position..... X:%d Y:%d
 Sector position....... X:%d Y:%d
 } T GE report 32
 
@@ -3389,34 +3392,37 @@ SCAN06 {[0;37mShields: [1;32mUP
 SCAN07 {[0;37mShields: [0;31mDOWN
 } T GE scan 07
 
-SCAN07A {[0;37mRegistered kills: [1;37m%d
-} T GE scan 07A
+SCAN08 {[0;37mRegistered kills: [1;37m%u
+} T GE scan 08
 
-SCAN08 {
+SCAN09 {[0;37mRegistered kills (%s): [1;37m%u (%u)
+} T GE scan 09
+
+SCAN10 {
 [0;37mScanning planet [0;34m%d[0;37m: [0;34m%s[1;37m
 } T GE scan 08
 
-SCAN09 {[0;37mCommanded by: [1;34m%s[0;37m
+SCAN11 {[0;37mCommanded by: [1;34m%s[0;37m
 } T GE scan 09
 
-SCAN10 {[0;37mBearing: [1;37m%s[0;37m  Distance: [1;37m%s[0;37m
+SCAN12 {[0;37mBearing: [1;37m%s[0;37m  Distance: [1;37m%s[0;37m
 } T GE scan 10
 
-SCAN11 {[0;37mEnvironment: } T GE scan 11
+SCAN13 {[0;37mEnvironment: } T GE scan 11
 
-SCAN12 {[1;37mPoor
+SCAN14 {[1;37mPoor
 } T GE scan 12
 
-SCAN13 {[1;37mMarginal
+SCAN15 {[1;37mMarginal
 } T GE scan 13
 
-SCAN14 {[1;37mGood
+SCAN16 {[1;37mGood
 } T GE scan 14
 
-SCAN15 {[1;37mVery good
+SCAN17 {[1;37mVery good
 } T GE scan 15
 
-SCAN16 {[0;37mResources: } T GE scan 16
+SCAN18 {[0;37mResources: } T GE scan 16
 
 SCAN24 {[0;37m
 Scanning range %s from sector [1;34m%d %d[0;37m:
