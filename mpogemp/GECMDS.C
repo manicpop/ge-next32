@@ -2464,7 +2464,7 @@ if (sameas(margv[1],"acc"))
 
 	prfmsg(REP31,waruptr->kills,waruptr->ukills);
 
-	prfmsg(REP32,warsptr->kills,waruptr->ukills);
+	prfmsg(REP32,warsptr->kills,warsptr->ukills);
 
 	if (waruptr->teamcode > 0)
 		{
