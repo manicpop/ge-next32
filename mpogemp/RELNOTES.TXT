@@ -95,6 +95,14 @@ The main focus of 0.3 is enhancements for user ships:
   - If a ship is in the path of your phaser but is protected
     by the neutral zone, you will get a message. The other
     ship won't though.
+* Missiles now travel more slowly when they carry a larger
+  charge, and speed up as they travel and burn energy. This
+  gives players a reason to actually use different charge
+  levels on the missiles instead of always using the maximum.
+  Close-range combat may benefit from using lightly charged,
+  fast missiles, whereas someone firing from a distance may
+  prefer a heavier charged missile that will be more likely
+  to have an impact when it reaches its destination.
 
 Other stuff:
 * The list of ships presented at the start of the game will now

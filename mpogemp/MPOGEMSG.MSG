@@ -294,7 +294,11 @@ MDAMMAX {Missile Damage Maximum: 35} N 1 100
 
 This option controls the speed of a missile. 
 It is the distance the missile goes each "tic"
-which is about 5 seconds.
+(which is about 5 seconds) when carrying around
+5000 units of energy. More heavily charged missiles
+travel more slowly (down to 0.5x) and lighter
+missiles can travel up to 2x this value. Missiles
+speed up as they travel and burn energy.
 
 MISLSPED {Speed of missile: 2441} N 1 10000
 
