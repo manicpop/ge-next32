@@ -4342,13 +4342,6 @@ left2 = plptr->items[I_TROOPS].qty;
 kill1 = 0;
 kill2 = 0;
 
-/* figure out the proportion of this attack*/
-
-if (left2 > 0)
-	ratio = (left1*100UL)/left2;
-else
-	ratio = 0;
-
 if (plptr->items[I_FIGHTER].qty > 1)
 	{
 	prfmsg(ATTACKM7);
@@ -4359,6 +4352,23 @@ if (plptr->items[I_FIGHTER].qty > 1)
 	sprintf(gechrbuf,"%ld",kill1);
 	prfmsg(ATTACKM8,gechrbuf);
 	}
+
+/* figure out the proportion of this attack*/
+
+if (left2 > 0)
+	ratio = (left1*100UL)/left2;
+else
+	{
+	ratio = 0;
+	if (plptr->items[(int)I_FIGHTER].qty <= 0L)
+		{
+		if (waruptr->planets < max_plnts)
+			won = 1;
+		else
+			prfmsg(ADMIN4, waruptr->planets);
+		}
+	}
+
 
 /* this specifies the number of troops killed by ground troops */
 r = rndm(plattrt1)+.25;	/*.766*/
@@ -4388,11 +4398,16 @@ prfmsg(ATTACKM2,gechrbuf2,gechrbuf);
 left1 -= kill1;
 left2 -= kill2;
 
-if (left2 > 0 && left2 < (left1/4))
+if (left2 > 0 && left2 < (left1/4) && !won)
 	{
-	sprintf(gechrbuf,"%ld",left2);
-	prfmsg(ATTACKM3,gechrbuf);
-	won = 1;
+	if (waruptr->planets < max_plnts)
+		{
+		won = 1;
+		sprintf(gechrbuf,"%ld",left2);
+		prfmsg(ATTACKM3,gechrbuf);
+		}
+	else
+		prfmsg(ADMIN4, waruptr->planets);
 	}
 
 if (left1 > 0 && left1 < (left2/4))
@@ -4430,9 +4445,12 @@ if (left1 > 0)
 	prfmsg(ATTACKM6,gechrbuf);
 	}
 
-if (left1 > 0L && (left2 <= 0L && plptr->items[(int)I_FIGHTER].qty <= 0L))
+if (left1 > 0L && (left2 <= 0L && plptr->items[(int)I_FIGHTER].qty <= 0L) && !won)
 	{
-	won = 1;
+	if (waruptr->planets < max_plnts)
+		won = 1;
+	else
+		prfmsg(ADMIN4, waruptr->planets);
 	}
 
 plptr->items[I_TROOPS].qty = left2;
@@ -4450,7 +4468,7 @@ if (ratio > 1L)
 
 
 /* dont mail him unless its significant*/
-if (ratio > 1L)
+if (ratio > 1L || won == 1)
 	{
 	mail.type = MESG02;
 	strncpy(mail.userid,plptr->userid,UIDSIZ);
@@ -4584,9 +4602,12 @@ if (ratio > 5)
 
 if (left1 > 0L && left2 <= 0L && plptr->items[I_TROOPS].qty < 5L)
 	{
-	won = 1;
 	prfmsg(ATTACKF7);
-	}
+	if (waruptr->planets < max_plnts)
+		won = 1;
+	else
+		prfmsg(ADMIN4, waruptr->planets);
+        }
 
 if (left1 > 0L)
 	{
