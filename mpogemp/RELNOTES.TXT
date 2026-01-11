@@ -90,11 +90,16 @@ The main focus of 0.3 is enhancements for user ships:
     range, and you will see messages on 0 damage phaser hits
     unless they are way out of range. NPCs will react to no
     damage hits, but not no hits.
-  - Hitting a cloaked ship with a phaser will no longer reveal
-    its name.
   - If a ship is in the path of your phaser but is protected
     by the neutral zone, you will get a message. The other
     ship won't though.
+* Cloak enhancements:
+  - If a cloaked ship scans you, or you hit a cloaked ship with
+    phasers, you will no longer see the ship's name.
+  - The "ion displacement" messages that help you track a cloaked
+    ship have been limited to two sectors worth of distance.
+  - There is a now a small window after lowering your cloak when
+    you are not able to fire (sorry, ambush fans!).
 * Missiles now travel more slowly when they carry a larger
   charge, and speed up as they travel and burn energy. This
   gives players a reason to actually use different charge
@@ -133,6 +138,7 @@ Other stuff:
   now tracked separately, and user-on-user kills are tracked
   separately from all others. More opportunties for bragging
   rights.
+
 
 === 0.2.6 === 2025-08-15
 

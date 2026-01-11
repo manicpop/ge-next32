@@ -2370,7 +2370,7 @@ if (sameas(margv[1],"sys"))
 
 	if (shipclass[warsptr->shpclass].max_cloak == 1)
 		{
-		if (warsptr->cloak > 0)
+		if (warsptr->cloak > 0 && warsptr->cloak != 3)
 			prfmsg(REP12);
 		else
 			prfmsg(REP13);
@@ -3894,7 +3894,7 @@ if (sameas(margv[1],"off"))
 	else
 	if (warsptr->cloak > 0)
 		{
-		warsptr->cloak = 0;
+		warsptr->cloak = 3;
 		assign_cybs(usrnum,1);	/* don't pull far away cybs if close ones around */
 		prfmsg(CLOKOFF);
 		outprfge(FILTER,usrnum);

@@ -739,13 +739,13 @@ if (flag == 1)
 	{
 	if (ptr->shieldstat == SHIELDUP)
 		{
-		prfmsg(HYSHDN);
+		prfmsg(SHLDDN);
 		ptr->shieldstat = SHIELDDN;
 		}
-	if (ptr->cloak > 0)
+	if (ptr->cloak > 0 && ptr->cloak != 3)
 		{
-		prfmsg(HYCLDN);
-		ptr->cloak = 0;
+		prfmsg(CLOKOFF);
+		ptr->cloak = 3;
 		}
 	prfmsg(HYPERIN,ptr->shipname);
 	outprfge(FILTER,usrn);
@@ -1778,11 +1778,11 @@ WARSHP	*ptr;
 int	usrn;
 {
 
-if (ptr->cloak > 0)
+if (ptr->cloak > 0 || ptr->cloak != 3)
 	{
 	if (fluxstat(ptr,usrn,clenguse) == 0)
 		{
-		ptr->cloak = 0;
+		ptr->cloak = 3;
 		prfmsg(CLOKNOP);
 		outprfge(ALWAYS,usrn);
 		prfmsg(CLOK2);
@@ -2207,6 +2207,14 @@ if (ptr->cloak == 2)
 	prfmsg(CLOKUP,ptr->shipname);
 	outprfge(ALWAYS,usrn);
 	}
+/* small weapon delay */
+if (ptr->cloak == 3)
+	{
+	ptr->cloak = 0;
+	prfmsg(CLOKW);
+	outprfge(ALWAYS,usrn);
+	}
+
 
 /* clear lastfired and lock if npc no longer exists */
 if (ptr->lastfired >= 0 && ptr->lastfired < nships && warshpoff(ptr->lastfired)->status == GESTAT_AVAIL)
