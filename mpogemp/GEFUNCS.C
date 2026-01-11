@@ -900,21 +900,24 @@ if (ptr->speed > 0)
 		prfmsg(MOVE1,coord1(oldsect.xcoord),coord1(oldsect.ycoord),
 			coord1(newsect.xcoord),coord1(newsect.ycoord));
 		outprfge(FILTER,usrn);
-		if (ptr->speed < 21000.0)
+		if (ptr->cloak != 10)
 			{
-			if (ptr->status == GESTAT_AUTO)
-				prfmsg(MOVE2N,ptr->shipname);
-			else
-				prfmsg(MOVE2,ptr->shipname);
-			outsect(FILTER,&oldsect,usrn,0);
-			}
-		if (ptr->speed < 21000.0)
-			{
-			if (ptr->status == GESTAT_AUTO)
-				prfmsg(MOVE3N,ptr->shipname);
-			else
-				prfmsg(MOVE3,ptr->shipname);
-			outsect(FILTER,&newsect,usrn,0);
+			if (ptr->speed < 21000.0)
+				{
+				if (ptr->status == GESTAT_AUTO)
+					prfmsg(MOVE2N,ptr->shipname);
+				else
+					prfmsg(MOVE2,ptr->shipname);
+				outsect(FILTER,&oldsect,usrn,0);
+				}
+			if (ptr->speed < 21000.0)
+				{
+				if (ptr->status == GESTAT_AUTO)
+					prfmsg(MOVE3N,ptr->shipname);
+				else
+					prfmsg(MOVE3,ptr->shipname);
+				outsect(FILTER,&newsect,usrn,0);
+				}
 			}
 		ptr->hostile = 0;
 		if (ptr->destruct > 0 && neutral(&newsect))
@@ -926,29 +929,35 @@ if (ptr->speed > 0)
 		}
 
 	/* if I am cloaked tell the closer ones */
-	if (ptr->cloak == 10 && ptr->speed2b > (rndm(200.0)+10.0) && gernd()%25 == 0)
+	if (ptr->cloak == 10)
 		{
-		for (zothusn=0 ; zothusn < nterms ; zothusn++)
+		unsigned int r = gernd();
+		if (ptr->speed2b > (double)(((r >> 5) % 200) + 10) && (((r >> 8) % 25) == 0))
 			{
-			wptr=warshpoff(zothusn);
-			if (ingegame(zothusn) && zothusn != usrn)
+			for (zothusn=0 ; zothusn < nterms ; zothusn++)
 				{
-				ddist = cdistance(&warsptr->coord,&wptr->coord);
-				ddist *= 10000;
-
-				if (ddist < (shipclass[wptr->shpclass].scanrange/2) && wptr->jam_sev <= (byte)2)
+				wptr=warshpoff(zothusn);
+				if (ingegame(zothusn) && zothusn != usrn)
 					{
-					bearing = cbearing(&wptr->coord,&ptr->coord,wptr->heading);
-					/* slop it up +- 10 degrees on either side */
-					bearing = bearing + (gernd()%20)-10;
-					prfmsg(CLOK3,bearing);
-					outprfge(ALWAYS,zothusn);
+					ddist = cdistance(&warsptr->coord,&wptr->coord);
+					ddist *= 10000;
+
+					if (ddist < (shipclass[wptr->shpclass].scanrange)
+						&& ddist < 20000 && wptr->jam_sev <= (byte)2)
+						{
+						bearing = cbearing(&wptr->coord,&ptr->coord,wptr->heading);
+						/* slop it up +- 10 degrees on either side */
+						bearing += ((r >> 11) % 20) - 10;
+						prfmsg(CLOK3,bearing);
+						outprfge(ALWAYS,zothusn);
+						}
 					}
 				}
 			}
 		}
 	if (ptr->speed > 1000.0 && ptr->status == GESTAT_USER)
 		{
+		unsigned int r = gernd();
 		intspeed = ptr->speed/1000.0;
 
 		/* if this ship is exceeding top cruising speed and not in the process of going under it */
@@ -960,7 +969,7 @@ if (ptr->speed > 0)
 
 			/* for every 10% over cruising speed, increase potential random damage */
 			overamt = (intspeed * 100 / newtop) - 100;
-			ptr->overspeed += (gernd()%(overamt+1));
+			ptr->overspeed += (r%(overamt+1));
 
 			/* if over twice new cruising speed, blow up the engines */
 			if ((overamt >= 110 || ptr->overspeed > 4000000000UL) && ptr->topspeed != 0)
@@ -969,7 +978,7 @@ if (ptr->speed > 0)
 				outprfge(ALWAYS,usrn);
 				ptr->topspeed = 0;
 				ptr->speed2b = 0;
-				ptr->damage += gernd()%20;
+				ptr->damage += r%20;
 				}
 			else
 			if (overamt != ptr->npcmsg)

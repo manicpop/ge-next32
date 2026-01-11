@@ -2878,8 +2878,13 @@ if (shpnum >= 0)
 			else
 				{
 				/* all else get this */
-				ltr = shpltr(shpnum,usrnum);
-				prfmsg(SCAN1,ltr,warsptr->shipname);
+				if (warsptr->cloak != 10)
+					{
+					ltr = shpltr(shpnum,usrnum);
+					prfmsg(SCAN1,ltr,warsptr->shipname);
+					}
+				else
+					prfmsg(SCAN3);
 				}
 			outprfge(FILTER,shpnum);
 			}
