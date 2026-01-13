@@ -2656,6 +2656,7 @@ if (margc > 0)
 
 		strncpy(plptr->userid,warsptr->userid,UIDSIZ);
 		++waruptr->planets;
+		geudb(GEUPDATE,waruptr->userid,waruptr);
 
 		if (strlen(plptr->name) == 0)
 			{

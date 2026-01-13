@@ -4140,6 +4140,7 @@ if (sameas(plptr->userid,warsptr->userid))
 	plptr->userid[0] = 0;
 	if(--waruptr->planets <0)
 		waruptr->planets = 0;
+	geudb(GEUPDATE,waruptr->userid,waruptr);
 
 	setsect(warsptr); /* build PKEY */
 	pkey.plnum = plnum;
@@ -4708,9 +4709,31 @@ if (won == 1
 void FUNC wonplnt()
 
 {
-strncpy(plptr->userid,warsptr->userid,UIDSIZ);
+char olduid[UIDSIZ];
+
+/* save old owner */
+strncpy(olduid, plptr->userid, UIDSIZ);
+
+/* remove planet from old owner, if they still exist */
+if (olduid[0] && !sameas(olduid, warsptr->userid))
+	{
+	setbtv(gebb5);
+	if (qeqbtv(olduid, 0))
+		{
+		gcrbtv(&tmpusr, 0);
+		if (tmpusr.planets)
+			--tmpusr.planets;
+		geudb(GEUPDATE, tmpusr.userid, &tmpusr);
+		}
+	}
+
+/* assign planet to new owner */
+strncpy(plptr->userid, warsptr->userid, UIDSIZ);
 warsptr->hostile = 0;
+
+/* add planet to winner */
 ++waruptr->planets;
+geudb(GEUPDATE, waruptr->userid, waruptr);
 }
 
 /**************************************************************************
