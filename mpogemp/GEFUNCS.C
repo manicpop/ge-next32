@@ -1778,7 +1778,7 @@ WARSHP	*ptr;
 int	usrn;
 {
 
-if (ptr->cloak > 0 || ptr->cloak != 3)
+if (ptr->cloak > 0 && ptr->cloak != 3)
 	{
 	if (fluxstat(ptr,usrn,clenguse) == 0)
 		{
