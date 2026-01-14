@@ -366,6 +366,16 @@ if (!sameas(plptr->userid,"**Free**"))
 			cnt = plptr->items[I_TROOPS].qty / ((gernd()%8)+2);
 			plptr->items[I_TROOPS].qty = cnt;
 
+			/* decrement planet counter for this user */
+			setbtv(gebb5);
+			if (qeqbtv(plptr->userid, 0))
+				{
+				gcrbtv(&tmpusr,0);
+				if (tmpusr.planets > 0)
+					--tmpusr.planets;
+				geudb(GEUPDATE, tmpusr.userid, &tmpusr);
+				}
+			setbtv(gebb2);
 
 			mail.class = MAIL_CLASS_DISTRESS;
 			mail.type = MESG30;
