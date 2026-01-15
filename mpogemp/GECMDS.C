@@ -4792,6 +4792,21 @@ else
 void FUNC cmd_planet()
 
 {
+int page = 1, stepper = 0, inc;
+
+if (margc > 1)
+	{
+	page = atoi(margv[1]);
+	if (page < 1 || page > 20 || margc > 2)
+		{
+		prfmsg(FORMAT,"PLANET");
+		outprfge(ALWAYS,usrnum);
+		return;
+		}
+	}
+
+inc = (page - 1) * 20;
+
 setbtv(gebb2);
 
 if (qlobtv(0))
@@ -4804,11 +4819,25 @@ if (qlobtv(0))
 			gcrbtv(&planet,1);
 			if (sameas(planet.userid,warsptr->userid))
 				{
-				prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
-				outprfge(ALWAYS,usrnum);
+				if (stepper >= inc)
+					{
+					prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
+					if (stepper%5 == 0)	/* cat five lines then print */
+						outprfge(ALWAYS,usrnum);
+					}
+				++stepper;
+				if (stepper >= inc+20)
+					{
+					prfmsg(PLAMSG3,page+1);
+					outprfge(ALWAYS,usrnum);
+					return;
+					}
 				}
 			else
-				break;
+				{
+				outprfge(ALWAYS,usrnum); /* one last out to make sure nothing was missed */
+				return;
+				}
 			} while (qnxbtv());
 		}
 	else

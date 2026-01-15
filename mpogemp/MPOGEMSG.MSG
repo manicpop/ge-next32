@@ -3629,6 +3629,10 @@ PLAMSG2 {
 [1;36mNo planets have been established.[1;37m
 } T GE you have no planets message
 
+PLAMSG3 {
+[1;36mEnter [1;37mPLANET %d[1;36m for more....[1;37m
+} T GE you have no planets message
+
 MAINT1 {
 [1;36mYou are not orbiting a planet.[1;37m
 } T GE no maint if not orbiting message
