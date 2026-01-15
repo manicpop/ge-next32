@@ -138,7 +138,12 @@ Other stuff:
   now tracked separately, and user-on-user kills are tracked
   separately from all others. More opportunties for bragging
   rights.
-
+* A player's total amount of planets as shown in the roster will
+  now update automatically any time a planet is added, abandoned,
+  or lost to an attack or revolt. You will no longer have to
+  wait until the next day for the correct count.
+* The planet command will now list your first 20 planets.
+  "PLANET 2" will list 21-40, and so on.
 
 === 0.2.6 === 2025-08-15
 
