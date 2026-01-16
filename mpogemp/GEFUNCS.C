@@ -1514,7 +1514,7 @@ if (who >= 0 && who < nships && who != usrn)
 	scr = (long)shipclass[ptr->shpclass].max_points;
 	bonus = 0;
 
-/* 12/19/91 NEW SCORING METHOD */
+	/* 12/19/91 NEW SCORING METHOD */
 
 	if (waruptr->rospos > 0)
 		{
@@ -1622,8 +1622,7 @@ if (who >= 0 && who < nships && who != usrn)
 			}
 		}
 
-#ifdef SHOWDOC
-	if (gernd()%RNDDOC == 0)
+	if (showdoc != 0 && gernd()%(11 - showdoc) == 0)
 		{
 		setbtv(gebb2);
 
@@ -1632,26 +1631,31 @@ if (who >= 0 && who < nships && who != usrn)
 			if (qeqbtv(ptr->userid,1))
 				{
 				prfmsg(CAPTDOC);
+				prfmsg(PLAMSG1);
 				i = 0;
 				do
 					{
 					gcrbtv(&planet,1);
 					if (sameas(planet.userid,ptr->userid))
 						{
-						prf("%-20s %d %d   %d \r",planet.name,planet.xsect,planet.ysect,planet.plnum);
-						outprfge(ALWAYS,who);
+						if (gernd()%2 == 0 || i == 0)	/* different random list each time */
+							{
+							prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
+							++i;
+							}
+						if (i % 5 == 0)		/* cat five lines then print */
+							outprfge(ALWAYS,who);
 						}
 					else
 						break;
-					} while (qnxbtv() && (++i < 20));
+					} while (qnxbtv() && (i < 20));
+				outprfge(ALWAYS,who);
 				}
 			}
 		}
-#endif
+
 	if (shipclass[wptr->shpclass].max_type != CLASSTYPE_DROID)
-		{
 		geudb(GEUPDATE,wuptr->userid,wuptr);
-		}
 
 	if (shipclass[ptr->shpclass].kill_func != NULL)
 		shipclass[ptr->shpclass].kill_func(ptr,usrn,wptr);

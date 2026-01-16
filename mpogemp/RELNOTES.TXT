@@ -144,6 +144,15 @@ Other stuff:
   wait until the next day for the correct count.
 * The planet command will now list your first 20 planets.
   "PLANET 2" will list 21-40, and so on.
+* The "captured document" feature (SHOWDOC), which will
+  occasionally display a list of planets owned by a user when
+  their ship is destroyed to the winner, has been changed from
+  a compile-time option to a MSG-configurable option. SHOWDOC
+  can be set from 0 (never) to 10 (always). The default is the
+  same as classic GE. It will now also assemble the list at
+  random instead of always showing the first 20 planets,
+  but still display 20 planets max.
+
 
 === 0.2.6 === 2025-08-15
 

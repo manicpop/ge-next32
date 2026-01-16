@@ -161,15 +161,6 @@
 
 #define TELEDAM 17		/* amount of damage done when edge reached */
 
-
-/* the following define if included will cause the captured planet map
-	to be displayed to the victor of a battle - The odds of it being
-	captured are 1 in RNDDOC (set below) - To remove this feature from
-	the game simple comment out the following two defines */
-
-#define SHOWDOC 1
-#define RNDDOC 6
-
 #define MINERANGE 10000		/* maximum Mine range                     */
 
 #define DESTRUCTRANGE 10000

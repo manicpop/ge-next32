@@ -223,6 +223,7 @@ int				gemaxplrs,
 				univwrap,
 				maxplanets,
 				meneat,
+				showdoc,
 				cattkd,
 				gcnum,
 				planupd,
@@ -383,6 +384,7 @@ maxplanets	= numopt(MAXPLSE,1,9);
 teambonus	= numopt(TEAMBONU,0,32000)*100L;
 team_max	= numopt(TEAMMAX,0,32000);
 meneat		= ynopt(MENEAT);
+showdoc		= numopt(SHOWDOC,0,10);
 cattkd		= numopt(CATTKD,0,10);
 gcnum		= numopt(GCNUM,0,8);
 
