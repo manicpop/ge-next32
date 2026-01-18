@@ -81,7 +81,7 @@ extern	int		heading;
 extern	unsigned	speed;
 extern	int		lockwarn;
 extern	int		xsect,ysect;
-extern	unsigned	xcord,ycord, coord2();
+extern	unsigned	xcord,ycord;
 extern	PKEY		pkey;
 extern	unsigned	distance;
 extern	double		ddistance;

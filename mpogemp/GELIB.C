@@ -230,3 +230,25 @@ double value;
 {
 return (value*(180/PI));
 }
+
+unsigned coord2(dcoord)
+double dcoord;
+{
+double d1,d2;
+int    d3;
+
+d2 =modf(1+modf(dcoord, &d1),&d1);
+d3 = (d2 * SSMAX);
+
+return ((unsigned)d3);
+
+}
+
+
+int coord1(dcoord)
+double dcoord;
+{
+
+return ((int)floor(dcoord));
+
+}

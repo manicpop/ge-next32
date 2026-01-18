@@ -217,8 +217,6 @@
 /*    3315 */ void FUNC update_scantab P((WARSHP *ptr , int usrn ));
 /*    3415 */ void FUNC pick_letter P((SCANTAB *ptr ));
 /*    3736 */ void FUNC printmap P((int mask ));
-/*    3777 */ unsigned FUNC coord2 P((double dcoord ));
-/*    3791 */ int FUNC coord1 P((double dcoord ));
 /*    3803 */ void FUNC cmd_shields P((void ));
 /*    3870 */ void FUNC cmd_cloak P((void ));
 /*    3954 */ void FUNC cmd_transfer P((void ));
@@ -325,6 +323,8 @@
 /*     259 */ double normal P((double angle ));
 /*     280 */ double degtorad P((double value ));
 /*     290 */ double radtodeg P((double value ));
+/*         */ unsigned coord2 P((double dcoord ));
+/*         */ int coord1 P((double dcoord ));
 
 /* gescan.c */
 void FUNC set_map_color P((int color ));
