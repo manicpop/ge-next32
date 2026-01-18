@@ -1401,6 +1401,7 @@ WARSHP	*disptr;
 unsigned i;
 int who, comma, full;
 long scr,amt,bonus,ded_amt;
+unsigned int r = gernd();
 
 /* 12/19/91 fix to prevent a player from being awarded points for killing */
 /* himself */
@@ -1476,7 +1477,7 @@ if (who >= 0 && who < nships && who != usrn)
 			if (i != I_MEN && i != I_TROOPS && i != I_SPY && i != I_GOLD &&
 				!(shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG && i == I_FOOD))
 				{
-				amt = ptr->items[i] / (gernd()%5 +1);
+				amt = ptr->items[i] / (r%5 +1);
 				/* only collect as much as we can hold */
 				if (amt > 0)
 					{
@@ -1622,7 +1623,8 @@ if (who >= 0 && who < nships && who != usrn)
 			}
 		}
 
-	if (showdoc != 0 && gernd()%(11 - showdoc) == 0)
+	if (ptr->status == GESTAT_USER && wptr->status == GESTAT_USER
+		&& showdoc != 0 && r%(11 - showdoc) == 0)
 		{
 		setbtv(gebb2);
 
@@ -1638,16 +1640,27 @@ if (who >= 0 && who < nships && who != usrn)
 					gcrbtv(&planet,1);
 					if (sameas(planet.userid,ptr->userid))
 						{
-						if (gernd()%2 == 0 || i == 0)	/* different random list each time */
+						if (r & 1)	/* different random list each time */
 							{
 							prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
 							++i;
 							}
-						if (i % 5 == 0)		/* cat five lines then print */
+						if (i != 0 && i % 5 == 0)	/* cat five lines then print */
 							outprfge(ALWAYS,who);
 						}
 					else
+						{
+						if (i == 0)	/* oops, we didn't print anything */
+							{
+							qprbtv();
+							gcrbtv(&planet,1);
+							prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
+							}
 						break;
+						}
+					r >>= 1;
+					if (r == 0)
+						r = gernd();
 					} while (qnxbtv() && (i < 20));
 				outprfge(ALWAYS,who);
 				}

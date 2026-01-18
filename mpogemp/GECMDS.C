@@ -4797,7 +4797,7 @@ int page = 1, stepper = 0, inc;
 if (margc > 1)
 	{
 	page = atoi(margv[1]);
-	if (page < 1 || page > 20 || margc > 2)
+	if (page < 1 || page > ((max_plnts + 19)/20) || margc > 2)
 		{
 		prfmsg(FORMAT,"PLANET");
 		outprfge(ALWAYS,usrnum);
