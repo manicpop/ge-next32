@@ -1628,42 +1628,46 @@ if (who >= 0 && who < nships && who != usrn)
 		{
 		setbtv(gebb2);
 
-		if (qlobtv(0))
+		if (qlobtv(0) && qeqbtv(ptr->userid,1))
 			{
-			if (qeqbtv(ptr->userid,1))
+			int bits = 1;
+			if (waruptr->planets > 100)	/* if lots of planets, increase rnd threshold */
+				bits = 4;
+			else
+			if (waruptr->planets > 50)
+				bits = 2;
+			prfmsg(CAPTDOC);
+			prfmsg(PLAMSG1);
+			i = 0;
+			do
 				{
-				prfmsg(CAPTDOC);
-				prfmsg(PLAMSG1);
-				i = 0;
-				do
+				gcrbtv(&planet,1);
+				if (sameas(planet.userid,ptr->userid))
 					{
-					gcrbtv(&planet,1);
-					if (sameas(planet.userid,ptr->userid))
+					if ((bits == 1 && (r & 1) == 1) ||	/* different random list each time */
+						(bits == 2 && (r & 3) == 3) ||	/* over 50 planets, 1 in 4 chance to be included */
+						(bits == 4 && (r & 7) == 7))	/* read 3 bits (1 in 8 chance) even though we shift 4 */
 						{
-						if (r & 1)	/* different random list each time */
-							{
-							prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
-							++i;
-							}
-						if (i != 0 && i % 5 == 0)	/* cat five lines then print */
+						prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
+						++i;
+						if (i % 5 == 0)		/* cat five lines then print */
 							outprfge(ALWAYS,who);
 						}
-					else
-						{
-						if (i == 0)	/* oops, we didn't print anything */
-							{
-							qprbtv();
-							gcrbtv(&planet,1);
-							prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
-							}
-						break;
-						}
-					r >>= 1;
-					if (r == 0)
-						r = gernd();
-					} while (qnxbtv() && (i < 20));
-				outprfge(ALWAYS,who);
+					}
+				else
+					break;
+				r >>= bits;
+				if (r == 0)
+					r = gernd();
+				} while (qnxbtv() && (i < 20));
+			if (i == 0)	/* oops, we didn't pick any planets, so print final planet */
+				{
+				qprbtv();
+				gcrbtv(&planet,1);
+				prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
 				}
+			if (i % 5 != 0)	/* if we're not on a multiple of 5, we still have to print the remainder */
+				outprfge(ALWAYS,who);
 			}
 		}
 
