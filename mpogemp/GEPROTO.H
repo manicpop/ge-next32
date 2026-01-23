@@ -172,10 +172,13 @@
 /*    2847 */ WARSHP *FUNC warshpoff P((int usrn ));
 /*    2859 */ double FUNC ton_fact P((WARSHP *ptr , double damfact ));
 /*    2872 */ char *FUNC showarp P((double speed ));
-/*    2890 */ void FUNC assign_cybs P((int usrnum , int call));
+/*    2890 */ void FUNC assign_cybs P((int usrnum , int call ));
 /*    2957 */ int FUNC cyb_fast P((WARSHP *ptr ));
 /*    2971 */ void FUNC set_dislike P((WARUSR *wuptr , int facnum, int dislike ));
 /*         */ int FUNC rospos P((WARUSR *ptr ));
+/*         */ void FUNC damstr P((int damage ));
+/*         */ void FUNC update_scantab P((WARSHP *ptr , int usrn ));
+/*         */ void FUNC pick_letter P((SCANTAB *ptr ));
 
 /* gecmds.c */
 /*     250 */ struct cmd *FUNC gesearch P((char *ptr , struct cmd tab [], int len ));
@@ -208,15 +211,12 @@
 /*    2033 */ void FUNC cmd_send P((void ));
 /*    2093 */ void FUNC cmd_freq P((void ));
 /*    2154 */ void FUNC cmd_report P((void ));
-/*    2526 */ void FUNC damstr P((int damage ));
 /*    2598 */ void FUNC cmd_scan P((void ));
 /*    2647 */ void FUNC scan_sh P((void ));
 /*    2743 */ void FUNC scan_pl P((void ));
 /*    2932 */ void FUNC scan_ra P((void ));
 /*    3091 */ void FUNC scan_se P((void ));
 /*    3160 */ void FUNC scan_lo P((void ));
-/*    3315 */ void FUNC update_scantab P((WARSHP *ptr , int usrn ));
-/*    3415 */ void FUNC pick_letter P((SCANTAB *ptr ));
 /*    3736 */ void FUNC printmap P((int mask ));
 /*    3803 */ void FUNC cmd_shields P((void ));
 /*    3870 */ void FUNC cmd_cloak P((void ));
