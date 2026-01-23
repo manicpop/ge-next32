@@ -3123,6 +3123,10 @@ ROSTER2 {
 [1;34mPlayer                             Score Kills Users Pla Empire Size[1;37m
 } T GE incomplete roster list message
 
+ROSTER3 {
+[1;36mYou are #%d on the roster![1;37m
+} T GE roster position message
+
 BUYPAS1 {
 [1;36mThey are asking for the correct trade password.[1;37m
 } T GE asking for trade password message
@@ -3342,9 +3346,6 @@ REP37 {[1;37mTotal cargo weight.... %s tons
 
 REP38 {[1;37mInventory report:
 } T GE report 38
-
-REP39 {[1;37mRoster position....... %d
-} T GE report 39
 
 REP40 {[1;37mCyborg: %d, Cybmine: %d, Cybupdate: %d
 } T GE report 40

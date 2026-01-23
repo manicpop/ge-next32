@@ -2419,9 +2419,6 @@ if (sameas(margv[1],"sys"))
 	if (warsptr->repair > 0)
 		prfmsg(REP18A,warsptr->repair);
 
-	if (waruptr->rospos != 0)
-		prfmsg(REP39,waruptr->rospos);
-
 	}
 else
 if (sameas(margv[1],"inv"))
@@ -4723,8 +4720,12 @@ void FUNC cmd_geroster()
 
 {
 
-int i = 0;
-int j;
+int	i = 0;
+int	j, showrank;
+int	rank = 0;
+long	target;
+
+showrank = (waruptr != NULL && waruptr->score != 0);
 
 setbtv(gebb5);
 
@@ -4742,6 +4743,9 @@ else
 	outprfge(ALWAYS,usrnum);
 	}
 
+if (showrank && qeqbtv(waruptr->userid, 0))
+	target = absbtv();
+
 if (qhibtv(1))
 	{
 	do
@@ -4754,9 +4758,16 @@ if (qhibtv(1))
 			sprintf(gechrbuf,"%11lu",tmpusr.score);
 			sprintf(gechrbuf2," %10.2fm",((float)tmpusr.population)/100.0);
 			prf("%-29s%s%6u%6u%4d%s\r",tmpusr.userid,gechrbuf,tmpusr.kills,tmpusr.ukills,tmpusr.planets,gechrbuf2);
+			if (showrank && absbtv() == target)
+				rank = i;
 			outprfge(ALWAYS,usrnum);
 			}
 		} while (qprbtv() && i < j);
+	if (rank != 0)
+		{
+		prfmsg(ROSTER3,rank);
+		outprfge(ALWAYS,usrnum);
+		}
 	}
 else
 	{
@@ -5950,6 +5961,13 @@ if (sameas("fill",margv[1]))
 	return;
 	}
 else
+if (sameas("rospos",margv[1]))
+	{
+	prf("rospos %d\r",rospos(waruptr));
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+else
 
 prfmsg(FORMAT,"SYS");
 outprfge(ALWAYS,usrnum);
@@ -6829,11 +6847,10 @@ if (!sameas(margv[1],"qazwsx"))
 
 if (sameas(margv[2],"report"))
 	{
-	prf("UD1:%s,%d,%d,%d,%d*\r",
+	prf("UD1:%s,%d,%d,%d*\r",
 		waruptr->userid,
 		waruptr->noships,
 		waruptr->kills,
-		waruptr->rospos,
 		waruptr->planets);
 	sprintf(gechrbuf,"%ld",waruptr->score);
 	sprintf(gechrbuf2,"%lu",waruptr->cash);

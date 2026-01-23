@@ -175,6 +175,7 @@
 /*    2890 */ void FUNC assign_cybs P((int usrnum , int call));
 /*    2957 */ int FUNC cyb_fast P((WARSHP *ptr ));
 /*    2971 */ void FUNC set_dislike P((WARUSR *wuptr , int facnum, int dislike ));
+/*         */ int FUNC rospos P((WARUSR *ptr ));
 
 /* gecmds.c */
 /*     250 */ struct cmd *FUNC gesearch P((char *ptr , struct cmd tab [], int len ));

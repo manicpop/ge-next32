@@ -1143,28 +1143,6 @@ for (i=0;i<MAXTEAMS;++i)
 
 update_team_tab();
 
-/* 12/19/91 added to create a roster position data field in the user record
-	which is later used to calculate bonus points. */
-
-i = 0;
-
-setbtv(gebb5);
-
-if (qhibtv(1))
-	{
-	do
-		{
-		gcrbtv(&tmpusr,1);
-		if (tmpusr.score > 0 && tmpusr.userid[0] != '@')
-			{
-			++i;
-			tmpusr.rospos = i;
-			updbtv(&tmpusr);
-			gcrbtv(&tmpusr,1);
-			}
-		} while (qprbtv());
-	}
-
 geshocst(0,spr("GE:INF:End Cleanup"));
 return;
 }

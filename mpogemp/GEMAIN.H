@@ -327,7 +327,7 @@ WARUSR {						/* user data blocks                       */
 		unsigned	noships;		/*   Number of ships                      */
 		int		topshipno;		/*   Top ship number used                 */
 		unsigned	kills;			/*   No kills                             */
-		unsigned	rospos;
+		unsigned	rospos;			/*   unused atm                           */
 		int		planets;		/*   Planets owned                        */
 		unsigned long	cash;			/*   cash on hand                         */
 		unsigned long	debt;			/*   this isn't used but it could be helpful later   */

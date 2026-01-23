@@ -1517,9 +1517,9 @@ if (who >= 0 && who < nships && who != usrn)
 
 	/* 12/19/91 NEW SCORING METHOD */
 
-	if (waruptr->rospos > 0)
+	if (rospos(waruptr) > 0)
 		{
-		bonus = (long)(score_bonus/(waruptr->rospos));
+		bonus = (long)(score_bonus/(rospos(waruptr)));
 		}
 
 	amt = scr + bonus;
@@ -3769,4 +3769,41 @@ if ((unsigned int)(wuptr->factions[facnum]) + dislike > 255)
 	wuptr->factions[facnum] = 255;
 else
 	wuptr->factions[facnum] += dislike;
+}
+
+int FUNC rospos(ptr)
+WARUSR *ptr;
+{
+long target;
+int i = 0;
+
+if (ptr->score <= 0)
+	return 0;
+
+setbtv(gebb5);
+
+/* find user record for given pointer */
+if (!qeqbtv(ptr->userid, 0))
+	return 0;
+
+target = absbtv();
+
+/* start at top of roster (key 1 = score order) */
+if (!qhibtv(1))
+	return 0;
+
+do
+	{
+	gcrbtv(&tmpusr, 1);
+
+	if (tmpusr.score > 0 && tmpusr.userid[0] != '@')
+		++i;
+
+	/* stop when we hit our user */
+	if (absbtv() == target)
+		return i;
+
+	} while (qprbtv());
+
+return 0;
 }
