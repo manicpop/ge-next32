@@ -4536,7 +4536,8 @@ int	j, showrank;
 int	rank = 0;
 long	target;
 
-showrank = (waruptr != NULL && waruptr->score != 0);
+/* don't try to show rank if we haven't initialized waruptr yet or we have no score */
+showrank = (waruptr != NULL && waruptr->userid[0] != '\0' && waruptr->score != 0);
 
 setbtv(gebb5);
 
@@ -4571,14 +4572,13 @@ if (qhibtv(1))
 			prf("%-29s%s%6u%6u%4d%s\r",tmpusr.userid,gechrbuf,tmpusr.kills,tmpusr.ukills,tmpusr.planets,gechrbuf2);
 			if (showrank && absbtv() == target)
 				rank = i;
-			outprfge(ALWAYS,usrnum);
+			if (i % 5 == 0)
+				outprfge(ALWAYS,usrnum);
 			}
 		} while (qprbtv() && i < j);
 	if (rank != 0)
-		{
 		prfmsg(ROSTER3,rank);
-		outprfge(ALWAYS,usrnum);
-		}
+	outprfge(ALWAYS,usrnum);
 	}
 else
 	{

@@ -1894,7 +1894,6 @@ MENUC {
 
 
 REPRMT {
-
 [1;34mSelect P, G, R, M, N, I, X to exit, or ? for menu : [1;37m} T GE menu select
 
 
@@ -1944,8 +1943,7 @@ https://github.com/manicpop/ge-next/
 Galactic Empire and ge-next are free software released under the GPLv2 license.
 https://opensource.org/license/gpl-2-0
 
-<Press ENTER>
-} T GE copyright info
+<Press ENTER>} T GE copyright info
 
 Please do not move or remove this definition.
 
@@ -1988,7 +1986,8 @@ the Sarten Empire, the Cybertrons have greatly expanded their power and reach.
 Cybertrons have no interest in planetary colonization or diplomacy, your only
 option is to evade or destroy them.
 
-Good luck!} T GE EXPLAIN text
+Good luck!
+} T GE EXPLAIN text
 
 FORLIVE {
 [1;33mSorry, only "Live" users can play Galactic Empire.[1;37m
