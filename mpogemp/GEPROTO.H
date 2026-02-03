@@ -174,8 +174,8 @@
 /*    2872 */ char *FUNC showarp P((double speed ));
 /*    2890 */ void FUNC assign_cybs P((int usrnum , int call ));
 /*    2957 */ int FUNC cyb_fast P((WARSHP *ptr ));
-/*    2971 */ void FUNC set_dislike P((WARUSR *wuptr , int facnum, int dislike ));
-/*         */ int FUNC rospos P((WARUSR *ptr ));
+/*    2971 */ void FUNC set_dislike P((WARUSR *wuptr , int facnum , int dislike ));
+/*         */ void FUNC rospos P((WARUSR *losptr , WARUSR *winptr , int *lospos , int *winpos ));
 /*         */ void FUNC damstr P((int damage ));
 /*         */ void FUNC update_scantab P((WARSHP *ptr , int usrn ));
 /*         */ void FUNC pick_letter P((SCANTAB *ptr ));

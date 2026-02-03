@@ -152,6 +152,15 @@ Other stuff:
   same as classic GE. It will now also assemble the list at
   random instead of always showing the first 20 planets,
   but still display 20 planets max.
+* The roster command will now report your current roster
+  position (no longer just updated once a day). It's been
+  removed from REP SYS.
+* There are new bonuses for user-on-user kills. You will
+  receive bonuses for taking out players with a higher score,
+  as well as for taking out a ship significantly more powerful
+  than your own. There will be a slight deduction from your
+  points awarded (not your total score) if you take out a
+  significantly less powerful ship.
 
 
 === 0.2.6 === 2025-08-15

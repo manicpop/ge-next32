@@ -426,17 +426,18 @@ with when they begin the game. It is specified in thousands.
 
 STRTCASH {How much cash does a player start with (in 1000's): 100} N 1 32000
 
-This bonus is awarded for killing the top player 
-in the roster. Half this for number 2, 1/3 this
-for number 3...etc. This gives players a huge 
-incentive to kill the top dog.
+This value is used to calculate the amount of bonus
+that a user gets for taking out a player ranked
+higher than they are. It's mulitiplied by number
+of roster positions separating the two users, and
+divided by point differential between the users.
 
-SCRBONUS {Max Bonus for killing top scoring player: 1000} N 1 32700
+SCRBONUS {User on user bonus value: 200} N 1 32700
 
 This factor calculates the percent of the winners 
 award to deduct from the loser. Example: If John
 kills Pete, and John gets 1000 points Pete will
-lose 100 points given the default value of 10%
+lose 350 points given the default value of 35%
 
 SCRFACT {Factor points to deduct from loser: 35} N 1 100
 
@@ -2056,6 +2057,10 @@ and transported back to their next stop, Zygor!
 [1;37m<Press ENTER>
 } T GE you got blowed up message
 
+YRDEAD2 {
+[1;36mYou lost %s points.[1;37m
+} T GE points lost for dying message
+
 DIED {***
 [1;36mThe [0;36m%s[1;36m, commanded by [0;36m%s[1;36m, has been destroyed![1;37m
 } T GE someone got blowed up message
@@ -3523,9 +3528,19 @@ KILLPNTS {
 [1;36mYou got %s points for the %s.[1;37m
 } T GE points for kill message
 
-KILLBON {
-[1;36mYou also got %s bonus points for taking out a top player.[1;37m
+KILLBON1 {[1;36mYou also got %s bonus points for taking out a more powerful ship![1;37m
 } T GE points for top kill message
+
+KILLBON2 {[1;36mHowever, %s points were deducted for taking out a less powerful ship.[1;37m
+} T GE points for top kill message
+
+KILLBON3 {
+[1;36mYou were ranked #%d and took out the #%d player! %s bonus points![1;37m
+} T GE points for top kill message
+
+KILNOPTS {
+[1;36mYou got zero points for taking out a new player.[1;37m
+} T GE points for kill message
 
 KILLDIS {
 [1;36mYou also got %s bonus points for rescuing [0;36m%s[1;36m.

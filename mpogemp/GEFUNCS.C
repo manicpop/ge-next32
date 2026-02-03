@@ -1399,8 +1399,8 @@ WARUSR	*wuptr;
 WARSHP	*disptr;
 
 unsigned i;
-int who, comma, full;
-long scr,amt,bonus,ded_amt;
+int who, comma, full, lospos, winpos;
+long scr, amt, bonus1, bonus2, ded_amt;
 unsigned int r = gernd();
 
 /* 12/19/91 fix to prevent a player from being awarded points for killing */
@@ -1510,62 +1510,102 @@ if (who >= 0 && who < nships && who != usrn)
 	if (full == TRUE)
 		prfmsg(KILLFULL);
 
+	outprfge(ALWAYS,who);
+
 	/* grant points for the kill */
-
 	scr = (long)shipclass[ptr->shpclass].max_points;
-	bonus = 0;
+	bonus1 = 0;
+	bonus2 = 0;
 
-	/* 12/19/91 NEW SCORING METHOD */
-
-	if (rospos(waruptr) > 0)
+	if (ptr->status == GESTAT_USER && wptr->status == GESTAT_USER)
 		{
-		bonus = (long)(score_bonus/(rospos(waruptr)));
-		}
+		lospos = 0;
+		winpos = 0;
 
-	amt = scr + bonus;
+		rospos(waruptr, wuptr, &lospos, &winpos);
 
-	ded_amt = (amt/100L)*score_f2;
+		/* bonus for lower ranked taking out higher ranked */
+		if (lospos != 0 && winpos > lospos && waruptr->score > wuptr->score)
+			{
+			bonus1 += ((winpos - lospos) * (long)score_bonus);
+			bonus1 += ((waruptr->score - wuptr->score) / (long)score_bonus);
+			}
 
-	/* if no one shot me or a cyb shot me - don't deduct the score */
+		/* adjust bonus for taking out more/less powerful ship */
+		if (shipclass[ptr->shpclass].damfact > (shipclass[wptr->shpclass].damfact + 50))
+			bonus2 = scr / 2;
+		else
+		if (shipclass[ptr->shpclass].damfact < (shipclass[wptr->shpclass].damfact - 50))
+			bonus2 = -((scr * 1L) / 3L);
 
-	if (who< 0 || who >= nterms)
-		ded_amt = ded_amt/10;
+		amt = scr + bonus1 + bonus2;
+		if (amt < 0)
+			amt = 0;
 
+		ded_amt = (amt * score_f2)/100L;
 
-	if (waruptr->score < ded_amt)
-		{
-		waruptr->score = 0;
-		waruptr->klscore = 0;
+		/* if loss exceeds total score, kill is worth nothing */
+		if (ded_amt > waruptr->score)
+			{
+			ded_amt = 0;
+			amt = 0;
+			scr = 0;
+			}
 		}
 	else
 		{
-		(waruptr->score) -= ded_amt;
+		amt = scr;
+
+		/* deduct less for losing to an NPC */
+		ded_amt = (amt * score_f2)/1000L;
 		}
 
-	if (waruptr->klscore < ded_amt)
+	/* cap deduction to combat-earned score */
+	if (ded_amt > waruptr->klscore)
+		ded_amt = waruptr->klscore;
+
+	waruptr->klscore -= ded_amt;
+	waruptr->score -= ded_amt;
+
+	if (ded_amt > 0)
 		{
-		waruptr->klscore = 0;
-		}
-	else
-		{
-		waruptr->klscore -= ded_amt;
+		sprintf(gechrbuf, "%lu", ded_amt);
+		prfmsg(YRDEAD2, gechrbuf);
+		outprfge(ALWAYS, usrn);
 		}
 
 	(wuptr->score) += amt;
 	(wuptr->klscore) += amt;
 
 	sprintf(gechrbuf,"%ld",scr);
-	prfmsg(KILLPNTS,gechrbuf,shipclass[ptr->shpclass].typename);
-
-	if (bonus > 0)
+	if (scr == 0)
+		prfmsg(KILNOPTS);
+	else
 		{
-		sprintf(gechrbuf,"%ld",bonus);
-		prfmsg(KILLBON,gechrbuf);
+		prfmsg(KILLPNTS,gechrbuf,shipclass[ptr->shpclass].typename);
+
+		if (bonus2 > 0)
+			{
+			sprintf(gechrbuf,"%ld",bonus2);
+			prfmsg(KILLBON1,gechrbuf);
+			}
+		else
+		if (bonus2 < 0)
+			{
+			sprintf(gechrbuf,"%ld",(bonus2 * -1L));
+			prfmsg(KILLBON2,gechrbuf);
+			}
+
+		if (bonus1 > 0)
+			{
+			sprintf(gechrbuf,"%ld",bonus1);
+			prfmsg(KILLBON3,winpos,lospos,gechrbuf);
+			}
 		}
 
 	outprfge(ALWAYS,who);
 
-	if (chgloser > 0
+	if (scr > 0 && chgloser > 0
 		&& ptr->status == GESTAT_USER
 		&& wptr->status == GESTAT_USER)
 		{
@@ -3771,41 +3811,55 @@ else
 	wuptr->factions[facnum] += dislike;
 }
 
-int FUNC rospos(ptr)
-WARUSR *ptr;
+void FUNC rospos(WARUSR *losptr, WARUSR *winptr, int *lospos, int *winpos)
 {
-long target;
+long ltarget = 0, wtarget = 0;
 int i = 0;
+int ranked;
 
-if (ptr->score <= 0)
-	return 0;
+*lospos = 0;
+*winpos = 0;
 
 setbtv(gebb5);
 
-/* find user record for given pointer */
-if (!qeqbtv(ptr->userid, 0))
-	return 0;
+/* find user record for loser */
+if (qeqbtv(losptr->userid, 0))
+	ltarget = absbtv();
 
-target = absbtv();
+/* find user record for winner */
+if (qeqbtv(winptr->userid, 0))
+	wtarget = absbtv();
+
+if (ltarget == 0 && wtarget == 0)
+	return;	/* return both 0 */
 
 /* start at top of roster (key 1 = score order) */
 if (!qhibtv(1))
-	return 0;
+	return;
 
 do
 	{
 	gcrbtv(&tmpusr, 1);
 
-	if (tmpusr.score > 0 && tmpusr.userid[0] != '@')
+	ranked = (tmpusr.score > 0 && tmpusr.userid[0] != '@');
+
+	if (ranked)
 		++i;
 
-	/* stop when we hit our user */
-	if (absbtv() == target)
-		return i;
+	if (ranked && ltarget !=0 && absbtv() == ltarget)
+		*lospos = i;
+	else
+	if (ranked && wtarget !=0 && absbtv() == wtarget)
+		*winpos = i;
+
+	if (*lospos && *winpos)
+		break;	/* we're done here */
 
 	} while (qprbtv());
 
-return 0;
+if (*winpos == 0)	/* unranked winner */
+	*winpos = i+1;
+
 }
 
 void FUNC damstr(damage)

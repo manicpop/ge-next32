@@ -5772,13 +5772,6 @@ if (sameas("fill",margv[1]))
 	return;
 	}
 else
-if (sameas("rospos",margv[1]))
-	{
-	prf("rospos %d\r",rospos(waruptr));
-	outprfge(ALWAYS,usrnum);
-	return;
-	}
-else
 
 prfmsg(FORMAT,"SYS");
 outprfge(ALWAYS,usrnum);
