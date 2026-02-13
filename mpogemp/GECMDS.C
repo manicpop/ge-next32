@@ -3073,7 +3073,7 @@ if (plnum <= MAXPLANETS && plnum > 0)
 			jam_scramble(gechrbuf2, warsptr->jam_sev, &rseed);
 			jam_scramble(gechrbuf3, warsptr->jam_sev, &rseed);
 			}
-		prfmsg(SCAN10,gechrbuf2,gechrbuf3);
+		prfmsg(SCAN12,gechrbuf2,gechrbuf3);
 		prfmsg(DASHES);
 		outprfge(ALWAYS,usrnum);
 		}
@@ -4578,7 +4578,8 @@ if (qhibtv(1))
 		} while (qprbtv() && i < j);
 	if (rank != 0)
 		prfmsg(ROSTER3,rank);
-	outprfge(ALWAYS,usrnum);
+	if (i != 0)
+		outprfge(ALWAYS,usrnum);
 	}
 else
 	{
