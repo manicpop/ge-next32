@@ -4576,10 +4576,13 @@ if (qhibtv(1))
 				outprfge(ALWAYS,usrnum);
 			}
 		} while (qprbtv() && i < j);
-	if (rank != 0)
-		prfmsg(ROSTER3,rank);
-	if (i != 0)
+	if (i % 5 != 0)
 		outprfge(ALWAYS,usrnum);
+	if (rank != 0)
+		{
+		prfmsg(ROSTER3,rank);
+		outprfge(ALWAYS,usrnum);
+		}
 	}
 else
 	{
