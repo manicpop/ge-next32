@@ -2027,8 +2027,11 @@ for (zothusn=0 ; zothusn < nships ;zothusn++)
 		if (wptr->status == GESTAT_USER)
 			++cntr;
 		repairship(wptr,zothusn);
-		shieldstat(wptr,zothusn);
-		cloakstat(wptr,zothusn);
+		if (wptr->damage < 100.0)
+			{
+			shieldstat(wptr,zothusn);
+			cloakstat(wptr,zothusn);
+			}
 
 /*DEBUG
 		geshocst(0,spr("GE:Chn %d checktm",zothusn));*/

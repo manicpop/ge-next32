@@ -4133,13 +4133,18 @@ SELFD2C {***
 } T GE someone is self destructing message 3
 
 SELFD3 {***
-[0;37m[[0;31mWARNING![0;37m] Self-destruct initiated![1;37m
+[0;37m[[0;31mWARNING![0;37m] The neutron flux overload caused [0;31msevere[0;37m damage![1;37m
 } T GE self destruct started message
 
 SELFD3A {***
-[0;37m[[0;31mWARNING![0;37m] The [0;36m%s[0;37m just exploded with a massive neutron implosion.
-Shock wave imminent![1;37m
+[0;37m[[0;31mWARNING![0;37m] The [0;36m%s[0;37m just exploded with a massive neutron implosion.[1;37m
 } T GE someone self destructed message
+
+SELFD3N {[0;37mThe neutron shock wave caused [0;31m%s[0;37m damage to [0;36m%s[0;37m's ship![1;37m
+} T GE self destruct damaged message
+
+SELFD3S {[0;37mShields contained the neutron shock wave![1;37m
+} T GE self destruct with shield up message
 
 SELFD4 {
 [0;37mSelf-destruct sequence aborted![1;37m
@@ -4153,12 +4158,10 @@ SELFD5 {
 [0;37m[[1;31mERROR[0;37m] The self-destruct sequence has not been started![1;37m
 } T GE no self destruct no abort message
 
-SELFD6 {
-[0;37mShields deflected some of the blast! Damage Control reports [0;31m%s[0;37m damage.[1;37m
+SELFD6 {[0;37mThe shock wave caused [0;31m%s[0;37m damage! Shields deflected some of the blast![1;37m
 } T GE self destruct with shields message
 
-SELFD7 {
-[0;37mThe shock wave caused [0;31m%s[0;37m damage![1;37m
+SELFD7 {[0;37mThe shock wave caused [0;31m%s[0;37m damage![1;37m
 } T GE self destruct with no shields message
 
 CYBNEW {***

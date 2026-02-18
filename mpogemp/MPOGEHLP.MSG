@@ -662,6 +662,10 @@ HLPDES {
 [1;36mThe [1;37mDESTRUCT[1;36m command will begin a self-destruct countdown timer that, when it
 reaches zero, will destroy your ship. The countdown can be aborted with the
 [1;37mABORT[1;36m command.
+
+The neutron shock wave from your ship's explosion may damage ships in the
+vicinity. If your ship's shields are raised when the self-destruct initiates,
+the shock wave will be contained.
 [1;37m} T GE help destruct message
 
 HLPFLU {

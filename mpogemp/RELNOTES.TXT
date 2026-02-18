@@ -108,6 +108,14 @@ The main focus of 0.3 is enhancements for user ships:
   fast missiles, whereas someone firing from a distance may
   prefer a heavier charged missile that will be more likely
   to have an impact when it reaches its destination.
+* The self-destruct sequence has been changed:
+  - If your shields are up when you self-destruct, you will not
+    damage other ships around you. If you want the explosion to
+    damage other ships, make sure your shields are down.
+  - If the explosion does damage other ships, you will be
+    notified before the death screen.
+  - The size of the explosion you create is now based on your
+    ship's damage factor (DAMF), not the ship class number.
 
 Other stuff:
 * The list of ships presented at the start of the game will now
@@ -161,7 +169,6 @@ Other stuff:
   than your own. There will be a slight deduction from your
   points awarded (not your total score) if you take out a
   significantly less powerful ship.
-
 
 === 0.2.6 === 2025-08-15
 

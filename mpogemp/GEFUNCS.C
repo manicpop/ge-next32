@@ -2487,43 +2487,51 @@ if (ptr->destruct > (byte)0)
 		outprfge(ALWAYS,usrn);
 		prfmsg(SELFD3A,ptr->shipname);
 		outrange(ALWAYS,&ptr->coord);
-		for (zothusn=0 ; zothusn < nships ; zothusn++)
+		if (ptr->shieldstat == SHIELDUP)
 			{
-			wptr=warshpoff(zothusn);
-			if (ingegame(zothusn))
+			prfmsg(SELFD3S);
+			outprfge(ALWAYS,usrn);
+			}
+		else
+			for (zothusn=0 ; zothusn < nships ; zothusn++)
 				{
-				ddist = cdistance(&ptr->coord,&wptr->coord);
-				ddist *= 10000;
-				setsect(wptr);
-				if (ddist < ((double)MINERANGE) && (xsect != 0 || ysect != 0))
+				wptr=warshpoff(zothusn);
+				if (ingegame(zothusn) && usrn != zothusn)
 					{
-					ddist = 1.0-(ddist/((double)DESTRUCTRANGE));
-					if (ddist < 0)
-						ddist = 0;
-					ddist = ddist*ddist*ddist;
-					if (wptr->shieldstat == SHIELDUP)
+					ddist = cdistance(&ptr->coord,&wptr->coord);
+					ddist *= 10000;
+					setsect(wptr);
+					if (ddist < ((double)DESTRUCTRANGE) && !neutral(&wptr->coord))
 						{
-						damage = (unsigned)(ddist*minedammax);
-						damage = damage*((ptr->shpclass/2)+1);
-						damage = damage/(gernd()%5+wptr->shieldtype);
-						damstr(damage);
-						prfmsg(SELFD6,gechrbuf);
-						outprfge(ALWAYS,zothusn);
-						shieldhit(wptr,zothusn,damage+20);
+						ddist = 1.0-(ddist/((double)DESTRUCTRANGE));
+						if (ddist < 0)
+							ddist = 0;
+						ddist = ddist*ddist*ddist;
+						if (wptr->shieldstat == SHIELDUP)
+							{
+							damage = (unsigned)(ddist*minedammax);
+							damage = damage*(shipclass[ptr->shpclass].damfact / 100);
+							damage = damage/(gernd()%5+wptr->shieldtype);
+							damstr(damage);
+							prfmsg(SELFD6,gechrbuf);
+							outprfge(ALWAYS,zothusn);
+							shieldhit(wptr,zothusn,damage+20);
+							}
+						else
+							{
+							damage = (unsigned)(ddist*minedammax);
+							damage = damage*(shipclass[ptr->shpclass].damfact / 100);
+							damstr(damage);
+							prfmsg(SELFD7,gechrbuf);
+							outprfge(ALWAYS,zothusn);
+							}
+						wptr->damage += (double)damage;
+						wptr->lastfired = -1;
+						prfmsg(SELFD3N,gechrbuf,username(wptr));
+						outprfge(ALWAYS,usrn);
 						}
-					else
-						{
-						damage = (unsigned)(ddist*minedammax);
-						damage = damage*((ptr->shpclass/2)+1);
-						damstr(damage);
-						prfmsg(SELFD7,gechrbuf);
-						outprfge(ALWAYS,zothusn);
-						}
-					wptr->damage += (double)damage;
-					wptr->lastfired = -1;
 					}
 				}
-			}
 		}
 	}
 }
