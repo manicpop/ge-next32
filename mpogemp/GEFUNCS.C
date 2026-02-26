@@ -2277,13 +2277,58 @@ if (ptr->cloak == 3)
 	}
 
 
-/* clear lastfired and lock if npc no longer exists */
+/* clear lastfired if npc no longer exists */
 if (ptr->lastfired >= 0 && ptr->lastfired < nships && warshpoff(ptr->lastfired)->status == GESTAT_AVAIL)
 	ptr->lastfired = -1;
 
-if (ptr->lock >= 0 && ptr->lock < nships && warshpoff(ptr->lock)->status == GESTAT_AVAIL)
-	ptr->lock = -1;
+}
 
+void FUNC validate_lock(ptr,usrn)
+WARSHP	*ptr;
+int	usrn;
+{
+WARSHP	*lptr;
+double	dist;
+int	lockee;
+
+if (ptr->lock < 0)
+	return;
+
+if (ptr->lock >= nships)
+	{
+	ptr->lock = -1;
+	prfmsg(LOCK01);
+	outprfge(FILTER,usrn);
+	return;
+	}
+
+lockee = ptr->lock;
+lptr = warshpoff(lockee);
+
+if (!ingegame(lockee) || lptr->status == GESTAT_AVAIL)
+	{
+	ptr->lock = -1;
+	return;
+	}
+
+if (lptr->cloak >= 10)
+	{
+	ptr->lock = -1;
+	prfmsg(LOCK05,shpltr(lockee,usrn));
+	outprfge(FILTER,usrn);
+	return;
+	}
+
+dist = cdistance(&ptr->coord,&lptr->coord) * 10000.0;
+if (dist > (double)shipclass[ptr->shpclass].scanrange)
+	{
+	ptr->lock = -1;
+	prfmsg(LOCK05,shpltr(lockee,usrn));
+	outprfge(FILTER,usrn);
+	prfmsg(LOCK04,shpltr(usrn,lockee));
+	outprfge(FILTER,lockee);
+	return;
+	}
 }
 
 void FUNC acctm(ptr,usrn,mt,channel)
@@ -2691,8 +2736,8 @@ if (ptr->damage > 100.0)
 
 damcomb = (int)(ptr->damage - hitdam);
 
-/* hit must be over 10 and damage before hit must be over 20 */
-if (hitdam < 10.0 || damcomb < 20)
+/* hit must be over 5 and damage before hit must be over 20 */
+if (hitdam < 5.0 || damcomb < 20)
 	return;
 
 /* weight toward big single hits */

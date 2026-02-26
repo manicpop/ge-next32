@@ -591,8 +591,6 @@ j = gernd()%((shipclass[ptr->shpclass].tough_factor)+2);
 
 for (i=0;i<j;++i)
 	{
-	if (i>0)
-		lockwarn = FALSE;
 	if (gernd()%10 == 0 && shipclass[ptr->shpclass].max_missl && ptr->items[I_MISSILE] > 0 &&
 		misl(ptr,usrn,zothusn,(shipclass[ptr->shpclass].tough_factor+1)*4000,0) == 1)
 		acted = 1;

@@ -1100,8 +1100,6 @@ if (!neutral(&ptr->coord) && !neutral(&wptr->coord) && wptr->cloak != 10 &&
 	j = gernd()%((shipclass[ptr->shpclass].tough_factor)+2);
 	for (i=0;i<j;++i)
 		{
-		if (i>0)
-			lockwarn = FALSE;
 		if (ptr->items[I_TORPEDO] > 0)
 			torp(ptr,usrn,zothusn);
 		}

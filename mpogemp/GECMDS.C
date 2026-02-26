@@ -1264,8 +1264,6 @@ void FUNC cmd_torp()
 
 int shpnum;
 
-lockwarn = TRUE;
-
 if (shipclass[warsptr->shpclass].max_torps == 0)
 	{
 	prfmsg(TORP3);
@@ -1398,8 +1396,6 @@ void FUNC cmd_missl()
 
 int shpnum;
 unsigned energy;
-
-lockwarn = TRUE;
 
 if (shipclass[warsptr->shpclass].max_missl == 0)
 	{
@@ -1597,12 +1593,6 @@ if (wptr->cloak < 10 && (dist*10000.0) < (double)shipclass[warsptr->shpclass].sc
 
 	if (fact > .7)
 		{
-		if (lockwarn == TRUE)
-			{
-			prfmsg(LOCK2,shpltr(ship,usrn));
-			outprfge(FILTER,ship);
-			}
-		lockwarn = TRUE;
 		if (wptr->status == GESTAT_AUTO)	/* if npc... */
 			{
 			wptr->cybmine = usrn;	/* engage user */
@@ -1613,23 +1603,14 @@ if (wptr->cloak < 10 && (dist*10000.0) < (double)shipclass[warsptr->shpclass].sc
 		}
 	else
 		{
-		if (lockwarn == TRUE)
-			{
-			prfmsg(LOCK3,shpltr(usrn,ship));
-			outprfge(FILTER,usrn);
-			if (warshpoff(usrn)->status == GESTAT_USER)
-				{
-				prfmsg(LOCK4,shpltr(ship,usrn));
-				outprfge(FILTER,ship);
-				}
-			}
-		lockwarn = TRUE;
+		prfmsg(FCNOLOCK,shpltr(usrn,ship));
+		outprfge(FILTER,usrn);
 		return(0);
 		}
 	}
 else
 	{
-	prfmsg(LOCK5,shpltr(usrn,ship));
+	prfmsg(NOSHIP);
 	outprfge(ALWAYS,usrn);
 	return(0);
 	}
@@ -2839,7 +2820,8 @@ if (shpnum >= 0)
 		outprfge(ALWAYS,usrnum);
 
 		/* if beyond the "scanned" ships range disply this msg */
-		if (warsptr->jam_sev < (byte)3)
+		/* if scanner is already locked onto target, suppress scan notification */
+		if (warsptr->jam_sev < (byte)3 && warsptr->lock != shpnum)
 			{
 			if ((long)scandist > shipclass[wptr->shpclass].scanrange)
 				{
@@ -4627,10 +4609,10 @@ if (qlobtv(0))
 				if (stepper >= inc)
 					{
 					prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
-					if (stepper%5 == 0)	/* cat five lines then print */
-						outprfge(ALWAYS,usrnum);
 					}
 				++stepper;
+				if (stepper > inc && ((stepper-inc)%5) == 0)	/* cat five lines then print */
+					outprfge(ALWAYS,usrnum);
 				if (stepper >= inc+20)
 					{
 					prfmsg(PLAMSG3,page+1);
@@ -4640,10 +4622,11 @@ if (qlobtv(0))
 				}
 			else
 				{
-				outprfge(ALWAYS,usrnum); /* one last out to make sure nothing was missed */
-				return;
+				break;
 				}
 			} while (qnxbtv());
+		if (stepper > inc && ((stepper-inc)%5) != 0)
+			outprfge(ALWAYS,usrnum);
 		}
 	else
 		{
@@ -5858,6 +5841,11 @@ int	shpnum;
 
 if (margc == 1)
 	{
+	if (warsptr->lock >= 0 && warsptr->lock < nships && ingegame(warsptr->lock))
+		{
+		prfmsg(LOCK04,shpltr(usrnum,warsptr->lock));
+		outprfge(FILTER,warsptr->lock);
+		}
 	warsptr->lock = -1;
 	prfmsg(LOCK01);
 	outprfge(ALWAYS,usrnum);
@@ -5881,6 +5869,8 @@ if (shpnum >= 0)
 	else
 		prfmsg(LOCK02N, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
 	outprfge(FILTER,usrnum);
+	prfmsg(LOCK03,shpltr(shpnum,usrnum));
+	outprfge(FILTER,shpnum);
 	}
 else
 	{

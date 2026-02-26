@@ -79,7 +79,6 @@ extern	struct message *gemsg;
 extern	int		nships;
 extern	int		heading;
 extern	unsigned	speed;
-extern	int		lockwarn;
 extern	int		xsect,ysect;
 extern	unsigned	xcord,ycord;
 extern	PKEY		pkey;

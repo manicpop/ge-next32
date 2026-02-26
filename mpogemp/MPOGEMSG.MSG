@@ -2533,21 +2533,9 @@ MISS01 {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with a missile launcher.[1;37m
 } T GE no missile launcher on this ship message
 
-LOCK2 {***
-[0;37m[[0;31mWARNING![0;37m] Ship [0;36m%c[0;37m has a fire control scanner locked onto this ship![1;37m
-} T GE someone locked onto you message
-
-LOCK3 {
+FCNOLOCK {
 [0;37m[[1;31mERROR[0;37m] Fire control scanners cannot get a positive lock on ship [0;36m%c[0;37m![1;37m
 } T GE cannot lock on message
-
-LOCK4 {***
-[0;37m[[0;31mWARNING![0;37m] Ship [0;36m%c[0;37m is attempting to lock fire control scanners onto this ship.[1;37m
-} T GE attempting to lock on to you message
-
-LOCK5 {
-[0;37m[[1;31mERROR[0;37m] Scanners do not detect ship [0;36m%c[0;37m![1;37m
-} T GE no such ship message
 
 THIT1 {***
 [0;37m[[0;31mWARNING![0;37m] Direct hit by a torpedo, caused [0;31m%s[0;37m damage!
@@ -4221,19 +4209,31 @@ MINE7 {
 } T GE no mining in neutral zone message
 
 LOCK01 {
-[0;37mFire control lock removed![1;37m
+[0;37mScanner lock removed![1;37m
 } T GE fire control lock removed message
 
 LOCK02 {
-[0;37mFire control locked on [0;36m%s[0;37m commanded by [0;36m%s[0;37m.[1;37m
+[0;37mScanners locked on [0;36m%s[0;37m commanded by [0;36m%s[0;37m.[1;37m
 } T GE fire control locked message
 
 LOCK02N {
-[0;37mFire control locked on [0;36m%s[0;37m.[1;37m
+[0;37mScanners locked on [0;36m%s[0;37m.[1;37m
 } T GE fire control locked message
 
+LOCK03 {***
+[0;37m[[0;31mWARNING![0;37m] Ship [0;36m%c[0;37m has locked its scanners onto this ship![1;37m
+} T GE someone locked onto you message
+
+LOCK04 {***
+[0;37mShip [0;36m%c[0;37m is no longer locked onto this ship.[1;37m
+} T GE lock removed notice to lockee
+
+LOCK05 {***
+[0;37mScanner lock on ship [0;36m%c[0;37m lost![1;37m
+} T GE lock lost out of range notice to locker
+
 NOLOCK {
-[0;37m[[1;31mERROR[0;37m] Fire control has no lock set.[1;37m
+[0;37m[[1;31mERROR[0;37m] Scanners have no lock set.[1;37m
 } T GE no fire control lock message
 
 NAV01 {

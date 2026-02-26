@@ -149,7 +149,6 @@ struct message	*gemsg;
 int				nships;
 int				heading;
 unsigned			speed;
-int				lockwarn;
 int				game_day;
 
 /* do not touch the next two definitions !!! */
@@ -778,11 +777,7 @@ for (i=0; i<s00plnum; ++i)
 	}
 
 /* Load the team table from disk */
-
 load_team_tab();
-
-/* turn on lockon warning global flag */
-lockwarn = TRUE;
 
 /* tell everyone that we are up */
 geshocst(0,spr("Galactic Empire %s",VERSION));
@@ -2027,18 +2022,15 @@ for (zothusn=0 ; zothusn < nships ;zothusn++)
 		if (wptr->status == GESTAT_USER)
 			++cntr;
 		repairship(wptr,zothusn);
+		validate_lock(wptr,zothusn);
 		if (wptr->damage < 100.0)
 			{
 			shieldstat(wptr,zothusn);
 			cloakstat(wptr,zothusn);
+			recharge(wptr,zothusn);
 			}
-
-/*DEBUG
-		geshocst(0,spr("GE:Chn %d checktm",zothusn));*/
-
 		checktm(wptr,zothusn);		/* check torps, missl, and decoys */
 		fireion(wptr,zothusn);
-		recharge(wptr,zothusn);
 		checkdam(wptr,zothusn);
 		}
 	}
