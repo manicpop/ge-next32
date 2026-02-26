@@ -5859,6 +5859,13 @@ if (margv[1] == NULL)
 	return;
 	}
 
+if (warsptr->jam_sev > (byte)7 || (warsptr->jam_sev > (byte)2 && gernd()%(9 - (int)warsptr->jam_sev) == 0))
+	{
+	prfmsg(JAMMER4W);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
 shpnum = findshp(margv[1],1);
 
 if (shpnum >= 0)
