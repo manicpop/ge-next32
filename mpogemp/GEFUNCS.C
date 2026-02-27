@@ -1969,7 +1969,11 @@ void FUNC checktm(ptr,usrn)
 WARSHP	*ptr;
 int	usrn;
 {
-int	i,j,flag,power,shotdown;
+int	i,j,k,power,shotdown;
+byte	track_cnt,lost_cnt,acc_used;
+byte	acc_cnt[MAXTORPS],acc_chan[MAXTORPS];
+byte	sh_cnt,un_cnt;
+double	sh_dam,un_dam;
 
 WARUSR				*wuptr;
 MISSILE				*mptr;
@@ -1993,8 +1997,11 @@ if (ptr->cantexit > 0)
 
 /* torpedoes first */
 
-flag = 0;
 shotdown = 0;
+track_cnt = 0;
+acc_used = 0;
+sh_cnt = un_cnt = 0;
+sh_dam = un_dam = 0.0;
 for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 	{
 	if (tptr->distance > 0)
@@ -2022,10 +2029,21 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 					wuptr = warusroff((int)tptr->channel);
 					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
 					}
-				damstr((int)damfact);
-				prfmsg(THIT1,gechrbuf);
-				outprfge(ALWAYS,usrn);
-				acctm(ptr,usrn,0,tptr->channel);
+				if (++sh_cnt == 1)
+					sh_dam = damfact;
+				else
+					sh_dam += damfact;
+				for (k=0;k<acc_used;++k)
+					if (acc_chan[k] == tptr->channel)
+						break;
+				if (k < acc_used)
+					++acc_cnt[k];
+				else
+					{
+					acc_chan[acc_used] = tptr->channel;
+					acc_cnt[acc_used] = 1;
+					++acc_used;
+					}
 				shieldhit(ptr,usrn,(gernd()%20)+10);
 				}
 			else
@@ -2041,12 +2059,22 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 					wuptr = warusroff((int)tptr->channel);
 					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
 					}
-				damstr((int)damfact);
-				prfmsg(THIT2,gechrbuf);
-				outprfge(ALWAYS,usrn);
-				acctm(ptr,usrn,0,tptr->channel);
+				if (++un_cnt == 1)
+					un_dam = damfact;
+				else
+					un_dam += damfact;
+				for (k=0;k<acc_used;++k)
+					if (acc_chan[k] == tptr->channel)
+						break;
+				if (k < acc_used)
+					++acc_cnt[k];
+				else
+					{
+					acc_chan[acc_used] = tptr->channel;
+					acc_cnt[acc_used] = 1;
+					++acc_used;
+					}
 				}
-			randamage(ptr,usrn,damfact); /*assess any random damage */
 			}
 		else	/* still flying */
 			{
@@ -2072,17 +2100,50 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 			if (tptr->distance > 0)	/* torp still here? */
 				{
 				tptr->distance -= torpsped;
-				if (flag == 0)
-					{
-					prfmsg(TORP1);
-					outprfge(FILTER,usrn);
-					flag = 1;
-					}
+				if (tptr->distance > 0)
+					++track_cnt;
 				}
 			}
 		}
 	}
 
+if (sh_cnt > 0)
+	{
+	damstr((int)sh_dam);
+	if (sh_cnt == 1)
+		prfmsg(THIT1,gechrbuf);
+	else
+		prfmsg(THIT3,sh_cnt,gechrbuf);
+	outprfge(ALWAYS,usrn);
+	}
+
+if (un_cnt > 0)
+	{
+	damstr((int)un_dam);
+	if (un_cnt == 1)
+		prfmsg(THIT2,gechrbuf);
+	else
+		prfmsg(THIT4,un_cnt,gechrbuf);
+	outprfge(ALWAYS,usrn);
+	}
+
+if ((sh_dam + un_dam) > 0.0)
+	randamage(ptr,usrn,sh_dam + un_dam); /* combined torpedo random damage check */
+
+if (track_cnt == 1)
+	{
+	prfmsg(TORP1);
+	outprfge(FILTER,usrn);
+	}
+else
+if (track_cnt > 1)
+	{
+	prfmsg(TORP4,track_cnt);
+	outprfge(FILTER,usrn);
+	}
+
+for (k=0;k<acc_used;++k)
+	acctm(ptr,usrn,0,acc_chan[k],acc_cnt[k]);
 
 if (shotdown > 0)
 	{
@@ -2094,8 +2155,12 @@ if (shotdown > 0)
 	}
 
 /* missiles second */
-flag = 0;
 shotdown = 0;
+track_cnt = 0;
+lost_cnt = 0;
+acc_used = 0;
+sh_cnt = un_cnt = 0;
+sh_dam = un_dam = 0.0;
 for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 	{
 	if (mptr->distance > 0)
@@ -2122,15 +2187,26 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 				damfact = damfact/20000.0;
 				damfact = mdammax*(damfact * rndm(.1));
 				ptr->damage += damfact;
-				damstr((int)damfact);
-				prfmsg(MHIT1,gechrbuf);
-				outprfge(ALWAYS,usrn);
+				if (++sh_cnt == 1)
+					sh_dam = damfact;
+				else
+					sh_dam += damfact;
 				if ((int)mptr->channel < nships)
 					{
 					wuptr = warusroff((int)mptr->channel);
 					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
 					}
-				acctm(ptr,usrn,1,mptr->channel);
+				for (k=0;k<acc_used;++k)
+					if (acc_chan[k] == mptr->channel)
+						break;
+				if (k < acc_used)
+					++acc_cnt[k];
+				else
+					{
+					acc_chan[acc_used] = mptr->channel;
+					acc_cnt[acc_used] = 1;
+					++acc_used;
+					}
 
 				power = mptr->energy/999;
 				power = power * (rndm(.5)+.5);
@@ -2141,17 +2217,27 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 				damfact = damfact/20000.0;
 				damfact = mdammax*(damfact * (rndm(.5)+.5));
 				ptr->damage += damfact;
-				damstr((int)damfact);
-				prfmsg(MHIT2,gechrbuf);
-				outprfge(ALWAYS,usrn);
+				if (++un_cnt == 1)
+					un_dam = damfact;
+				else
+					un_dam += damfact;
 				if ((int)mptr->channel < nships)
 					{
 					wuptr = warusroff((int)mptr->channel);
 					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
 					}
-				acctm(ptr,usrn,1,mptr->channel);
+				for (k=0;k<acc_used;++k)
+					if (acc_chan[k] == mptr->channel)
+						break;
+				if (k < acc_used)
+					++acc_cnt[k];
+				else
+					{
+					acc_chan[acc_used] = mptr->channel;
+					acc_cnt[acc_used] = 1;
+					++acc_used;
+					}
 				}
-			randamage(ptr,usrn,damfact); /*assess any random damage */
 			}
 		else
 			{
@@ -2188,8 +2274,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 					mptr->energy <= 500)
 					{
 					mptr->distance = 0;
-					prfmsg(MISSL2);
-					outprfge(FILTER,usrn);
+					++lost_cnt;
 					if (ingegame(mptr->channel) && mptr->channel < nterms)
 						{
 						prfmsg(MISMISS,shpltr(mptr->channel,usrn));
@@ -2201,16 +2286,62 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 					mptr->distance += (int)(ptr->speed/6.5);
 					mptr->energy -= 500;	/* decrease energy over time */
 					}
-				if (mptr->distance > 0 && flag == 0)
-					{
-					prfmsg(MISSL1);
-					outprfge(FILTER,usrn);
-					flag = 1;
-					}
+				if (mptr->distance > 0)
+					++track_cnt;
 				}
 			}
 		}
 	}
+
+if (lost_cnt == 1)
+	{
+	prfmsg(MISSL2);
+	outprfge(FILTER,usrn);
+	}
+else
+if (lost_cnt > 1)
+	{
+	prfmsg(MISSL4,lost_cnt);
+	outprfge(FILTER,usrn);
+	}
+
+if (track_cnt == 1)
+	{
+	prfmsg(MISSL1);
+	outprfge(FILTER,usrn);
+	}
+else
+if (track_cnt > 1)
+	{
+	prfmsg(MISSL3,track_cnt);
+	outprfge(FILTER,usrn);
+	}
+
+if (sh_cnt > 0)
+	{
+	damstr((int)sh_dam);
+	if (sh_cnt == 1)
+		prfmsg(MHIT1,gechrbuf);
+	else
+		prfmsg(MHIT3,sh_cnt,gechrbuf);
+	outprfge(ALWAYS,usrn);
+	}
+
+if (un_cnt > 0)
+	{
+	damstr((int)un_dam);
+	if (un_cnt == 1)
+		prfmsg(MHIT2,gechrbuf);
+	else
+		prfmsg(MHIT4,un_cnt,gechrbuf);
+	outprfge(ALWAYS,usrn);
+	}
+
+if ((sh_dam + un_dam) > 0.0)
+	randamage(ptr,usrn,sh_dam + un_dam); /* combined missile random damage check */
+
+for (k=0;k<acc_used;++k)
+	acctm(ptr,usrn,1,acc_chan[k],acc_cnt[k]);
 
 if (shotdown > 0)
 	{
@@ -2331,20 +2462,31 @@ if (dist > (double)shipclass[ptr->shpclass].scanrange)
 	}
 }
 
-void FUNC acctm(ptr,usrn,mt,channel)
+void FUNC acctm(ptr,usrn,mt,channel,count)
 WARSHP	*ptr;
 int	usrn;
 int	mt;
 unsigned char channel;
+int	count;
 
 {
 
 if (channel != 255)
 	{
-	if (ptr->status == GESTAT_AUTO)
-		prfmsg(MTACC1N+mt,shpltr(channel,usrn),ptr->shipname);
+	if (count <= 1)
+		{
+		if (ptr->status == GESTAT_AUTO)
+			prfmsg(MTACC1N+mt,shpltr(channel,usrn),ptr->shipname);
+		else
+			prfmsg(MTACC1+mt,shpltr(channel,usrn),ptr->shipname);
+		}
 	else
-		prfmsg(MTACC1+mt,shpltr(channel,usrn),ptr->shipname);
+		{
+		if (ptr->status == GESTAT_AUTO)
+			prfmsg(MTACC3N+mt,count,shpltr(channel,usrn),ptr->shipname);
+		else
+			prfmsg(MTACC3+mt,count,shpltr(channel,usrn),ptr->shipname);
+		}
 	outprfge(ALWAYS,channel);
 	ptr->lastfired = channel;
 	}

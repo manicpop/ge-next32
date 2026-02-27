@@ -2546,6 +2546,15 @@ THIT2 {***
 [0;37m[[0;31mWARNING![0;37m] Direct hit by a torpedo, caused [0;31m%s[0;37m damage![1;37m
 } T GE hit by torp without shields message
 
+THIT3 {***
+[0;37m[[0;31mWARNING![0;37m] Direct hit by %d torpedoes, caused [0;31m%s[0;37m damage!
+Shields deflected some of the blast.[1;37m
+} T GE multi-hit by torps with shields message
+
+THIT4 {***
+[0;37m[[0;31mWARNING![0;37m] Direct hit by %d torpedoes, caused [0;31m%s[0;37m damage![1;37m
+} T GE multi-hit by torps without shields message
+
 MHIT1 {***
 [0;37m[[0;31mWARNING![0;37m] Direct hit by a hyper-missile, caused [0;31m%s[0;37m damage!
 Shields deflected most of the blast.[1;37m
@@ -2554,6 +2563,15 @@ Shields deflected most of the blast.[1;37m
 MHIT2 {***
 [0;37m[[0;31mWARNING![0;37m] Direct hit by a hyper-missile, caused [0;31m%s[0;37m damage![1;37m
 } T GE hit by missile without shields message
+
+MHIT3 {***
+[0;37m[[0;31mWARNING![0;37m] Direct hit by %d hyper-missiles, caused [0;31m%s[0;37m damage!
+Shields deflected most of the blast.[1;37m
+} T GE multi-hit by missiles with shields message
+
+MHIT4 {***
+[0;37m[[0;31mWARNING![0;37m] Direct hit by %d hyper-missiles, caused [0;31m%s[0;37m damage![1;37m
+} T GE multi-hit by missiles without shields message
 
 MTACC1 {***
 [0;37mSensors indicate a torpedo has hit ship [0;36m%c[0;37m, the [0;36m%s[0;37m.[1;37m
@@ -2570,6 +2588,22 @@ MTACC1N {***
 MTACC2N {***
 [0;37mSensors indicate a hyper-missile has hit ship [0;36m%c[0;37m, [0;36m%s[0;37m.[1;37m
 } T GE your missile hit npc message
+
+MTACC3 {***
+[0;37mSensors indicate %d torpedoes have hit ship [0;36m%c[0;37m, the [0;36m%s[0;37m.[1;37m
+} T GE your torp multi-hit message
+
+MTACC4 {***
+[0;37mSensors indicate %d hyper-missiles have hit ship [0;36m%c[0;37m, the [0;36m%s[0;37m.[1;37m
+} T GE your missile multi-hit message
+
+MTACC3N {***
+[0;37mSensors indicate %d torpedoes have hit ship [0;36m%c[0;37m, [0;36m%s[0;37m.[1;37m
+} T GE your torp multi-hit npc message
+
+MTACC4N {***
+[0;37mSensors indicate %d hyper-missiles have hit ship [0;36m%c[0;37m, [0;36m%s[0;37m.[1;37m
+} T GE your missile multi-hit npc message
 
 MISMISS {***
 [0;37mSensors indicate a hyper-missile fired at ship [0;36m%c[0;37m has been lost![1;37m
@@ -2607,13 +2641,25 @@ TORP1 {***
 [0;37m[[0;31mWARNING![0;37m] Tracking incoming torpedo![1;37m
 } T GE tracking torp message
 
+TORP4 {***
+[0;37m[[0;31mWARNING![0;37m] Tracking %d incoming torpedoes![1;37m
+} T GE tracking multiple torps message
+
 MISSL1 {***
 [0;37m[[0;31mWARNING![0;37m] Tracking incoming hyper-missile![1;37m
 } T GE tracking missile message
 
+MISSL3 {***
+[0;37m[[0;31mWARNING![0;37m] Tracking %d incoming hyper-missiles![1;37m
+} T GE tracking multiple missiles message
+
 MISSL2 {***
 [0;37mAn incoming missile has lost lockon and self-destructed![1;37m
 } T GE incoming missile got lost message
+
+MISSL4 {***
+[0;37m%d incoming missiles have lost lockon and self-destructed![1;37m
+} T GE incoming missiles got lost message
 
 SCAN1 {***
 [0;37mSensors indicate this ship is being scanned by ship [0;36m%c[0;37m, the [0;36m%s[0;37m.[1;37m
