@@ -1349,8 +1349,10 @@ int	shpnum;
 
 {
 WARSHP	*wptr;
+WARSHP	*optr;
+byte	others[MAXTORPS],ocount,found;
 
-int	i;
+int	i,oi;
 
 if (ptr->damage >= 100)
 	{
@@ -1380,6 +1382,41 @@ if (lockon(ptr,0,shpnum,usrn) == 1)
 			}
 		}
 	prfmsg(TORMANY,MAXTORPS);
+	wptr = warshpoff(shpnum);
+	ocount = 0;
+	for (i=0; i<MAXTORPS; ++i)
+		{
+		if (wptr->ltorps[i].distance > 0 &&
+			wptr->ltorps[i].channel != (byte)usrn &&
+			wptr->ltorps[i].channel < nships &&
+			ingegame((int)wptr->ltorps[i].channel))
+			{
+			found = 0;
+			for (oi=0; oi<(int)ocount; ++oi)
+				{
+				if (others[oi] == wptr->ltorps[i].channel)
+					{
+					found = 1;
+					break;
+					}
+				}
+			if (!found && ocount < MAXTORPS)
+				others[ocount++] = wptr->ltorps[i].channel;
+			}
+		}
+	if (ocount > 0)
+		{
+		gechrbuf[0] = 0;
+		for (oi=0; oi<(int)ocount; ++oi)
+			{
+			optr = warshpoff((int)others[oi]);
+			if (oi > 0)
+				strcat(gechrbuf,", ");
+			strcat(gechrbuf,username(optr));
+			}
+		strcat(gechrbuf,(ocount > 1) ? " are" : " is");
+		prfmsg(TORMANY2,gechrbuf);
+		}
 	outprfge(FILTER,usrn);
 	return(0);
 	}
@@ -1493,7 +1530,9 @@ unsigned energy, eng_flu;
 
 {
 WARSHP *wptr;
-int i;
+WARSHP *optr;
+byte	others[MAXMISSL],ocount,found;
+int	i,oi;
 
 if (ptr->damage >= 100)
 	{
@@ -1525,6 +1564,41 @@ if (lockon(ptr,1,shpnum,usrnum) == 1)
 			}
 		}
 	prfmsg(MISMANY,MAXMISSL);
+	wptr = warshpoff(shpnum);
+	ocount = 0;
+	for (i=0; i<MAXMISSL; ++i)
+		{
+		if (wptr->lmissl[i].distance > 0 &&
+			wptr->lmissl[i].channel != (byte)usrnum &&
+			wptr->lmissl[i].channel < nships &&
+			ingegame((int)wptr->lmissl[i].channel))
+			{
+			found = 0;
+			for (oi=0; oi<(int)ocount; ++oi)
+				{
+				if (others[oi] == wptr->lmissl[i].channel)
+					{
+					found = 1;
+					break;
+					}
+				}
+			if (!found && ocount < MAXMISSL)
+				others[ocount++] = wptr->lmissl[i].channel;
+			}
+		}
+	if (ocount > 0)
+		{
+		gechrbuf[0] = 0;
+		for (oi=0; oi<(int)ocount; ++oi)
+			{
+			optr = warshpoff((int)others[oi]);
+			if (oi > 0)
+				strcat(gechrbuf,", ");
+			strcat(gechrbuf,username(optr));
+			}
+		strcat(gechrbuf,(ocount > 1) ? " are" : " is");
+		prfmsg(MISMANY2,gechrbuf);
+		}
 	outprfge(FILTER,usrnum);
 	return(0);
 	}

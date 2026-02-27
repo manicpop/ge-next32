@@ -2505,6 +2505,9 @@ TORMANY {
 [0;37m[[1;31mERROR[0;37m] Only %d torpedoes can lock onto a ship at once.[1;37m
 } T GE too many torpedoes message
 
+TORMANY2 {[0;37m%s also firing on this ship.[1;37m
+} T GE too many torpedoes extra context message
+
 TORP2 {
 [0;37m[[1;31mERROR[0;37m] Torpedoes are not functional in hyperspace.[1;37m
 } T GE no torpedoes in hyperspace message
@@ -2528,6 +2531,9 @@ MFIRE2 {***
 MISMANY {
 [0;37m[[1;31mERROR[0;37m] Only %d hyper-missiles can lock onto a ship at once.[1;37m
 } T GE too many missiles message
+
+MISMANY2 {[0;37m%s also firing on this ship.[1;37m
+} T GE too many missiles extra context message
 
 MISS01 {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with a missile launcher.[1;37m

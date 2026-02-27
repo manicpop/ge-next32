@@ -116,6 +116,16 @@ The main focus of 0.3 is enhancements for user ships:
     notified before the death screen.
   - The size of the explosion you create is now based on your
     ship's damage factor (DAMF), not the ship class number.
+* New LOCK behavior:
+  - You will no longer see the "locked onto this ship" message
+    when someone fires at you.
+  - You will see the "locked on this ship" message when a user
+    player uses the LOCK command on you.
+  - When a player is locked onto you, you will not see messages
+    each time that player scans you. You should assume they are
+    watching your every move.
+  - If someone is locked onto you, and you exit, cloak, or leave
+    that ship's scan area, that player's lock will be cleared.
 
 Other stuff:
 * The list of ships presented at the start of the game will now
@@ -169,6 +179,15 @@ Other stuff:
   than your own. There will be a slight deduction from your
   points awarded (not your total score) if you take out a
   significantly less powerful ship.
+* Projectile message batching: If multiple torpedoes or missiles
+  are tracking you, the "tracking" message will list the amount.
+  If multiple torpedoes or missiles hit you on the same tick,
+  you will receive one message saying how many projectiles hit
+  and the combined, total amount of damage they all caused.
+* If you are trying to fire torpedoes or missiles on a player,
+  and you can't because another player (or NPC)'s projectiles
+  are filling the slots, it will tell you who else is firing on
+  this ship.
 
 === 0.2.6 === 2025-08-15
 
