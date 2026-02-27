@@ -2165,7 +2165,21 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 	{
 	if (mptr->distance > 0)
 		{
+		unsigned mstep;
+		float menergy, mscale;
+
 		ptr->cantexit = FIRETICKS;
+		/* heavy missiles up to half speed, light missiles up to 2x speed */
+		menergy = (float)mptr->energy + 300.0f;
+		mscale = sqrt(5000.0f / menergy);
+		if (mscale > 2.0f)
+			mscale = 2.0f;
+		if (mscale < 0.5f)
+			mscale = 0.5f;
+		mstep = (unsigned int)(mislsped * mscale);
+		if (mstep == 0)
+			mstep = 1;
+
 		if (neutral(&ptr->coord) && mptr->distance < 5000)
 			{
 			mptr->distance = 0;
@@ -2174,7 +2188,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 			outprfge(FILTER,mptr->channel);
 			}
 		else
-		if (mptr->distance < mislsped)
+		if (mptr->distance <= mstep)
 			{
 			mptr->distance = 0;
 			/* reduce the energy by the damage factor of this ship */
@@ -2262,14 +2276,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 				}
 			if (mptr->distance > 0)	/* missl still here? */
 				{
-				/* heavy missiles up to half speed, light missiles up to 2x speed */
-				float menergy = (float)mptr->energy + 300.0f;
-				float mscale = sqrt(5000.0f / menergy);
-				if (mscale > 2.0f)
-					mscale = 2.0f;
-				if (mscale < 0.5f)
-					mscale = 0.5f;
-				mptr->distance -= (unsigned int)(mislsped * mscale);
+				mptr->distance -= mstep;
 				if (ptr->speed > 100000.0 || mptr->distance > 50000U - (int)(ptr->speed/6.5) ||
 					mptr->energy <= 500)
 					{
