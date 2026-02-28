@@ -5942,12 +5942,20 @@ if (warsptr->jam_sev > (byte)7 || (warsptr->jam_sev > (byte)2 && gernd()%(9 - (i
 
 shpnum = findshp(margv[1],1);
 
-if (shpnum >= 0)
-	{
-	warsptr->lock = shpnum;
-	if (warshpoff(shpnum)->status == GESTAT_USER)
-		prfmsg(LOCK02, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
-	else
+	if (shpnum >= 0)
+		{
+		warsptr->lock = shpnum;
+		if (warshpoff(shpnum)->status == GESTAT_AUTO
+			&& shipclass[warshpoff(shpnum)->shpclass].max_type == CLASSTYPE_CYBORG
+			&& warshpoff(shpnum)->cybmine == 255)
+			{
+			warshpoff(shpnum)->cybmine = usrnum;	/* engage user */
+			warshpoff(shpnum)->tick = 2;		/* do it fast */
+			warshpoff(shpnum)->npcmsg = 255;	/* reset annoy msg tracking */
+			}
+		if (warshpoff(shpnum)->status == GESTAT_USER)
+			prfmsg(LOCK02, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
+		else
 		prfmsg(LOCK02N, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
 	outprfge(FILTER,usrnum);
 	prfmsg(LOCK03,shpltr(shpnum,usrnum));
