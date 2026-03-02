@@ -474,7 +474,7 @@ for (i=0;i<NUMITEMS;++i)
 	manhours[i] = lngopt(ITMMH01+i,0L,201228378L);
 	logthis(spr("Itm #%d manhours=%ld",i,manhours[i]));
 
-	baseprice[i] = numopt(ITMPR01+i,0,32000);
+	baseprice[i] = numopt(ITMPR01+i,1,32000);
 	logthis(spr("Itm #%d baseprice=%d",i,baseprice[i]));
 
 	}

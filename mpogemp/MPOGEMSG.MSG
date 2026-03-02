@@ -2904,6 +2904,10 @@ TRANSFR5 {
 [1;37m%s %s[1;36m have been transferred to the planet.[1;37m
 } T GE transfer down message
 
+TRANSFR6 {
+[1;36mThe planet cannot accept any more %s.[1;37m
+} T GE no transfer down in 0 0 message
+
 TRANSUP1 {
 [1;36mThey don't have that many available.[1;37m
 } T GE not enough to transfer up message
@@ -3909,7 +3913,7 @@ SELL5 {
 } T GE none to sell message
 
 TOOMUCH {
-[1;36mThis is too large of a transaction to process at once. Try a smaller amount.[1;37m
+[1;36mThis is too large of a transaction to process at once.[1;37m
 } T GE transaction too big message
 
 TOORICH {

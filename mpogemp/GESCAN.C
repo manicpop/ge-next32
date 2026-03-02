@@ -468,3 +468,855 @@ for (i = 0; buf[i]; ++i)
 		buf[i] = '?';
 	}
 }
+
+/**************************************************************************
+** Static functions for scans                                            **
+**************************************************************************/
+
+static void map_planets()
+{
+int i;
+unsigned x,y;
+getsector(&warsptr->coord);
+for (i=0;i < sector.numplan;++i)
+	{
+	if (sector.ptab[i].coord.xcoord != 0)
+		{
+		x = coord2(sector.ptab[i].coord.xcoord)+25;
+		y = coord2(sector.ptab[i].coord.ycoord)+25;
+		if (map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] == '*')
+			mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '7';
+		map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '1' + i;
+		if (mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] != '7')
+			{
+			if (sector.ptab[i].type == PLTYPE_WORM)
+				mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '3';
+			else
+				mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '5';
+			}
+		}
+	}
+}
+
+static void clearmap()
+{
+int i,j;
+
+for (i=0; i < MAXY; ++i)
+	{
+	for (j=0; j < MAXX; ++j)
+		{
+		map[i][j]=' ';
+		mapc[i][j]=' ';
+		}
+	map[i][MAXX] = 0;
+	mapc[i][MAXX] = 0;
+	}
+}
+
+
+
+/* SCAN SHIP FUNCTION */
+
+void FUNC scan_sh()
+
+{
+int	shpnum,gheading;
+WARSHP	*wptr;
+WARUSR	*wuptr;
+char	ltr;
+unsigned int rseed = gernd();
+long	scandist;	/* update_scantab uses ddistance, so we need a local here */
+
+if (margc != 3)
+	{
+	prfmsg(FORMAT,"SCAN");
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if (warsptr->jam_sev > (byte)7 || (warsptr->jam_sev > (byte)2 && rseed%(9 - (int)warsptr->jam_sev) == 0))
+	{
+	prfmsg(JAMMER4);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+shpnum = findshp(margv[2],1);
+
+if (shpnum == usrnum)
+	{
+	prfmsg(SCANER);
+	outprfge(ALWAYS,usrnum);
+	}
+else
+if (shpnum >= 0)
+	{
+	wptr = warshpoff(shpnum);
+	wuptr = warusroff(shpnum);
+	scandist = cdistance(&warsptr->coord,&wptr->coord)*10000;
+	if (scandist < shipclass[warsptr->shpclass].scanrange)
+		{
+		bearing = cbearing(&warsptr->coord,&wptr->coord,warsptr->heading);
+		heading = cbearing(&wptr->coord,&warsptr->coord,wptr->heading);
+		gheading = (int) (wptr->heading+.5);
+
+		speed = ((unsigned)(wptr->speed+.5));
+
+		sprintf(gechrbuf,"%s",wptr->shipname);
+
+		if (warsptr->jam_sev > 2)
+			jam_scramble(gechrbuf, warsptr->jam_sev, &rseed);
+		if (wptr->status == GESTAT_AUTO)
+			prfmsg(SCAN01N,gechrbuf);
+		else
+			prfmsg(SCAN01,gechrbuf);
+		prfmsg(DASHES);
+		if (warsptr->jam_sev < (byte)3)
+			prfmsg(SCAN01A,shipclass[wptr->shpclass].typename);
+		if (wptr->status == GESTAT_USER && warsptr->jam_sev < (byte)3)
+			{
+			prfmsg(SCAN02,username(wptr));
+			if (warusroff(shpnum)->teamcode >0)
+				prfmsg(SCAN02A,teamname(wuptr));
+			}
+		memset(gechrbuf, 0, 255);
+		sprintf(gechrbuf,"%d",bearing);
+		sprintf(gechrbuf2,"%d",heading);
+		sprintf(gechrbuf3,"%ld",(long)scandist);
+		if (warsptr->jam_sev > (byte)2)
+			{
+			jam_scramble(gechrbuf, warsptr->jam_sev, &rseed);
+			jam_scramble(gechrbuf2, warsptr->jam_sev, &rseed);
+			jam_scramble(gechrbuf3, warsptr->jam_sev, &rseed);
+			}
+		prfmsg(SCAN03,gechrbuf,gechrbuf2,gechrbuf3);
+		setsect(wptr);
+		sprintf(gechrbuf,"%d",gheading);
+		sprintf(gechrbuf2,"%d %d",xsect,ysect);
+		sprintf(gechrbuf3,"%s",showarp(wptr->speed));
+		if (warsptr->jam_sev > 2)
+			{
+			jam_scramble(gechrbuf, warsptr->jam_sev, &rseed);
+			jam_scramble(gechrbuf2, warsptr->jam_sev, &rseed);
+			jam_scramble(gechrbuf3, warsptr->jam_sev, &rseed);
+			}
+		prfmsg(SCAN03A,gechrbuf,gechrbuf2);
+		prfmsg(SCAN04,gechrbuf3);
+
+		if (warsptr->where != 1 && wptr->where != 1 && warsptr->jam_sev < (byte)3)
+			{
+			damage = (unsigned) (wptr->damage+.5);
+			damstr(damage);
+			prfmsg(SCAN05,gechrbuf);
+
+			if (wptr->shieldstat == SHIELDUP)
+				prfmsg(SCAN06);
+			else
+				prfmsg(SCAN07);
+
+			if (wptr->status == GESTAT_AUTO)
+				prfmsg(SCAN08,wptr->kills);
+			else
+				{
+				prfmsg(SCAN09,wptr->shipname,wptr->kills,wptr->ukills);
+				prfmsg(SCAN09,wuptr->userid,wuptr->kills,wuptr->ukills);
+				}
+			}
+
+		prfmsg(DASHES);
+		outprfge(ALWAYS,usrnum);
+
+		/* if beyond the "scanned" ships range disply this msg */
+		/* if scanner is already locked onto target, suppress scan notification */
+		if (warsptr->jam_sev < (byte)3 && warsptr->lock != shpnum)
+			{
+			if ((long)scandist > shipclass[wptr->shpclass].scanrange)
+				{
+				bearing = cbearing(&wptr->coord,&warsptr->coord,wptr->heading);
+				prfmsg(SCAN2,bearing);
+				}
+			else
+				{
+				/* all else get this */
+				if (warsptr->cloak != 10)
+					{
+					ltr = shpltr(shpnum,usrnum);
+					prfmsg(SCAN1,ltr,warsptr->shipname);
+					}
+				else
+					prfmsg(SCAN3);
+				}
+			outprfge(FILTER,shpnum);
+			}
+		}
+	else
+		{
+		prfmsg(NOSHIP);
+		outprfge(ALWAYS,usrnum);
+		}
+	}
+else
+	{
+	prfmsg(NOSHIP);
+	outprfge(ALWAYS,usrnum);
+	}
+}
+
+void FUNC scan_pl()
+
+{
+unsigned i;
+unsigned int rseed = gernd();
+
+/* SCAN PLANET FUNCTION */
+
+if (margc != 3)
+	{
+	prfmsg(FORMAT,"SCAN");
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if (warsptr->jam_sev > (byte)7 || (warsptr->jam_sev > (byte)2 && rseed%(9 - (int)warsptr->jam_sev) == 0))
+	{
+	prfmsg(JAMMER4);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+plnum = atoi(margv[2]);
+
+if (plnum <= MAXPLANETS && plnum > 0)
+	{
+	getplanetdat(usrnum);
+	refresh(warsptr,usrnum);
+	if (plnum > sector.numplan)
+		{
+		prfmsg(NOPLNT);
+		outprfge(ALWAYS,usrnum);
+		}
+	else
+	if (plptr->type == PLTYPE_PLNT)
+		{
+		bearing = cbearing(&warsptr->coord,&plptr->coord,warsptr->heading);
+		ddistance = cdistance(&warsptr->coord,&plptr->coord)*10000;
+		memset(gechrbuf, 0, 255);
+		sprintf(gechrbuf,"%s",plptr->name);
+		if (warsptr->jam_sev > (byte)2 && warsptr->where - 10 != plnum)
+			jam_scramble(gechrbuf, warsptr->jam_sev, &rseed);
+		prfmsg(SCAN10,plnum,gechrbuf);
+		prfmsg(DASHES);
+
+		if (plptr->userid[0] != 0 && (warsptr->jam_sev < (byte)3 || warsptr->where - 10 == plnum))
+			prfmsg(SCAN11,plptr->userid);
+
+		memset(gechrbuf2, 0, 20);
+		memset(gechrbuf3, 0, 20);
+		sprintf(gechrbuf2,"%d",bearing);
+		sprintf(gechrbuf3,"%ld",(long)ddistance);
+		if (warsptr->jam_sev > (byte)2 && warsptr->where - 10 != plnum)
+			{
+			jam_scramble(gechrbuf2, warsptr->jam_sev, &rseed);
+			jam_scramble(gechrbuf3, warsptr->jam_sev, &rseed);
+			}
+		prfmsg(SCAN12,gechrbuf2,gechrbuf3);
+
+		if (warsptr->where != 1 && (warsptr->jam_sev < (byte)3 || warsptr->where - 10 == plnum))
+			{
+			prfmsg(SCAN13);
+			if (plptr->enviorn == 0)
+				prfmsg(SCAN14);
+			else
+			if (plptr->enviorn == 1)
+				prfmsg(SCAN15);
+			else
+			if (plptr->enviorn == 2)
+				prfmsg(SCAN16);
+			else
+			if (plptr->enviorn == 3)
+				prfmsg(SCAN17);
+
+			prfmsg(SCAN18);
+			if (plptr->resource == 0)
+				prfmsg(SCAN14);
+			else
+			if (plptr->resource == 1)
+				prfmsg(SCAN15);
+			else
+			if (plptr->resource == 2)
+				prfmsg(SCAN16);
+			else
+			if (plptr->resource == 3)
+				prfmsg(SCAN17);
+			/*DEBUG
+			prf("plptr->userid=%s\rwarsptr->userid=%s\r",plptr->userid,warsptr->userid);*/
+
+			if (sameas(plptr->userid,warsptr->userid) || (plptr->userid[0] == 0 && warsptr->where - 10 == plnum))
+				{
+				for (i=0; i<NUMITEMS; ++i)
+					{
+					if (plptr->items[i].qty > 0)
+						{
+						sprintf(gechrbuf,"%s%s%12lu",item_name[i],gedots(26-strlen(item_name[i])),plptr->items[i].qty);
+						gechrbuf[0] = toupper(gechrbuf[0]);
+						prf("%s\r",gechrbuf);
+						}
+					}
+				}
+			else
+				{
+				if (plptr->items[I_MEN].qty + plptr->items[I_TROOPS].qty == 0)
+					strcpy(gechrbuf,"None");
+				else
+				if (plptr->items[I_MEN].qty + plptr->items[I_TROOPS].qty < 100)
+					strcpy(gechrbuf,"Less than 100");
+				else
+				if (plptr->items[I_MEN].qty + plptr->items[I_TROOPS].qty < 1000)
+					strcpy(gechrbuf,"Hundreds");
+				else
+				if (plptr->items[I_MEN].qty + plptr->items[I_TROOPS].qty < 10000)
+					strcpy(gechrbuf,"Thousands");
+				else
+				if (plptr->items[I_MEN].qty + plptr->items[I_TROOPS].qty < 100000L)
+					strcpy(gechrbuf,"Tens of thousands");
+				else
+				if (plptr->items[I_MEN].qty + plptr->items[I_TROOPS].qty < 1000000L)
+					strcpy(gechrbuf,"Hundreds of thousands");
+				else
+					strcpy(gechrbuf,"Millions");
+				prfmsg(SCAN28,gechrbuf);
+
+				if (plptr->items[I_MISSILE].qty == 0)
+					strcpy(gechrbuf,"No");
+				else
+				if (plptr->items[I_MISSILE].qty < 250)
+					strcpy(gechrbuf,"Small");
+				else
+				if (plptr->items[I_MISSILE].qty < 1000)
+					strcpy(gechrbuf,"Moderate");
+				else
+					strcpy(gechrbuf,"Large");
+				prfmsg(SCAN29,gechrbuf);
+
+				if (plptr->items[I_TORPEDO].qty == 0)
+					strcpy(gechrbuf,"No");
+				else
+				if (plptr->items[I_TORPEDO].qty < 250)
+					strcpy(gechrbuf,"Small");
+				else
+				if (plptr->items[I_TORPEDO].qty < 1000)
+					strcpy(gechrbuf,"Moderate");
+				else
+					strcpy(gechrbuf,"Large");
+				prfmsg(SCAN30,gechrbuf);
+
+				if (plptr->items[I_FLUXPOD].qty == 0)
+					strcpy(gechrbuf,"No");
+				else
+				if (plptr->items[I_FLUXPOD].qty < 250)
+					strcpy(gechrbuf,"Small");
+				else
+				if (plptr->items[I_FLUXPOD].qty < 1000)
+					strcpy(gechrbuf,"Moderate");
+				else
+					strcpy(gechrbuf,"Large");
+				prfmsg(SCAN33,gechrbuf);
+
+				if (plptr->items[I_MINE].qty == 0)
+					strcpy(gechrbuf,"No");
+				else
+				if (plptr->items[I_MINE].qty < 250)
+					strcpy(gechrbuf,"Small");
+				else
+				if (plptr->items[I_MINE].qty < 1000)
+					strcpy(gechrbuf,"Moderate");
+				else
+					strcpy(gechrbuf,"Large");
+				prfmsg(SCAN34,gechrbuf);
+
+				if (plptr->items[I_FIGHTER].qty == 0)
+					prfmsg(SCAN31);
+				else
+					prfmsg(SCAN32);
+
+				}
+			}
+		prfmsg(DASHES);
+		outprfge(ALWAYS,usrnum);
+		}
+	else
+	if (plptr->type == PLTYPE_WORM)
+		{
+		memcpy(&worm,plptr,sizeof(GALWORM));
+		bearing = cbearing(&warsptr->coord,&worm.coord,warsptr->heading);
+		ddistance = cdistance(&warsptr->coord,&worm.coord)*10000;
+		prfmsg(SCANWRM,plnum,worm.name);
+		prfmsg(DASHES);
+
+		memset(gechrbuf2, 0, 20);
+		memset(gechrbuf3, 0, 20);
+		sprintf(gechrbuf2,"%d",bearing);
+		sprintf(gechrbuf3,"%ld",(long)ddistance);
+		if (warsptr->jam_sev > (byte)2)
+			{
+			jam_scramble(gechrbuf2, warsptr->jam_sev, &rseed);
+			jam_scramble(gechrbuf3, warsptr->jam_sev, &rseed);
+			}
+		prfmsg(SCAN12,gechrbuf2,gechrbuf3);
+		prfmsg(DASHES);
+		outprfge(ALWAYS,usrnum);
+		}
+
+		else
+		{
+		prfmsg(NOPLNT);
+		outprfge(ALWAYS,usrnum);
+		}
+	}
+else
+	{
+	prfmsg(NOPLNT);
+	outprfge(ALWAYS,usrnum);
+	}
+}
+
+void FUNC scan_ra()
+{
+int i, x, y;
+double xf, yf, x1, y1, range;
+double minx, miny;
+double xfactor, yfactor;
+double cell_center_x, cell_center_y;
+double cell_half_x, cell_half_y;
+double gal_min, gal_max;
+double shiftx = 0.0, shifty = 0.0;
+
+WARSHP *wptr;
+MINE   *mptr;
+
+if (margc < 2 || margc > 3)
+	{
+	prfmsg(FORMAT, "SCAN");
+	outprfge(ALWAYS, usrnum);
+	return;
+	}
+
+setsect(warsptr);
+
+if (genearas("h",margv[2]))
+	range = (double)((shipclass[warsptr->shpclass].scanrange) / 2);
+else
+if (genearas("q",margv[2]))
+	range = (double)((shipclass[warsptr->shpclass].scanrange) / 4);
+else
+	{
+	x = atoi(margv[2]);
+	if (x < 1 || x > 9 || margc == 2)
+		x = 9;
+
+	range = (double)((shipclass[warsptr->shpclass].scanrange) / ((10 - x) * (10 - x)));
+	}
+
+prfmsg(SCAN24, spr("%ld", (long)range), xsect, ysect);
+
+clearmap();
+update_scantab(warsptr, usrnum);
+
+x1 = warsptr->coord.xcoord;
+y1 = warsptr->coord.ycoord;
+
+xfactor = range / 5000.0 / (double)MAXX;
+yfactor = range / 5000.0 / (double)MAXY;
+
+minx = x1 - range / 10000.0;
+miny = y1 - range / 10000.0;
+
+cell_half_x = xfactor / 2.0;
+cell_half_y = yfactor / 2.0;
+
+gal_min = -((double)univmax);
+gal_max = (double)univmax + 0.99;
+
+/* determine shift for X if player would fall one left of center */
+if ((int)((x1 - minx) / xfactor) == (MAXX/2) - 1)
+	shiftx = xfactor;
+
+/* determine shift for Y if player would fall one above center */
+if ((int)((y1 - miny) / yfactor) == (MAXY/2) - 1)
+	shifty = yfactor;
+
+/* mark out-of-bounds areas */
+for (y = 0; y < MAXY; y++)
+	{
+	for (x = 0; x < MAXX; x++)
+		{
+		cell_center_x = minx + x * xfactor + shiftx;
+		cell_center_y = miny + y * yfactor + shifty;
+
+		if ((cell_center_x + cell_half_x < gal_min) || (cell_center_x - cell_half_x > gal_max) ||
+			(cell_center_y + cell_half_y < gal_min) || (cell_center_y - cell_half_y > gal_max))
+			{
+			map[y][x] = '.';
+			mapc[y][x] = '4';
+			}
+		}
+	}
+
+/* plot mines */
+for (i = 0, mptr = mines; i < nummines; ++mptr, ++i)
+	{
+	if (mptr->channel != 255)
+		{
+		xf = ((mptr->coord.xcoord - x1) / xfactor) + ((double)MAXX)/2.0;
+		yf = ((mptr->coord.ycoord - y1) / yfactor) + ((double)MAXY)/2.0;
+
+		xf += shiftx / xfactor;
+		yf += shifty / yfactor;
+
+		if (xf >= 0.0 && xf < (double)MAXX && yf >= 0.0 && yf < (double)MAXY)
+			{
+			x = (int)xf;
+			y = (int)yf;
+			map[y][x] = '.';
+			mapc[y][x] = '0';
+			}
+		}
+	}
+
+/* plot ships from scantab */
+for (i = 0; i < NOSCANTAB; i++)
+	{
+	othusn = scantab[usrnum].ship[i].shipno;
+	if (scantab[usrnum].ship[i].flag == 1)
+		{
+		wptr = warshpoff(othusn);
+
+		xf = ((wptr->coord.xcoord - x1) / xfactor) + ((double)MAXX)/2.0 + shiftx / xfactor;
+		yf = ((wptr->coord.ycoord - y1) / yfactor) + ((double)MAXY)/2.0 + shifty / yfactor;
+
+		if (xf >= 0.0 && xf < (double)MAXX && yf >= 0.0 && yf < (double)MAXY)
+			{
+			x = (int)xf;
+			y = (int)yf;
+			/* don't replace locked ship on map */
+			if (mapc[y][x] != '6')
+				{
+				map[y][x] = scantab[usrnum].ship[i].letter;
+
+				if (warsptr->lock == othusn)
+					mapc[y][x] = '6';
+				else
+				if (shipclass[wptr->shpclass].max_type == CLASSTYPE_CYBORG)
+					mapc[y][x] = '1';
+				else
+				if (shipclass[wptr->shpclass].max_type == CLASSTYPE_DROID)
+					mapc[y][x] = '4';
+				else
+					mapc[y][x] = '2';
+				}
+			}
+		}
+	}
+
+/* plot player at center */
+map[MAXY/2][MAXX/2] = '*';
+mapc[MAXY/2][MAXX/2] = '0';
+
+if (waruptr->options[SCANOPTS] == FULL)
+	printmap(RANGEFULL,(long)range);
+else
+if (waruptr->options[SCANOPTS] == FULLNAMES)
+	printmap(RANGENAMES,(long)range);
+else
+if (waruptr->options[SCANOPTS] == FULLEXTRA)
+	printmap(RANGEEXTRA,(long)range);
+else
+if (waruptr->options[SCANOPTS] == NOMAP)
+	printmap(RANGENOMAP,(long)range);
+else
+	printmap(RANGE,0L);
+
+outprfge(ALWAYS, usrnum);
+}
+
+void FUNC scan_se()
+
+{
+unsigned i,x,y;
+WARSHP	*wptr;
+MINE	*mptr;
+
+refresh(warsptr,usrnum);
+
+setsect(warsptr);
+prfmsg(SCAN25,xsect,ysect);
+clearmap();
+
+update_scantab(warsptr,usrnum);
+
+for (i=0,mptr = mines; i<nummines;++mptr,++i)
+	{
+	x = coord1(mptr->coord.xcoord);
+	y = coord1(mptr->coord.ycoord);
+
+	if (mptr->channel != 255 && (x==xsect && y==ysect))	/* if a live mine */
+		{
+		x = coord2(mptr->coord.xcoord) +50;
+		y = coord2(mptr->coord.ycoord) +50;
+		map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '.';
+		mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '0';
+		}
+	}
+
+for (i=0 ; i< NOSCANTAB; i++)
+	{
+	othusn = scantab[usrnum].ship[i].shipno;
+	if (scantab[usrnum].ship[i].flag == 1)
+		{
+		wptr = warshpoff(othusn);
+		if (samesect(&wptr->coord,&warsptr->coord))
+			{
+			x = coord2(wptr->coord.xcoord) +50;
+			y = coord2(wptr->coord.ycoord) +50;
+			map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = scantab[usrnum].ship[i].letter;
+			if (warsptr->lock == othusn)
+				mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '6';
+			else
+			if (shipclass[wptr->shpclass].max_type == CLASSTYPE_CYBORG)
+				mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '1';
+			else
+			if (shipclass[wptr->shpclass].max_type == CLASSTYPE_DROID)
+				mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '4';
+			else
+				mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '2';
+			}
+		}
+	}
+x = coord2(warsptr->coord.xcoord) +50;
+y = coord2(warsptr->coord.ycoord) +50;
+map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '*';
+mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '0';
+
+map_planets();
+if (waruptr->options[SCANOPTS] == NOMAP)
+	printmap(SECTORNOMAP,0L);
+else
+if (waruptr->options[SCANOPTS] == SIMPLE)
+	printmap(SECTOR,0L);
+else
+	printmap(SECTORFULL,0L);
+outprfge(ALWAYS,usrnum);
+}
+
+void FUNC scan_lo()
+{
+int x, y, fullgal;
+double xf, yf, x1, y1, range;
+double minx, miny;
+double xfactor, yfactor;
+double sx, sy;
+double cell_center_x, cell_center_y;
+double cell_half_x, cell_half_y;
+double gal_min, gal_max;
+double shiftx = 0.0;
+
+WARSHP *wptr;
+
+if (margc < 2 || margc > 3)
+	{
+	prfmsg(FORMAT,"SCAN");
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+setsect(warsptr);
+
+if (margc == 3 && genearas("h",margv[2]))
+	range = (double)(shipclass[warsptr->shpclass].scanrange) * 5.0;
+else
+if (margc == 3 && genearas("q",margv[2]))
+	range = (double)(shipclass[warsptr->shpclass].scanrange) * 2.5;
+else
+	range = (double)(shipclass[warsptr->shpclass].scanrange) * 10.0;
+
+x1 = warsptr->coord.xcoord * 10000.0;
+y1 = warsptr->coord.ycoord * 10000.0;
+
+gal_min = -(double)univmax * 10000.0;
+gal_max = ((double)univmax * 10000.0) + 9999.0;
+
+/* will this scan touch all four corners of the galaxy? */
+fullgal = (range >= (x1 - gal_min) && range >= (gal_max - x1) &&
+	range >= (y1 - gal_min) && range >= (gal_max - y1));
+
+if (fullgal)
+	prfmsg(SCAN24G);
+else
+	prfmsg(SCAN24, spr("%ld",(long)range), xsect, ysect);
+
+clearmap();
+
+if (fullgal)
+	{
+	minx = gal_min;
+	miny = gal_min;
+	xfactor = (gal_max - gal_min) / (double)MAXX;
+	yfactor = (gal_max - gal_min) / (double)MAXY;
+	}
+else
+	{
+	minx = x1 - range;
+	miny = y1 - range;
+	xfactor = (2.0 * range) / (double)MAXX;
+	yfactor = (2.0 * range) / (double)MAXY;
+
+	/* compute visual shift so player ends up at MAXX/2 */
+	shiftx = ((double)MAXX / 2.0) - 0.5 - ((x1 - minx) / xfactor);
+	shiftx *= xfactor;  /* convert from cells to units */
+	}
+
+cell_half_x = xfactor / 2.0;
+cell_half_y = yfactor / 2.0;
+
+/* mark outside of galaxy */
+for (y = 0; y < MAXY; y++)
+	{
+	for (x = 0; x < MAXX; x++)
+		{
+		cell_center_x = minx + (x + 0.5) * xfactor + shiftx;
+		cell_center_y = miny + (y + 0.5) * yfactor;
+
+		/* if the entire cell lies outside galaxy bounds */
+		if ((cell_center_x + cell_half_x < gal_min) || (cell_center_x - cell_half_x > gal_max) ||
+			(cell_center_y + cell_half_y < gal_min) || (cell_center_y - cell_half_y > gal_max))
+			{
+			map[y][x]  = '.';
+			mapc[y][x] = '4';
+			}
+		}
+	}
+
+/* place all ships except the player scanning */
+for (othusn = 0; othusn < nships; othusn++)
+	{
+	if (ingegame(othusn) && othusn != usrnum)
+		{
+		wptr = warshpoff(othusn);
+
+		sx = (wptr->coord.xcoord * 10000.0 - minx + shiftx) / xfactor;
+		sy = (wptr->coord.ycoord * 10000.0 - miny) / yfactor;
+
+		if (sx >= 0.0 && sy >= 0.0)
+			{
+			x = (int)sx;
+			y = (int)sy;
+
+			if (x >= 0 && y >= 0 && x < MAXX && y < MAXY)
+				{
+				if (wptr->status == GESTAT_AUTO)
+					{
+					if (map[y][x] != '=')   /* user ships take precedence */
+						{
+						map[y][x] = '+';
+						mapc[y][x] = '0';
+						}
+					}
+				else
+					{
+					map[y][x] = '=';
+					mapc[y][x] = '0';
+					}
+				}
+			}
+		}
+	}
+
+/* place player */
+if (fullgal)
+	{
+	xf = (x1 - minx) / xfactor;
+	yf = (y1 - miny) / yfactor;
+
+	if (xf >= 0.0 && yf >= 0.0)
+		{
+		x = (int)xf;
+		y = (int)yf;
+
+		if (x >= MAXX) x = MAXX - 1;
+		if (y >= MAXY) y = MAXY - 1;
+
+		if (x >= 0 && y >= 0 && x < MAXX && y < MAXY)
+			{
+			map[y][x] = '*';
+			mapc[y][x] = '0';
+			}
+		}
+	}
+else
+	{
+	map[MAXY/2][MAXX/2] = '*';
+	mapc[MAXY/2][MAXX/2] = '0';
+	}
+
+printmap(LONG,0L);
+outprfge(ALWAYS,usrnum);
+}
+
+/**************************************************************************
+** Print the map                                                         **
+**************************************************************************/
+
+void FUNC printmap(int maptype, long dist_filter)
+{
+SCANTAB *sptr = &scantab[usrnum];
+int i, shp = 0, ff = 0;
+
+print_map_header(maptype);
+outprfge(ALWAYS, usrnum);
+
+for (i = 0; i < MAXY + 1; ++i)
+	{
+	if (maptype == SECTORNOMAP || maptype == RANGENOMAP)
+		continue;
+
+	if (i == MAXY)
+		prfmsg(PLUSDASH);
+	else
+		print_map_row(i, maptype);
+
+	if (maptype == SECTORFULL)
+		{
+		while (shp < MAXPLANETS && ptab[usrnum].planets[shp].type != 0 && print_planet_line(shp) == FALSE)
+			shp++;  /* skip jammed planet and immediately try next one */
+
+		shp++;
+		}
+
+	if (maptype == RANGENAMES || maptype == RANGEEXTRA)
+		{
+		while (ff == 0 && warsptr->jam_sev > (byte)7 && gernd()%2 == 0)
+			shp++;
+		shp += print_range_line(sptr, shp, &ff, dist_filter);
+		}
+
+	if (maptype == RANGEFULL)
+		{
+		while (ff == 0 && warsptr->jam_sev > (byte)7 && gernd()%2 == 0)
+			shp++;
+		shp += print_fullrange_line(sptr, shp, dist_filter);
+		}
+
+	prf("\r");
+	}
+
+if (maptype == RANGEEXTRA || maptype == RANGENOMAP)
+	print_range_summary(sptr, shp, dist_filter, maptype);
+
+if (maptype == SECTORNOMAP)
+	print_planet_summary(shp);
+
+prf("\r");
+prf(CLR_WHITE2);
+}
+
