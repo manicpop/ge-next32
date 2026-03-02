@@ -192,6 +192,9 @@ Other stuff:
   to fire projectiles at it when you are out of weapons range.
 * You CAN now bait a Cyb into pursuing you (if it's idle) by
   using the LOCK command on it.
+* Mines have been given an overall damage boost. Overall "blast
+  range" is still one sector, but the damage falloff has been
+  lessened so the radius of actual damage is bigger.
 
 === 0.2.6 === 2025-08-15
 

@@ -1860,7 +1860,7 @@ if (ptr->cloak > 0 && ptr->cloak != 3)
 
 void FUNC checkmines()
 {
-int	i, mineset;
+int	i;
 int	zothusn;	/* general purpose other-user channel number */
 WARSHP	*wptr;
 WARUSR	*wuptr;
@@ -1869,10 +1869,13 @@ unsigned udist;
 MINE	*mptr;
 setmbk(gemb);
 
-/*DEBUG
-printf("checking mines\r\n");*/
-
-mineset = FALSE;
+/* reset per-ship mine proximity status each tick */
+for (zothusn=0 ; zothusn < nships ; zothusn++)
+	{
+	wptr = warshpoff(zothusn);
+	if (ingegame(zothusn))
+		wptr->minesnear = FALSE;
+	}
 
 for (i=0,mptr = mines; i<nummines;++mptr,++i)
 	{
@@ -1886,13 +1889,11 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 				wptr=warshpoff(zothusn);
 				if (ingegame(zothusn))
 					{
-					if (mineset == FALSE)
-						wptr->minesnear = FALSE;
 					ddist = cdistance(&mptr->coord,&wptr->coord);
 					ddist *= 10000;
 					bearing = cbearing(&wptr->coord,&mptr->coord,wptr->heading);
 					setsect(wptr);
-					if (ddist < ((double)MINERANGE) && (xsect != 0 || ysect != 0))
+					if (ddist < ((double)MINERANGE) && !neutral(&wptr->coord))
 						{
 						udist = (unsigned)ddist;
 						if (mptr->timer == 0)
@@ -1900,7 +1901,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 							ddist = 1.0-(ddist/((double)MINERANGE));
 							if (ddist < 0)
 								ddist = 0;
-							ddist = ddist*ddist*ddist;
+							ddist = ddist*ddist;
 							if (wptr->shieldstat == SHIELDUP)
 								{
 								damfact = (double)(ddist*minedammax);
@@ -1942,7 +1943,6 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 								outprfge(FILTER,zothusn);
 								}
 							wptr->minesnear = TRUE;
-							mineset = TRUE;
 							}
 						}
 					else

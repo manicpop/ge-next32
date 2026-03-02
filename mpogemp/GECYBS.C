@@ -575,6 +575,7 @@ int	zothusn;	/* users ship number*/
 {
 
 int i,j,acted;
+int zipden;
 
 acted = 0;
 
@@ -601,7 +602,10 @@ for (i=0;i<j;++i)
 	}
 
 /* launch Zippers if needed */
-if (gernd()%10 == 0 && shipclass[ptr->shpclass].has_zip && ptr->items[I_ZIPPERS] > 0
+zipden = 12 - (shipclass[ptr->shpclass].tough_factor * 2);
+if (zipden < 3)
+	zipden = 3;
+if (gernd()%zipden == 0 && shipclass[ptr->shpclass].has_zip && ptr->items[I_ZIPPERS] > 0 && ptr->zipload == 0
 	&& shipclass[ptr->shpclass].max_accel > 0 && wptr->minesnear == TRUE)
 	{
 	zip(ptr,usrn);

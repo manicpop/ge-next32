@@ -2047,7 +2047,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 		{
 		ddist = cdistance(&ptr->coord,&mptr->coord);
 		ddist *= 10000;
-		if (ddist < (double)shipclass[warsptr->shpclass].scanrange)
+		if (ddist < (double)shipclass[ptr->shpclass].scanrange)
 			{
 			mptr->timer = 1; /* set mine to explode next tick */
 			}

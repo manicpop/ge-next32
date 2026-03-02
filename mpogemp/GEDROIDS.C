@@ -824,7 +824,8 @@ if (ptr->jam_sev <= (byte)3)
 				}
 			ptr->speed2b = (double)(ptr->topspeed/2)*1000;
 			}
-		if (ptr->items[I_ZIPPERS] > 0 && shipclass[ptr->shpclass].has_zip && wptr->minesnear == TRUE && gernd()%3 == 0)
+		if (ptr->items[I_ZIPPERS] > 0 && shipclass[ptr->shpclass].has_zip && ptr->zipload == 0
+			&& wptr->minesnear == TRUE && gernd()%3 == 0)
 			{
 			zip(ptr,usrn);
 			wptr->minesnear = FALSE;
@@ -991,7 +992,8 @@ if (ptr->jam_sev <= (byte)3)
 					cyb_lay_decoys(ptr);
 				if (ptr->holdcourse == 1 && ptr->items[I_JAMMERS] > 0 && shipclass[ptr->shpclass].has_jam)
 					jam(ptr,usrn);
-				if (ptr->items[I_ZIPPERS] > 0 && shipclass[ptr->shpclass].has_zip && wptr->minesnear == TRUE && gernd()%3 == 0)
+				if (ptr->items[I_ZIPPERS] > 0 && shipclass[ptr->shpclass].has_zip && ptr->zipload == 0
+					&& wptr->minesnear == TRUE && gernd()%3 == 0)
 					{
 					zip(ptr,usrn);
 					wptr->minesnear = FALSE;
