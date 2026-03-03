@@ -2212,6 +2212,15 @@ if (un_cnt > 0)
 if ((sh_dam + un_dam) > 0.0)
 	randamage(ptr,usrn,sh_dam + un_dam); /* combined torpedo random damage check */
 
+if (shotdown > 0)
+	{
+	if (shotdown == 1)
+		prfmsg(TORENF1);
+	else
+		prfmsg(TORENF,shotdown);
+	outprfge(FILTER,usrn);
+	}
+
 if (track_cnt == 1)
 	{
 	prfmsg(TORP1);
@@ -2226,15 +2235,6 @@ if (track_cnt > 1)
 
 for (k=0;k<acc_used;++k)
 	acctm(ptr,usrn,0,acc_chan[k],acc_cnt[k]);
-
-if (shotdown > 0)
-	{
-	if (shotdown == 1)
-		prfmsg(TORENF1);
-	else
-		prfmsg(TORENF,shotdown);
-	outprfge(FILTER,usrn);
-	}
 
 /* missiles second */
 shotdown = 0;
@@ -2394,18 +2394,6 @@ if (lost_cnt > 1)
 	outprfge(FILTER,usrn);
 	}
 
-if (track_cnt == 1)
-	{
-	prfmsg(MISSL1);
-	outprfge(FILTER,usrn);
-	}
-else
-if (track_cnt > 1)
-	{
-	prfmsg(MISSL3,track_cnt);
-	outprfge(FILTER,usrn);
-	}
-
 if (sh_cnt > 0)
 	{
 	damstr((int)sh_dam);
@@ -2438,6 +2426,18 @@ if (shotdown > 0)
 		prfmsg(MISENF1);
 	else
 		prfmsg(MISENF,shotdown);
+	outprfge(FILTER,usrn);
+	}
+
+if (track_cnt == 1)
+	{
+	prfmsg(MISSL1);
+	outprfge(FILTER,usrn);
+	}
+else
+if (track_cnt > 1)
+	{
+	prfmsg(MISSL3,track_cnt);
 	outprfge(FILTER,usrn);
 	}
 
