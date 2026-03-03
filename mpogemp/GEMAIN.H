@@ -76,7 +76,6 @@
 #define NEUTRAL_Y 0
 
 #define ACCENGAMT 120		/* Acceleration energy usage                 */
-#define MOVENGUSE 10
 
 #define PRELOAD 10		/* Phasor reload rate / tick                 */
 #define PMINFIRE 60		/* Minimum amount to fire phasor             */
@@ -88,7 +87,7 @@
 #define HPBEAMW 5
 
 #define ENGYMAX 65000U		/* Maximum energy one can have               */
-#define ENGRECHG 1		/* Energy recharge amount / tick             */
+#define ENGRECHG 2		/* Energy recharge amount / tick             */
 
 #define SHENGUSE 100		/* Energy used every tick for shields        */
 #define SHHITENG 1000		/* Energy drained when hit                   */
