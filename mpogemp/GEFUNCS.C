@@ -2989,6 +2989,13 @@ if (!doitems && !dosys)
 	dosys = 1;
 	}
 
+if (ptr->status == GESTAT_AUTO)
+	{
+	doitems = 0;
+	if (!dosys)
+		dosys = 1;
+	}
+
 a = r % (85 - damcomb);
 
 if (a > 10)	/* no effect */

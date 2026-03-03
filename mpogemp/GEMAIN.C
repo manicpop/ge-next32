@@ -2205,8 +2205,11 @@ while (zothusn < nships)
 		wptr=warshpoff(zothusn);
 		setbtv(gebb1);
 		setmbk(gemb);
-		rotateship(wptr,zothusn);
-		accel(wptr,zothusn);
+		if (!(wptr->status == GESTAT_AUTO && wptr->helm < 0))
+			{
+			rotateship(wptr,zothusn);
+			accel(wptr,zothusn);
+			}
 		moveship(wptr,zothusn);
 		destruct(wptr,zothusn);
 		}

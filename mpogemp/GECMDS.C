@@ -2072,6 +2072,7 @@ void FUNC cmd_mine()
 
 {
 int i;
+int mres;
 
 if (!shipclass[warsptr->shpclass].has_mine)
 	{
@@ -2132,14 +2133,18 @@ if (i < 1 || i > 50)
 	return;
 	}
 
-if (laymine(warsptr,usrnum,i) == 1)
+mres = laymine(warsptr,usrnum,i);
+if (mres == 1)
 	{
 	prfmsg(MINE3,i);
 	outprfge(FILTER,usrnum);
 	return;
 	}
 
-prfmsg(MINE2,usermines);
+if (mres == 2)
+	prfmsg(MINE8);
+else
+	prfmsg(MINE2,usermines);
 outprfge(FILTER,usrnum);
 }
 
@@ -2178,7 +2183,7 @@ for (i=0; i<nummines;++i)
 		return(1);
 		}
 	}
-return(0);
+return(2);
 }
 
 /**************************************************************************

@@ -275,6 +275,8 @@ sprintf(&cybname[7],"%d",usrn);
 
 logthis(spr("@cyb_lives %s",cybname));
 
+if (ptr->damage >= 100)
+	return;
 
 /* reset the ticker to 255 to cause it to recalc */
 ptr->tick = 255;
@@ -288,6 +290,19 @@ else
 
 /* countdown to database update */
 db_update(ptr,usrn);
+
+if (ptr->tactical < 0)
+	{
+	ptr->cybmine = 255;
+	ptr->holdcourse = 0;
+	if (shipclass[ptr->shpclass].max_accel > 0)
+		cyb_cruise(ptr,usrn,0);
+	if (ptr->where == 0 && ptr->shieldstat == SHIELDDN)
+		shieldup(ptr,usrn);
+	ptr->energy = 50000L;
+	ptr->tick = (CYBTICKTIME + gernd()%CYBTICKTIME)*5;
+	return;
+	}
 
 /* still moving at pursuit speed, but no longer pursuing */
 if (cyb_fast(ptr) && ptr->cybmine == 255)
@@ -337,7 +352,7 @@ if (ptr->jam_sev <= (byte)3)
 								else
 									{
 									ptr->degrees = cbearing(&ptr->coord,&wptr->coord,ptr->heading);
-									if (ptr->where == 1)
+									if (ptr->where == 1 && shipclass[ptr->shpclass].max_phasr > 0 && ptr->hypha == 0 && ptr->phasr >= 0)
 										firehp(ptr,usrn);
 									if (ptr->where == 0 && shipclass[ptr->shpclass].max_phasr >= phatowrp && ptr->phasr >= PMINFIRE)
 										{
@@ -366,7 +381,7 @@ else
 		{
 	/* as long as they can't see ... the other player must be trying to get
 		away.... might as well mine the area */
-		if (shipclass[ptr->shpclass].has_mine && ptr->items[I_MINE] > 0 && gernd()%5 == 0)
+		if (shipclass[ptr->shpclass].has_mine && ptr->items[I_MINE] > 0 && ptr->mineload == 0 && !neutral(&ptr->coord) && gernd()%5 == 0)
 			{
 			laymine(ptr,usrn,10);
 			cyb_cruise(ptr,usrn,2);
@@ -579,7 +594,14 @@ int zipden;
 
 acted = 0;
 
-if (ptr->phasr >= PMINFIRE && gernd()%(4-(shipclass[ptr->shpclass].tough_factor/2)) == 0)
+if (neutral(&ptr->coord))
+	return;
+if (neutral(&wptr->coord))
+	return;
+
+
+
+if (shipclass[ptr->shpclass].max_phasr > 0 && ptr->phasr >= PMINFIRE && gernd()%(4-(shipclass[ptr->shpclass].tough_factor/2)) == 0)
 	{
 	ptr->degrees = cbearing(&ptr->coord,&wptr->coord,ptr->heading);
 	ptr->percent = 2;
@@ -638,6 +660,13 @@ WARSHP	*ptr;
 
 int	i;
 
+if (!shipclass[ptr->shpclass].has_decoy)
+	return;
+if (ptr->items[I_DECOYS] == 0)
+	return;
+if (ptr->decload != 0)
+	return;
+
 /* send out a decoy */
 for (i=0; i<3;++i)
 	if (ptr->decout[i] == 0 && gernd()%(50*(i+1)) == 0 && ptr->items[I_DECOYS] > 0)
@@ -662,11 +691,14 @@ if (ptr->damage > CYB_MINDAM && ((gernd()%10 == 0) || ptr->holdcourse > 0))
 	{
 	if (shipclass[ptr->shpclass].has_mine
 		&& ptr->items[I_MINE] > 0
+		&& ptr->mineload == 0
+		&& !neutral(&ptr->coord)
 		&& gernd()%8 == 0)
 		laymine(ptr,usrn,10);
 
 	if (shipclass[ptr->shpclass].has_jam
 		&& ptr->items[I_JAMMERS] > 0
+		&& ptr->jamload == 0
 		&& gernd()%40 == 0)
 		jam(ptr,usrn);
 	if (ptr->holdcourse == 1)

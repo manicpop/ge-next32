@@ -4268,6 +4268,10 @@ MINE7 {
 [0;37m[[1;31mERROR[0;37m] The Galactic Command does not permit mining in the neutral zone.[1;37m
 } T GE no mining in neutral zone message
 
+MINE8 {
+[0;37m[[1;31mERROR[0;37m] Too many active mines in the galaxy. All mining temporarily halted.[1;37m
+} T GE no mining in neutral zone message
+
 LOCK01 {
 [0;37mScanner lock removed![1;37m
 } T GE fire control lock removed message

@@ -233,6 +233,9 @@ if (usrn < 0 || usrn >= nships)
 
 sprintf(&droidname[7],"%d",usrn+1);
 
+if (ptr->damage >= 100)
+	return;
+
 /* DEBUG
 logthis(spr("GE:%s Lives",droidname)); */
 
@@ -259,6 +262,18 @@ if (ptr->topspeed == 0 && shipclass[ptr->shpclass].max_accel > 0)
 	dr_topspeed = 990;
 else
 	dr_topspeed = (double)ptr->topspeed*1000.0;
+
+if (ptr->tactical < 0)
+	{
+	ptr->cybmine = 255;
+	ptr->holdcourse = 0;
+	cyb_cruise(ptr,usrn,0);
+	droid_check_state(ptr,usrn);
+	droid_distress(ptr,usrn);
+	ptr->energy = 50000L;
+	ptr->tick = (CYBTICKTIME + gernd()%CYBTICKTIME)*5;
+	return;
+	}
 
 if(shipclass[ptr->shpclass].loadout == 2)
 	droid_act_2(ptr,usrn);	/* Murdonian Transport */
@@ -344,7 +359,7 @@ else
 		return;
 		}
 	/* if engaged, show message every time hit (255) */
-	if (ptr->npcmsg == 255 && ptr->damage < 100)
+	if (ptr->npcmsg == 255)
 		{
 		prfmsg(sel,ptr->shipname);
 		outprfge(FILTER,usrn);
@@ -361,7 +376,7 @@ int	usrn;
 
 if (ptr->distress > nships || !ingegame(ptr->distress))
 	ptr->distress = 255;
-if (ptr->distress != ptr->cybmine && ptr->cybmine < nships && ptr->damage < 100)
+if (ptr->distress != ptr->cybmine && ptr->cybmine < nships)
 	{
 	setsect(ptr);
 	prfmsg(DRDISMSG,ptr->shipname,shipclass[ptr->shpclass].typename,username(warshpoff(ptr->cybmine)),xsect,ysect);
@@ -575,7 +590,7 @@ if (ptr->jam_sev <= (byte)3)
 				else
 					{
 					cyb_cruise(ptr,usrn,4);
-					if (ptr->items[I_MINE] > 0 && shipclass[ptr->shpclass].has_mine && !neutral(&ptr->coord) && gernd()%3 == 0)
+					if (ptr->items[I_MINE] > 0 && shipclass[ptr->shpclass].has_mine && ptr->mineload == 0 && !neutral(&ptr->coord) && gernd()%3 == 0)
 						laymine(ptr,usrn,10);
 					}
 				if (wptr->cloak == 10)
@@ -588,7 +603,7 @@ if (ptr->jam_sev <= (byte)3)
 				{
 				droid_phaser(ptr,usrn,wptr);
 				droid_torp(ptr,usrn,wptr,zothusn);
-				if (ptr->items[I_JAMMERS] > 0 && shipclass[ptr->shpclass].has_jam && !neutral(&ptr->coord) && ptr->holdcourse == 1)
+				if (ptr->items[I_JAMMERS] > 0 && shipclass[ptr->shpclass].has_jam && ptr->jamload == 0 && !neutral(&ptr->coord) && ptr->holdcourse == 1)
 					jam(ptr,usrn);
 				}
 			}
@@ -670,7 +685,7 @@ if (ptr->jam_sev <= (byte)3)
 				droid_phaser(ptr,usrn,wptr);
 				if (ptr->where == 0 && ptr->items[I_DECOYS] > 0 && shipclass[ptr->shpclass].has_decoy)
 					cyb_lay_decoys(ptr);
-				if (ptr->holdcourse == 1 && ptr->items[I_JAMMERS] > 0 && shipclass[ptr->shpclass].has_jam)
+				if (ptr->holdcourse == 1 && ptr->items[I_JAMMERS] > 0 && shipclass[ptr->shpclass].has_jam && ptr->jamload == 0)
 					jam(ptr,usrn);
 				}
 			}
@@ -812,6 +827,7 @@ if (ptr->jam_sev <= (byte)3)
 			droid_torp(ptr,usrn,wptr,zothusn);
 			}
 		if (ddist < 3000 && !neutral(&ptr->coord) && ptr->items[I_MINE] > 0 && shipclass[ptr->shpclass].has_mine
+			&& ptr->mineload == 0
 			&& ptr->holdcourse == 0 && gernd()%3 == 0)
 			{
 			laymine(ptr,usrn,10);
@@ -990,7 +1006,7 @@ if (ptr->jam_sev <= (byte)3)
 				droid_torp(ptr,usrn,wptr,zothusn);
 				if (ptr->where == 0 && ptr->items[I_DECOYS] > 0 && shipclass[ptr->shpclass].has_decoy)
 					cyb_lay_decoys(ptr);
-				if (ptr->holdcourse == 1 && ptr->items[I_JAMMERS] > 0 && shipclass[ptr->shpclass].has_jam)
+				if (ptr->holdcourse == 1 && ptr->items[I_JAMMERS] > 0 && shipclass[ptr->shpclass].has_jam && ptr->jamload == 0)
 					jam(ptr,usrn);
 				if (ptr->items[I_ZIPPERS] > 0 && shipclass[ptr->shpclass].has_zip && ptr->zipload == 0
 					&& wptr->minesnear == TRUE && gernd()%3 == 0)
@@ -1071,10 +1087,10 @@ int	usrn;
 WARSHP	*wptr;
 
 {
-if (!neutral(&ptr->coord) && !neutral(&wptr->coord) && wptr->cloak != 10 && gernd()%(4-(shipclass[ptr->shpclass].tough_factor/2)) == 0)
+if (shipclass[ptr->shpclass].max_phasr > 0 && !neutral(&ptr->coord) && !neutral(&wptr->coord) && wptr->cloak != 10 && gernd()%(4-(shipclass[ptr->shpclass].tough_factor/2)) == 0)
 	{
 	ptr->degrees = cbearing(&ptr->coord,&wptr->coord,ptr->heading);
-	if (wptr->where == 1 && ptr->where == 1)
+	if (wptr->where == 1 && ptr->where == 1 && ptr->hypha == 0 && ptr->phasr >= 0)
 		firehp(ptr,usrn);
 	else
 	if (ptr->where == 0 && (wptr->where == 0 || (wptr->where == 1 &&
