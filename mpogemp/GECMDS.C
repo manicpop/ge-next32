@@ -1163,15 +1163,16 @@ if (ptr->damage >= 100)
 	return;
 	}
 
+if (neutral(&ptr->coord))
+	{
+	zaphim(ptr,usrn);
+	prfmsg(FRCTER);
+	outprfge(ALWAYS,usrn);
+	return;
+	}
+
 if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 	{
-	if (neutral(&ptr->coord))
-		{
-		zaphim(ptr,usrn);
-		prfmsg(FRCTER);
-		outprfge(ALWAYS,usrn);
-		return;
-		}
 	deg = (unsigned)normal(ptr->heading + (double)ptr->degrees);
 	prfmsg(HPFIRED,deg);
 	outprfge(FILTER,usrn);
@@ -1485,12 +1486,6 @@ else
 		energy = (unsigned)(atol(margv[2]));
 	}
 
-if (fluxstat(warsptr,usrnum,energy) == 0)
-	{
-	prfmsg(MISSHRT);
-	outprfge(ALWAYS,usrnum);
-	return;
-	}
 
 shpnum = findshp(margv[1],1);
 
@@ -1548,6 +1543,12 @@ if (lockon(ptr,1,shpnum,usrnum) == 1)
 		wptr=warshpoff(shpnum);
 		if (wptr->lmissl[i].distance == 0)
 			{
+			if (fluxstat(ptr,usrnum,eng_flu) == 0)
+				{
+				prfmsg(MISSHRT);
+				outprfge(ALWAYS,usrnum);
+				return(0);
+				}
 			prfmsg(MFIRE1,energy);
 			outprfge(FILTER,usrnum);
 			--(ptr->items[I_MISSILE]);
@@ -2774,19 +2775,16 @@ if (margc != 2)
 
 if (sameas(margv[1],"up"))
 	{
+	if (warsptr->shieldstat == SHIELDDM)
+		{
+		prfmsg(SHNORPR);
+		outprfge(ALWAYS,usrnum);
+		return;
+		}
 	if (fluxstat(warsptr,usrnum,SHENGUSE * warsptr->shieldtype) == 1)
 		{
-		if (warsptr->shieldstat == SHIELDDM)
-			{
-			prfmsg(SHNORPR);
-			outprfge(ALWAYS,usrnum);
-			return;
-			}
-		else
-			{
-			shieldup(warsptr,usrnum);
-			return;
-			}
+		shieldup(warsptr,usrnum);
+		return;
 		}
 	else
 		{

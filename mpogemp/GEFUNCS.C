@@ -648,28 +648,64 @@ WARSHP	*ptr;
 int	usrn;
 {
 int	usage;
+int	newwarp;
+int	need;
 double	accelrate,decelrate;
 
 if (ptr->speed < ptr->speed2b)
 	{
 	accelrate = (double)shipclass[ptr->shpclass].max_accel;
-	if ((ptr->speed2b >= 1000) && (ptr->speed/1000 < 1) && ((ptr->speed+accelrate)/1000 >=1))
-		hyperspace(ptr,usrn,1);
+	if (ptr->speed < 1000 && ptr->speed2b < 1000)
+		usage = 0;
+	else
+		usage = ACCENGAMT;
 	if (fabs(ptr->speed - ptr->speed2b) <= accelrate)
 		{
-		ptr->speed = ptr->speed2b;
+		need = usage;
+		if (ptr->speed/1000 < 1 && ptr->speed2b >= 1000)
+			{
+			newwarp = (int)(ptr->speed2b/1000.0);
+			need += (newwarp + 10);
+			}
+		if (fluxstat(ptr,usrn,need) == 1)
+			{
+			if ((ptr->speed2b >= 1000) && (ptr->speed/1000 < 1))
+				hyperspace(ptr,usrn,1);
+			ptr->speed = ptr->speed2b;
+			ptr->energy -= usage;
 
-		prfmsg(SPEEDIS, showarp(ptr->speed));
-		outprfge(FILTER,usrn);
+			prfmsg(SPEEDIS, showarp(ptr->speed));
+			outprfge(FILTER,usrn);
+			}
+		else
+			{
+			if (ptr->speed2b >= 1000 && ptr->energy < (ACCENGAMT + 10 + 1))
+				prfmsg(MOVE5);
+			else
+				prfmsg(NOACCEL,(int)(ptr->speed/1000.0));
+			outprfge(ALWAYS,usrn);
+			decelrate = (double)shipclass[ptr->shpclass].max_accel * 2.0;
+			if ((ptr->speed/1000 >=1) && ((ptr->speed-decelrate)/1000 <1))
+				hyperspace(ptr,usrn,0);
+			if (fabs(ptr->speed) <= decelrate)
+				ptr->speed = 0;
+			else
+				ptr->speed -= decelrate;
+			ptr->speed2b = 0;
+			}
 		}
 	else
 		{
-		if (ptr->speed < 1000)
-			usage = 0;
-		else
-			usage = ACCENGAMT;
-		if (fluxstat(ptr,usrn,usage) == 1)
+		need = usage;
+		if (ptr->speed/1000 < 1 && (ptr->speed+accelrate) >= 1000)
 			{
+			newwarp = (int)((ptr->speed+accelrate)/1000.0);
+			need += (newwarp + 10);
+			}
+		if (fluxstat(ptr,usrn,need) == 1)
+			{
+			if ((ptr->speed2b >= 1000) && (ptr->speed/1000 < 1) && ((ptr->speed+accelrate)/1000 >=1))
+				hyperspace(ptr,usrn,1);
 			if ((int)(ptr->speed/accelrate) != (int)((ptr->speed + accelrate)/accelrate))
 				{
 				sprintf(gechrbuf,"%.2f",(ptr->speed + accelrate)/1000.0);
@@ -681,8 +717,18 @@ if (ptr->speed < ptr->speed2b)
 			}
 		else
 			{
-			prfmsg(NOACCEL,(int)ptr->speed);
+			if (ptr->speed2b >= 1000 && ptr->energy < (ACCENGAMT + 10 + 1))
+				prfmsg(MOVE5);
+			else
+				prfmsg(NOACCEL,(int)(ptr->speed/1000.0));
 			outprfge(ALWAYS,usrn);
+			decelrate = (double)shipclass[ptr->shpclass].max_accel * 2.0;
+			if ((ptr->speed/1000 >=1) && ((ptr->speed-decelrate)/1000 <1))
+				hyperspace(ptr,usrn,0);
+			if (fabs(ptr->speed) <= decelrate)
+				ptr->speed = 0;
+			else
+				ptr->speed -= decelrate;
 			ptr->speed2b = 0;
 			}
 		}
@@ -816,7 +862,7 @@ int	usrn;
 
 WARSHP	*wptr;
 COORD	oldsect,newsect,neutsect;
-int	overamt,intspeed,zothusn;
+int	overamt,intspeed,zothusn,movenergy;
 double	ddist;
 float	newtop;
 
@@ -825,11 +871,34 @@ neutsect.ycoord = 0.50001;
 
 if (ptr->speed > 0)
 	{
+	if (ptr->status == GESTAT_USER && ptr->speed <= ptr->speed2b)
+		{
+		intspeed = ptr->speed/1000.0;
+		if (intspeed < 1)
+			movenergy = 1;
+		else
+			movenergy = intspeed + 10;
+		if (fluxstat(ptr,usrn,movenergy) == 0)
+			{
+			ptr->speed2b = 0;
+			if (intspeed >= 1 && ptr->energy < (ACCENGAMT + 10 + 1))
+				prfmsg(MOVE5);
+			else
+				prfmsg(MOVE4);
+			outprfge(FILTER,usrn);
+			if ((ptr->speed/1000 >=1) && ((ptr->speed-((double)shipclass[ptr->shpclass].max_accel * 2.0))/1000 <1))
+				hyperspace(ptr,usrn,0);
+			if (fabs(ptr->speed) <= ((double)shipclass[ptr->shpclass].max_accel * 2.0))
+				ptr->speed = 0;
+			else
+				ptr->speed -= ((double)shipclass[ptr->shpclass].max_accel * 2.0);
+			return;
+			}
+		else
+			ptr->energy -= movenergy;
+		}
 
 	movecoord(&oldsect, &ptr->coord);
-/*   sprintf(gechrbuf,"usrn = %d, x=%g, y=%g",usrn,ptr->coord.xcoord,ptr->coord.ycoord);
-	prf("%s",gechrbuf);
-	outprf(usrn);            */
 	ptr->coord.xcoord = ptr->coord.xcoord + ((ptr->speed * sin(degtorad(ptr->heading)))/65000.0);
 	ptr->coord.ycoord = ptr->coord.ycoord - ((ptr->speed * cos(degtorad(ptr->heading)))/65000.0);
 
@@ -965,7 +1034,7 @@ if (ptr->speed > 0)
 				}
 			}
 		}
-	if (ptr->speed > 1000.0 && ptr->status == GESTAT_USER)
+	if (ptr->speed > 0.0 && ptr->status == GESTAT_USER)
 		{
 		unsigned int r = gernd();
 		intspeed = ptr->speed/1000.0;
@@ -974,15 +1043,7 @@ if (ptr->speed > 0)
 		if (intspeed > ptr->topspeed && (int)(ptr->speed2b/1000.0) > ptr->topspeed)
 			{
 			newtop = shipclass[ptr->shpclass].max_warp * (1.0f - (float)ptr->overspeed / 10000.0f);
-			if (ptr->topspeed != newtop && ptr->topspeed != 0)
-				ptr->topspeed = (int)newtop;
-
-			/* for every 10% over cruising speed, increase potential random damage */
-			overamt = (intspeed * 100 / newtop) - 100;
-			ptr->overspeed += (r%(overamt+1));
-
-			/* if over twice new cruising speed, blow up the engines */
-			if ((overamt >= 110 || ptr->overspeed > 4000000000UL) && ptr->topspeed != 0)
+			if (newtop < 1.0f)
 				{
 				prfmsg(WARPBRK);
 				outprfge(ALWAYS,usrn);
@@ -991,25 +1052,36 @@ if (ptr->speed > 0)
 				ptr->damage += r%20;
 				}
 			else
-			if (overamt != ptr->npcmsg)
 				{
-				if (overamt >= 60 && overamt/10 != ptr->npcmsg/10)
+				if (ptr->topspeed != newtop && ptr->topspeed != 0)
+					ptr->topspeed = (int)newtop;
+
+				/* for every 10% over cruising speed, increase potential random damage */
+				overamt = (intspeed * 100 / newtop) - 100;
+				ptr->overspeed += (r%(overamt+1));
+
+				/* if over twice new cruising speed, blow up the engines */
+				if ((overamt >= 110 || ptr->overspeed > 4000000000UL) && ptr->topspeed != 0)
 					{
-					prfmsg(WARPFAST+(int)((overamt/10)-6));
-					outprfge(FILTER,usrn);
+					prfmsg(WARPBRK);
+					outprfge(ALWAYS,usrn);
+					ptr->topspeed = 0;
+					ptr->speed2b = 0;
+					ptr->damage += r%20;
 					}
-				ptr->npcmsg = overamt;
+				else
+				if (overamt != ptr->npcmsg)
+					{
+					if (overamt >= 60 && overamt/10 != ptr->npcmsg/10)
+						{
+						prfmsg(WARPFAST+(int)((overamt/10)-6));
+						outprfge(FILTER,usrn);
+						}
+					ptr->npcmsg = overamt;
+					}
 				}
 			}
 
-		if (fluxstat(ptr,usrn,MOVENGUSE) == 0)
-			{
-			ptr->speed2b = 0;
-			prfmsg(MOVE4);
-			outprfge(FILTER,usrn);
-			}
-		else
-			ptr->energy -= MOVENGUSE;
 		}
 	/* Cybertrons ignore gravity */
 	if (ptr->where == 0 && ptr->status == GESTAT_USER)

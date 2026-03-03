@@ -195,6 +195,9 @@ Other stuff:
 * Mines have been given an overall damage boost. Overall "blast
   range" is still one sector, but the damage falloff has been
   lessened so the radius of actual damage is bigger.
+* Higher warp speeds now use more flux. Stock up on pods.
+* Impulse now uses 1 flux unit per tick. Ships now "background
+  charge" flux twice as fast so that impluse is "free."
 
 === 0.2.6 === 2025-08-15
 

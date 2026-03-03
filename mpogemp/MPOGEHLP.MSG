@@ -684,13 +684,13 @@ a good percentage of power left in the old pod. The old pod is jettisoned.
 Your power is restored to full charge automatically.
 
 Ships are also capable of recharging the flux pile by absorbing the naturally
-occuring background ion radiation of the galaxy, at a rate of 1 unit per
-centock. This means a ship can still travel at warp 1 even if a ship has run
-out of flux pods.
+occuring background ion radiation of the galaxy, at a rate of 1 unit every
+three seconds. This means a ship can still travel at impulse even if a ship
+has run out of flux pods.
 
 It is your responsibility to make sure that you keep your ship stocked with
 flux pods, because if you run out, it will be a long trip to the nearest base
-at only warp 1 speed.
+at impulse.
 [1;37m} T GE help flux message
 
 HLPHEL {
