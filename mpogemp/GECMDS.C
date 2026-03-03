@@ -4217,7 +4217,9 @@ if (plptr->userid[0] != 0)
 			if (sameas("ALL",margv[1]))
 				amt = amt4sale(item);
 			if ((sameas(plptr->userid,warsptr->userid) && amt > SLCAP / baseprice[item])
-				|| (!sameas(plptr->userid,warsptr->userid) && amt > SLCAP / (long)plptr->items[item].markup2a))
+				|| (!sameas(plptr->userid,warsptr->userid)
+					&& plptr->items[item].markup2a > 0
+					&& amt > SLCAP / (long)plptr->items[item].markup2a))
 				{
 				prfmsg(TOOMUCH);
 				return;
@@ -6236,6 +6238,7 @@ int	item;
 
 {
 unsigned long amt;
+long req;
 int	defuse = FALSE;
 
 if (item == I_MEN || item == I_TROOPS || item == I_SPY)
@@ -6252,26 +6255,25 @@ if (sameas("ALL",margv[1]) > 0L)
 	{
 	amt = warsptr->items[item];
 	warsptr->items[item] = 0;
-	sprintf(gechrbuf,"%ld",amt);
 	if (defuse == TRUE)
-		prfmsg(JETT3D,gechrbuf,item_name[item]);
+		prfmsg(JETT3D,spr("%lu",amt),item_name[item]);
 	else
-		prfmsg(JETT3,gechrbuf,item_name[item]);
+		prfmsg(JETT3,spr("%lu",amt),item_name[item]);
 	outprfge(ALWAYS,usrnum);
 	gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
 	return;
 	}
 else
-if ((amt = atol(margv[1])) > 0L)
+if ((req = atol(margv[1])) > 0L)
 	{
+	amt = (unsigned long)req;
 	if (warsptr->items[item] >= amt)
 		{
 		warsptr->items[item] -= amt;
-		sprintf(gechrbuf,"%ld",amt);
 		if (defuse == TRUE)
-			prfmsg(JETT3D,gechrbuf,item_name[item]);
+			prfmsg(JETT3D,spr("%lu",amt),item_name[item]);
 		else
-			prfmsg(JETT3,gechrbuf,item_name[item]);
+			prfmsg(JETT3,spr("%lu",amt),item_name[item]);
 		outprfge(ALWAYS,usrnum);
 		gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
 		return;
@@ -6288,4 +6290,3 @@ else
 	outprfge(ALWAYS,usrnum);
 	}
 }
-
