@@ -678,6 +678,7 @@ warshp=MK_FP(warshp_ecl,0);
 for (j=0 ; j < nships ; j++)
 	{
 	setmem(((void *)warshpoff(j)),sizeof(WARSHP),0);
+	warshpoff(j)->status = GESTAT_AVAIL;
 	}
 geshocst(1,spr("GE:INF:Ship Mem: %ld",nships*sizeof(WARSHP)));
 
@@ -693,7 +694,6 @@ geshocst(1,spr("GE:INF:Temp Items Mem: %d",n));
 
 /* allocate memory for a team table */
 teamtab=(TEAM  *)alcmem(n=MAXTEAMS*sizeof(TEAM));
-setmem(teamtab,n,0);
 geshocst(1,spr("GE:INF:Team Tab Mem: %d",n));
 
 /* allocate memory for scan table */
@@ -801,8 +801,6 @@ rtkick(1,autorti);
 #endif
 
 
-for (j=0;j<nships;++j)
-	warshpoff(j)->status = GESTAT_AVAIL;
 
 /* find the module number (state) of the FSE for later use */
 fse_state=-1;

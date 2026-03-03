@@ -194,49 +194,70 @@ int	i,flag;
 logthis(spr("GE:DBG:initship %d",type));
 logthis(spr("%s",userid));
 strncpy(tmpshp.userid,userid,UIDSIZ);
-strncpy(tmpshp.shipname," <NO NAME> ",20);
+tmpshp.shpclass		= type;
 
-tmpshp.coord.xcoord = NEUTRAL_X + rndm(.9999);
-tmpshp.coord.ycoord = NEUTRAL_Y + rndm(.9999);
-
-getsector(&tmpshp.coord);
-flag = 1;
-
-while (flag == 1)
+if (shipclass[type].max_type == CLASSTYPE_USER)
 	{
+	strncpy(tmpshp.shipname," <NO NAME> ",20);
+
 	tmpshp.coord.xcoord = NEUTRAL_X + rndm(.9999);
 	tmpshp.coord.ycoord = NEUTRAL_Y + rndm(.9999);
-	flag = 0;
-	for (i=0;i<sector.numplan;++i)
+	getsector(&tmpshp.coord);
+	flag = 1;
+
+	while (flag == 1)
 		{
-		if (sector.ptab[i].coord.xcoord != 0)
+		tmpshp.coord.xcoord = NEUTRAL_X + rndm(.9999);
+		tmpshp.coord.ycoord = NEUTRAL_Y + rndm(.9999);
+		flag = 0;
+		for (i=0;i<sector.numplan;++i)
 			{
-			ddistance = cdistance(&tmpshp.coord,&sector.ptab[i].coord)*10000;
-			if (ddistance < 1000)
-				flag = 1;
+			if (sector.ptab[i].coord.xcoord != 0)
+				{
+				ddistance = cdistance(&tmpshp.coord,&sector.ptab[i].coord)*10000;
+				if (ddistance < 1000)
+					flag = 1;
+				}
 			}
 		}
+
+	tmpshp.phasrtype	= 1;
+	tmpshp.shieldtype	= 1;
+	tmpshp.items[I_FLUXPOD]	= 3;
 	}
+else
+	{
+	tmpshp.shipname[0]	= '\0';
+	tmpshp.coord.xcoord	= 0.0;
+	tmpshp.coord.ycoord	= 0.0;
+	tmpshp.phasrtype	= 0;
+	tmpshp.shieldtype	= 0;
+	tmpshp.items[I_FLUXPOD]	= 0;
+	}
+
 tmpshp.heading		= gernd()%360;
 tmpshp.head2b		= tmpshp.heading;
-
-tmpshp.shpclass		= type;
 tmpshp.speed		= 0;
 tmpshp.phasr		= 100;
-tmpshp.speed		= 0;
 tmpshp.speed2b		= 0;
 tmpshp.damage		= 0.0;
 tmpshp.lastfired	= -1;
 tmpshp.energy		= 50000L;
+tmpshp.kills		= 0;
 tmpshp.tactical		= 0;
 tmpshp.helm		= 0;
 tmpshp.cloak		= 0;
 tmpshp.shieldstat	= SHIELDDN;
 tmpshp.shield		= 0;
-tmpshp.shieldtype	= 1;
-tmpshp.phasrtype	= 1;
+tmpshp.degrees		= 0;
+tmpshp.percent		= 0;
 tmpshp.train		= 0;
 tmpshp.where		= 0;
+tmpshp.jam_sev		= 0;
+tmpshp.jam_time		= 0;
+for (i=0;i<3;++i)
+	tmpshp.freq[i] = 0;
+tmpshp.titem		= 0;
 tmpshp.hostile		= 0;
 tmpshp.repair		= 0;
 tmpshp.hypha		= 0;
@@ -245,7 +266,6 @@ tmpshp.mislcntl		= 0;
 tmpshp.cantexit		= 0;
 tmpshp.items[I_TORPEDO]	= 0;
 tmpshp.items[I_MISSILE]	= 0;
-tmpshp.items[I_FLUXPOD]	= 3;
 tmpshp.items[I_FOOD]	= 0;
 tmpshp.items[I_DECOYS]	= 0;
 tmpshp.items[I_FIGHTER]	= 0;
@@ -262,8 +282,13 @@ tmpshp.status		= 0;
 tmpshp.cybmine		= 0;
 tmpshp.upgrade		= 0;	/*UNUSED ATM*/
 tmpshp.cybupdate	= 0;
+tmpshp.tick		= 0;
 tmpshp.distress		= 255;
+tmpshp.minesnear	= 0;
 tmpshp.lock		= -1;
+tmpshp.holdcourse	= 0;
+tmpshp.overspeed	= 0L;
+tmpshp.ukills		= 0;
 
 tmpshp.zipload		= 0;
 tmpshp.jamload		= 0;
@@ -293,25 +318,10 @@ int FUNC initusr(userid)
 char	*userid;
 {
 
+setmem(&tmpusr,sizeof(WARUSR),0);
 strncpy(tmpusr.userid,userid,UIDSIZ); /* BJ CHANGED TO UIDSIZ */
-tmpusr.kills		= 0;
-tmpusr.planets		= 0;
-tmpusr.debt		= 0;
-tmpusr.noships		= 0;
-tmpusr.score		= 0;
-tmpusr.plscore		= 0;
-tmpusr.klscore		= 0;
-tmpusr.rospos		= 0;
-tmpusr.teamcode		= 0;
-tmpusr.population	= 0;
-
 tmpusr.cash		= startcash;
-
-tmpusr.topshipno	= 0;
-
 tmpusr.options[0]	= FULLNAMES; /* set scan default */
-
-memset(tmpusr.factions, 0, sizeof(tmpusr.factions));
 
 return(0);
 }

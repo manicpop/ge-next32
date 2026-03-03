@@ -613,32 +613,13 @@ if (!gesdb(GEGET,&pkey,&sector))
 				planet.coord.xcoord = sector.ptab[i].coord.xcoord;
 				planet.coord.ycoord = sector.ptab[i].coord.ycoord;
 				planet.type = sector.ptab[i].type;
-				planet.userid[0] = 0;
-				planet.name[0] = 0;
 				planet.enviorn = (char)(rndm(3.999));
 				planet.resource = (char)(rndm(3.999));
-
-				planet.cash = 0;
-				planet.timestamp = 0;
-				planet.tax = 0;
-				planet.taxrate = 0;
-				planet.warnings = 0;
-				planet.lastattack[0] = 0;
 
 				strcpy(planet.password,"none");
 
 				for (k = 0; k < NUMITEMS;++k)
-					{
-
-					planet.items[k].qty = 0;
-
-					planet.items[k].rate = 0;
-
-					planet.items[k].reserve = 0;
 					planet.items[k].sell = 'N';
-					planet.items[k].markup2a = 0;
-					planet.items[k].sold2a = 0;
-					}
 				if (rndm(3.99) > 3)
 					{
 					for (k = 0; k < NUMITEMS;++k)
