@@ -579,7 +579,9 @@ GALPLNT {					/* star system data record              */
 /*462*/
 	unsigned long	teamcode;
 /*466*/
-	char	filler[512-182-(UIDSIZ*2)-(sizeof(ITEM)*NUMITEMS)]; /*   GALPLNT in GE classic is 512            */
+	unsigned long	nebseed;			/*   random seed for nebula map (Zygor only) */
+/*470*/
+	char	filler[512-186-(UIDSIZ*2)-(sizeof(ITEM)*NUMITEMS)]; /*   GALPLNT in GE classic is 512            */
 
 };
 

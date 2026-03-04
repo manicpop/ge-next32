@@ -690,6 +690,9 @@ planet.plnum = pkey.plnum;
 planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
 planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
 planet.type = PLTYPE_PLNT;
+planet.nebseed = nebseed;
+if (planet.nebseed == 0L)
+	planet.nebseed = 1L;
 
 plptr = &planet;
 update_plan_1();
@@ -830,6 +833,30 @@ COORD	*coord;
 xsect=coord1(coord->xcoord);
 ysect=coord1(coord->ycoord);
 return (xsect == 0 && ysect == 0);
+}
+
+int FUNC innebula(x,y)
+int	x,y;
+{
+unsigned	dmod;
+unsigned long	work;
+
+if (x == 0 && y == 0)
+	return(FALSE);
+
+if (nebodds <= 0)
+	return(FALSE);
+
+work = nebseed;
+work ^= (((unsigned long)(unsigned)x) << 16) | (unsigned)y;
+work += ((unsigned long)(unsigned)x * 214013L) + ((unsigned long)(unsigned)y * 2531011L);
+work ^= (work >> 16);
+
+dmod = (unsigned)(180 / nebodds);
+if (dmod == 0)
+	dmod = 1;
+
+return((unsigned)(work % (unsigned long)dmod) == 0);
 }
 
 void FUNC update_plan_1(void)

@@ -311,6 +311,7 @@
 /*     752 */ void FUNC build_worm P((int idx ));
 /*     798 */ int FUNC getplanet P((COORD *sect , int plnt ));
 /*     819 */ int FUNC neutral P((COORD *coord ));
+/*     825 */ int FUNC innebula P((int x , int y ));
 /*     827 */ void FUNC update_plan_1 P((void ));
 /*     837 */ void FUNC update_plan_2 P((void ));
 /*     853 */ void FUNC update_plan_3 P((void ));

@@ -1050,7 +1050,7 @@ MINE	*mptr;
 refresh(warsptr,usrnum);
 
 setsect(warsptr);
-prfmsg(SCAN25,xsect,ysect);
+prfmsg(SCAN25,(innebula(xsect,ysect) ? CLR_GREEN2 "nebula" : "sector"),xsect,ysect);
 clearmap();
 
 update_scantab(warsptr,usrnum);

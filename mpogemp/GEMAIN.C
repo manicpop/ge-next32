@@ -179,6 +179,8 @@ long				max_plrec,
 
 unsigned			plantime;
 
+unsigned long			nebseed;
+
 int				gemaxplrs,
 				gefreebies,
 				gemaxlist,
@@ -194,6 +196,7 @@ int				gemaxplrs,
 				univmax,
 				plodds,
 				wormodds,
+				nebodds,
 				hpfirdst,
 				hpdammax,
 				pfirdist,
@@ -376,6 +379,7 @@ max_plnts	= numopt(MAXPLNTS,1,256);
 planupd		= numopt(PLANUPD,1,15);
 plodds		= numopt(PLODDS,1,20);
 wormodds	= numopt(WORMODDS,1,100);
+nebodds		= numopt(NEBODDS,0,10);
 univmax		= numopt(UNIVMAX,10,32767);
 univwrap	= ynopt(UNIVWRAP);
 s00plnum	= numopt(S00PLNUM,3,9);
@@ -523,6 +527,22 @@ gebb1=opnbtv(geship,sizeof(WARSHP));
 gebb4=opnbtv(gemail,sizeof(struct message)+GEMSGSIZ);
 
 gebb2=opnbtv(geplnt,sizeof(GALSECT));
+
+nebseed		= 1L;
+pkey.xsect	= 0;
+pkey.ysect	= 0;
+pkey.plnum	= 1;
+if (gesdb(GEGET,&pkey,(GALSECT *)&planet))
+	{
+	if (planet.type == PLTYPE_PLNT && planet.nebseed != 0L)
+		nebseed = planet.nebseed;
+	}
+else
+	{
+	nebseed = (((unsigned long)gernd()) << 16) | ((unsigned long)gernd());
+	if (nebseed == 0L)
+		nebseed = 1L;
+	}
 
 game_day = cofdat(today());
 

@@ -99,6 +99,8 @@ extern	int		tmp_usrnum;
 
 extern	unsigned	plantime;
 
+extern	unsigned long	nebseed;
+
 extern	long		max_plrec,
 			teambonus,
 			pltvcash,
@@ -120,6 +122,7 @@ extern	int		gemaxplrs,
 			univmax,
 			plodds,
 			wormodds,
+			nebodds,
 			hpfirdst,
 			hpdammax,
 			pfirdist,

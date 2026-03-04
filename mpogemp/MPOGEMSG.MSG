@@ -206,6 +206,11 @@ a sector will have a wormhole.
 
 WORMODDS {Frequency Factor for wormholes: 6} N 1 100
 
+This value controls the odds of a sector being a
+nebula. 0 disables nebulas.
+
+NEBODDS {Frequency Factor for nebulas: 3} N 0 10
+
 This value controls how far from the center (sector 0 0) 
 the galaxy extends. The Galaxy is square and UNIVMAX
 sectors in each direction (N,S,E,W).
@@ -3489,7 +3494,7 @@ Full galaxy scan:
 } T GE scan 24 galaxy
 
 SCAN25 {[0;37m
-Scanning sector [1;34m%d %d[0;37m:
+Scanning %s [1;34m%d %d[0;37m:
 } T GE scan 25
 
 SCAN28 {[0;37mPopulation: [1;37m%s
@@ -3649,7 +3654,7 @@ HPWAIT {
 } T GE hyperphaser time out message
 
 MOVE1 {***
-[0;37mHelm reports leaving sector [1;34m%d %d[0;37m and entering sector [1;34m%d %d[0;37m.[1;37m
+[0;37mHelm reports leaving %s [1;34m%d %d[0;37m and entering %s [1;34m%d %d[0;37m.[1;37m
 } T GE you changed sectors message
 
 MOVE2 {***

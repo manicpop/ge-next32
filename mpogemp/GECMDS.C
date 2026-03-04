@@ -4750,6 +4750,13 @@ if (sameas("help",margv[1]) && margc == 2)
 	return;
 	}
 else
+	if (sameas("nebseed",margv[1]) && margc == 2)
+		{
+		prf("\rNebula seed: %s\r",spr("%lu",nebseed));
+		outprfge(ALWAYS,usrnum);
+		return;
+		}
+else
 if (sameas("get",margv[1]) && margc == 4)
 	{
 	if (margc == 4)
@@ -4825,7 +4832,11 @@ if (sameas("goto",margv[1]) && margc == 4)
 
 			plnum = 0;
 			getplanetdat(usrnum);
-			prfmsg(MOVE1,xsect,ysect,i,j);
+			prfmsg(MOVE1,
+					(innebula(xsect,ysect) ? CLR_GREEN2 "nebula" : "sector"),
+					xsect,ysect,
+					(innebula(i,j) ? CLR_GREEN2 "nebula" : "sector"),
+					i,j);
 			outprfge(ALWAYS,usrnum);
 			return;
 			}

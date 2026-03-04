@@ -976,7 +976,10 @@ if (ptr->speed > 0)
 
 	if (!samesect(&oldsect, &newsect))
 		{
-		prfmsg(MOVE1,coord1(oldsect.xcoord),coord1(oldsect.ycoord),
+		prfmsg(MOVE1,
+			(innebula(coord1(oldsect.xcoord),coord1(oldsect.ycoord)) ? CLR_GREEN2 "nebula" : "sector"),
+			coord1(oldsect.xcoord),coord1(oldsect.ycoord),
+			(innebula(coord1(newsect.xcoord),coord1(newsect.ycoord)) ? CLR_GREEN2 "nebula" : "sector"),
 			coord1(newsect.xcoord),coord1(newsect.ycoord));
 		outprfge(FILTER,usrn);
 		if (ptr->cloak != 10)
@@ -1201,7 +1204,11 @@ for (i=0; i<MAXPLANETS;++i)
 					gesdb(GEGETNOW,&pkey,(GALSECT *)&worm);
 					ptr->coord.xcoord = worm.destination.xcoord;
 					ptr->coord.ycoord = worm.destination.ycoord;
-					prfmsg(MOVE1,xsect,ysect,coord1(worm.destination.xcoord),coord1(worm.destination.ycoord));
+					prfmsg(MOVE1,
+						(innebula(xsect,ysect) ? CLR_GREEN2 "nebula" : "sector"),
+						xsect,ysect,
+						(innebula(coord1(worm.destination.xcoord),coord1(worm.destination.ycoord)) ? CLR_GREEN2 "nebula" : "sector"),
+						coord1(worm.destination.xcoord),coord1(worm.destination.ycoord));
 					ptr->damage+= 5.5;
 					outprfge(ALWAYS,usrn);
 					clearitm(usrn);	 /* clear the tors and missiles */
