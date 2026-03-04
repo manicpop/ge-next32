@@ -309,7 +309,7 @@ MISSILE	{
 	};
 
 #define TORPEDO struct _torpedo
-TORPEDO {
+TORPEDO	{
 	unsigned char channel;
 	unsigned distance;
 	};
@@ -319,149 +319,166 @@ TORPEDO {
 extern
 
 
-WARUSR {						/* user data blocks                       */
-		char		userid[UIDSIZ];		/* userid of player                       */
-		unsigned long	score;			/*   Your score               31     */
-		char		waste[40];
-		unsigned	noships;		/*   Number of ships                      */
-		int		topshipno;		/*   Top ship number used                 */
-		unsigned	kills;			/*   No kills                             */
-		unsigned	rospos;			/*   unused atm                           */
-		int		planets;		/*   Planets owned                        */
-		unsigned long	cash;			/*   cash on hand                         */
-		unsigned long	debt;			/*   this isn't used but it could be helpful later   */
-		unsigned long	plscore;
-		unsigned long	klscore;
-		unsigned long	population;
-		byte		options[30];
-		unsigned long	teamcode;
-		byte		factions[8];		/* do NPCs like me */
-		unsigned	ukills;			/* just user kills */
-		char		filler[256-115-UIDSIZ];
-};
+WARUSR	{
+	char		userid[UIDSIZ];		/*   userid of player                     */
+/*30*/
+	unsigned long	score;			/*   Your score                           */
+/*34*/
+	char		waste[40];
+/*74*/
+	unsigned	noships;		/*   Number of ships                      */
+/*76*/
+	int		topshipno;		/*   Top ship number used                 */
+/*78*/
+	unsigned	kills;			/*   No kills                             */
+/*80*/
+	unsigned	rospos;			/*   unused atm                           */
+/*82*/
+	int		planets;		/*   Planets owned                        */
+/*84*/
+	unsigned long	cash;			/*   cash on hand                         */
+/*88*/
+	unsigned long	debt;			/*   this isn't used but it could be helpful later   */
+/*92*/
+	unsigned long	plscore;
+/*96*/
+	unsigned long	klscore;
+/*100*/
+	unsigned long	population;
+/*104*/
+	byte		options[30];
+/*134*/
+	unsigned long	teamcode;
+/*138*/
+	byte		factions[8];		/* do NPCs like me */
+/*146*/
+	unsigned	ukills;			/* just user kills */
+/*148*/
+			char		filler[256-115-UIDSIZ]; /*   WARUSR in GE classic is 256             */
+	};
 
 
 #define WARSHP struct warshp
 extern
 
 
-WARSHP {						/*   user data blocks                        */
-		char		userid[UIDSIZ];		/*   userid of player                        */
+WARSHP	{
+	char		userid[UIDSIZ];		/*   userid of player                        */
 /*30*/
-		int		shipno;			/*   Ship id number                          */
+	int		shipno;			/*   Ship id number                          */
 /*32*/
-		char		shipname[35];		/*   Ship name                               */
+	char		shipname[35];		/*   Ship name                               */
 /*67*/
-		int		shpclass;		/*   Ship Class   display                    */
+	int		shpclass;		/*   Ship Class   display                    */
 /*69*/
-		double		heading;		/*   Heading of this ship                    */
+	double		heading;		/*   Heading of this ship                    */
 /*77*/
-		double		head2b;			/*   direction rotating to                   */
+	double		head2b;			/*   direction rotating to                   */
 /*85*/
-		double		speed;			/*   Speed                                   */
+	double		speed;			/*   Speed                                   */
 /*93*/
-		double		speed2b;		/*   Speed to be                             */
+	double		speed2b;		/*   Speed to be                             */
 /*101*/
-		COORD		coord;
+	COORD		coord;
 /*117*/
-		double		damage;			/*   Damage on this ship (0 - 100%)          */
+	double		damage;			/*   Damage on this ship (0 - 100%)          */
 /*125*/
-		double		energy;			/*   Amount of energy available              */
+	double		energy;			/*   Amount of energy available              */
 /*133*/
-		double		phasr;			/*   Phasor strength (0 - 100%)              */
+	double		phasr;			/*   Phasor strength (0 - 100%)              */
 /*141*/
-		byte		phasrtype;		/*   Type of Phasor system                   */
+	byte		phasrtype;		/*   Type of Phasor system                   */
 /*142*/
-		unsigned	kills;			/*   No kills                                */
+	unsigned	kills;			/*   No kills                                */
 /*144*/
-		int		lastfired;		/*   usernumber of last user to fire on you  */
+	int		lastfired;		/*   usernumber of last user to fire on you  */
 /*146*/
-		byte		shieldtype;		/*   shield type                             */
+	byte		shieldtype;		/*   shield type                             */
 /*147*/
-		byte		shieldstat;		/*   shield status (supposed to be up/dn)    */
+	byte		shieldstat;		/*   shield status (supposed to be up/dn)    */
 /*148*/
-		int		shield;			/*   shield charge                           */
+	int		shield;			/*   shield charge                           */
 /*150*/
-		int		cloak;			/*   cloak flag 0 = down, 10 = up, neg = dmg */
+	int		cloak;			/*   cloak flag 0 = down, 10 = up, neg = dmg */
 /*152*/
-		int		degrees;		/*   work fields for calculating degrees     */
+	int		degrees;		/*   work fields for calculating degrees     */
 /*154*/
-		int		percent;		/*   Work field for calculating percentages  */
+	int		percent;		/*   Work field for calculating percentages  */
 /*156*/
-		int		tactical;		/*   Tactical Display damage indicator       */
+	int		tactical;		/*   Tactical Display damage indicator       */
 /*158*/
-		int		helm;			/*   Helm Control damage indicator           */
+	int		helm;			/*   Helm Control damage indicator           */
 /*160*/
-		int		train;			/*   Training screen counter                 */
+	int		train;			/*   Training screen counter                 */
 /*162*/
-		int		where;			/*   Hyperspace flag                         */
+	int		where;			/*   Hyperspace flag                         */
 /*164*/
-		TORPEDO		ltorps[MAXTORPS];	/*   Locked on torpedoes                     */
+	TORPEDO		ltorps[MAXTORPS];	/*   Locked on torpedoes                     */
 /*173*/
-		MISSILE		lmissl[MAXMISSL];	/*   Locked on missiles                      */
+	MISSILE		lmissl[MAXMISSL];	/*   Locked on missiles                      */
 /*188*/
-		unsigned	decout[MAXDECOY];	/*   decoys out                              */
+	unsigned	decout[MAXDECOY];	/*   decoys out                              */
 /*208*/
-		byte		jam_sev;		/*   jamming severity                        */
+	byte		jam_sev;		/*   jamming severity                        */
 /*209*/
-		byte		jam_time;		/*   time left in jamming                    */
+	byte		jam_time;		/*   time left in jamming                    */
 /*210*/
-		unsigned	freq[3];		/*   sub space, hyper space, planetary       */
+	unsigned	freq[3];		/*   sub space, hyper space, planetary       */
 /*216*/
-		unsigned long	items[NUMITEMS];	/*   all the items                           */
+	unsigned long	items[NUMITEMS];	/*   all the items                           */
 /*272*/
-		unsigned	titem;			/*   establishing a colony mode temp item    */
+	unsigned	titem;			/*   establishing a colony mode temp item    */
 /*274*/
-		unsigned	hostile;		/*   being hostile flag                      */
+	unsigned	hostile;		/*   being hostile flag                      */
 /*276*/
-		unsigned	cantexit;		/*   cannot exit counter                     */
+	unsigned	cantexit;		/*   cannot exit counter                     */
 /*278*/
-		unsigned	repair;			/*   repairs underway flag                   */
+	unsigned	repair;			/*   repairs underway flag                   */
 /*280*/
-		unsigned	hypha;			/*   hyper-phasers cooling flag              */
+	unsigned	hypha;			/*   hyper-phasers cooling flag              */
 /*282*/
-		byte		torpcntl;		/*   torpedo damage flag                     */
+	byte		torpcntl;		/*   torpedo damage flag                     */
 /*283*/
-		byte		mislcntl;		/*   misl damage flag                        */
+	byte		mislcntl;		/*   misl damage flag                        */
 /*284*/
-		byte		destruct;		/*   self destruct countdown                 */
+	byte		destruct;		/*   self destruct countdown                 */
 /*285*/
-		byte		status;			/*   Status of this record                   */
+	byte		status;			/*   Status of this record                   */
 /*286*/
-		byte		cybmine;		/*   I have found me a ship to seek          */
+	byte		cybmine;		/*   I have found me a ship to seek          */
 /*287*/
-		byte		upgrade;		/*   UNUSED ATM                              */
+	byte		upgrade;		/*   UNUSED ATM                              */
 /*288*/
-		byte		cybupdate;		/*   update cyborg counter                   */
+	byte		cybupdate;		/*   update cyborg counter                   */
 /*289*/
-		byte		tick;			/*   Ship Ticker                             */
+	byte		tick;			/*   Ship Ticker                             */
 /*290*/
-		byte		distress;		/*   has sent distress message               */
+	byte		distress;		/*   has sent distress message               */
 /*291*/
-		byte		minesnear;		/*   set when mines are near                 */
+	byte		minesnear;		/*   set when mines are near                 */
 /*292*/
-		int		lock;			/*   set to the ship we are locked onto      */
+	int		lock;			/*   set to the ship we are locked onto      */
 /*294*/
-		byte		holdcourse;		/*   Hold course ticker                      */
+	byte		holdcourse;		/*   Hold course ticker                      */
 /*295*/
-		int		topspeed;		/*   top speed considering damage            */
+	int		topspeed;		/*   top speed considering damage            */
 /*297*/
-		byte		npcmsg;			/*   keeps track of last annoy msg sent      */
+	byte		npcmsg;			/*   keeps track of last annoy msg sent      */
 /*298*/
-		unsigned long	overspeed;		/*   counter for over maximum warp           */
+	unsigned long	overspeed;		/*   counter for over maximum warp           */
 /*302*/
-		int		zipload;		/*   zipper launch throttle                  */
+	int		zipload;		/*   zipper launch throttle                  */
 /*304*/
-		int		jamload;		/*   jam launch throttle                     */
+	int		jamload;		/*   jam launch throttle                     */
 /*306*/
-		int		decload;		/*   decoy launch throttle                   */
+	int		decload;		/*   decoy launch throttle                   */
 /*308*/
-		int		mineload;		/*   mine launch throttle                    */
+	int		mineload;		/*   mine launch throttle                    */
 /*310*/
-		unsigned	ukills;			/*   just user kills                         */
+	unsigned	ukills;			/*   just user kills                         */
 /*312*/
-		char		filler[514-278-UIDSIZ]; /*   WARSHP in GE classic is 514             */
-};
+	char		filler[514-278-UIDSIZ]; /*   WARSHP in GE classic is 514             */
+	};
 
 /*
 #define X1 ptr1->xcoord
@@ -501,13 +518,19 @@ PLANETAB	{
 extern
 GALSECT	{					/* star system data record              */
 	int	xsect;				/* sector x coord                       */
+/*2*/
 	int	ysect;				/* sector y coord                       */
+/*4*/
 	int	plnum;				/* always 0                             */
+/*6*/
 	int	type;				/* type of sector                       */
+/*8*/
 
 	int	numplan;			/* number of planetary objects          */
+/*10*/
 	PLNTCOORD	ptab[MAXPLANETS];
-	char	filler[512-10-(sizeof(PLNTCOORD)*MAXPLANETS)];		/* fill to 250  */
+/*172*/
+	char	filler[512-10-(sizeof(PLNTCOORD)*MAXPLANETS)];		/*   GALSECT in GE classic is 512            */
 };
 
 #define GALPLNT struct _galplnt
@@ -515,27 +538,48 @@ GALSECT	{					/* star system data record              */
 extern
 GALPLNT {					/* star system data record              */
 	int	xsect;				/* sector x coord                       */
+/*2*/
 	int	ysect;				/* sector y coord                       */
+/*4*/
 	int	plnum;				/* planet number                        */
+/*6*/
 	int	type;				/* type of sector                       */
+/*8*/
 	COORD	coord;
+/*24*/
 	char	userid[UIDSIZ];
+/*54*/
 	char	name[20];
+/*74*/
 	char	enviorn;			/* environment factor                   */
+/*75*/
 	char	resource;			/* resources                            */
+/*76*/
 	unsigned long cash;			/* cash on hand                         */
+/*80*/
 	unsigned long timestamp;		/* time of last update                  */
+/*84*/
 	unsigned long tax;			/* amount of tax collected              */
+/*88*/
 	int	taxrate;			/* rate to tax population               */
+/*90*/
 	char	warnings;			/* warnings to intruders                */
+/*91*/
 	char	password[10];			/* password for alliance                */
+/*101*/
 	char	lastattack[UIDSIZ];		/* userid of last attacker              */
+/*131*/
 	ITEM	items[NUMITEMS];		/* 195                                  */
+/*355*/
 	char	beacon[BEACONMSGSZ];
+/*430*/
 	char	spyowner[UIDSIZ];
+/*460*/
 	unsigned int	plantimesave;
+/*462*/
 	unsigned long	teamcode;
-	char	filler[512-182-(UIDSIZ*2)-(sizeof(ITEM)*NUMITEMS)];
+/*466*/
+	char	filler[512-182-(UIDSIZ*2)-(sizeof(ITEM)*NUMITEMS)]; /*   GALPLNT in GE classic is 512            */
 
 };
 
@@ -544,14 +588,22 @@ GALPLNT {					/* star system data record              */
 extern
 GALWORM {					/* star system data record              */
 	int	xsect;				/* sector x coord                       */
+/*2*/
 	int	ysect;				/* sector y coord                       */
+/*4*/
 	int	plnum;				/* planet number                        */
+/*6*/
 	int	type;				/* type of sector                       */
+/*8*/
 	COORD	coord;
+/*24*/
 	int	visible;			/* is the wormhole visible flag         */
+/*26*/
 	COORD	destination;
+/*42*/
 	char	name[20];
-	char	filler[512-30-(sizeof(COORD)*2)];	/* fill to 250                  */
+/*62*/
+	char	filler[512-30-(sizeof(COORD)*2)];	/*   GALWORM in GE classic is 512            */
 };
 
 
@@ -587,41 +639,69 @@ MAILKEY	{
 extern
 MAIL    {
 	char	userid[UIDSIZ];
+/*30*/
 	int	class;
+/*32*/
 	int	type;
+/*34*/
 	int	stamp;
+/*36*/
 	char	dtime[20];
+/*56*/
 	char	topic[30];
+/*86*/
 	char	string1[80];
+/*166*/
 	char	name1[25];
+/*191*/
 	char	name2[25];
+/*216*/
 	int	int1;
+/*218*/
 	int	int2;
+/*220*/
 	int	int3;
+/*222*/
 	long	long1;
+/*226*/
 	long	long2;
+/*230*/
 	long	long3;
-	char	filler[253-200-UIDSIZ];		/* fill to 256 BJ added 20 for name     */
+/*234*/
+	char	filler[253-200-UIDSIZ];		/*   MAIL in GE classic is 253               */
 	};
 
 #define MAILSTAT struct _mailstat
 extern
 MAILSTAT	{
-		char	userid[UIDSIZ];
-		int	class;
-		int	type;
-		int	stamp;
-		char	dtime[20];
-		char	topic[30];
-		char	name1[25];
-		int	int1;
-		int	int2;
+			char	userid[UIDSIZ];
+	/*30*/
+			int	class;
+	/*32*/
+			int	type;
+	/*34*/
+			int	stamp;
+	/*36*/
+			char	dtime[20];
+	/*56*/
+			char	topic[30];
+	/*86*/
+			char	name1[25];
+	/*111*/
+			int	int1;
+	/*113*/
+			int	int2;
+	/*115*/
 	unsigned long	cash;				/* cash on hand                 */
+	/*119*/
 	unsigned long	timestamp;			/* time of last update          */
+	/*123*/
 	unsigned long	tax;				/* amount of tax collected      */
+	/*127*/
 	unsigned long	itemqty[NUMITEMS];
-	char	filler[253-97-(UIDSIZ)-(sizeof(long)*NUMITEMS)];	/* fill to 250 BJ changed size for name */
-		};
+	/*183*/
+	char	filler[253-97-(UIDSIZ)-(sizeof(long)*NUMITEMS)];	/*   MAILSTAT in GE classic is 253           */
+			};
 
 #define SHPKEY struct _shpkey
 
@@ -735,4 +815,3 @@ BEACONTAB	{
 		};
 
 #define FUNC _export
-
