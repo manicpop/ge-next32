@@ -164,6 +164,8 @@
 
 #define DESTRUCTRANGE 10000
 
+#define NEBRNG 1200		/* SE scan visibility range inside nebulas */
+
 #define NUM_MINES 20		/* 20 mines in the game max */
 
 #define TOPSHIELD 19

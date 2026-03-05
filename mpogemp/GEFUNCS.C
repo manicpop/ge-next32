@@ -2494,6 +2494,17 @@ if (ptr->cloak == 2)
 	ptr->cloak = 10;
 	prfmsg(CLOKUP,ptr->shipname);
 	outprfge(ALWAYS,usrn);
+	if (ptr->lock >= 0)
+		{
+		if (ptr->lock < nships && ingegame(ptr->lock))
+			{
+			prfmsg(LOCK04,shpltr(usrn,ptr->lock));
+			outprfge(FILTER,ptr->lock);
+			}
+		ptr->lock = -1;
+		prfmsg(LOCK01);
+		outprfge(FILTER,usrn);
+		}
 	}
 /* small weapon delay */
 if (ptr->cloak == 3)
@@ -2517,6 +2528,8 @@ int	usrn;
 WARSHP	*lptr;
 double	dist;
 int	lockee;
+byte	locker_neb;
+byte	lockee_neb;
 
 if (ptr->lock < 0)
 	return;
@@ -2543,10 +2556,27 @@ if (lptr->cloak >= 10)
 	ptr->lock = -1;
 	prfmsg(LOCK05,shpltr(lockee,usrn));
 	outprfge(FILTER,usrn);
+	prfmsg(LOCK04,shpltr(usrn,lockee));
+	outprfge(FILTER,lockee);
 	return;
 	}
 
 dist = cdistance(&ptr->coord,&lptr->coord) * 10000.0;
+locker_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
+lockee_neb = (byte)innebula(coord1(lptr->coord.xcoord),coord1(lptr->coord.ycoord));
+if (locker_neb || lockee_neb)
+	{
+	if (!(locker_neb && lockee_neb && dist < (double)NEBRNG))
+		{
+		ptr->lock = -1;
+		prfmsg(LOCK05,shpltr(lockee,usrn));
+		outprfge(FILTER,usrn);
+		prfmsg(LOCK04,shpltr(usrn,lockee));
+		outprfge(FILTER,lockee);
+		return;
+		}
+	}
+
 if (dist > (double)shipclass[ptr->shpclass].scanrange)
 	{
 	ptr->lock = -1;
@@ -4191,12 +4221,15 @@ int	usrn;
 {
 int	i,j;
 char	l;
+byte	ptr_neb,oth_neb;
 WARSHP	*wptr;
 SCANTAB	tmp;
 
 char	lettab[300];
 
 setmem(&lettab[0],sizeof(char)*300,0);
+
+ptr_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
 
 /* save off the old letters */
 for (i=0;i<NOSCANTAB;++i)
@@ -4221,6 +4254,9 @@ for (othusn=0 ; othusn < nships ; othusn++)
 
 		wptr=warshpoff(othusn);
 		ddistance = cdistance(&ptr->coord,&wptr->coord)*10000;
+		oth_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+		if ((ptr_neb || oth_neb) && !(ptr_neb && oth_neb && ddistance < (double)NEBRNG))
+			continue;
 		if (ddistance < shipclass[ptr->shpclass].scanrange
 			&& wptr->cloak < 10)
 			{

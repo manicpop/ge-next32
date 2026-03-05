@@ -1264,6 +1264,9 @@ void FUNC cmd_torp()
 {
 
 int shpnum;
+WARSHP	*wptr;
+double	dist;
+byte nebmask,targ_neb;
 
 if (shipclass[warsptr->shpclass].max_torps == 0)
 	{
@@ -1312,6 +1315,8 @@ if (margc < 2)
 	return;
 	}
 
+nebmask = (byte)innebula(coord1(warsptr->coord.xcoord),coord1(warsptr->coord.ycoord));
+
 shpnum = findshp(margv[1],1);
 
 if (shpnum == usrnum)
@@ -1322,18 +1327,35 @@ if (shpnum == usrnum)
 else
 if ( shpnum >= 0)
 	{
-	if (neutral(&warsptr->coord))
+	wptr = warshpoff(shpnum);
+	dist = cdistance(&warsptr->coord,&wptr->coord) * 10000.0;
+	targ_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+	if ((nebmask || targ_neb) && !(nebmask && targ_neb && dist < (double)NEBRNG))
 		{
-		zaphim(warsptr,usrnum);
-		prfmsg(FRCTER);
+		if (nebmask)
+			prfmsg(SCAN27);
+		else
+			prfmsg(NOSHIP);
 		outprfge(ALWAYS,usrnum);
-		return;
 		}
-	torp(warsptr,usrnum,shpnum);
+	else
+		{
+		if (neutral(&warsptr->coord))
+			{
+			zaphim(warsptr,usrnum);
+			prfmsg(FRCTER);
+			outprfge(ALWAYS,usrnum);
+			return;
+			}
+		torp(warsptr,usrnum,shpnum);
+		}
 	}
 else
 	{
-	prfmsg(NOSHIP);
+	if (nebmask)
+		prfmsg(SCAN27);
+	else
+		prfmsg(NOSHIP);
 	outprfge(ALWAYS,usrnum);
 	}
 
@@ -1433,7 +1455,10 @@ void FUNC cmd_missl()
 {
 
 int shpnum;
+WARSHP	*wptr;
+double	dist;
 unsigned energy;
+byte nebmask,targ_neb;
 
 if (shipclass[warsptr->shpclass].max_missl == 0)
 	{
@@ -1487,6 +1512,8 @@ else
 	}
 
 
+nebmask = (byte)innebula(coord1(warsptr->coord.xcoord),coord1(warsptr->coord.ycoord));
+
 shpnum = findshp(margv[1],1);
 
 if (shpnum == usrnum)
@@ -1497,18 +1524,35 @@ if (shpnum == usrnum)
 else
 if (shpnum >= 0)
 	{
-	if (neutral(&warsptr->coord))
+	wptr = warshpoff(shpnum);
+	dist = cdistance(&warsptr->coord,&wptr->coord) * 10000.0;
+	targ_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+	if ((nebmask || targ_neb) && !(nebmask && targ_neb && dist < (double)NEBRNG))
 		{
-		zaphim(warsptr,usrnum);
-		prfmsg(FRCTER);
+		if (nebmask)
+			prfmsg(SCAN27);
+		else
+			prfmsg(NOSHIP);
 		outprfge(ALWAYS,usrnum);
-		return;
 		}
-	misl(warsptr,usrnum,shpnum,energy,energy);
+	else
+		{
+		if (neutral(&warsptr->coord))
+			{
+			zaphim(warsptr,usrnum);
+			prfmsg(FRCTER);
+			outprfge(ALWAYS,usrnum);
+			return;
+			}
+		misl(warsptr,usrnum,shpnum,energy,energy);
+		}
 	}
 else
 	{
-	prfmsg(NOSHIP);
+	if (nebmask)
+		prfmsg(SCAN27);
+	else
+		prfmsg(NOSHIP);
 	outprfge(ALWAYS,usrnum);
 	}
 
@@ -5157,6 +5201,9 @@ void FUNC cmd_lock()
 {
 
 int	shpnum;
+byte	nebmask,targ_neb;
+double	dist;
+WARSHP	*wptr;
 
 if (margc == 1)
 	{
@@ -5178,6 +5225,20 @@ if (margv[1] == NULL)
 	return;
 	}
 
+if (margv[1][0] == '@')
+	{
+	prfmsg(NOSHIP);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if (warsptr->cloak > 0 )
+	{
+	prfmsg(PCLOKUP,"Scanner lock is");
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
 if (warsptr->jam_sev > (byte)7 || (warsptr->jam_sev > (byte)2 && gernd()%(9 - (int)warsptr->jam_sev) == 0))
 	{
 	prfmsg(JAMMER4W);
@@ -5185,22 +5246,35 @@ if (warsptr->jam_sev > (byte)7 || (warsptr->jam_sev > (byte)2 && gernd()%(9 - (i
 	return;
 	}
 
+nebmask = (byte)innebula(coord1(warsptr->coord.xcoord),coord1(warsptr->coord.ycoord));
 shpnum = findshp(margv[1],1);
 
-	if (shpnum >= 0)
+if (shpnum >= 0)
+	{
+	wptr = warshpoff(shpnum);
+	dist = cdistance(&warsptr->coord,&wptr->coord) * 10000.0;
+	targ_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+	if ((nebmask || targ_neb) && !(nebmask && targ_neb && dist < (double)NEBRNG))
 		{
-		warsptr->lock = shpnum;
-		if (warshpoff(shpnum)->status == GESTAT_AUTO
-			&& shipclass[warshpoff(shpnum)->shpclass].max_type == CLASSTYPE_CYBORG
-			&& warshpoff(shpnum)->cybmine == 255)
-			{
-			warshpoff(shpnum)->cybmine = usrnum;	/* engage user */
-			warshpoff(shpnum)->tick = 2;		/* do it fast */
-			warshpoff(shpnum)->npcmsg = 255;	/* reset annoy msg tracking */
-			}
-		if (warshpoff(shpnum)->status == GESTAT_USER)
-			prfmsg(LOCK02, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
+		if (nebmask)
+			prfmsg(SCAN27);
 		else
+			prfmsg(NOSHIP);
+		outprfge(ALWAYS,usrnum);
+		return;
+		}
+	warsptr->lock = shpnum;
+	if (warshpoff(shpnum)->status == GESTAT_AUTO
+		&& shipclass[warshpoff(shpnum)->shpclass].max_type == CLASSTYPE_CYBORG
+		&& warshpoff(shpnum)->cybmine == 255)
+		{
+		warshpoff(shpnum)->cybmine = usrnum;	/* engage user */
+		warshpoff(shpnum)->tick = 2;		/* do it fast */
+		warshpoff(shpnum)->npcmsg = 255;	/* reset annoy msg tracking */
+		}
+	if (warshpoff(shpnum)->status == GESTAT_USER)
+		prfmsg(LOCK02, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
+	else
 		prfmsg(LOCK02N, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
 	outprfge(FILTER,usrnum);
 	prfmsg(LOCK03,shpltr(shpnum,usrnum));
@@ -5208,7 +5282,10 @@ shpnum = findshp(margv[1],1);
 	}
 else
 	{
-	prfmsg(NOSHIP);
+	if (nebmask)
+		prfmsg(SCAN27);
+	else
+		prfmsg(NOSHIP);
 	outprfge(ALWAYS,usrnum);
 	}
 }
@@ -5218,7 +5295,6 @@ else
 /**************************************************************************
 ** navigate command...                                                   **
 **************************************************************************/
-
 void FUNC cmd_navigate()
 {
 COORD	tmp;

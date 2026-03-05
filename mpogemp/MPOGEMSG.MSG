@@ -3497,6 +3497,14 @@ SCAN25 {[0;37m
 Scanning %s [1;34m%d %d[0;37m:
 } T GE scan 25
 
+SCAN26 {
+[0;37m[[1;31mERROR[0;37m] There is no such planet in this sector, or it is hidden by the nebula.[1;37m
+} T GE can't scan planet in nebula message
+
+SCAN27 {
+[0;37m[[1;31mERROR[0;37m] Scanner functionality is limited inside the nebula.[1;37m
+} T GE can't scan planet in nebula message
+
 SCAN28 {[0;37mPopulation: [1;37m%s
 } T GE scan 28
 

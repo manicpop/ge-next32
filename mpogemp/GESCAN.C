@@ -61,6 +61,8 @@
 const int scan_side_blocks[15] =
 	{7, 4, 3, 1, 0, 0, 0, 0, 0, 0, 0, 1, 3, 4, 7};
 
+static int se_nebula = FALSE;
+
 /**************************************************************************
 ** Functions for printmap()                                              **
 **************************************************************************/
@@ -170,6 +172,9 @@ unsigned int rseed = gernd();
 int jam_digits, len, k;
 int orbit = (warsptr->where - 11 == shp);
 
+if (se_nebula && cdistance(&warsptr->coord,&ptab[usrnum].planets[shp].coord)*10000.0 > (double)NEBRNG && !orbit)
+	return(FALSE);
+
 if (rseed%(warsptr->jam_sev+1) > (byte)6 && !orbit)
 	return(FALSE);
 if (rseed%(warsptr->jam_sev+1) > (byte)3 && !orbit)
@@ -237,7 +242,23 @@ switch (maptype)
 		}
 	case SECTORFULL:
 		{
-		if (ptab[usrnum].planets[0].type != 0)
+		int i, vispl = FALSE;
+
+		if (!se_nebula)
+			vispl = (ptab[usrnum].planets[0].type != 0);
+		else
+			{
+			for (i=0; i<MAXPLANETS && ptab[usrnum].planets[i].type != 0; ++i)
+				{
+				if (cdistance(&warsptr->coord,&ptab[usrnum].planets[i].coord)*10000.0 <= (double)NEBRNG)
+					{
+					vispl = TRUE;
+					break;
+					}
+				}
+			}
+
+		if (vispl)
 			prfmsg(PLUSSECT);
 		else
 			prfmsg(PLUSDASH);
@@ -482,6 +503,8 @@ for (i=0;i < sector.numplan;++i)
 	{
 	if (sector.ptab[i].coord.xcoord != 0)
 		{
+		if (se_nebula && cdistance(&warsptr->coord,&sector.ptab[i].coord)*10000.0 > (double)NEBRNG)
+			continue;
 		x = coord2(sector.ptab[i].coord.xcoord)+25;
 		y = coord2(sector.ptab[i].coord.ycoord)+25;
 		if (map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] == '*')
@@ -527,6 +550,7 @@ WARUSR	*wuptr;
 char	ltr;
 unsigned int rseed = gernd();
 long	scandist;	/* update_scantab uses ddistance, so we need a local here */
+int	nebmask,target_neb;
 
 if (margc != 3)
 	{
@@ -542,7 +566,33 @@ if (warsptr->jam_sev > (byte)7 || (warsptr->jam_sev > (byte)2 && rseed%(9 - (int
 	return;
 	}
 
+setsect(warsptr);
+nebmask = innebula(xsect,ysect);
+
 shpnum = findshp(margv[2],1);
+
+if (shpnum >= 0)
+	{
+	wptr = warshpoff(shpnum);
+	scandist = cdistance(&warsptr->coord,&wptr->coord)*10000;
+	target_neb = innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+	if ((nebmask || target_neb) && !(nebmask && target_neb && scandist < (long)NEBRNG))
+		{
+		if (nebmask)
+			prfmsg(SCAN27);
+		else
+			prfmsg(NOSHIP);
+		outprfge(ALWAYS,usrnum);
+		return;
+		}
+	}
+else
+if (nebmask)
+	{
+	prfmsg(SCAN27);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
 
 if (shpnum == usrnum)
 	{
@@ -668,6 +718,7 @@ void FUNC scan_pl()
 {
 unsigned i;
 unsigned int rseed = gernd();
+int	nebmask;
 
 /* SCAN PLANET FUNCTION */
 
@@ -687,10 +738,28 @@ if (warsptr->jam_sev > (byte)7 || (warsptr->jam_sev > (byte)2 && rseed%(9 - (int
 
 plnum = atoi(margv[2]);
 
+setsect(warsptr);
+nebmask = innebula(xsect,ysect);
+
 if (plnum <= MAXPLANETS && plnum > 0)
 	{
 	getplanetdat(usrnum);
 	refresh(warsptr,usrnum);
+	if (nebmask)
+		{
+		if (plnum > sector.numplan)
+			{
+			prfmsg(SCAN26);
+			outprfge(ALWAYS,usrnum);
+			return;
+			}
+		if (cdistance(&warsptr->coord,&plptr->coord)*10000.0 > (double)NEBRNG)
+			{
+			prfmsg(SCAN26);
+			outprfge(ALWAYS,usrnum);
+			return;
+			}
+		}
 	if (plnum > sector.numplan)
 		{
 		prfmsg(NOPLNT);
@@ -904,6 +973,13 @@ if (margc < 2 || margc > 3)
 
 setsect(warsptr);
 
+if (innebula(xsect,ysect))
+	{
+	prfmsg(SCAN27);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
 if (genearas("h",margv[2]))
 	range = (double)((shipclass[warsptr->shpclass].scanrange) / 2);
 else
@@ -1046,11 +1122,15 @@ void FUNC scan_se()
 unsigned i,x,y;
 WARSHP	*wptr;
 MINE	*mptr;
+int	nebmask;
+long	px,py,dx,dy,r2;
 
 refresh(warsptr,usrnum);
 
 setsect(warsptr);
-prfmsg(SCAN25,(innebula(xsect,ysect) ? CLR_GREEN2 "nebula" : "sector"),xsect,ysect);
+nebmask = innebula(xsect,ysect);
+se_nebula = nebmask;
+prfmsg(SCAN25,(nebmask ? CLR_GREEN2 "nebula" : "sector"),xsect,ysect);
 clearmap();
 
 update_scantab(warsptr,usrnum);
@@ -1062,6 +1142,8 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 
 	if (mptr->channel != 255 && (x==xsect && y==ysect))	/* if a live mine */
 		{
+		if (nebmask && cdistance(&warsptr->coord,&mptr->coord)*10000.0 > (double)NEBRNG)
+			continue;
 		x = coord2(mptr->coord.xcoord) +50;
 		y = coord2(mptr->coord.ycoord) +50;
 		map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '.';
@@ -1077,6 +1159,8 @@ for (i=0 ; i< NOSCANTAB; i++)
 		wptr = warshpoff(othusn);
 		if (samesect(&wptr->coord,&warsptr->coord))
 			{
+			if (nebmask && cdistance(&warsptr->coord,&wptr->coord)*10000.0 > (double)NEBRNG)
+				continue;
 			x = coord2(wptr->coord.xcoord) +50;
 			y = coord2(wptr->coord.ycoord) +50;
 			map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = scantab[usrnum].ship[i].letter;
@@ -1099,6 +1183,30 @@ map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '*';
 mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '0';
 
 map_planets();
+
+if (nebmask)
+	{
+	px = (long)(coord2(warsptr->coord.xcoord) + 50);
+	py = (long)(coord2(warsptr->coord.ycoord) + 50);
+	r2 = (long)NEBRNG * (long)NEBRNG;
+	for (y=0; y<MAXY; ++y)
+		{
+		dy = (((long)y * (long)(SSMAX/(MAXY-1))) + (long)((SSMAX/(MAXY-1))/2)) - py;
+		for (x=0; x<MAXX; ++x)
+			{
+			dx = (((long)x * (long)(SSMAX/(MAXX-1))) + (long)((SSMAX/(MAXX-1))/2)) - px;
+			if ((dx*dx + dy*dy) > r2)
+				{
+				if (map[y][x] == ' ')
+					{
+					map[y][x] = '.';
+					mapc[y][x] = '2';
+					}
+				}
+			}
+		}
+	}
+
 if (waruptr->options[SCANOPTS] == NOMAP)
 	printmap(SECTORNOMAP,0L);
 else
@@ -1106,6 +1214,7 @@ if (waruptr->options[SCANOPTS] == SIMPLE)
 	printmap(SECTOR,0L);
 else
 	printmap(SECTORFULL,0L);
+se_nebula = FALSE;
 outprfge(ALWAYS,usrnum);
 }
 
@@ -1131,6 +1240,13 @@ if (margc < 2 || margc > 3)
 	}
 
 setsect(warsptr);
+
+if (innebula(xsect,ysect))
+	{
+	prfmsg(SCAN27);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
 
 if (margc == 3 && genearas("h",margv[2]))
 	range = (double)(shipclass[warsptr->shpclass].scanrange) * 5.0;
