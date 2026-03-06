@@ -2090,12 +2090,20 @@ PHITHIMC {
 [0;37mThe phasers caused [0;31m%s[0;37m damage to a cloaked ship![1;37m
 } T GE phaser hit someone message
 
+PHITHIMN {
+[0;37mThe phasers caused [0;31m%s[0;37m damage to a ship in [1;32mnebula [1;34m%d %d[0;37m![1;37m
+} T GE phaser hit someone message
+
 PHITNPC {
 [0;37mThe phasers caused [0;31m%s[0;37m damage to [0;36m%s[0;37m![1;37m
 } T GE phaser hit someone message
 
 PHITYOU {***
 [0;37m[[0;31mWARNING![0;37m] Phaser hit from [0;36m%s[0;37m's ship, caused [0;31m%s[0;37m damage![1;37m
+} T GE phaser hit you message
+
+PHITYOUN {***
+[0;37m[[0;31mWARNING![0;37m] Phaser hit from an unknown ship, caused [0;31m%s[0;37m damage![1;37m
 } T GE phaser hit you message
 
 PNPCHIT {***
@@ -2110,6 +2118,10 @@ PDEFLECC {
 [0;37mThe phasers were deflected by a cloaked ship's shields![1;37m
 } T GE phasers you fired deflected message
 
+PDEFLECN {
+[0;37mThe phasers were deflected by a ship in [1;32mnebula [1;34m%d %d[0;37m's shields![1;37m
+} T GE phasers you fired deflected message
+
 PDEFNEUT {
 [0;37mThe neutral zone protected [0;36m%s[0;37m's ship from the phasers![1;37m
 } T GE phasers you fired deflected message
@@ -2120,6 +2132,11 @@ PDEFLNPC {
 
 PHITDEF {***
 [0;37m[[1;31mCAUTION[0;37m] Phaser hit from [0;36m%s[0;37m's ship, magnitude [0;31m%d[0;37m,
+was deflected by the shields![1;37m
+} T GE phaser fired at you deflected message
+
+PHITDEFN {***
+[0;37m[[1;31mCAUTION[0;37m] Phaser hit from an unknown ship, magnitude [0;31m%d[0;37m,
 was deflected by the shields![1;37m
 } T GE phaser fired at you deflected message
 
@@ -3248,6 +3265,9 @@ REP01 {
 REP02 {[1;35mTraveling in hyperspace (sector [1;34m%d %d[1;35m)[1;37m
 } T GE report 02
 
+REP02N {[1;35mTraveling in hyperspace ([1;32mnebula [1;34m%d %d[1;35m)[1;37m
+} T GE report 02
+
 REP03 {[1;37mSpeed................. Warp %s
 } T GE report 03
 
@@ -3257,6 +3277,9 @@ REP04 {[1;37mGalactic heading...... %d
 REP05 {[1;37mNavigating sector [1;34m%d %d[1;37m
 } T GE report 05
 
+REP05N {[1;37mNavigating [1;32mnebula [1;34m%d %d[1;37m
+} T GE report 05
+
 REP06 {[1;37mSpeed................. Warp %s
 } T GE report 06
 
@@ -3264,6 +3287,9 @@ REP07 {[1;37mGalactic heading...... %u
 } T GE report 07
 
 REP08 {[1;37mOrbiting planet [1;34m%d[1;37m in sector [1;34m%d %d[1;37m
+} T GE report 08
+
+REP08N {[1;37mOrbiting planet [1;34m%d[1;37m in [1;32mnebula [1;34m%d %d[1;37m
 } T GE report 08
 
 REP09 {[1;37mNeutron flux.......... %u
@@ -3641,12 +3667,20 @@ HPHITM {
 [0;37mThe hyper-phaser caused [0;31m%s[0;37m damage to [0;36m%s[0;37m's ship![1;37m
 } T GE you hit a ship with hyperphaser message
 
+HPHITNEB {
+[0;37mThe hyper-phaser caused [0;31m%s[0;37m damage to a ship in [1;32mnebula [1;34m%d %d[0;37m![1;37m
+} T GE you hit a ship with hyperphaser message
+
 HPHITN {
 [0;37mThe hyper-phaser caused [0;31m%s[0;37m damage to [0;36m%s[0;37m![1;37m
 } T GE you hit a ship with hyperphaser message
 
 HPHITU {***
 [0;37m[[0;31mWARNING![0;37m] Hyper-phaser hit from [0;36m%s[0;37m's ship, caused [0;31m%s[0;37m damage![1;37m
+} T GE you got hit with a hyperphaser message
+
+HPHITUN {***
+[0;37m[[0;31mWARNING![0;37m] Hyper-phaser hit from an unknown ship, caused [0;31m%s[0;37m damage![1;37m
 } T GE you got hit with a hyperphaser message
 
 HPNHITU {***

@@ -838,6 +838,7 @@ void FUNC cmd_orbit()
 
 {
 int got_plt;
+byte nebmask;
 
 if (margc != 2)
 	{
@@ -860,11 +861,27 @@ if (warsptr->where >= 10)
 	return;
 	}
 
+nebmask = (byte)innebula(coord1(warsptr->coord.xcoord),coord1(warsptr->coord.ycoord));
 plnum = (atoi(margv[1]));
 
 if (plnum <= MAXPLANETS && plnum > 0)
 	{
 	got_plt = getplanetdat(usrnum);
+	if (nebmask)
+		{
+		if (!got_plt)
+			{
+			prfmsg(SCAN26);
+			outprfge(ALWAYS,usrnum);
+			return;
+			}
+		if (cdistance(&warsptr->coord,&plptr->coord)*10000.0 > (double)NEBRNG)
+			{
+			prfmsg(SCAN26);
+			outprfge(ALWAYS,usrnum);
+			return;
+			}
+		}
 	if (got_plt)
 		{
 		if (plptr->type == PLTYPE_WORM)
@@ -1004,6 +1021,7 @@ WARUSR	*wuptr;
 
 unsigned deg;
 double factor;
+byte src_neb,targ_neb,nebmask;
 
 int hitone;
 
@@ -1040,6 +1058,7 @@ if (ptr->phasr >=PMINFIRE)
 	deg = (unsigned)(normal(ptr->heading + (double)ptr->degrees) + 0.5);
 	prfmsg(PFIRED,(int)ptr->phasr,ptr->percent);
 	outprfge(FILTER,usrn);
+	src_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
 	for (othusn=0 ; othusn < nships ; othusn++)
 		{
 		wptr=warshpoff(othusn);
@@ -1083,9 +1102,14 @@ if (ptr->phasr >=PMINFIRE)
 								wptr->tick = 2;		/* do it fast */
 								wptr->npcmsg = 255;	/* reset annoy msg tracking */
 								}
+							targ_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+							nebmask = (byte)((src_neb || targ_neb) && !(src_neb && targ_neb && ddistance < (double)NEBRNG));
 							if (wptr->shieldstat != SHIELDUP)
 								{
 								damstr((int)factor);
+								if (nebmask)
+									prfmsg(PHITHIMN,gechrbuf,coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+								else
 								if (wptr->cloak == 10)
 									prfmsg(PHITHIMC,gechrbuf);
 								else
@@ -1094,6 +1118,9 @@ if (ptr->phasr >=PMINFIRE)
 								else
 									prfmsg(PHITHIM,gechrbuf,username(wptr));
 								outprfge(ALWAYS,usrn);
+								if (nebmask)
+									prfmsg(PHITYOUN,gechrbuf);
+								else
 								if (ptr->status == GESTAT_AUTO)
 									prfmsg(PNPCHIT,username(ptr),gechrbuf);
 								else
@@ -1114,6 +1141,9 @@ if (ptr->phasr >=PMINFIRE)
 								shieldhit(wptr,othusn,(int)factor); /* modify the damage */
 								wuptr = warusroff(usrn);
 								set_dislike(wuptr,shipclass[wptr->shpclass].faction,2);
+								if (nebmask)
+									prfmsg(PDEFLECN,coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+								else
 								if (wptr->cloak == 10)
 									prfmsg(PDEFLECC);
 								else
@@ -1122,6 +1152,9 @@ if (ptr->phasr >=PMINFIRE)
 								else
 									prfmsg(PDEFLECT,username(wptr));
 								outprfge(ALWAYS,usrn);
+								if (nebmask)
+									prfmsg(PHITDEFN,(int)factor);
+								else
 								if (ptr->status == GESTAT_AUTO)
 									prfmsg(PNPCDEF,username(ptr),(int)factor);
 								else
@@ -1154,6 +1187,7 @@ WARSHP	*wptr;
 WARUSR	*wuptr;
 unsigned deg;
 double factor;
+byte src_neb,targ_neb,nebmask;
 
 
 if (ptr->damage >= 100)
@@ -1176,6 +1210,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 	deg = (unsigned)normal(ptr->heading + (double)ptr->degrees);
 	prfmsg(HPFIRED,deg);
 	outprfge(FILTER,usrn);
+	src_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
 	ptr->energy -= HPFIRAMT;
 	ptr->hypha = 1;
 	for (othusn=0 ; othusn < nships ; othusn++)
@@ -1208,12 +1243,20 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 								if (factor < 1.0)	/* hit, but no damage */
 									factor = 0.0;
 								damstr((int)factor);
+								targ_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+								nebmask = (byte)((src_neb || targ_neb) && !(src_neb && targ_neb && ddistance < (double)NEBRNG));
 
+								if (nebmask)
+									prfmsg(HPHITNEB,gechrbuf,coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+								else
 								if (wptr->status == GESTAT_AUTO)
 									prfmsg(HPHITN,gechrbuf,username(wptr));
 								else
 									prfmsg(HPHITM,gechrbuf,username(wptr));
 								outprfge(ALWAYS,usrn);
+								if (nebmask)
+									prfmsg(HPHITUN,gechrbuf);
+								else
 								if (ptr->status == GESTAT_AUTO)
 									prfmsg(HPNHITU,username(ptr),gechrbuf);
 								else
@@ -2383,7 +2426,10 @@ if (sameas(margv[1],"nav"))
 	if (warsptr->where == 1)
 		{
 		setsect(warsptr);
-		prfmsg(REP02,xsect, ysect);
+		if (innebula(xsect,ysect))
+			prfmsg(REP02N,xsect, ysect);
+		else
+			prfmsg(REP02,xsect, ysect);
 		prfmsg(REP03, showarp(warsptr->speed));
 		prfmsg(REP04, heading);
 		}
@@ -2391,7 +2437,10 @@ if (sameas(margv[1],"nav"))
 	if (warsptr->where == 0)
 		{
 		setsect(warsptr);
-		prfmsg(REP05,xsect,ysect);
+		if (innebula(xsect,ysect))
+			prfmsg(REP05N,xsect,ysect);
+		else
+			prfmsg(REP05,xsect,ysect);
 		prfmsg(REP06, showarp(warsptr->speed));
 		prfmsg(REP07, heading);
 		}
@@ -2399,7 +2448,10 @@ if (sameas(margv[1],"nav"))
 	if (warsptr->where >= 10)
 		{
 		setsect(warsptr);
-		prfmsg(REP08,warsptr->where - 10,xsect,ysect);
+		if (innebula(xsect,ysect))
+			prfmsg(REP08N,warsptr->where - 10,xsect,ysect);
+		else
+			prfmsg(REP08,warsptr->where - 10,xsect,ysect);
 		}
 
 	setsect(warsptr);

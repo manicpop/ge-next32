@@ -128,6 +128,21 @@ The main focus of 0.3 is enhancements for user ships:
     that ship's scan area, that player's lock will be cleared.
 
 Other stuff:
+* NEBULAS have been added. Certain sectors of the galaxy will
+  now be nebulas. You will need to seek out (or avoid) these
+  sectors as you see fit. Inside a nebula, your scan range is
+  severely limited. You will also be hidden from any ships
+  outside the nebula. Nebulas interfere with scanners, your
+  LOCK system, and torpedoes and missiles. Nebulas do not
+  protect you from phasers or mines (but make it much harder
+  for someone to target you with them). Nebulas are a good place
+  to hide, but you won't have any idea what's going on outside
+  (or who might be following you in). Planets and wormholes can
+  exist in nebulas like any other sector, but you will have
+  to search for them. The positions of nebulas are determined
+  by a random seed generated the first time a new game is
+  loaded, so they will be different in every ge-next instance.
+  Nebula frequency can be adjusted (or turned off) by the admin.
 * The list of ships presented at the start of the game will now
   show 15 ships, and if you have more than 15, you can use 'n'
   and 'p' to scroll through the pages of ships. This fixes a

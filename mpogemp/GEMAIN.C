@@ -2338,22 +2338,36 @@ unsigned exclude,freq;
 {
 int	i;
 int	zothusn;
+double	ddist;
+byte	src_neb,oth_neb;
+WARSHP	*wptr;
+
+src_neb = (byte)innebula(coord1(coordptr->xcoord),coord1(coordptr->ycoord));
 
 for (zothusn=0; zothusn < nterms ; zothusn++)
 	{
 	if (ingegame(zothusn) && zothusn != exclude)
 		{
-		if (samesect(&(warshpoff(zothusn)->coord),coordptr))
+		wptr=warshpoff(zothusn);
+		if (samesect(&(wptr->coord),coordptr))
 			{
 			if (freq == 0)
 				{
+				oth_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+				if (src_neb || oth_neb)
+					{
+					ddist = cdistance(coordptr,&wptr->coord);
+					ddist *= 10000;
+					if (!(src_neb && oth_neb && ddist < (double)NEBRNG))
+						continue;
+					}
 				outprfge(filter,zothusn);
 				}
 			else
 				{
 				for (i=0; i<3; ++i)
 					{
-					if (freq == warshpoff(zothusn)->freq[i])
+					if (freq == wptr->freq[i])
 						{
 						outprfge(filter,zothusn);
 						}
@@ -2375,8 +2389,10 @@ COORD	*coordptr;
 {
 double	ddist;
 int	zothusn;
+byte	src_neb,oth_neb;
 WARSHP	*wptr;
 
+src_neb = (byte)innebula(coord1(coordptr->xcoord),coord1(coordptr->ycoord));
 
 for (zothusn=0 ; zothusn < nships ; zothusn++)
 	{
@@ -2385,6 +2401,9 @@ for (zothusn=0 ; zothusn < nships ; zothusn++)
 		{
 		ddist = cdistance(coordptr,&wptr->coord);
 		ddist *= 10000;
+		oth_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+		if ((src_neb || oth_neb) && !(src_neb && oth_neb && ddist < (double)NEBRNG))
+			continue;
 		if (ddist > 1 && ddist < (double)shipclass[wptr->shpclass].scanrange)
 			outprfge(filter,zothusn);
 		}

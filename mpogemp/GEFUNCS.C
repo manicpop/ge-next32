@@ -865,6 +865,7 @@ COORD	oldsect,newsect,neutsect;
 int	overamt,intspeed,zothusn,movenergy;
 double	ddist;
 float	newtop;
+byte	ptr_neb,oth_neb;
 
 neutsect.xcoord = 0.50001;
 neutsect.ycoord = 0.50001;
@@ -1016,6 +1017,7 @@ if (ptr->speed > 0)
 		unsigned int r = gernd();
 		if (ptr->speed2b > (double)(((r >> 5) % 200) + 10) && (((r >> 8) % 25) == 0))
 			{
+			ptr_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
 			for (zothusn=0 ; zothusn < nterms ; zothusn++)
 				{
 				wptr=warshpoff(zothusn);
@@ -1023,6 +1025,9 @@ if (ptr->speed > 0)
 					{
 					ddist = cdistance(&warsptr->coord,&wptr->coord);
 					ddist *= 10000;
+					oth_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+					if ((ptr_neb || oth_neb) && !(ptr_neb && oth_neb && ddist < (double)NEBRNG))
+						continue;
 
 					if (ddist < (shipclass[wptr->shpclass].scanrange)
 						&& ddist < 20000 && wptr->jam_sev <= (byte)2)
@@ -1955,6 +1960,7 @@ WARSHP	*wptr;
 WARUSR	*wuptr;
 double	ddist, damfact;
 unsigned udist;
+byte	mine_neb,ship_neb;
 MINE	*mptr;
 setmbk(gemb);
 
@@ -1973,6 +1979,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 		--mptr->timer;
 		if (mptr->timer%5 == 0)
 			{
+			mine_neb = (byte)innebula(coord1(mptr->coord.xcoord),coord1(mptr->coord.ycoord));
 			for (zothusn=0 ; zothusn < nships ; zothusn++)
 				{
 				wptr=warshpoff(zothusn);
@@ -2028,8 +2035,12 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 							{
 							if (wptr->jam_sev <= (byte)2)
 								{
-								prfmsg(MINE6,bearing,udist);
-								outprfge(FILTER,zothusn);
+								ship_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+								if (!(mine_neb || ship_neb) || (mine_neb && ship_neb && ddist < (double)NEBRNG))
+									{
+									prfmsg(MINE6,bearing,udist);
+									outprfge(FILTER,zothusn);
+									}
 								}
 							wptr->minesnear = TRUE;
 							}
@@ -2037,8 +2048,12 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 					else
 					if (mptr->timer == 0 && wptr->jam_sev <= (byte)2)
 						{
-						prfmsg(MINE5,bearing);
-						outprfge(FILTER,zothusn);
+						ship_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+						if (!(mine_neb || ship_neb) || (mine_neb && ship_neb && ddist < (double)NEBRNG))
+							{
+							prfmsg(MINE5,bearing);
+							outprfge(FILTER,zothusn);
+							}
 						}
 					}
 				}
@@ -2069,6 +2084,9 @@ MISSILE				*mptr;
 TORPEDO				*tptr;
 unsigned			*dptr;
 double				damfact;
+WARSHP				*sptr;
+byte				ptr_neb,src_neb;
+double				ndist;
 
 /* flag hyper-phasers ready again */
 if (ptr->hypha > 0)
@@ -2084,6 +2102,8 @@ if (ptr->zipload > 0)
 if (ptr->cantexit > 0)
 	--(ptr->cantexit);
 
+ptr_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
+
 /* torpedoes first */
 
 shotdown = 0;
@@ -2096,6 +2116,25 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 	if (tptr->distance > 0)
 		{
 		ptr->cantexit = FIRETICKS;
+		if (tptr->distance >= 5000 && (int)tptr->channel < nships && ingegame((int)tptr->channel))
+			{
+			sptr = warshpoff((int)tptr->channel);
+			src_neb = (byte)innebula(coord1(sptr->coord.xcoord),coord1(sptr->coord.ycoord));
+			if (ptr_neb || src_neb)
+				{
+				ndist = cdistance(&ptr->coord,&sptr->coord) * 10000.0;
+				if (!(ptr_neb && src_neb && ndist < (double)NEBRNG))
+					{
+					tptr->distance = 0;
+					if ((int)tptr->channel < nterms)
+						{
+						prfmsg(TORMISS,shpltr(tptr->channel,usrn));
+						outprfge(FILTER,tptr->channel);
+						}
+					continue;
+					}
+				}
+			}
 		if (neutral(&ptr->coord) && tptr->distance < 5000)
 			{
 			tptr->distance = 0;
@@ -2258,6 +2297,26 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 		float menergy, mscale;
 
 		ptr->cantexit = FIRETICKS;
+		if (mptr->distance >= 5000 && (int)mptr->channel < nships && ingegame((int)mptr->channel))
+			{
+			sptr = warshpoff((int)mptr->channel);
+			src_neb = (byte)innebula(coord1(sptr->coord.xcoord),coord1(sptr->coord.ycoord));
+			if (ptr_neb || src_neb)
+				{
+				ndist = cdistance(&ptr->coord,&sptr->coord) * 10000.0;
+				if (!(ptr_neb && src_neb && ndist < (double)NEBRNG))
+					{
+					mptr->distance = 0;
+					++lost_cnt;
+					if ((int)mptr->channel < nterms)
+						{
+						prfmsg(MISMISS,shpltr(mptr->channel,usrn));
+						outprfge(FILTER,mptr->channel);
+						}
+					continue;
+					}
+				}
+			}
 		/* heavy missiles up to half speed, light missiles up to 2x speed */
 		menergy = (float)mptr->energy + 300.0f;
 		mscale = sqrt(5000.0f / menergy);
