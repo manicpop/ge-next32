@@ -3074,8 +3074,8 @@ if (margc == 1)
 	plnum = warsptr->where - 10;
 	getplanetdat(usrnum);
 
-	strncpy(plptr->password,margv[0],9);
-	plptr->password[10] = 0;
+	strncpy(plptr->password,margv[0],sizeof(plptr->password)-1);
+	plptr->password[sizeof(plptr->password)-1] = 0;
 
 	setsect(warsptr); /* build PKEY */
 	pkey.plnum = plnum;

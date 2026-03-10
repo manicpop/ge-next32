@@ -567,9 +567,9 @@ GALPLNT {					/* star system data record              */
 /*90*/
 	char	warnings;			/* warnings to intruders                */
 /*91*/
-	char	password[10];			/* password for alliance                */
-/*101*/
-	char	lastattack[UIDSIZ];		/* userid of last attacker              */
+	char	password[11];			/* password for alliance                */
+/*102*/
+	char	filler2[UIDSIZ-1];		/* unused                               */
 /*131*/
 	ITEM	items[NUMITEMS];		/* 195                                  */
 /*355*/
