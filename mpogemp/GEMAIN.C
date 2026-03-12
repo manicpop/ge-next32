@@ -608,8 +608,8 @@ for (n=0; n<tot_classes; ++n)
 
 	shipclass[i].max_shlds = numopt(++classbase,0,19);
 	shipclass[i].max_phasr = numopt(++classbase,0,19);
-	shipclass[i].max_torps = ynopt(++classbase);
-	shipclass[i].max_missl = ynopt(++classbase);
+	shipclass[i].max_torps = numopt(++classbase,0,3);
+	shipclass[i].max_missl = numopt(++classbase,0,3);
 	shipclass[i].has_decoy = ynopt(++classbase);
 	shipclass[i].has_jam = ynopt(++classbase);
 	shipclass[i].has_zip = ynopt(++classbase);

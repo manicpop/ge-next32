@@ -2535,7 +2535,15 @@ TORP2 {
 } T GE no torpedoes in hyperspace message
 
 TORP3 {
-[0;37m[[1;31mERROR[0;37m] This ship is not equipped with a torpedo launcher.[1;37m
+[0;37m[[1;31mERROR[0;37m] This ship is not equipped with any torpedo launchers.[1;37m
+} T GE no torpedo launcher on this ship message
+
+TORPRELS {
+[0;37m[[1;31mERROR[0;37m] The torpedo launcher is reloading.[1;37m
+} T GE no torpedo launcher on this ship message
+
+TORPRELM {
+[0;37m[[1;31mERROR[0;37m] All torpedo launchers are reloading.[1;37m
 } T GE no torpedo launcher on this ship message
 
 NOMISSL {
@@ -2558,8 +2566,16 @@ MISMANY2 {[0;37m%s also firing on this ship.[1;37m
 } T GE too many missiles extra context message
 
 MISS01 {
-[0;37m[[1;31mERROR[0;37m] This ship is not equipped with a missile launcher.[1;37m
+[0;37m[[1;31mERROR[0;37m] This ship is not equipped with any missile launchers.[1;37m
 } T GE no missile launcher on this ship message
+
+MISSRELS {
+[0;37m[[1;31mERROR[0;37m] The missile launcher is reloading.[1;37m
+} T GE no torpedo launcher on this ship message
+
+MISSRELM {
+[0;37m[[1;31mERROR[0;37m] All missile launchers are reloading.[1;37m
+} T GE no torpedo launcher on this ship message
 
 FCNOLOCK {
 [0;37m[[1;31mERROR[0;37m] Fire control scanners cannot get a positive lock on ship [0;36m%c[0;37m![1;37m

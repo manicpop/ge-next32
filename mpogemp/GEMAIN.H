@@ -477,9 +477,13 @@ WARSHP	{
 /*308*/
 	int		mineload;		/*   mine launch throttle                    */
 /*310*/
-	unsigned	ukills;			/*   just user kills                         */
+	byte		torps_fired;		/*   torpedoes fired this tick               */
+/*311*/
+	byte		missl_fired;		/*   missiles fired this tick                */
 /*312*/
-	char		filler[514-278-UIDSIZ]; /*   WARSHP in GE classic is 514             */
+	unsigned	ukills;			/*   just user kills                         */
+/*314*/
+	char		filler[514-280-UIDSIZ]; /*   WARSHP in GE classic is 514             */
 	};
 
 /*

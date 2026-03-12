@@ -213,6 +213,10 @@ Other stuff:
 * Higher warp speeds now use more flux. Stock up on pods.
 * Impulse now uses 1 flux unit per tick. Ships now "background
   charge" flux twice as fast so that impluse is "free."
+* Instead of a "yes/no" for torpedo and missile capability,
+  ships now have from 0 to 3 torpedo and missile launchers and
+  a small reload delay. Ships can fire up to that many projectiles
+  before having to wait a few seconds for the launchers to reload.
 
 === 0.2.6 === 2025-08-15
 

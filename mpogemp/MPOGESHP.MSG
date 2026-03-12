@@ -33,13 +33,13 @@ between 1 and this class.
 
 S01PHSR {Maximum phaser type: 8} (S01TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 01.
+Number of torpedo launchers for class 01.
 
-S01TORP {Has torpedo capability? YES} (S01TYPE#<NONE>) B
+S01TORP {Number of torpedo launchers: 1} (S01TYPE#<NONE>) N 0 3
 
-Missile capability for class 01.
+Number of missile launchers for class 01.
 
-S01MISL {Has missile capability? NO} (S01TYPE#<NONE>) B
+S01MISL {Number of missile launchers: 0} (S01TYPE#<NONE>) N 0 3
 
 Decoy capability for class 01.
 
@@ -209,13 +209,13 @@ between 1 and this class.
 
 S02PHSR {Maximum phaser type: 0} (S02TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 02.
+Number of torpedo launchers for class 02.
 
-S02TORP {Has torpedo capability? NO} (S02TYPE#<NONE>) B
+S02TORP {Number of torpedo launchers: 0} (S02TYPE#<NONE>) N 0 3
 
-Missile capability for class 02.
+Number of missile launchers for class 02.
 
-S02MISL {Has missile capability? NO} (S02TYPE#<NONE>) B
+S02MISL {Number of missile launchers: 0} (S02TYPE#<NONE>) N 0 3
 
 Decoy capability for class 02.
 
@@ -386,13 +386,13 @@ between 1 and this class.
 
 S03PHSR {Maximum phaser type: 2} (S03TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 03.
+Number of torpedo launchers for class 03.
 
-S03TORP {Has torpedo capability? NO} (S03TYPE#<NONE>) B
+S03TORP {Number of torpedo launchers: 0} (S03TYPE#<NONE>) N 0 3
 
-Missile capability for class 03.
+Number of missile launchers for class 03.
 
-S03MISL {Has missile capability? NO} (S03TYPE#<NONE>) B
+S03MISL {Number of missile launchers: 0} (S03TYPE#<NONE>) N 0 3
 
 Decoy capability for class 03.
 
@@ -561,13 +561,13 @@ between 1 and this class.
 
 S04PHSR {Maximum phaser type: 10} (S04TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 04.
+Number of torpedo launchers for class 04.
 
-S04TORP {Has torpedo capability? YES} (S04TYPE#<NONE>) B
+S04TORP {Number of torpedo launchers: 1} (S04TYPE#<NONE>) N 0 3
 
-Missile capability for class 04.
+Number of missile launchers for class 04.
 
-S04MISL {Has missile capability? YES} (S04TYPE#<NONE>) B
+S04MISL {Number of missile launchers: 1} (S04TYPE#<NONE>) N 0 3
 
 Decoy capability for class 04.
 
@@ -737,13 +737,13 @@ between 1 and this class.
 
 S05PHSR {Maximum phaser type: 3} (S05TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 05.
+Number of torpedo launchers for class 05.
 
-S05TORP {Has torpedo capability? NO} (S05TYPE#<NONE>) B
+S05TORP {Number of torpedo launchers: 0} (S05TYPE#<NONE>) N 0 3
 
-Missile capability for class 05.
+Number of missile launchers for class 05.
 
-S05MISL {Has missile capability? NO} (S05TYPE#<NONE>) B
+S05MISL {Number of missile launchers: 0} (S05TYPE#<NONE>) N 0 3
 
 Decoy capability for class 05.
 
@@ -910,13 +910,13 @@ between 1 and this class.
 
 S06PHSR {Maximum phaser type: 15} (S06TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 06.
+Number of torpedo launchers for class 06.
 
-S06TORP {Has torpedo capability? YES} (S06TYPE#<NONE>) B
+S06TORP {Number of torpedo launchers: 2} (S06TYPE#<NONE>) N 0 3
 
-Missile capability for class 06.
+Number of missile launchers for class 06.
 
-S06MISL {Has missile capability? NO} (S06TYPE#<NONE>) B
+S06MISL {Number of missile launchers: 0} (S06TYPE#<NONE>) N 0 3
 
 Decoy capability for class 06.
 
@@ -1082,13 +1082,13 @@ between 1 and this class.
 
 S07PHSR {Maximum phaser type: 4} (S07TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 07.
+Number of torpedo launchers for class 07.
 
-S07TORP {Has torpedo capability? NO} (S07TYPE#<NONE>) B
+S07TORP {Number of torpedo launchers: 0} (S07TYPE#<NONE>) N 0 3
 
-Missile capability for class 07.
+Number of missile launchers for class 07.
 
-S07MISL {Has missile capability? NO} (S07TYPE#<NONE>) B
+S07MISL {Number of missile launchers: 0} (S07TYPE#<NONE>) N 0 3
 
 Decoy capability for class 07.
 
@@ -1255,13 +1255,13 @@ between 1 and this class.
 
 S08PHSR {Maximum phaser type: 10} (S08TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 08.
+Number of torpedo launchers for class 08.
 
-S08TORP {Has torpedo capability? YES} (S08TYPE#<NONE>) B
+S08TORP {Number of torpedo launchers: 2} (S08TYPE#<NONE>) N 0 3
 
-Missile capability for class 08.
+Number of missile launchers for class 08.
 
-S08MISL {Has missile capability? YES} (S08TYPE#<NONE>) B
+S08MISL {Number of missile launchers: 1} (S08TYPE#<NONE>) N 0 3
 
 Decoy capability for class 08.
 
@@ -1428,13 +1428,13 @@ between 1 and this class.
 
 S09PHSR {Maximum phaser type: 6} (S09TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 09.
+Number of torpedo launchers for class 09.
 
-S09TORP {Has torpedo capability? YES} (S09TYPE#<NONE>) B
+S09TORP {Number of torpedo launchers: 1} (S09TYPE#<NONE>) N 0 3
 
-Missile capability for class 09.
+Number of missile launchers for class 09.
 
-S09MISL {Has missile capability? YES} (S09TYPE#<NONE>) B
+S09MISL {Number of missile launchers: 1} (S09TYPE#<NONE>) N 0 3
 
 Decoy capability for class 09.
 
@@ -1598,13 +1598,13 @@ between 1 and this class.
 
 S10PHSR {Maximum phaser type: 16} (S10TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 10.
+Number of torpedo launchers for class 10.
 
-S10TORP {Has torpedo capability? YES} (S10TYPE#<NONE>) B
+S10TORP {Number of torpedo launchers: 2} (S10TYPE#<NONE>) N 0 3
 
-Missile capability for class 10.
+Number of missile launchers for class 10.
 
-S10MISL {Has missile capability? YES} (S10TYPE#<NONE>) B
+S10MISL {Number of missile launchers: 2} (S10TYPE#<NONE>) N 0 3
 
 Decoy capability for class 10.
 
@@ -1770,13 +1770,13 @@ between 1 and this class.
 
 S11PHSR {Maximum phaser type: 12} (S11TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 11.
+Number of torpedo launchers for class 11.
 
-S11TORP {Has torpedo capability? YES} (S11TYPE#<NONE>) B
+S11TORP {Number of torpedo launchers: 3} (S11TYPE#<NONE>) N 0 3
 
-Missile capability for class 11.
+Number of missile launchers for class 11.
 
-S11MISL {Has missile capability? YES} (S11TYPE#<NONE>) B
+S11MISL {Number of missile launchers: 3} (S11TYPE#<NONE>) N 0 3
 
 Decoy capability for class 11.
 
@@ -1940,13 +1940,13 @@ between 1 and this class.
 
 S12PHSR {Maximum phaser type: 3} (S12TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 12.
+Number of torpedo launchers for class 12.
 
-S12TORP {Has torpedo capability? NO} (S12TYPE#<NONE>) B
+S12TORP {Number of torpedo launchers: 0} (S12TYPE#<NONE>) N 0 3
 
-Missile capability for class 12.
+Number of missile launchers for class 12.
 
-S12MISL {Has missile capability? NO} (S12TYPE#<NONE>) B
+S12MISL {Number of missile launchers: 0} (S12TYPE#<NONE>) N 0 3
 
 Decoy capability for class 12.
 
@@ -2112,13 +2112,13 @@ between 1 and this class.
 
 S13PHSR {Maximum phaser type: 0} (S13TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 13.
+Number of torpedo launchers for class 13.
 
-S13TORP {Has torpedo capability? NO} (S13TYPE#<NONE>) B
+S13TORP {Number of torpedo launchers: 0} (S13TYPE#<NONE>) N 0 3
 
-Missile capability for class 13.
+Number of missile launchers for class 13.
 
-S13MISL {Has missile capability? NO} (S13TYPE#<NONE>) B
+S13MISL {Number of missile launchers: 0} (S13TYPE#<NONE>) N 0 3
 
 Decoy capability for class 13.
 
@@ -2282,13 +2282,13 @@ between 1 and this class.
 
 S14PHSR {Maximum phaser type: 0} (S14TYPE#<NONE>) N 0 19
 
-Torpedo capability for class for class 14.
+Number of torpedo launchers for class 14.
 
-S14TORP {Has torpedo capability? YES} (S14TYPE#<NONE>) B
+S14TORP {Number of torpedo launchers: 1} (S14TYPE#<NONE>) N 0 3
 
-Missile capability for class for class 14.
+Number of missile launchers for class 14.
 
-S14MISL {Has missile capability? NO} (S14TYPE#<NONE>) B
+S14MISL {Number of missile launchers: 0} (S14TYPE#<NONE>) N 0 3
 
 Decoy capability for class for class 14.
 
@@ -2461,13 +2461,13 @@ between 1 and this class.
 
 S15PHSR {Maximum phaser type: 19} (S15TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 15.
+Number of torpedo launchers for class 15.
 
-S15TORP {Has torpedo capability? YES} (S15TYPE#<NONE>) B
+S15TORP {Number of torpedo launchers: 3} (S15TYPE#<NONE>) N 0 3
 
-Missile capability for class 15.
+Number of missile launchers for class 15.
 
-S15MISL {Has missile capability? YES} (S15TYPE#<NONE>) B
+S15MISL {Number of missile launchers: 3} (S15TYPE#<NONE>) N 0 3
 
 Decoy capability for class 15.
 
@@ -2639,13 +2639,13 @@ between 1 and this class.
 
 S16PHSR {Maximum phaser type: 17} (S16TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 16.
+Number of torpedo launchers for class 16.
 
-S16TORP {Has torpedo capability? YES} (S16TYPE#<NONE>) B
+S16TORP {Number of torpedo launchers: 3} (S16TYPE#<NONE>) N 0 3
 
-Missile capability for class 16.
+Number of missile launchers for class 16.
 
-S16MISL {Has missile capability? YES} (S16TYPE#<NONE>) B
+S16MISL {Number of missile launchers: 3} (S16TYPE#<NONE>) N 0 3
 
 Decoy capability for class 16.
 
@@ -2814,13 +2814,13 @@ between 1 and this class.
 
 S17PHSR {Maximum phaser type: 0} (S17TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 17.
+Number of torpedo launchers for class 17.
 
-S17TORP {Has torpedo capability? NO} (S17TYPE#<NONE>) B
+S17TORP {Number of torpedo launchers: 0} (S17TYPE#<NONE>) N 0 3
 
-Missile capability for class 17.
+Number of missile launchers for class 17.
 
-S17MISL {Has missile capability? NO} (S17TYPE#<NONE>) B
+S17MISL {Number of missile launchers: 0} (S17TYPE#<NONE>) N 0 3
 
 Decoy capability for class 17.
 
@@ -2967,13 +2967,13 @@ between 1 and this class.
 
 S18PHSR {Maximum phaser type: 0} (S18TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 18.
+Number of torpedo launchers for class 18.
 
-S18TORP {Has torpedo capability? NO} (S18TYPE#<NONE>) B
+S18TORP {Number of torpedo launchers: 0} (S18TYPE#<NONE>) N 0 3
 
-Missile capability for class 18.
+Number of missile launchers for class 18.
 
-S18MISL {Has missile capability? NO} (S18TYPE#<NONE>) B
+S18MISL {Number of missile launchers: 0} (S18TYPE#<NONE>) N 0 3
 
 Decoy capability for class 18.
 
@@ -3115,13 +3115,13 @@ between 1 and this class.
 
 S19PHSR {Maximum phaser type: 0} (S19TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 19.
+Number of torpedo launchers for class 19.
 
-S19TORP {Has torpedo capability? NO} (S19TYPE#<NONE>) B
+S19TORP {Number of torpedo launchers: 0} (S19TYPE#<NONE>) N 0 3
 
-Missile capability for class 19.
+Number of missile launchers for class 19.
 
-S19MISL {Has missile capability? NO} (S19TYPE#<NONE>) B
+S19MISL {Number of missile launchers: 0} (S19TYPE#<NONE>) N 0 3
 
 Decoy capability for class 19.
 
@@ -3268,13 +3268,13 @@ between 1 and this class.
 
 S20PHSR {Maximum phaser type: 0} (S20TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 20.
+Number of torpedo launchers for class 20.
 
-S20TORP {Has torpedo capability? NO} (S20TYPE#<NONE>) B
+S20TORP {Number of torpedo launchers: 0} (S20TYPE#<NONE>) N 0 3
 
-Missile capability for class 20.
+Number of missile launchers for class 20.
 
-S20MISL {Has missile capability? NO} (S20TYPE#<NONE>) B
+S20MISL {Number of missile launchers: 0} (S20TYPE#<NONE>) N 0 3
 
 Decoy capability for class 20.
 
@@ -3421,13 +3421,13 @@ between 1 and this class.
 
 S21PHSR {Maximum phaser type: 4} (S21TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 21.
+Number of torpedo launchers for class 21.
 
-S21TORP {Has torpedo capability? YES} (S21TYPE#<NONE>) B
+S21TORP {Number of torpedo launchers: 1} (S21TYPE#<NONE>) N 0 3
 
-Missile capability for class 21.
+Number of missile launchers for class 21.
 
-S21MISL {Has missile capability? NO} (S21TYPE#<NONE>) B
+S21MISL {Number of missile launchers: 0} (S21TYPE#<NONE>) N 0 3
 
 Decoy capability for class 21.
 
@@ -3574,13 +3574,13 @@ between 1 and this class.
 
 S22PHSR {Maximum phaser type: 6} (S22TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 22.
+Number of torpedo launchers for class 22.
 
-S22TORP {Has torpedo capability? YES} (S22TYPE#<NONE>) B
+S22TORP {Number of torpedo launchers: 2} (S22TYPE#<NONE>) N 0 3
 
-Missile capability for class 22.
+Number of missile launchers for class 22.
 
-S22MISL {Has missile capability? NO} (S22TYPE#<NONE>) B
+S22MISL {Number of missile launchers: 0} (S22TYPE#<NONE>) N 0 3
 
 Decoy capability for class 22.
 
@@ -3727,13 +3727,13 @@ between 1 and this class.
 
 S23PHSR {Maximum phaser type: 16} (S23TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 23.
+Number of torpedo launchers for class 23.
 
-S23TORP {Has torpedo capability? YES} (S23TYPE#<NONE>) B
+S23TORP {Number of torpedo launchers: 3} (S23TYPE#<NONE>) N 0 3
 
-Missile capability for class 23.
+Number of missile launchers for class 23.
 
-S23MISL {Has missile capability? YES} (S23TYPE#<NONE>) B
+S23MISL {Number of missile launchers: 3} (S23TYPE#<NONE>) N 0 3
 
 Decoy capability for class 23.
 
@@ -3880,13 +3880,13 @@ between 1 and this class.
 
 S24PHSR {Maximum phaser type: 8} (S24TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 24.
+Number of torpedo launchers for class 24.
 
-S24TORP {Has torpedo capability? YES} (S24TYPE#<NONE>) B
+S24TORP {Number of torpedo launchers: 3} (S24TYPE#<NONE>) N 0 3
 
-Missile capability for class 24.
+Number of missile launchers for class 24.
 
-S24MISL {Has missile capability? YES} (S24TYPE#<NONE>) B
+S24MISL {Number of missile launchers: 1} (S24TYPE#<NONE>) N 0 3
 
 Decoy capability for class 24.
 
@@ -4033,13 +4033,13 @@ between 1 and this class.
 
 S25PHSR {Maximum phaser type: 10} (S25TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 25.
+Number of torpedo launchers for class 25.
 
-S25TORP {Has torpedo capability? YES} (S25TYPE#<NONE>) B
+S25TORP {Number of torpedo launchers: 3} (S25TYPE#<NONE>) N 0 3
 
-Missile capability for class 25.
+Number of missile launchers for class 25.
 
-S25MISL {Has missile capability? YES} (S25TYPE#<NONE>) B
+S25MISL {Number of missile launchers: 3} (S25TYPE#<NONE>) N 0 3
 
 Decoy capability for class 25.
 
@@ -4186,13 +4186,13 @@ between 1 and this class.
 
 S26PHSR {Maximum phaser type: 0} (S26TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 26.
+Number of torpedo launchers for class 26.
 
-S26TORP {Has torpedo capability? NO} (S26TYPE#<NONE>) B
+S26TORP {Number of torpedo launchers: 0} (S26TYPE#<NONE>) N 0 3
 
-Missile capability for class 26.
+Number of missile launchers for class 26.
 
-S26MISL {Has missile capability? NO} (S26TYPE#<NONE>) B
+S26MISL {Number of missile launchers: 0} (S26TYPE#<NONE>) N 0 3
 
 Decoy capability for class 26.
 
@@ -4339,13 +4339,13 @@ between 1 and this class.
 
 S27PHSR {Maximum phaser type: 0} (S27TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 27.
+Number of torpedo launchers for class 27.
 
-S27TORP {Has torpedo capability? NO} (S27TYPE#<NONE>) B
+S27TORP {Number of torpedo launchers: 0} (S27TYPE#<NONE>) N 0 3
 
-Missile capability for class 27.
+Number of missile launchers for class 27.
 
-S27MISL {Has missile capability? NO} (S27TYPE#<NONE>) B
+S27MISL {Number of missile launchers: 0} (S27TYPE#<NONE>) N 0 3
 
 Decoy capability for class 27.
 
@@ -4492,13 +4492,13 @@ between 1 and this class.
 
 S28PHSR {Maximum phaser type: 0} (S28TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 28.
+Number of torpedo launchers for class 28.
 
-S28TORP {Has torpedo capability? NO} (S28TYPE#<NONE>) B
+S28TORP {Number of torpedo launchers: 0} (S28TYPE#<NONE>) N 0 3
 
-Missile capability for class 28.
+Number of missile launchers for class 28.
 
-S28MISL {Has missile capability? NO} (S28TYPE#<NONE>) B
+S28MISL {Number of missile launchers: 0} (S28TYPE#<NONE>) N 0 3
 
 Decoy capability for class 28.
 
@@ -4645,13 +4645,13 @@ between 1 and this class.
 
 S29PHSR {Maximum phaser type: 0} (S29TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 29.
+Number of torpedo launchers for class 29.
 
-S29TORP {Has torpedo capability? NO} (S29TYPE#<NONE>) B
+S29TORP {Number of torpedo launchers: 0} (S29TYPE#<NONE>) N 0 3
 
-Missile capability for class 29.
+Number of missile launchers for class 29.
 
-S29MISL {Has missile capability? NO} (S29TYPE#<NONE>) B
+S29MISL {Number of missile launchers: 0} (S29TYPE#<NONE>) N 0 3
 
 Decoy capability for class 29.
 
@@ -4798,13 +4798,13 @@ between 1 and this class.
 
 S30PHSR {Maximum phaser type: 0} (S30TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 30.
+Number of torpedo launchers for class 30.
 
-S30TORP {Has torpedo capability? NO} (S30TYPE#<NONE>) B
+S30TORP {Number of torpedo launchers: 0} (S30TYPE#<NONE>) N 0 3
 
-Missile capability for class 30.
+Number of missile launchers for class 30.
 
-S30MISL {Has missile capability? NO} (S30TYPE#<NONE>) B
+S30MISL {Number of missile launchers: 0} (S30TYPE#<NONE>) N 0 3
 
 Decoy capability for class 30.
 
@@ -4951,13 +4951,13 @@ between 1 and this class.
 
 S31PHSR {Maximum phaser type: 0} (S31TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 31.
+Number of torpedo launchers for class 31.
 
-S31TORP {Has torpedo capability? NO} (S31TYPE#<NONE>) B
+S31TORP {Number of torpedo launchers: 0} (S31TYPE#<NONE>) N 0 3
 
-Missile capability for class 31.
+Number of missile launchers for class 31.
 
-S31MISL {Has missile capability? NO} (S31TYPE#<NONE>) B
+S31MISL {Number of missile launchers: 0} (S31TYPE#<NONE>) N 0 3
 
 Decoy capability for class 31.
 
@@ -5104,13 +5104,13 @@ between 1 and this class.
 
 S32PHSR {Maximum phaser type: 10} (S32TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 32.
+Number of torpedo launchers for class 32.
 
-S32TORP {Has torpedo capability? NO} (S32TYPE#<NONE>) B
+S32TORP {Number of torpedo launchers: 0} (S32TYPE#<NONE>) N 0 3
 
-Missile capability for class 32.
+Number of missile launchers for class 32.
 
-S32MISL {Has missile capability? NO} (S32TYPE#<NONE>) B
+S32MISL {Number of missile launchers: 0} (S32TYPE#<NONE>) N 0 3
 
 Decoy capability for class 32.
 
@@ -5257,13 +5257,13 @@ between 1 and this class.
 
 S33PHSR {Maximum phaser type: 1} (S33TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 33.
+Number of torpedo launchers for class 33.
 
-S33TORP {Has torpedo capability? YES} (S33TYPE#<NONE>) B
+S33TORP {Number of torpedo launchers: 2} (S33TYPE#<NONE>) N 0 3
 
-Missile capability for class 33.
+Number of missile launchers for class 33.
 
-S33MISL {Has missile capability? NO} (S33TYPE#<NONE>) B
+S33MISL {Number of missile launchers: 0} (S33TYPE#<NONE>) N 0 3
 
 Decoy capability for class 33.
 
@@ -5410,13 +5410,13 @@ between 1 and this class.
 
 S34PHSR {Maximum phaser type: 6} (S34TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 34.
+Number of torpedo launchers for class 34.
 
-S34TORP {Has torpedo capability? NO} (S34TYPE#<NONE>) B
+S34TORP {Number of torpedo launchers: 0} (S34TYPE#<NONE>) N 0 3
 
-Missile capability for class 34.
+Number of missile launchers for class 34.
 
-S34MISL {Has missile capability? NO} (S34TYPE#<NONE>) B
+S34MISL {Number of missile launchers: 0} (S34TYPE#<NONE>) N 0 3
 
 Decoy capability for class 34.
 
@@ -5563,13 +5563,13 @@ between 1 and this class.
 
 S35PHSR {Maximum phaser type: 10} (S35TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 35.
+Number of torpedo launchers for class 35.
 
-S35TORP {Has torpedo capability? YES} (S35TYPE#<NONE>) B
+S35TORP {Number of torpedo launchers: 3} (S35TYPE#<NONE>) N 0 3
 
-Missile capability for class 35.
+Number of missile launchers for class 35.
 
-S35MISL {Has missile capability? NO} (S35TYPE#<NONE>) B
+S35MISL {Number of missile launchers: 0} (S35TYPE#<NONE>) N 0 3
 
 Decoy capability for class 35.
 
@@ -5716,13 +5716,13 @@ between 1 and this class.
 
 S36PHSR {Maximum phaser type: 10} (S36TYPE#<NONE>) N 0 19
 
-Torpedo capability for class 36.
+Number of torpedo launchers for class 36.
 
-S36TORP {Has torpedo capability? YES} (S36TYPE#<NONE>) B
+S36TORP {Number of torpedo launchers: 3} (S36TYPE#<NONE>) N 0 3
 
-Missile capability for class 36.
+Number of missile launchers for class 36.
 
-S36MISL {Has missile capability? NO} (S36TYPE#<NONE>) B
+S36MISL {Number of missile launchers: 0} (S36TYPE#<NONE>) N 0 3
 
 Decoy capability for class 36.
 

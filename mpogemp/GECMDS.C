@@ -353,8 +353,7 @@ outprfge(ALWAYS,usrnum);
 void FUNC cmd_gehelp()
 {
 int	ndx,i,syshelp;
-
-char	gechrbuf4[20], gechrbuf5[20], gechrbuf6[20], gechrbuf7[20];
+char	gechrbuf4[12],gechrbuf5[12],gechrbuf6[12],gechrbuf7[12],gechrbuf8[12],gechrbuf9[12];
 
 #ifdef PHARLAP
 if ((!syscmds) || (sysonly && !(hasmkey(SYSKEY))))
@@ -422,40 +421,46 @@ if (genearas(margv[1],"class"))
 				else
 					sprintf(gechrbuf3,"%ld",shipclass[i].scanrange);
 
-				if (shipclass[i].max_accel >999)
-					sprintf(gechrbuf4,"%dk",shipclass[i].max_accel/1000);
-				else
-					sprintf(gechrbuf4,"%d",shipclass[i].max_accel);
-
 				if (shipclass[i].max_warp == 0)
-					sprintf(gechrbuf5,"%sN",CLR_RED1);
+					strcpy(gechrbuf4,CLR_RED1 " N");
 				else
-					sprintf(gechrbuf5,"%s%d",CLR_WHITE2,shipclass[i].max_warp);
-
+					sprintf(gechrbuf4,"%s%2d",CLR_WHITE2,shipclass[i].max_warp);
 				if (shipclass[i].max_shlds == 0)
-					sprintf(gechrbuf6,"%sN",CLR_RED1);
+					strcpy(gechrbuf5,CLR_RED1 " N");
 				else
-					sprintf(gechrbuf6,"%s%d",CLR_WHITE2,shipclass[i].max_shlds);
-
+					sprintf(gechrbuf5,"%s%2d",CLR_WHITE2,shipclass[i].max_shlds);
 				if (shipclass[i].max_phasr == 0)
-					sprintf(gechrbuf7,"%sN",CLR_RED1);
+					strcpy(gechrbuf6,CLR_RED1 " N");
 				else
-					sprintf(gechrbuf7,"%s%d",CLR_WHITE2,shipclass[i].max_phasr);
-
-				prf("%s%2d %s%-24s %s%5s %9s %9s %9s %s %s %s %s %s %s %s %s %s%3s %4s %4s %5d\r",
+					sprintf(gechrbuf6,"%s%2d",CLR_WHITE2,shipclass[i].max_phasr);
+				if (shipclass[i].max_torps == 0)
+					strcpy(gechrbuf7,CLR_RED1 "N");
+				else
+					sprintf(gechrbuf7,"%s%1d",CLR_GREEN2,shipclass[i].max_torps);
+				if (shipclass[i].max_missl == 0)
+					strcpy(gechrbuf8,CLR_RED1 "N");
+				else
+					sprintf(gechrbuf8,"%s%1d",CLR_GREEN2,shipclass[i].max_missl);
+				if (shipclass[i].max_accel >999)
+					sprintf(gechrbuf9,"%s%2dk",CLR_WHITE2,shipclass[i].max_accel/1000);
+				else
+					sprintf(gechrbuf9,"%s%3d",CLR_WHITE2,shipclass[i].max_accel);
+				prf("%s%2d %s%-24s %s%5s %s %s %s %s %s %s %s %s %s %s %s %4s %4s %4s %5d\r",
 					CLR_CYAN2, i+1,
 					CLR_CYAN1, shipclass[i].typename,
 					CLR_YELLOW1, gechrbuf2,
-					gechrbuf5, gechrbuf6, gechrbuf7,
-					shipclass[i].max_torps ? CLR_GREEN2 "Y" : CLR_RED1 "N",
-					shipclass[i].max_missl ? CLR_GREEN2 "Y" : CLR_RED1 "N",
+					gechrbuf4,
+					gechrbuf5,
+					gechrbuf6,
+					gechrbuf7,
+					gechrbuf8,
 					shipclass[i].has_mine ? CLR_GREEN2 "Y" : CLR_RED1 "N",
 					shipclass[i].max_attk ? CLR_GREEN2 "Y" : CLR_RED1 "N",
 					shipclass[i].has_decoy ? CLR_GREEN2 "Y" : CLR_RED1 "N",
 					shipclass[i].has_jam ? CLR_GREEN2 "Y" : CLR_RED1 "N",
 					shipclass[i].has_zip ? CLR_GREEN2 "Y" : CLR_RED1 "N",
 					shipclass[i].max_cloak ? CLR_GREEN2 "Y" : CLR_RED1 "N",
-					CLR_WHITE2, gechrbuf4,
+					gechrbuf9,
 					gechrbuf3,
 					gechrbuf,
 					shipclass[i].max_points
@@ -1418,7 +1423,7 @@ WARSHP	*wptr;
 WARSHP	*optr;
 byte	others[MAXTORPS],ocount,found;
 
-int	i,oi;
+int	i,oi,slot;
 
 if (ptr->damage >= 100)
 	{
@@ -1429,62 +1434,80 @@ if (ptr->damage >= 100)
 
 if (lockon(ptr,0,shpnum,usrn) == 1)
 	{
+	wptr = warshpoff(shpnum);
+	slot = -1;
 	for (i=0; i<MAXTORPS;++i)
 		{
-		wptr = warshpoff(shpnum);
 		if (wptr->ltorps[i].distance == 0)
 			{
-			prfmsg(TFIRE1);
-			outprfge(FILTER,usrn);
-			--ptr->items[I_TORPEDO];
-			prfmsg(TFIRE2,shpltr(shpnum,usrn));
-			outprfge(FILTER,shpnum);
-			wptr->ltorps[i].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
-			wptr->ltorps[i].distance += 20;
-			wptr->ltorps[i].channel = (unsigned char)usrn;
-			wptr->cantexit = FIRETICKS;
-			ptr->cantexit = FIRETICKS;
-			return(1);
+			slot = i;
+			break;
 			}
 		}
-	prfmsg(TORMANY,MAXTORPS);
-	wptr = warshpoff(shpnum);
-	ocount = 0;
-	for (i=0; i<MAXTORPS; ++i)
+	if (slot < 0)
 		{
-		if (wptr->ltorps[i].distance > 0 &&
-			wptr->ltorps[i].channel != (byte)usrn &&
-			wptr->ltorps[i].channel < nships &&
-			ingegame((int)wptr->ltorps[i].channel))
+		prfmsg(TORMANY,MAXTORPS);
+		ocount = 0;
+		for (i=0; i<MAXTORPS; ++i)
 			{
-			found = 0;
+			if (wptr->ltorps[i].distance > 0 &&
+				wptr->ltorps[i].channel != (byte)usrn &&
+				wptr->ltorps[i].channel < nships &&
+				ingegame((int)wptr->ltorps[i].channel))
+				{
+				found = 0;
+				for (oi=0; oi<(int)ocount; ++oi)
+					{
+					if (others[oi] == wptr->ltorps[i].channel)
+						{
+						found = 1;
+						break;
+						}
+					}
+				if (!found && ocount < MAXTORPS)
+					others[ocount++] = wptr->ltorps[i].channel;
+				}
+			}
+		if (ocount > 0)
+			{
+			gechrbuf[0] = 0;
 			for (oi=0; oi<(int)ocount; ++oi)
 				{
-				if (others[oi] == wptr->ltorps[i].channel)
-					{
-					found = 1;
-					break;
-					}
+				optr = warshpoff((int)others[oi]);
+				if (oi > 0)
+					strcat(gechrbuf,", ");
+				strcat(gechrbuf,username(optr));
 				}
-			if (!found && ocount < MAXTORPS)
-				others[ocount++] = wptr->ltorps[i].channel;
+			strcat(gechrbuf,(ocount > 1) ? " are" : " is");
+			prfmsg(TORMANY2,gechrbuf);
 			}
+		outprfge(FILTER,usrn);
+		return(0);
 		}
-	if (ocount > 0)
+	if (ptr->torps_fired >= shipclass[ptr->shpclass].max_torps)
 		{
-		gechrbuf[0] = 0;
-		for (oi=0; oi<(int)ocount; ++oi)
+		if (ptr->status != GESTAT_AUTO)
 			{
-			optr = warshpoff((int)others[oi]);
-			if (oi > 0)
-				strcat(gechrbuf,", ");
-			strcat(gechrbuf,username(optr));
+			if (shipclass[ptr->shpclass].max_torps == 1)
+				prfmsg(TORPRELS);
+			else
+				prfmsg(TORPRELM);
+			outprfge(ALWAYS,usrn);
 			}
-		strcat(gechrbuf,(ocount > 1) ? " are" : " is");
-		prfmsg(TORMANY2,gechrbuf);
+		return(0);
 		}
+	prfmsg(TFIRE1);
 	outprfge(FILTER,usrn);
-	return(0);
+	--ptr->items[I_TORPEDO];
+	++ptr->torps_fired;
+	prfmsg(TFIRE2,shpltr(shpnum,usrn));
+	outprfge(FILTER,shpnum);
+	wptr->ltorps[slot].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
+	wptr->ltorps[slot].distance += 20;
+	wptr->ltorps[slot].channel = (unsigned char)usrn;
+	wptr->cantexit = FIRETICKS;
+	ptr->cantexit = FIRETICKS;
+	return(1);
 	}
 return(0);
 }
@@ -1614,7 +1637,7 @@ unsigned energy, eng_flu;
 WARSHP *wptr;
 WARSHP *optr;
 byte	others[MAXMISSL],ocount,found;
-int	i,oi;
+int	i,oi,slot;
 
 if (ptr->damage >= 100)
 	{
@@ -1625,70 +1648,88 @@ if (ptr->damage >= 100)
 
 if (lockon(ptr,1,shpnum,usrnum) == 1)
 	{
+	wptr=warshpoff(shpnum);
+	slot = -1;
 	for (i=0; i<MAXMISSL;++i)
 		{
-		wptr=warshpoff(shpnum);
 		if (wptr->lmissl[i].distance == 0)
 			{
-			if (fluxstat(ptr,usrnum,eng_flu) == 0)
-				{
-				prfmsg(MISSHRT);
-				outprfge(ALWAYS,usrnum);
-				return(0);
-				}
-			prfmsg(MFIRE1,energy);
-			outprfge(FILTER,usrnum);
-			--(ptr->items[I_MISSILE]);
-			ptr->energy -= eng_flu;
-			prfmsg(MFIRE2,shpltr(shpnum,usrnum));
-			outprfge(FILTER,shpnum);
-			wptr->lmissl[i].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
-			wptr->lmissl[i].distance += 20;
-			wptr->lmissl[i].channel = (unsigned char)usrnum;
-			wptr->lmissl[i].energy = energy;
-			wptr->cantexit = FIRETICKS;
-			ptr->cantexit = FIRETICKS;
-			return(1);
+			slot = i;
+			break;
 			}
 		}
-	prfmsg(MISMANY,MAXMISSL);
-	wptr = warshpoff(shpnum);
-	ocount = 0;
-	for (i=0; i<MAXMISSL; ++i)
+	if (slot < 0)
 		{
-		if (wptr->lmissl[i].distance > 0 &&
-			wptr->lmissl[i].channel != (byte)usrnum &&
-			wptr->lmissl[i].channel < nships &&
-			ingegame((int)wptr->lmissl[i].channel))
+		prfmsg(MISMANY,MAXMISSL);
+		ocount = 0;
+		for (i=0; i<MAXMISSL; ++i)
 			{
-			found = 0;
+			if (wptr->lmissl[i].distance > 0 &&
+				wptr->lmissl[i].channel != (byte)usrnum &&
+				wptr->lmissl[i].channel < nships &&
+				ingegame((int)wptr->lmissl[i].channel))
+				{
+				found = 0;
+				for (oi=0; oi<(int)ocount; ++oi)
+					{
+					if (others[oi] == wptr->lmissl[i].channel)
+						{
+						found = 1;
+						break;
+						}
+					}
+				if (!found && ocount < MAXMISSL)
+					others[ocount++] = wptr->lmissl[i].channel;
+				}
+			}
+		if (ocount > 0)
+			{
+			gechrbuf[0] = 0;
 			for (oi=0; oi<(int)ocount; ++oi)
 				{
-				if (others[oi] == wptr->lmissl[i].channel)
-					{
-					found = 1;
-					break;
-					}
+				optr = warshpoff((int)others[oi]);
+				if (oi > 0)
+					strcat(gechrbuf,", ");
+				strcat(gechrbuf,username(optr));
 				}
-			if (!found && ocount < MAXMISSL)
-				others[ocount++] = wptr->lmissl[i].channel;
+			strcat(gechrbuf,(ocount > 1) ? " are" : " is");
+			prfmsg(MISMANY2,gechrbuf);
 			}
+		outprfge(FILTER,usrnum);
+		return(0);
 		}
-	if (ocount > 0)
+	if (ptr->missl_fired >= shipclass[ptr->shpclass].max_missl)
 		{
-		gechrbuf[0] = 0;
-		for (oi=0; oi<(int)ocount; ++oi)
+		if (ptr->status != GESTAT_AUTO)
 			{
-			optr = warshpoff((int)others[oi]);
-			if (oi > 0)
-				strcat(gechrbuf,", ");
-			strcat(gechrbuf,username(optr));
+			if (shipclass[ptr->shpclass].max_missl == 1)
+				prfmsg(MISSRELS);
+			else
+				prfmsg(MISSRELM);
+			outprfge(ALWAYS,usrnum);
 			}
-		strcat(gechrbuf,(ocount > 1) ? " are" : " is");
-		prfmsg(MISMANY2,gechrbuf);
+		return(0);
 		}
+	if (fluxstat(ptr,usrnum,eng_flu) == 0)
+		{
+		prfmsg(MISSHRT);
+		outprfge(ALWAYS,usrnum);
+		return(0);
+		}
+	prfmsg(MFIRE1,energy);
 	outprfge(FILTER,usrnum);
-	return(0);
+	--(ptr->items[I_MISSILE]);
+	++ptr->missl_fired;
+	ptr->energy -= eng_flu;
+	prfmsg(MFIRE2,shpltr(shpnum,usrnum));
+	outprfge(FILTER,shpnum);
+	wptr->lmissl[slot].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
+	wptr->lmissl[slot].distance += 20;
+	wptr->lmissl[slot].channel = (unsigned char)usrnum;
+	wptr->lmissl[slot].energy = energy;
+	wptr->cantexit = FIRETICKS;
+	ptr->cantexit = FIRETICKS;
+	return(1);
 	}
 return(0);
 }

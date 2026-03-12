@@ -294,6 +294,8 @@ tmpshp.zipload		= 0;
 tmpshp.jamload		= 0;
 tmpshp.decload		= 0;
 tmpshp.mineload		= 0;
+tmpshp.torps_fired	= 0;
+tmpshp.missl_fired	= 0;
 
 tmpshp.shipno = waruptr->topshipno+1;
 
@@ -585,6 +587,8 @@ if (ptr->repair > 0)
 		ptr->jamload = 0;
 		ptr->decload = 0;
 		ptr->mineload = 0;
+		ptr->torps_fired = 0;
+		ptr->missl_fired = 0;
 
 		if (ptr->shieldstat == SHIELDDM)
 			ptr->shieldstat = SHIELDDN;
@@ -2097,6 +2101,9 @@ if (ptr->jamload > 0)
 
 if (ptr->zipload > 0)
 	--(ptr->zipload);
+
+ptr->torps_fired = 0;
+ptr->missl_fired = 0;
 
 /* knock down battle lock ticks */
 if (ptr->cantexit > 0)
