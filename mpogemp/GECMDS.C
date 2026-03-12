@@ -535,7 +535,7 @@ if (warsptr->where == 1)
 	return;
 	}
 
-if (warsptr->damage >= 100)
+if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDNAVG);
 	outprfge(ALWAYS,usrnum);
@@ -620,7 +620,7 @@ if (warsptr->topspeed == 0 && atoi(margv[1]) != 0)
 	return;
 	}
 
-if (warsptr->damage >= 100)
+if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDNAVG);
 	outprfge(ALWAYS,usrnum);
@@ -1039,7 +1039,7 @@ if (ptr->cloak > 0 )
 	return;
 	}
 
-if (ptr->damage >= 100) /* no firing in the brief period between going over 100 and blowing up */
+if (ptr->damage >= 100.0) /* no firing in the brief period between going over 100 and blowing up */
 	{
 	prfmsg(RNDPHSR);
 	outprfge(ALWAYS,usrn);
@@ -1097,7 +1097,7 @@ if (ptr->phasr >=PMINFIRE)
 								factor = 0.0;
 							hitone = TRUE;
 							/* prioritize user hits over npcs so users get credit */
-							if (wptr->damage < 100 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
+							if (wptr->damage < 100.0 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
 								wptr->lastfired = usrn;
 							wptr->cantexit = FIRETICKS;
 							ptr->cantexit = FIRETICKS;
@@ -1195,7 +1195,7 @@ double factor;
 byte src_neb,targ_neb,nebmask;
 
 
-if (ptr->damage >= 100)
+if (ptr->damage >= 100.0)
 	{
 	prfmsg(RNDPHSR);
 	outprfge(ALWAYS,usrn);
@@ -1268,7 +1268,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 									prfmsg(HPHITU,username(ptr),gechrbuf);
 								outprfge(ALWAYS,othusn);
 								/* prioritize user hits over npcs so users get credit */
-								if (wptr->damage < 100 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
+								if (wptr->damage < 100.0 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
 									wptr->lastfired = usrn;
 								/* cap npc-on-npc phasers so big ships don't get one shot kills */
 								if (ptr->status == GESTAT_AUTO && wptr->status == GESTAT_AUTO &&
@@ -1425,7 +1425,7 @@ byte	others[MAXTORPS],ocount,found;
 
 int	i,oi,slot;
 
-if (ptr->damage >= 100)
+if (ptr->damage >= 100.0)
 	{
 	prfmsg(RNDTORP);
 	outprfge(ALWAYS,usrn);
@@ -1639,7 +1639,7 @@ WARSHP *optr;
 byte	others[MAXMISSL],ocount,found;
 int	i,oi,slot;
 
-if (ptr->damage >= 100)
+if (ptr->damage >= 100.0)
 	{
 	prfmsg(RNDMISL);
 	outprfge(ALWAYS,usrnum);
@@ -1954,7 +1954,7 @@ if (warsptr->cloak > 0 )
 	return;
 	}
 
-if (warsptr->damage >= 100)
+if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDDECY);
 	outprfge(ALWAYS,usrnum);
@@ -2020,7 +2020,7 @@ if (warsptr->items[I_JAMMERS] == 0)
 	return;
 	}
 
-if (warsptr->damage >= 100)
+if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDJAMR);
 	outprfge(ALWAYS,usrnum);
@@ -2127,7 +2127,7 @@ if (warsptr->cloak > 0 )
 	return;
 	}
 
-if (warsptr->damage >= 100)
+if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDZIPR);
 	outprfge(ALWAYS,usrnum);
@@ -2230,7 +2230,7 @@ if (warsptr->cloak > 0 )
 	return;
 	}
 
-if (warsptr->damage >= 100)
+if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDMINE);
 	outprfge(ALWAYS,usrnum);
@@ -2856,7 +2856,7 @@ if (warsptr->tactical != 0)
 	return;
 	}
 
-if (warsptr->damage >= 100)
+if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDTACT);
 	outprfge(ALWAYS,usrnum);
@@ -2914,7 +2914,7 @@ if (warsptr->where == 1)
 	return;
 	}
 
-if (warsptr->damage >= 100)
+if (warsptr->damage >= 100.0)
 	{
 	prfmsg(SHDAMAG);
 	outprfge(ALWAYS,usrnum);
@@ -2992,7 +2992,7 @@ if (warsptr->where == 1)
 	return;
 	}
 
-if (warsptr->damage >= 100)
+if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDCLOK);
 	outprfge(ALWAYS,usrnum);

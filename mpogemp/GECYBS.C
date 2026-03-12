@@ -275,7 +275,7 @@ sprintf(&cybname[7],"%d",usrn);
 
 logthis(spr("@cyb_lives %s",cybname));
 
-if (ptr->damage >= 100)
+if (ptr->damage >= 100.0)
 	return;
 
 /* reset the ticker to 255 to cause it to recalc */
@@ -294,6 +294,7 @@ db_update(ptr,usrn);
 if (ptr->tactical < 0)
 	{
 	ptr->cybmine = 255;
+	ptr->npcmsg = 255;
 	ptr->holdcourse = 0;
 	if (shipclass[ptr->shpclass].max_accel > 0)
 		cyb_cruise(ptr,usrn,0);
@@ -450,7 +451,7 @@ if (usrn >= nterms)
 	return;
 
 /* if already blowed up, don't msg */
-if (ptr->damage > 100)
+if (ptr->damage >= 100.0)
 	return;
 
 /* if out of user's range, don't msg */
@@ -458,11 +459,9 @@ if (cdistance(&ptr->coord,&warshpoff(usrn)->coord)*10000 > (double)shipclass[war
 	return;
 
 /* if we are fleeing from this user, don't send other msgs to this user until done */
-if (usrn == ptr->cybmine && ptr->npcmsg == FLEE)
+/* allow an explicit flee message to print when transitioning from silent missile avoidance */
+if (usrn == ptr->cybmine && ptr->npcmsg == FLEE && (msgtype != FLEE || ptr->holdcourse > 0))
 	{
-	/* if coming back from missile avoidance */
-	if (msgtype == APPROACH)
-		ptr->npcmsg = APPROACH;
 	return;
 	}
 
@@ -489,6 +488,10 @@ if ((msgtype == NEUTRAL || msgtype == IGNORE) &&
 	gernd()%(16+(shipclass[ptr->shpclass].tough_factor*2)) == 0)	/* adjust for tougher ships going faster */
 	ptr->npcmsg = 255;
 
+/* allow a real flee message after silent missile avoidance */
+if (msgtype == FLEE && ptr->npcmsg == FLEE && ptr->holdcourse == 0)
+	ptr->npcmsg = 255;
+
 /* otherwise don't do the same message twice in a row */
 if (ptr->npcmsg == msgtype)
 	return;
@@ -505,13 +508,6 @@ if ((ptr->npcmsg == TAUNT || ptr->npcmsg == CYBTORP || ptr->npcmsg == LOATTACK) 
 /* if you're fleeing, be quiet after flee message */
 if (ptr->holdcourse > 0)
 	return;
-
-/* if you've fled, and you're returning, don't reannounce */
-if (ptr->npcmsg == FLEE && msgtype == APPROACH)
-	{
-	ptr->npcmsg = APPROACH;
-	return;
-	}
 
 /* remember which message type was called last (even if it doesn't necessarily get displayed) */
 ptr->npcmsg = msgtype;
@@ -750,6 +746,7 @@ if (ptr->holdcourse > 0)
 if (zothusn >= nships)
 	{
 	ptr->cybmine = (byte)255;
+	ptr->npcmsg = 255;
 	}
 else
 	{
@@ -769,7 +766,10 @@ else
 
 		/* if the guy is cloaked then give up after awhile */
 		if (gernd()%10 == 0)
+			{
 			ptr->cybmine = 255;
+			ptr->npcmsg = 255;
+			}
 
 		return;
 		}
@@ -804,10 +804,14 @@ if (ptr->cybmine == (byte)255 && ptr->damage <= CYB_MINDAM) /* don't pick new pu
 	}
 
 if (low_ship == -1 || low_ship >= nships)
+	{
 	ptr->cybmine = 255;
+	ptr->npcmsg = 255;
+	}
 else
 	{
 	ptr->cybmine = (byte)low_ship;
+	ptr->npcmsg = 255;
 	wptr=warshpoff(low_ship);
 	if (low_dist >= hyperdist1)
 		{
@@ -997,6 +1001,7 @@ int call;
 if (call == 0)
 	{
 	ptr->cybmine = (byte)255;
+	ptr->npcmsg = 255;
 	ptr->distress = (byte)255;
 	}
 

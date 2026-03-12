@@ -3068,7 +3068,7 @@ unsigned int r, r2;
 gechrbuf[0] = '\0';
 
 /* already dead */
-if (ptr->damage > 100.0)
+if (ptr->damage >= 100.0)
 	return;
 
 damcomb = (int)(ptr->damage - hitdam);

@@ -233,7 +233,7 @@ if (usrn < 0 || usrn >= nships)
 
 sprintf(&droidname[7],"%d",usrn+1);
 
-if (ptr->damage >= 100)
+if (ptr->damage >= 100.0)
 	return;
 
 /* DEBUG
