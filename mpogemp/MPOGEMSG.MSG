@@ -4306,13 +4306,13 @@ MINE1 {
 [0;37m[[1;31mERROR[0;37m] There are no neutron mines on-board.[1;37m
 } T GE no mines message
 
-MINE3 {
-[0;32mNeutron mine launched. Detonation in %u centocks![1;37m
-} T GE you launched a mine message
-
 MINE2 {
 [0;37m[[1;31mERROR[0;37m] The mine launcher can only safely deploy %d mines at once.[1;37m
 } T GE too many mines message
+
+MINE3 {
+[0;32mNeutron mine launched. Detonation in %u centocks![1;37m
+} T GE you launched a mine message
 
 MINE4 {***
 [0;37m[[0;31mWARNING![0;37m] A neutron mine exploded bearing [1;37m%d[0;37m, distance [1;37m%u[0;37m, causing
@@ -4334,6 +4334,10 @@ MINE7 {
 MINE8 {
 [0;37m[[1;31mERROR[0;37m] Too many active mines in the galaxy. All mining temporarily halted.[1;37m
 } T GE no mining in neutral zone message
+
+MINE9 {
+[0;37m[[1;31mERROR[0;37m] The mine launcher is reloading.[1;37m
+} T GE too many mines message
 
 LOCK01 {
 [0;37mScanner lock removed![1;37m

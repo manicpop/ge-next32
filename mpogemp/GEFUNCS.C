@@ -2102,6 +2102,9 @@ if (ptr->jamload > 0)
 if (ptr->zipload > 0)
 	--(ptr->zipload);
 
+if (ptr->mineload > 0)
+	--(ptr->mineload);
+
 ptr->torps_fired = 0;
 ptr->missl_fired = 0;
 

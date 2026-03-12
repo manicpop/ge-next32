@@ -2272,6 +2272,9 @@ if (mres == 1)
 if (mres == 2)
 	prfmsg(MINE8);
 else
+if (mres == 3)
+	prfmsg(MINE9);
+else
 	prfmsg(MINE2,usermines);
 outprfge(FILTER,usrnum);
 }
@@ -2283,35 +2286,45 @@ WARSHP	*ptr;
 int	usrn;
 int	timer;
 {
-int i,cnt;
+int i,cnt,slot;
 
 /* count up the number of mines this player has layed */
 
 cnt = 0;
+slot = -1;
 
 for (i=0; i<nummines;++i)
+	{
 	if (mines[i].channel == (byte)usrn)
-		cnt++;
+		++cnt;
+	else
+	if (slot < 0 && mines[i].channel == 255)
+		slot = i;
+	}
 
 if (cnt >= usermines)
 	{
 	return(0);
 	}
 
-for (i=0; i<nummines;++i)
+if (slot < 0)
 	{
-	if (mines[i].channel == 255)
-		{
-		ptr->cantexit = FIRETICKS;
-		mines[i].channel = (byte)usrn;
-		mines[i].timer = timer;
-		mines[i].coord.xcoord = ptr->coord.xcoord;
-		mines[i].coord.ycoord = ptr->coord.ycoord;
-		--ptr->items[I_MINE];
-		return(1);
-		}
+	return(2);
 	}
-return(2);
+
+if (ptr->mineload > 0)
+	{
+	return(3);
+	}
+
+ptr->cantexit = FIRETICKS;
+mines[slot].channel = (byte)usrn;
+mines[slot].timer = timer;
+mines[slot].coord.xcoord = ptr->coord.xcoord;
+mines[slot].coord.ycoord = ptr->coord.ycoord;
+--ptr->items[I_MINE];
+ptr->mineload = 1;
+return(1);
 }
 
 /**************************************************************************
