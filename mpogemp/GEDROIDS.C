@@ -1110,15 +1110,17 @@ int	zothusn;
 
 {
 
-int i, j;
+int i, tden;
 
 if (!neutral(&ptr->coord) && !neutral(&wptr->coord) && wptr->cloak != 10 &&
 	ptr->where == 0 && wptr->where == 0 && shipclass[ptr->shpclass].max_torps && gernd()%2 == 0)
 	{
-	j = gernd()%((shipclass[ptr->shpclass].tough_factor)+2);
-	for (i=0;i<j;++i)
+	tden = 5 - shipclass[ptr->shpclass].tough_factor;
+	if (tden < 1)
+		tden = 1;
+	for (i=0;i<shipclass[ptr->shpclass].max_torps;++i)
 		{
-		if (ptr->items[I_TORPEDO] > 0)
+		if (ptr->items[I_TORPEDO] > 0 && gernd()%tden == 0)
 			torp(ptr,usrn,zothusn);
 		}
 	}

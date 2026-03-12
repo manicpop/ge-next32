@@ -586,7 +586,7 @@ int	zothusn;	/* users ship number*/
 {
 
 int i,j,acted;
-int zipden;
+int zipden,mden,tden;
 
 acted = 0;
 
@@ -606,17 +606,23 @@ if (shipclass[ptr->shpclass].max_phasr > 0 && ptr->phasr >= PMINFIRE && gernd()%
 	}
 
 /* fire torpedoes or missiles at the fool */
-j = gernd()%((shipclass[ptr->shpclass].tough_factor)+2);
-
-for (i=0;i<j;++i)
+mden = 12 - (shipclass[ptr->shpclass].tough_factor * 2);
+if (mden < 3)
+	mden = 3;
+for (i=0;i<shipclass[ptr->shpclass].max_missl;++i)
 	{
-	if (gernd()%10 == 0 && shipclass[ptr->shpclass].max_missl && ptr->items[I_MISSILE] > 0 &&
+	if (ptr->items[I_MISSILE] > 0 && gernd()%mden == 0 &&
 		misl(ptr,usrn,zothusn,(shipclass[ptr->shpclass].tough_factor+1)*4000,0) == 1)
 		acted = 1;
-	else
-		if (gernd()%2 == 0 && shipclass[ptr->shpclass].max_torps && ptr->items[I_TORPEDO] > 0 &&
-			torp(ptr,usrn,zothusn) == 1)
-			acted = 2;
+	}
+tden = 5 - shipclass[ptr->shpclass].tough_factor;
+if (tden < 1)
+	tden = 1;
+for (j=0;j<shipclass[ptr->shpclass].max_torps;++j)
+	{
+	if (ptr->items[I_TORPEDO] > 0 && gernd()%tden == 0 &&
+		torp(ptr,usrn,zothusn) == 1)
+		acted = 2;
 	}
 
 /* launch Zippers if needed */
