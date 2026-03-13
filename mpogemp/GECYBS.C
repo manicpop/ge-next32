@@ -766,6 +766,13 @@ else
 
 	if (!isvisible(ptr,wptr))
 		{
+		if (innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord)))
+			{
+			ptr->head2b = vector(&ptr->coord,&(wptr->coord));
+			cyb_cruise(ptr,usrn,4);
+			ptr->cybmine = zothusn;
+			return;
+			}
 		ptr->holdcourse=gernd()%5+5;
 		cyb_cruise(ptr,usrn,1); /* let them cruise */
 		ptr->cybmine = zothusn;

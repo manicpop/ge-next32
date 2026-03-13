@@ -674,6 +674,9 @@ if (ptr->jam_sev <= (byte)3)
 					ptr->head2b = rndm(359.9);
 				else
 					ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + 180.0 + (rand() % 51 - 25));
+				if (!isvisible(ptr,wptr) && innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord)))
+					ptr->speed2b = 990;
+				else
 				if (gernd()%2 == 0)
 					cyb_cruise(ptr,usrn,4);
 				else
@@ -774,6 +777,12 @@ if (ptr->jam_sev <= (byte)3)
 		wptr = warshpoff(zothusn);
 		if (!isvisible(ptr,wptr) && ptr->holdcourse == 0)
 			{
+			if (innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord)))
+				{
+				ptr->head2b = vector(&ptr->coord,&(wptr->coord));
+				cyb_cruise(ptr,usrn,4);
+				return;
+				}
 			ptr->holdcourse=gernd()%5+5;
 			cyb_cruise(ptr,usrn,0); /* let them cruise */
 
