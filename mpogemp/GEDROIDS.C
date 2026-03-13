@@ -411,7 +411,7 @@ if (ptr->jam_sev <= (byte)3)
 			{
 			wptr=warshpoff(zothusn);
 			/* hail users in area */
-			if (ingegame(zothusn) && wptr->status == GESTAT_USER && wptr->cloak != 10)
+			if (ingegame(zothusn) && wptr->status == GESTAT_USER && isvisible(ptr,wptr))
 				{
 				ddist = cdistance(&ptr->coord,&wptr->coord);
 				ddist *= 10000;
@@ -430,7 +430,7 @@ if (ptr->jam_sev <= (byte)3)
 		wptr = warshpoff(zothusn);
 		ddist = cdistance(&ptr->coord,&wptr->coord);
 		ddist *= 10000;
-		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && wptr->cloak != 10) || ptr->cantexit > 0)
+		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && isvisible(ptr,wptr)) || ptr->cantexit > 0)
 			{
 			/* if still in range, flee */
 			ptr->speed2b = dr_topspeed;
@@ -477,7 +477,7 @@ if (ptr->jam_sev <= (byte)3)
 			{
 			wptr=warshpoff(zothusn);
 			/* hail users in area */
-			if (ingegame(zothusn) && wptr->status == GESTAT_USER && wptr->cloak != 10)
+			if (ingegame(zothusn) && wptr->status == GESTAT_USER && isvisible(ptr,wptr))
 				{
 				ddist = cdistance(&ptr->coord,&wptr->coord);
 				ddist *= 10000;
@@ -506,16 +506,16 @@ if (ptr->jam_sev <= (byte)3)
 		wptr = warshpoff(zothusn);
 		ddist = cdistance(&ptr->coord,&wptr->coord);
 		ddist *= 10000;
-		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && wptr->cloak != 10) || ptr->cantexit > 0)
+		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && isvisible(ptr,wptr)) || ptr->cantexit > 0)
 			{
-			if (wptr->cloak != 10)
+			if (isvisible(ptr,wptr))
 				droid_annoy(ptr,zothusn);
 			/* if still in range, flee and attack */
 			if (ptr->damage > 50)
 				cyb_cruise(ptr,usrn,4);
 			else
 				ptr->speed2b = 990.0;
-			if (wptr->cloak == 10)
+			if (!isvisible(ptr,wptr))
 				ptr->head2b = rndm(359.9);
 			else
 				ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + 180.0 + (rand() % 51 - 25));
@@ -560,7 +560,7 @@ if (ptr->jam_sev <= (byte)3)
 			{
 			wptr=warshpoff(zothusn);
 			/* hail users in area */
-			if (ingegame(zothusn) && wptr->status == GESTAT_USER && wptr->cloak != 10)
+			if (ingegame(zothusn) && wptr->status == GESTAT_USER && isvisible(ptr,wptr))
 				{
 				ddist = cdistance(&ptr->coord,&wptr->coord);
 				ddist *= 10000;
@@ -579,9 +579,9 @@ if (ptr->jam_sev <= (byte)3)
 		wptr = warshpoff(zothusn);
 		ddist = cdistance(&ptr->coord,&wptr->coord);
 		ddist *= 10000;
-		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && wptr->cloak != 10) || ptr->cantexit > 0)
+		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && isvisible(ptr,wptr)) || ptr->cantexit > 0)
 			{
-			if (wptr->cloak != 10)
+			if (isvisible(ptr,wptr))
 				droid_annoy(ptr,zothusn);
 			if (ptr->holdcourse == 0)
 				{
@@ -593,13 +593,13 @@ if (ptr->jam_sev <= (byte)3)
 					if (ptr->items[I_MINE] > 0 && shipclass[ptr->shpclass].has_mine && ptr->mineload == 0 && !neutral(&ptr->coord) && gernd()%3 == 0)
 						laymine(ptr,usrn,10);
 					}
-				if (wptr->cloak == 10)
+				if (!isvisible(ptr,wptr))
 					ptr->head2b = rndm(359.9);
 				else
 					ptr->head2b = normal(vector(&ptr->coord, &(wptr->coord)) + 180.0 + (rand() % 51 - 25));
 				ptr->holdcourse = gernd()%15 + 10;
 				}
-			if (ddist < 30000 && !neutral(&ptr->coord) && wptr->cloak != 10)
+			if (ddist < 30000 && !neutral(&ptr->coord) && isvisible(ptr,wptr))
 				{
 				droid_phaser(ptr,usrn,wptr);
 				droid_torp(ptr,usrn,wptr,zothusn);
@@ -645,7 +645,7 @@ if (ptr->jam_sev <= (byte)3)
 			{
 			wptr=warshpoff(zothusn);
 			/* hail users in area */
-			if (ingegame(zothusn) && wptr->status == GESTAT_USER && wptr->cloak != 10)
+			if (ingegame(zothusn) && wptr->status == GESTAT_USER && isvisible(ptr,wptr))
 				{
 				ddist = cdistance(&ptr->coord,&wptr->coord);
 				ddist *= 10000;
@@ -664,13 +664,13 @@ if (ptr->jam_sev <= (byte)3)
 		wptr = warshpoff(zothusn);
 		ddist = cdistance(&ptr->coord,&wptr->coord);
 		ddist *= 10000;
-		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && wptr->cloak != 10) || ptr->cantexit > 0)
+		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && isvisible(ptr,wptr)) || ptr->cantexit > 0)
 			{
-			if (wptr->cloak != 10)
+			if (isvisible(ptr,wptr))
 				droid_annoy(ptr,zothusn);
 			if (ptr->holdcourse == 0)
 				{
-				if (wptr->cloak == 10)
+				if (!isvisible(ptr,wptr))
 					ptr->head2b = rndm(359.9);
 				else
 					ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + 180.0 + (rand() % 51 - 25));
@@ -680,7 +680,7 @@ if (ptr->jam_sev <= (byte)3)
 					ptr->speed2b = 990;
 				ptr->holdcourse = gernd()%15 + 10;
 				}
-			if (ddist < 30000 && !neutral(&ptr->coord) && wptr->cloak != 10)
+			if (ddist < 30000 && !neutral(&ptr->coord) && isvisible(ptr,wptr))
 				{
 				droid_phaser(ptr,usrn,wptr);
 				if (ptr->where == 0 && ptr->items[I_DECOYS] > 0 && shipclass[ptr->shpclass].has_decoy)
@@ -740,13 +740,13 @@ if (ptr->jam_sev <= (byte)3)
 				ddist *= 10000;
 				/* hail any users if close */
 				if (zothusn < nterms && wptr->status == GESTAT_USER && ddist < (double)shipclass[wptr->shpclass].scanrange &&
-					ddist < (double)shipclass[ptr->shpclass].scanrange && ddist < 15000.0 && wptr->cloak != 10)
+					ddist < (double)shipclass[ptr->shpclass].scanrange && ddist < 15000.0 && isvisible(ptr,wptr))
 					{
 					ptr->tick = CYBTICKTIME + gernd()%(5-shipclass[ptr->shpclass].tough_factor);
 					droid_annoy(ptr,zothusn);
 					}
 				if ((shipclass[wptr->shpclass].max_type == CLASSTYPE_CYBORG && wptr->cybmine == 255) ||
-					(wptr->status == GESTAT_USER && wptr->cloak != 10 && lta <= wptr->shpclass &&
+					(wptr->status == GESTAT_USER && isvisible(ptr,wptr) && lta <= wptr->shpclass &&
 					warusroff(zothusn)->factions[shipclass[ptr->shpclass].faction] > 50 &&
 					notclaimed_d(shipclass[ptr->shpclass].loadout,zothusn)))
 					{
@@ -772,7 +772,7 @@ if (ptr->jam_sev <= (byte)3)
 		{
 		zothusn = ptr->cybmine;
 		wptr = warshpoff(zothusn);
-		if (wptr->cloak == 10 && ptr->holdcourse == 0)
+		if (!isvisible(ptr,wptr) && ptr->holdcourse == 0)
 			{
 			ptr->holdcourse=gernd()%5+5;
 			cyb_cruise(ptr,usrn,0); /* let them cruise */
@@ -906,7 +906,7 @@ if (ptr->jam_sev <= (byte)3)
 			{
 			wptr=warshpoff(zothusn);
 			/* hail users in area */
-			if (ingegame(zothusn) && wptr->status == GESTAT_USER && wptr->cloak != 10)
+			if (ingegame(zothusn) && wptr->status == GESTAT_USER && isvisible(ptr,wptr))
 				{
 				ddist = cdistance(&ptr->coord,&wptr->coord);
 				ddist *= 10000;
@@ -949,7 +949,7 @@ if (ptr->jam_sev <= (byte)3)
 						}
 					}
 				else
-				if (ptr->freq[1] > 2 || ptr->freq[1] < 6)	/* hang out a little longer */
+				if (ptr->freq[1] > 2 && ptr->freq[1] < 6)	/* hang out a little longer */
 					++ptr->freq[1];
 				if (ptr->freq[1] == 6)
 					{
@@ -984,13 +984,13 @@ if (ptr->jam_sev <= (byte)3)
 		wptr = warshpoff(zothusn);
 		ddist = cdistance(&ptr->coord,&wptr->coord);
 		ddist *= 10000;
-		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && wptr->cloak != 10) || ptr->cantexit > 0)
+		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && isvisible(ptr,wptr)) || ptr->cantexit > 0)
 			{
-			if (wptr->cloak != 10)
+			if (isvisible(ptr,wptr))
 				droid_annoy(ptr,zothusn);
 			if (ptr->holdcourse == 0)
 				{
-				if (wptr->cloak == 10)
+				if (!isvisible(ptr,wptr))
 					ptr->head2b = rndm(359.9);
 				else
 					ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + (rand() % 71 - 35) + 180);
@@ -1000,7 +1000,7 @@ if (ptr->jam_sev <= (byte)3)
 					cyb_cruise(ptr,usrn,4);
 				ptr->holdcourse = gernd()%15 + 10;
 				}
-			if (ddist < 30000 && !neutral(&ptr->coord) && wptr->cloak != 10)
+			if (ddist < 30000 && !neutral(&ptr->coord) && isvisible(ptr,wptr))
 				{
 				droid_phaser(ptr,usrn,wptr);
 				droid_torp(ptr,usrn,wptr,zothusn);
@@ -1087,7 +1087,7 @@ int	usrn;
 WARSHP	*wptr;
 
 {
-if (shipclass[ptr->shpclass].max_phasr > 0 && !neutral(&ptr->coord) && !neutral(&wptr->coord) && wptr->cloak != 10 && gernd()%(4-(shipclass[ptr->shpclass].tough_factor/2)) == 0)
+if (shipclass[ptr->shpclass].max_phasr > 0 && !neutral(&ptr->coord) && !neutral(&wptr->coord) && isvisible(ptr,wptr) && gernd()%(4-(shipclass[ptr->shpclass].tough_factor/2)) == 0)
 	{
 	ptr->degrees = cbearing(&ptr->coord,&wptr->coord,ptr->heading);
 	if (wptr->where == 1 && ptr->where == 1 && ptr->hypha == 0 && ptr->phasr >= 0)
@@ -1112,7 +1112,7 @@ int	zothusn;
 
 int i, tden;
 
-if (!neutral(&ptr->coord) && !neutral(&wptr->coord) && wptr->cloak != 10 &&
+if (!neutral(&ptr->coord) && !neutral(&wptr->coord) && isvisible(ptr,wptr) &&
 	ptr->where == 0 && wptr->where == 0 && shipclass[ptr->shpclass].max_torps && gernd()%2 == 0)
 	{
 	tden = 5 - shipclass[ptr->shpclass].tough_factor;

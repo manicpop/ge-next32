@@ -1952,6 +1952,31 @@ if (ptr->cloak > 0 && ptr->cloak != 3)
 	 }
 }
 
+int FUNC isvisible(ptr,wptr)
+
+WARSHP	*ptr;
+WARSHP	*wptr;
+
+{
+double	ddist;
+byte	ptr_neb,oth_neb;
+
+if (wptr->cloak == 10)
+	return(FALSE);
+
+ptr_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
+oth_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+
+if (!(ptr_neb || oth_neb))
+	return(TRUE);
+
+ddist = cdistance(&ptr->coord,&wptr->coord) * 10000.0;
+if (ptr_neb && oth_neb && ddist < (double)NEBRNG)
+	return(TRUE);
+
+return(FALSE);
+}
+
 /**************************************************************************
 ** Check mine status                                                     **
 **************************************************************************/

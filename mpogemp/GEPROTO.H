@@ -135,6 +135,7 @@
 /*    1431 */ int FUNC fluxstat P((WARSHP *ptr , int usrn , int energy ));
 /*    1466 */ void FUNC shieldstat P((WARSHP *ptr , int usrn ));
 /*    1498 */ void FUNC cloakstat P((WARSHP *ptr , int usrn ));
+/*         */ int FUNC isvisible P((WARSHP *ptr , WARSHP *wptr ));
 /*    1535 */ void FUNC checkmines P((void ));
 /*    1660 */ void FUNC checktm P((WARSHP *ptr , int usrn ));
 /*         */ void FUNC validate_lock P((WARSHP *ptr , int usrn ));

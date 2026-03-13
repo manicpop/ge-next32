@@ -316,8 +316,8 @@ if (ptr->jam_sev <= (byte)3)
 	for (zothusn=0 ; zothusn < nships ; zothusn++)
 		{
 		wptr=warshpoff(zothusn);
-		/* if in game, not cloaked, and not same faction, go getem */
-		if (ingegame(zothusn) && wptr->cloak != 10 &&
+		/* if in game, visible, and not same faction, go getem */
+		if (ingegame(zothusn) && isvisible(ptr,wptr) &&
 			(shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction))
 			{
 
@@ -764,7 +764,7 @@ else
 
 	wptr=warshpoff(zothusn);
 
-	if (wptr->cloak == 10)
+	if (!isvisible(ptr,wptr))
 		{
 		ptr->holdcourse=gernd()%5+5;
 		cyb_cruise(ptr,usrn,1); /* let them cruise */
@@ -791,8 +791,8 @@ if (ptr->cybmine == (byte)255 && ptr->damage <= CYB_MINDAM) /* don't pick new pu
 	for (zothusn=0 ; zothusn < nships ; zothusn++)
 		{
 		wptr=warshpoff(zothusn);
-		/* if playing, and not cloaked, and not same faction */
-		if (ingegame(zothusn) && wptr->cloak != 10 && shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction &&
+		/* if playing, visible, and not same faction */
+		if (ingegame(zothusn) && isvisible(ptr,wptr) && shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction &&
 			/* and high enough class to attack, and not already claimed, and passes npc throttle */
 			lta <= wptr->shpclass && notclaimed(wptr,zothusn) && cyb_pick_fight(zothusn,1) &&
 			/* and if a user or a droid that we target */
