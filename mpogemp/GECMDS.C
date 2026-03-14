@@ -4869,6 +4869,7 @@ void FUNC cmd_sysop()
 int	i,j;
 unsigned long	amt;
 int	gotone;
+int	count,class,clscnt;
 
 WARSHP	*ptr;
 
@@ -4892,6 +4893,7 @@ if (sameas("factions",margv[1]) && margc == 2)
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
+else
 if (sameas("help",margv[1]) && margc == 2)
 	{
 	setmbk(gehlpmb);
@@ -4900,12 +4902,47 @@ if (sameas("help",margv[1]) && margc == 2)
 	return;
 	}
 else
-	if (sameas("nebseed",margv[1]) && margc == 2)
+if (sameas("nebseed",margv[1]) && margc == 2)
+	{
+	prf("\rNebula seed: %s\r",spr("%lu",nebseed));
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+else
+if (sameas("fillslots",margv[1]) && margc == 2)
+	{
+	count = 0;
+	for (j = nterms; j < nships; ++j)
 		{
-		prf("\rNebula seed: %s\r",spr("%lu",nebseed));
-		outprfge(ALWAYS,usrnum);
-		return;
+		ptr = warshpoff(j);
+		if (ptr->status == GESTAT_AVAIL)
+			{
+			clscnt = j - nterms;
+			class = -1;
+			for (i=0;i<tot_classes;++i)
+				{
+				if (shipclass[i].max_type == CLASSTYPE_CYBORG ||
+					shipclass[i].max_type == CLASSTYPE_DROID)
+					{
+					if (clscnt < shipclass[i].tot_to_create)
+						{
+						class = i;
+						break;
+						}
+					clscnt -= shipclass[i].tot_to_create;
+					}
+				}
+			if (class > -1 && shipclass[class].init_func != NULL)
+				{
+				(*(shipclass[class].init_func))(ptr,j,class);
+				++count;
+				}
+			}
 		}
+	prf("%d NPC slots filled.\r",count);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
 else
 if (sameas("get",margv[1]) && margc == 4)
 	{
@@ -5205,15 +5242,6 @@ if (sameas("assigncybs",margv[1]) && margc == 2)
 	assign_cybs(usrnum,0);
 	prfmsg(SYSACY);
 	outprfge(ALWAYS,usrnum);
-	return;
-	}
-else
-if (sameas("rdtest",margv[1]) && margc == 4)
-	{
-	i = (atoi(margv[2]));
-	j = (atoi(margv[3]));
-	warsptr->damage = (double)i + (double)j;
-	randamage(warsptr,usrnum,(double)j);
 	return;
 	}
 else

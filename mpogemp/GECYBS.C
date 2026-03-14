@@ -595,8 +595,6 @@ if (neutral(&ptr->coord))
 if (neutral(&wptr->coord))
 	return;
 
-
-
 if (shipclass[ptr->shpclass].max_phasr > 0 && ptr->phasr >= PMINFIRE && gernd()%(4-(shipclass[ptr->shpclass].tough_factor/2)) == 0)
 	{
 	ptr->degrees = cbearing(&ptr->coord,&wptr->coord,ptr->heading);
@@ -729,6 +727,7 @@ int	usrn;
 
 WARSHP	*wptr;
 int	zothusn;
+int	inbound,keepwarp,attackwarp;
 
 double	ddist;
 
@@ -823,8 +822,9 @@ if (low_ship == -1 || low_ship >= nships)
 	}
 else
 	{
+	if (ptr->cybmine != (byte)low_ship)
+		ptr->npcmsg = 255;
 	ptr->cybmine = (byte)low_ship;
-	ptr->npcmsg = 255;
 	wptr=warshpoff(low_ship);
 	if (low_dist >= hyperdist1)
 		{
@@ -885,38 +885,21 @@ else
 	else
 	if (wptr->where == 1 && d_topspeed >= 1000)
 		{
-		if (cyb_fast(ptr))
-			{
-			ptr->speed2b = d_topspeed;
-			ptr->speed = ptr->speed2b;
-			}
-		/* if following and not shooting first, slow down */
-		if (shipclass[wptr->shpclass].cybs_can_att == 0 && ptr->cantexit == 0 && wptr->cantexit == 0 && low_dist < 1)
-			{
-			if (wptr->speed * .5 > d_topspeed)
-				ptr->speed2b = d_topspeed;
-			else
-				{
-				ptr->speed2b = ((long)(wptr->speed * 0.5) / 1000L) * 1000.0;
-				if (ptr->speed2b == 0)
-					ptr->speed2b = 990;
-				}
-			}
-		else
-		if (wptr->speed * 1.25 >= d_topspeed)
-			ptr->speed2b = d_topspeed;
-		else
-			ptr->speed2b = ((long)(wptr->speed * 1.25) / 1000L) * 1000.0;
+		inbound = FALSE;
+		keepwarp = FALSE;
+		attackwarp = FALSE;
 		ptr->head2b = vector(&ptr->coord,&(wptr->coord));
-		/* DEBUG
-		prf("***\r%s, CLOSE, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
-			spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
-		outwar(ALWAYS,usrn,0); */
-		}
-	else
-	if ((shipclass[wptr->shpclass].cybs_can_att || wptr->cantexit > 0 || ptr->cantexit > 0) && !neutral(&wptr->coord))
-		{
-		if (low_dist > .5)
+		if (low_dist < 1.5 && fabs(normal(wptr->heading - ptr->head2b)) > 135.0)
+			inbound = TRUE;
+		if (shipclass[ptr->shpclass].max_phasr > 0 && ptr->hypha == 0 && ptr->phasr >= 0)
+			keepwarp = TRUE;
+		if (shipclass[ptr->shpclass].max_missl > 0 && ptr->items[I_MISSILE] > 0)
+			keepwarp = TRUE;
+		if (shipclass[ptr->shpclass].max_phasr >= phatowrp && ptr->phasr >= PMINFIRE)
+			attackwarp = TRUE;
+		if (shipclass[ptr->shpclass].max_missl > 0 && ptr->items[I_MISSILE] > 0)
+			attackwarp = TRUE;
+		if (inbound && attackwarp && (!keepwarp || gernd()%(4-(shipclass[ptr->shpclass].tough_factor/2)) == 0))
 			{
 			ptr->speed2b = 990.0;
 			if (cyb_fast(ptr))
@@ -924,7 +907,58 @@ else
 				hyperspace(ptr,usrn,0);
 				ptr->speed = ptr->speed2b;
 				}
-			ptr->head2b = vector(&ptr->coord,&(wptr->coord));
+			}
+		else
+			{
+			if (cyb_fast(ptr))
+				{
+				ptr->speed2b = d_topspeed;
+				ptr->speed = ptr->speed2b;
+				}
+			/* if following and not shooting first, slow down */
+			if (shipclass[wptr->shpclass].cybs_can_att == 0 && ptr->cantexit == 0 && wptr->cantexit == 0 && low_dist < 1)
+				{
+				if (wptr->speed * .5 > d_topspeed)
+					ptr->speed2b = d_topspeed;
+				else
+					{
+					ptr->speed2b = ((long)(wptr->speed * 0.5) / 1000L) * 1000.0;
+					if (ptr->speed2b == 0)
+						ptr->speed2b = 990;
+					}
+				}
+			else
+			if (wptr->speed * 1.25 >= d_topspeed)
+				ptr->speed2b = d_topspeed;
+			else
+				ptr->speed2b = ((long)(wptr->speed * 1.25) / 1000L) * 1000.0;
+			}
+			/* DEBUG
+			prf("***\r%s, CLOSE, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
+				spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
+		outwar(ALWAYS,usrn,0); */
+		}
+	else
+	if ((shipclass[wptr->shpclass].cybs_can_att || wptr->cantexit > 0 || ptr->cantexit > 0) && !neutral(&wptr->coord))
+		{
+		if (low_dist > .5)
+			{
+			if (ptr->where == 0 && wptr->where == 0 && wptr->speed >= 990.0 && d_topspeed >= 1000.0 && low_dist > 1.5)
+				{
+				ptr->head2b = vector(&ptr->coord,&(wptr->coord));
+				ptr->speed2b = d_topspeed;
+				ptr->holdcourse = 1;
+				}
+			else
+				{
+				ptr->speed2b = 990.0;
+				ptr->head2b = vector(&ptr->coord,&(wptr->coord));
+				if (cyb_fast(ptr))
+					{
+					hyperspace(ptr,usrn,0);
+					ptr->speed = ptr->speed2b;
+					}
+				}
 			}
 		else
 			{
