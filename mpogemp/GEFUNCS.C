@@ -2130,6 +2130,9 @@ if (ptr->zipload > 0)
 if (ptr->mineload > 0)
 	--(ptr->mineload);
 
+if (ptr->decload > 0)
+	--(ptr->decload);
+
 ptr->torps_fired = 0;
 ptr->missl_fired = 0;
 
@@ -2550,9 +2553,14 @@ for (i=0,dptr=ptr->decout;i<MAXDECOY;++i)
 	{
 	if (dptr[i] > 0)
 		{
-		--dptr[i];
-		if (dptr[i] == 0)
+		if (dptr[i] > 1)
+			--dptr[i];
+		else
+		if (decpass == 0)
+			{
+			dptr[i] = 0;
 			++shotdown;
+			}
 		}
 	}
 if (shotdown == 1)

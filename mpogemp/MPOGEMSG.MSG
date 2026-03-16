@@ -2785,6 +2785,10 @@ DECOY1 {
 [0;37m[[1;31mERROR[0;37m] Decoys do not function in hyperspace.[1;37m
 } T GE no decoys at warp message
 
+DECOYREL {
+[0;37m[[1;31mERROR[0;37m] The decoy loader is reloading.[1;37m
+} T GE no decoys at warp message
+
 TORDEST {***
 [0;37mAn incoming torpedo locked onto a decoy, destroying both![1;37m
 } T GE torpedo hit decoy message

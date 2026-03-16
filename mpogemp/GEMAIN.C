@@ -110,6 +110,7 @@ static	char	*geuser,
 static	char	*endmark;
 
 int	numwar=0;		/* number of users in game  */
+int	decpass=0;		/* decoy expiry batching pass counter */
 
 WARSHP	tmpshp;			/* used to temporarly set up a new ship */
 
@@ -2028,6 +2029,7 @@ cntr = 0;
 #endif
 
 checkmines();		/* check for mines */
+	decpass = (decpass + 1) % 5;
 
 for (zothusn=0 ; zothusn < nships ;zothusn++)
 	{

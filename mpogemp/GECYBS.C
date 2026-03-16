@@ -673,6 +673,7 @@ for (i=0; i<3;++i)
 		{
 		--ptr->items[I_DECOYS];
 		ptr->decout[i] = DECOYTIME;
+		ptr->decload = 1;
 		return;
 		}
 }

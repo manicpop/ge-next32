@@ -48,6 +48,7 @@ extern	FILE		*gemb, *gehlpmb, *geshmb;
 extern	FILE		*opnmsg();
 
 extern	int		numwar;		/* number of users in game */
+extern	int		decpass;	/* decoy expiry batching pass counter */
 
 extern	WARSHP		tmpshp;		/* used to temporarly set up a new ship */
 extern	WARSHP		*warshp,*warsptr;
@@ -282,4 +283,3 @@ extern struct	usracc *othuap;	/* gen purp other-user accounting data ptr */
 #endif
 
 #include "geproto.h"
-

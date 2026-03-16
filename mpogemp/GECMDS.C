@@ -1533,7 +1533,6 @@ void FUNC cmd_missl()
 
 int shpnum;
 WARSHP	*wptr;
-double	dist;
 unsigned energy;
 byte nebmask;
 
@@ -1983,6 +1982,12 @@ if (warsptr->decload < 0)
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
+if (warsptr->decload > 0)
+	{
+	prfmsg(DECOYREL);
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
 
 for (i=0; i<10;++i)
 	{
@@ -1990,6 +1995,7 @@ for (i=0; i<10;++i)
 		{
 		--warsptr->items[I_DECOYS];
 		warsptr->decout[i] = DECOYTIME;
+		warsptr->decload = 1;
 		prfmsg(DECFIRE);
 		outprfge(FILTER,usrnum);
 		return;
