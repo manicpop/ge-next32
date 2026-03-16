@@ -2131,17 +2131,17 @@ PDEFLNPC {
 } T GE phasers you fired deflected message
 
 PHITDEF {***
-[0;37m[[1;31mCAUTION[0;37m] Phaser hit from [0;36m%s[0;37m's ship, magnitude [0;31m%d[0;37m,
+[0;37m[[1;31mCAUTION[0;37m] Phaser hit from [0;36m%s[0;37m's ship, magnitude [0;31m%s[0;37m,
 was deflected by the shields![1;37m
 } T GE phaser fired at you deflected message
 
 PHITDEFN {***
-[0;37m[[1;31mCAUTION[0;37m] Phaser hit from an unknown ship, magnitude [0;31m%d[0;37m,
+[0;37m[[1;31mCAUTION[0;37m] Phaser hit from an unknown ship, magnitude [0;31m%s[0;37m,
 was deflected by the shields![1;37m
 } T GE phaser fired at you deflected message
 
 PNPCDEF {***
-[0;37m[[1;31mCAUTION[0;37m] Phaser hit from [0;36m%s[0;37m, magnitude [0;31m%d[0;37m,
+[0;37m[[1;31mCAUTION[0;37m] Phaser hit from [0;36m%s[0;37m, magnitude [0;31m%s[0;37m,
 was deflected by the shields![1;37m
 } T GE phaser fired at you deflected message
 

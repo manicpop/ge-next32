@@ -1029,8 +1029,10 @@ double factor;
 byte src_neb,targ_neb,nebmask;
 
 int hitone;
+int fired;
 
 hitone = FALSE;
+fired = FALSE;
 
 if (ptr->cloak > 0 )
 	{
@@ -1046,7 +1048,7 @@ if (ptr->damage >= 100.0) /* no firing in the brief period between going over 10
 	return;
 	}
 
-if (ptr->shieldstat == SHIELDUP)
+if (ptr->shieldstat == SHIELDUP && ptr->status == GESTAT_USER)
 	{
 	shielddn(ptr,usrn);
 	}
@@ -1061,8 +1063,12 @@ if (ptr->phasr >=PMINFIRE)
 		return;
 		}
 	deg = (unsigned)(normal(ptr->heading + (double)ptr->degrees) + 0.5);
-	prfmsg(PFIRED,(int)ptr->phasr,ptr->percent);
-	outprfge(FILTER,usrn);
+	if (ptr->status == GESTAT_USER)
+		{
+		prfmsg(PFIRED,(int)ptr->phasr,ptr->percent);
+		outprfge(FILTER,usrn);
+		fired = TRUE;
+		}
 	src_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
 	for (othusn=0 ; othusn < nships ; othusn++)
 		{
@@ -1093,6 +1099,14 @@ if (ptr->phasr >=PMINFIRE)
 							}
 						else
 							{
+							if (ptr->status == GESTAT_AUTO && factor < 0.5)
+								continue;
+							if (fired == FALSE)
+								{
+								prfmsg(PFIRED,(int)ptr->phasr,ptr->percent);
+								outprfge(FILTER,usrn);
+								fired = TRUE;
+								}
 							if (factor < 1.0)	/* hit, but no damage */
 								factor = 0.0;
 							hitone = TRUE;
@@ -1158,12 +1172,12 @@ if (ptr->phasr >=PMINFIRE)
 									prfmsg(PDEFLECT,username(wptr));
 								outprfge(ALWAYS,usrn);
 								if (nebmask)
-									prfmsg(PHITDEFN,(int)factor);
+									prfmsg(PHITDEFN,(factor < 1.0) ? "<1" : spr("%d",(int)factor));
 								else
 								if (ptr->status == GESTAT_AUTO)
-									prfmsg(PNPCDEF,username(ptr),(int)factor);
+									prfmsg(PNPCDEF,username(ptr),(factor < 1.0) ? "<1" : spr("%d",(int)factor));
 								else
-									prfmsg(PHITDEF,username(ptr),(int)factor);
+									prfmsg(PHITDEF,username(ptr),(factor < 1.0) ? "<1" : spr("%d",(int)factor));
 								outprfge(ALWAYS,othusn);
 								}
 							}
