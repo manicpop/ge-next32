@@ -1327,8 +1327,7 @@ void FUNC cmd_torp()
 
 int shpnum;
 WARSHP	*wptr;
-double	dist;
-byte nebmask,targ_neb;
+byte nebmask;
 
 if (shipclass[warsptr->shpclass].max_torps == 0)
 	{
@@ -1390,9 +1389,7 @@ else
 if ( shpnum >= 0)
 	{
 	wptr = warshpoff(shpnum);
-	dist = cdistance(&warsptr->coord,&wptr->coord) * 10000.0;
-	targ_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
-	if ((nebmask || targ_neb) && !(nebmask && targ_neb && dist < (double)NEBRNG))
+	if (!isvisible(warsptr,wptr))
 		{
 		if (nebmask)
 			prfmsg(SCAN27);
@@ -1538,7 +1535,7 @@ int shpnum;
 WARSHP	*wptr;
 double	dist;
 unsigned energy;
-byte nebmask,targ_neb;
+byte nebmask;
 
 if (shipclass[warsptr->shpclass].max_missl == 0)
 	{
@@ -1605,9 +1602,7 @@ else
 if (shpnum >= 0)
 	{
 	wptr = warshpoff(shpnum);
-	dist = cdistance(&warsptr->coord,&wptr->coord) * 10000.0;
-	targ_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
-	if ((nebmask || targ_neb) && !(nebmask && targ_neb && dist < (double)NEBRNG))
+	if (!isvisible(warsptr,wptr))
 		{
 		if (nebmask)
 			prfmsg(SCAN27);
@@ -5349,8 +5344,7 @@ void FUNC cmd_lock()
 {
 
 int	shpnum;
-byte	nebmask,targ_neb;
-double	dist;
+byte	nebmask;
 WARSHP	*wptr;
 
 if (margc == 1)
@@ -5400,9 +5394,7 @@ shpnum = findshp(margv[1],1);
 if (shpnum >= 0)
 	{
 	wptr = warshpoff(shpnum);
-	dist = cdistance(&warsptr->coord,&wptr->coord) * 10000.0;
-	targ_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
-	if ((nebmask || targ_neb) && !(nebmask && targ_neb && dist < (double)NEBRNG))
+	if (!isvisible(warsptr,wptr))
 		{
 		if (nebmask)
 			prfmsg(SCAN27);
