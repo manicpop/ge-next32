@@ -1026,7 +1026,7 @@ WARUSR	*wuptr;
 
 unsigned deg;
 double factor;
-byte src_neb,targ_neb,nebmask;
+byte src_neb,targ_neb,nebmask,underone;
 
 int hitone;
 int fired;
@@ -1107,14 +1107,25 @@ if (ptr->phasr >=PMINFIRE)
 								outprfge(FILTER,usrn);
 								fired = TRUE;
 								}
-							if (factor < 1.0)	/* hit, but no damage */
+							underone = (factor < 1.0);
+							if (underone == TRUE)	/* hit, but no damage */
 								factor = 0.0;
 							hitone = TRUE;
 							/* prioritize user hits over npcs so users get credit */
 							if (wptr->damage < 100.0 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
 								wptr->lastfired = usrn;
-							wptr->cantexit = FIRETICKS;
-							ptr->cantexit = FIRETICKS;
+							if (underone || wptr->shieldstat == SHIELDUP)
+								{
+								if (wptr->cantexit < FIRETICKS/2)
+									wptr->cantexit = FIRETICKS/2;
+								if (ptr->cantexit < FIRETICKS/2)
+									ptr->cantexit = FIRETICKS/2;
+								}
+							else
+								{
+								wptr->cantexit = FIRETICKS;
+								ptr->cantexit = FIRETICKS;
+								}
 							if (wptr->status == GESTAT_AUTO)	/* if npc... */
 								{
 								wptr->cybmine = usrn;	/* engage user */
