@@ -728,6 +728,8 @@ int	usrn;
 WARSHP	*wptr;
 int	zothusn;
 int	inbound,keepwarp,attackwarp;
+int	closemove;
+int	phatwarp;
 
 double	ddist;
 
@@ -888,18 +890,24 @@ else
 		inbound = FALSE;
 		keepwarp = FALSE;
 		attackwarp = FALSE;
+		phatwarp = FALSE;
 		ptr->head2b = vector(&ptr->coord,&(wptr->coord));
-		if (low_dist < 1.5 && fabs(normal(wptr->heading - ptr->head2b)) > 135.0)
+		if (low_dist < 2.0 && fabs(normal(wptr->heading - ptr->head2b)) > 120.0)
 			inbound = TRUE;
 		if (shipclass[ptr->shpclass].max_phasr > 0 && ptr->hypha == 0 && ptr->phasr >= 0)
 			keepwarp = TRUE;
-		if (shipclass[ptr->shpclass].max_missl > 0 && ptr->items[I_MISSILE] > 0)
-			keepwarp = TRUE;
 		if (shipclass[ptr->shpclass].max_phasr >= phatowrp && ptr->phasr >= PMINFIRE)
+			{
+			phatwarp = TRUE;
 			attackwarp = TRUE;
+			}
 		if (shipclass[ptr->shpclass].max_missl > 0 && ptr->items[I_MISSILE] > 0)
+			{
+			if (!phatwarp)
+				keepwarp = TRUE;
 			attackwarp = TRUE;
-		if (inbound && attackwarp && (!keepwarp || gernd()%(4-(shipclass[ptr->shpclass].tough_factor/2)) == 0))
+			}
+		if (inbound && attackwarp && (phatwarp || !keepwarp || gernd()%(5-((shipclass[ptr->shpclass].tough_factor+1)/2)) == 0))
 			{
 			ptr->speed2b = 990.0;
 			if (cyb_fast(ptr))
@@ -968,7 +976,18 @@ else
 				hyperspace(ptr,usrn,0);
 				ptr->speed = ptr->speed2b;
 				}
-			ptr->head2b = rndm(359.9);
+			/* vary the close maneuver */
+			closemove = gernd()%6;
+			if (closemove < 2)
+				/* press the attack with a slight offset */
+				ptr->head2b = normal(vector(&ptr->coord,&wptr->coord) + rndm(60.0) - 30.0);
+			else
+			if (closemove < 4)
+				/* make a short breakaway turn before coming back around */
+				ptr->head2b = normal(vector(&ptr->coord,&wptr->coord) + 180.0 + rndm(90.0) - 45.0);
+			else
+				/* sometimes keep the old full-random move for unpredictability */
+				ptr->head2b = rndm(359.9);
 			}
 		/* DEBUG
 		prf("***\r%s, IMPULSE, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
@@ -985,9 +1004,12 @@ else
 			ptr->speed = ptr->speed2b;
 			}
 		if (low_dist < 1.5)
-			ptr->head2b = normal(vector(&ptr->coord,&wptr->coord) + 180.0);
+			/* if already close, make a brief angled breakaway */
+			ptr->head2b = normal(vector(&ptr->coord,&wptr->coord) + 150.0 + rndm(60.0));
 		else
-			ptr->head2b = vector(&ptr->coord,&wptr->coord);
+			/* otherwise drift across the target's front instead of creeping straight in */
+			ptr->head2b = normal(vector(&ptr->coord,&wptr->coord) + 30.0 + rndm(60.0));
+		ptr->holdcourse = (gernd()%3) + 2;
 		if (shipclass[wptr->shpclass].cybs_can_att == 0)
 			cyb_annoy(ptr,low_ship,IGNORE);
 		else

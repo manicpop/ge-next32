@@ -217,6 +217,8 @@ Other stuff:
   ships now have from 0 to 3 torpedo and missile launchers and
   a small reload delay. Ships can fire up to that many projectiles
   before having to wait a few seconds for the launchers to reload.
+* Several tweaks have been made to Cybertrons to make them less
+  predictable and more formidable.
 
 === 0.2.6 === 2025-08-15
 
