@@ -1495,10 +1495,12 @@ int	usrn;
 WARSHP	*wptr;
 WARUSR	*wuptr;
 WARSHP	*disptr;
+WARSHP	*nearptr;
 
 unsigned i;
-int who, comma, full, lospos, winpos;
+int who, comma, full, lospos, winpos, nearby;
 long scr, amt, bonus1, bonus2, ded_amt;
+double ddist;
 unsigned int r = gernd();
 
 /* 12/19/91 fix to prevent a player from being awarded points for killing */
@@ -1808,6 +1810,27 @@ if (who >= 0 && who < nships && who != usrn)
 				outprfge(ALWAYS,who);
 			}
 		}
+
+	nearby = FALSE;
+	for (i=0;i<nships;++i)
+		{
+		if (i != who && i != usrn && ingegame((int)i))
+			{
+			nearptr = warshpoff((int)i);
+			if (nearptr->damage < 100.0)
+				{
+				ddist = cdistance(&wptr->coord,&nearptr->coord);
+				ddist *= 10000.0;
+				if (ddist < 30000.0)
+					{
+					nearby = TRUE;
+					break;
+					}
+				}
+			}
+		}
+	if (!nearby && wptr->cantexit > (FIRETICKS/4))
+		wptr->cantexit = FIRETICKS/4;
 
 	if (shipclass[wptr->shpclass].max_type != CLASSTYPE_DROID)
 		geudb(GEUPDATE,wuptr->userid,wuptr);

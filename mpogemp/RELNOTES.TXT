@@ -219,6 +219,8 @@ Other stuff:
   before having to wait a few seconds for the launchers to reload.
 * Several tweaks have been made to Cybertrons to make them less
   predictable and more formidable.
+* If you destroy a ship and there aren't other ships in weapons
+  range, your "can't exit" timer is significantly reduced.
 
 === 0.2.6 === 2025-08-15
 
