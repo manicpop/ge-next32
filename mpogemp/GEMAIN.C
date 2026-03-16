@@ -1223,7 +1223,6 @@ return(0);
 
 void FUNC warhupa(void)
 {
-
 setbtv(gebb1);
 setmbk(gemb);
 
@@ -1239,10 +1238,25 @@ if (warsptr->status == GESTAT_USER)
 		/* if modem hangup */
 		logthis(spr("User Hungup Status = %d",status));
 		if (warsptr->cantexit > 0)
+#ifndef MBBSEMU
 			{
-			killem(warsptr,usrnum);
-			warsptr->where = -1;
+			/* if we're in cleanup mode, don't killem */
+			if (status == RING && rsmodes[usrnum] != NORMRS)
+				{
+				cleartm(usrnum);
+				clearitm(usrnum);
+				gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
+				geudb(GEUPDATE,waruptr->userid,waruptr);
+				}
+			else
+#endif
+				{
+				killem(warsptr,usrnum);
+				warsptr->where = -1;
+				}
+#ifndef MBBSEMU
 			}
+#endif
 		else
 			{
 			prfmsg(PEACEOUT,waruptr->userid,warsptr->shipname);
