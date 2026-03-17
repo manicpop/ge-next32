@@ -1,4 +1,4 @@
-wGalactic Empire Standard Message File
+Galactic Empire Standard Message File
 Version ge-next 0.3
 
 LEVEL0 {}
@@ -2103,7 +2103,7 @@ PHITYOU {***
 } T GE phaser hit you message
 
 PHITYOUN {***
-[0;37m[[0;31mWARNING![0;37m] Phaser hit from an unknown ship, caused [0;31m%s[0;37m damage![1;37m
+[0;37m[[0;31mWARNING![0;37m] Phaser hit from a ship bearing %d, caused [0;31m%s[0;37m damage![1;37m
 } T GE phaser hit you message
 
 PNPCHIT {***
@@ -2136,7 +2136,7 @@ was deflected by the shields![1;37m
 } T GE phaser fired at you deflected message
 
 PHITDEFN {***
-[0;37m[[1;31mCAUTION[0;37m] Phaser hit from an unknown ship, magnitude [0;31m%s[0;37m,
+[0;37m[[1;31mCAUTION[0;37m] Phaser hit from a ship bearing %d, magnitude [0;31m%s[0;37m,
 was deflected by the shields![1;37m
 } T GE phaser fired at you deflected message
 
@@ -3700,7 +3700,7 @@ HPHITU {***
 } T GE you got hit with a hyperphaser message
 
 HPHITUN {***
-[0;37m[[0;31mWARNING![0;37m] Hyper-phaser hit from an unknown ship, caused [0;31m%s[0;37m damage![1;37m
+[0;37m[[0;31mWARNING![0;37m] Hyper-phaser hit a ship bearing %d, caused [0;31m%s[0;37m damage![1;37m
 } T GE you got hit with a hyperphaser message
 
 HPNHITU {***

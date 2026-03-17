@@ -155,8 +155,8 @@ S01HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mInterceptor   [1;37mLength: [1;32m156m    [1;37mWidth: [1;32m52m   [1;37mHeight: [1;32m17m
-[1;37mShields: [1;32mMark-8 maximum   [1;37mPhasers: [1;32mMark-8 maximum   [1;37mTorpedo launcher: [1;32mYes
-[1;37mMissile launcher: [0;31mNo   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
+[1;37mShields: [1;32mMark-8 maximum   [1;37mPhasers: [1;32mMark-8 maximum   [1;37mTorpedo launchers: [1;32m1
+[1;37mMissile launchers: [0;31m0   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
 [1;37mZipper launcher: [0;31mNo   [1;37mMine launcher: [0;31mNo   [1;37mFighter launcher: [0;31mNo   [1;37mCloak: [0;31mNo
 [1;37mAcceleration rate: [1;32m5000 Su/T   [1;37mTop rated speed: [1;32mWarp 10   [1;37mKill points: [1;32m750
 [1;37mScanner range: [1;32m100,000 subsectors (10 sectors)   [1;37mCargo capacity: [1;32m5000 Tons
@@ -167,9 +167,9 @@ S01HELP {
 ship for adventurers looking to learn the ropes of interstellar travel,
 and best of all, it's FREE*!
 
-With a warp 10 capable engine, torpedo launcher, and 5000 tons of cargo space,
-you'll be ready to start finding new planets to colonize and be prepared for
-light battles.
+With a warp 10 capable engine, one torpedo launcher, and 5000 tons of cargo
+space, you'll be ready to start finding new planets to colonize and be
+prepared for light battles.
 
 When you're ready for more firepower, more cargo space, or a faster engine,
 remember to come back to Zygor for your next ship!
@@ -331,8 +331,8 @@ S02HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mScout   [1;37mLength: [1;32m31m    [1;37mWidth: [1;32m10m   [1;37mHeight: [1;32m8m
-[1;37mShields: [0;31mNo   [1;37mPhasers: [0;31mNo   [1;37mTorpedo launcher: [0;31mNo
-[1;37mMissile launcher: [0;31mNo   [1;37mDecoy launcher: [0;31mNo   [1;37mJammer launcher: [1;32mYes
+[1;37mShields: [0;31mNo   [1;37mPhasers: [0;31mNo   [1;37mTorpedo launchers: [0;31m0
+[1;37mMissile launchers: [0;31m0   [1;37mDecoy launcher: [0;31mNo   [1;37mJammer launcher: [1;32mYes
 [1;37mZipper launcher: [0;31mNo   [1;37mMine launcher: [0;31mNo   [1;37mFighter launcher: [0;31mNo   [1;37mCloak: [0;31mNo
 [1;37mAcceleration rate: [1;32m10,000 Su/T   [1;37mTop rated speed: [1;32mWarp 40   [1;37mKill points: [1;32m500
 [1;37mScanner range: [1;32m100,000 subsectors (10 sectors)   [1;37mCargo capacity: [1;32m1000 Tons
@@ -508,8 +508,8 @@ S03HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mLight Freighter  [1;37mLength: [1;32m3125m    [1;37mWidth: [1;32m1041m   [1;37mHeight: [1;32m647m
-[1;37mShields: [1;32mMark-4 maximum   [1;37mPhasers: [1;32mMark-2 maximum   [1;37mTorpedo launcher: [0;31mNo
-[1;37mMissile launcher: [0;31mNo   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
+[1;37mShields: [1;32mMark-4 maximum   [1;37mPhasers: [1;32mMark-2 maximum   [1;37mTorpedo launchers: [0;31m0
+[1;37mMissile launchers: [0;31m0   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
 [1;37mZipper launcher: [0;31mNo   [1;37mMine launcher: [0;31mNo   [1;37mFighter launcher: [1;32mYes   [1;37mCloak: [0;31mNo
 [1;37mAcceleration rate: [1;32m3,000 Su/T   [1;37mTop rated speed: [1;32mWarp 8   [1;37mKill points: [1;32m1000
 [1;37mScanner range: [1;32m50,000 subsectors (5 sectors)   [1;37mCargo capacity: [1;32m100,000 Tons
@@ -683,8 +683,8 @@ S04HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mPatrol  [1;37mLength: [1;32m312m    [1;37mWidth: [1;32m104m   [1;37mHeight: [1;32m74m
-[1;37mShields: [1;32mMark-10 maximum   [1;37mPhasers: [1;32mMark-10 maximum   [1;37mTorpedo launcher: [1;32mYes
-[1;37mMissile launcher: [1;32mYes   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [0;31mNo
+[1;37mShields: [1;32mMark-10 maximum   [1;37mPhasers: [1;32mMark-10 maximum   [1;37mTorpedo launchers: [1;32m1
+[1;37mMissile launchers: [1;32m1   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [0;31mNo
 [1;37mZipper launcher: [1;32mYes   [1;37mMine launcher: [0;31mNo   [1;37mFighter launcher: [0;31mNo   [1;37mCloak: [1;32mYes
 [1;37mAcceleration rate: [1;32m2,000 Su/T   [1;37mTop rated speed: [1;32mWarp 4   [1;37mKill points: [1;32m1000
 [1;37mScanner range: [1;32m50,000 subsectors (5 sectors)   [1;37mCargo capacity: [1;32m10,000 Tons
@@ -859,8 +859,8 @@ S05HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mMinelayer  [1;37mLength: [1;32m937m    [1;37mWidth: [1;32m312m   [1;37mHeight: [1;32m96m
-[1;37mShields: [1;32mMark-10 maximum   [1;37mPhasers: [1;32mMark-3 maximum   [1;37mTorpedo launcher: [0;31mNo
-[1;37mMissile launcher: [0;31mNo   [1;37mDecoy launcher: [0;31mNo   [1;37mJammer launcher: [0;31mNo
+[1;37mShields: [1;32mMark-10 maximum   [1;37mPhasers: [1;32mMark-3 maximum   [1;37mTorpedo launchers: [0;31m0
+[1;37mMissile launchers: [0;31m0   [1;37mDecoy launcher: [0;31mNo   [1;37mJammer launcher: [0;31mNo
 [1;37mZipper launcher: [1;32mYes   [1;37mMine launcher: [1;32mYes   [1;37mFighter launcher: [0;31mNo   [1;37mCloak: [1;32mYes
 [1;37mAcceleration rate: [1;32m5,000 Su/T   [1;37mTop rated speed: [1;32mWarp 15   [1;37mKill points: [1;32m1500
 [1;37mScanner range: [1;32m100,000 subsectors (10 sectors)   [1;37mCargo capacity: [1;32m30,000 Tons
@@ -1032,8 +1032,8 @@ S06HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mMonitor  [1;37mLength: [1;32m625m    [1;37mWidth: [1;32m208m   [1;37mHeight: [1;32m112m
-[1;37mShields: [1;32mMark-5 maximum   [1;37mPhasers: [1;32mMark-15 maximum   [1;37mTorpedo launcher: [1;32mYes
-[1;37mMissile launcher: [0;31mNo   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
+[1;37mShields: [1;32mMark-5 maximum   [1;37mPhasers: [1;32mMark-15 maximum   [1;37mTorpedo launchers: [1;32m2
+[1;37mMissile launchers: [0;31m0   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
 [1;37mZipper launcher: [1;32mYes   [1;37mMine launcher: [0;31mNo   [1;37mFighter launcher: [0;31mNo   [1;37mCloak: [0;31mNo
 [1;37mAcceleration rate: [1;32m8,000 Su/T   [1;37mTop rated speed: [1;32mWarp 20   [1;37mKill points: [1;32m1000
 [1;37mScanner range: [1;32m200,000 subsectors (20 sectors)   [1;37mCargo capacity: [1;32m20,000 Tons
@@ -1204,8 +1204,8 @@ S07HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mHeavy Freighter  [1;37mLength: [1;32m12500m    [1;37mWidth: [1;32m4166m   [1;37mHeight: [1;32m1536m
-[1;37mShields: [1;32mMark-8 maximum   [1;37mPhasers: [1;32mMark-4 maximum   [1;37mTorpedo launcher: [0;31mNo
-[1;37mMissile launcher: [0;31mNo   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
+[1;37mShields: [1;32mMark-8 maximum   [1;37mPhasers: [1;32mMark-4 maximum   [1;37mTorpedo launchers: [0;31m0
+[1;37mMissile launchers: [0;31m0   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
 [1;37mZipper launcher: [1;32mYes   [1;37mMine launcher: [0;31mNo   [1;37mFighter launcher: [1;32mYes   [1;37mCloak: [0;31mNo
 [1;37mAcceleration rate: [1;32m3,000 Su/T   [1;37mTop rated speed: [1;32mWarp 12   [1;37mKill points: [1;32m1500
 [1;37mScanner range: [1;32m100,000 subsectors (10 sectors)   [1;37mCargo capacity: [1;32m400,000 Tons
@@ -1377,8 +1377,8 @@ S08HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mDestroyer  [1;37mLength: [1;32m625m    [1;37mWidth: [1;32m208m   [1;37mHeight: [1;32m124m
-[1;37mShields: [1;32mMark-10 maximum   [1;37mPhasers: [1;32mMark-10 maximum   [1;37mTorpedo launcher: [1;32mYes
-[1;37mMissile launcher: [1;32mYes   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
+[1;37mShields: [1;32mMark-10 maximum   [1;37mPhasers: [1;32mMark-10 maximum   [1;37mTorpedo launchers: [1;32mY2
+[1;37mMissile launchers: [1;32m1   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
 [1;37mZipper launcher: [1;32mYes   [1;37mMine launcher: [1;32mYes   [1;37mFighter launcher: [0;31mNo   [1;37mCloak: [0;31mNo
 [1;37mAcceleration rate: [1;32m10,000 Su/T   [1;37mTop rated speed: [1;32mWarp 25   [1;37mKill points: [1;32m2000
 [1;37mScanner range: [1;32m150,000 subsectors (15 sectors)   [1;37mCargo capacity: [1;32m20,000 Tons
@@ -1478,7 +1478,7 @@ S09WARP {Maximum warp: 30} (S09TYPE#<NONE>) N 0 255
 
 Maximum cargo capacity of class 09 in tons.
 
-S09TONS {Maximum tonnage: 60000} (S09TYPE#<NONE>) L 1 2000000000
+S09TONS {Maximum tonnage: 200000} (S09TYPE#<NONE>) L 1 2000000000
 
 Price of a class 09 ship (user ships only).
 
@@ -1550,8 +1550,8 @@ S09HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mFrigate  [1;37mLength: [1;32m1875m    [1;37mWidth: [1;32m625m   [1;37mHeight: [1;32m293m
-[1;37mShields: [1;32mMark-8 maximum   [1;37mPhasers: [1;32mMark-6 maximum   [1;37mTorpedo launcher: [1;32mYes
-[1;37mMissile launcher: [1;32mYes   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
+[1;37mShields: [1;32mMark-8 maximum   [1;37mPhasers: [1;32mMark-6 maximum   [1;37mTorpedo launchers: [1;32m1
+[1;37mMissile launchers: [1;32m1   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
 [1;37mZipper launcher: [1;32mYes   [1;37mMine launcher: [1;32mYes   [1;37mFighter launcher: [1;32mYes   [1;37mCloak: [0;31mNo
 [1;37mAcceleration rate: [1;32m4,000 Su/T   [1;37mTop rated speed: [1;32mWarp 30   [1;37mKill points: [1;32m5000
 [1;37mScanner range: [1;32m250,000 subsectors (25 sectors)   [1;37mCargo capacity: [1;32m60,000 Tons
@@ -1560,7 +1560,7 @@ S09HELP {
 
 [1;36m"If you want a battle-ready ship that doesn't skimp on the cargo space, take a
 look at the FRIGATE, from Zygor. Torpedo, missile, and mine capability is
-included along with a fighter launcher, and with 60,000 tons of cargo space,
+included along with a fighter launcher, and with 200,000 tons of cargo space,
 you can take out the competition and do supply runs for your planets at the
 same time!
 
@@ -1648,7 +1648,7 @@ S10WARP {Maximum warp cruising speed: 35} (S10TYPE#<NONE>) N 0 255
 
 Maximum cargo capacity of class 10 in tons.
 
-S10TONS {Maximum tonnage: 30000} (S10TYPE#<NONE>) L 1 2000000000
+S10TONS {Maximum tonnage: 40000} (S10TYPE#<NONE>) L 1 2000000000
 
 Price of a class 10 ship (user ships only).
 
@@ -1720,8 +1720,8 @@ S10HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mBattle Cruiser  [1;37mLength: [1;32m937m    [1;37mWidth: [1;32m312m   [1;37mHeight: [1;32m204m
-[1;37mShields: [1;32mMark-16 maximum   [1;37mPhasers: [1;32mMark-16 maximum   [1;37mTorpedo launcher: [1;32mYes
-[1;37mMissile launcher: [1;32mYes   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
+[1;37mShields: [1;32mMark-16 maximum   [1;37mPhasers: [1;32mMark-16 maximum   [1;37mTorpedo launchers: [1;32m2
+[1;37mMissile launchers: [1;32m2   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
 [1;37mZipper launcher: [1;32mYes   [1;37mMine launcher: [1;32mYes   [1;37mFighter launcher: [0;31mNo   [1;37mCloak: [1;32mYes
 [1;37mAcceleration rate: [1;32m6,000 Su/T   [1;37mTop rated speed: [1;32mWarp 35   [1;37mKill points: [1;32m5000
 [1;37mScanner range: [1;32m250,000 subsectors (25 sectors)   [1;37mCargo capacity: [1;32m30,000 Tons
@@ -1761,14 +1761,14 @@ For users, ships start with a Mark-1 shield and can purchase
 up to this value. For NPCs, this will be a random value
 between 1 and this class.
 
-S11SHLD {Maximum shield type: 12} (S11TYPE#<NONE>) N 0 19
+S11SHLD {Maximum shield type: 19} (S11TYPE#<NONE>) N 0 19
 
 Maximum phaser type for class 11. 0 for no phaser at all.
 For users, ships start with a Mark-1 phaser and can purchase
 up to this value. For NPCs, this will be a random value
 between 1 and this class.
 
-S11PHSR {Maximum phaser type: 12} (S11TYPE#<NONE>) N 0 19
+S11PHSR {Maximum phaser type: 19} (S11TYPE#<NONE>) N 0 19
 
 Number of torpedo launchers for class 11.
 
@@ -1892,8 +1892,8 @@ S11HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mDreadnought  [1;37mLength: [1;32m3125m    [1;37mWidth: [1;32m1041m   [1;37mHeight: [1;32m638m
-[1;37mShields: [1;32mMark-12 maximum   [1;37mPhasers: [1;32mMark-12 maximum   [1;37mTorpedo launcher: [1;32mYes
-[1;37mMissile launcher: [1;32mYes   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
+[1;37mShields: [1;32mMark-12 maximum   [1;37mPhasers: [1;32mMark-12 maximum   [1;37mTorpedo launchers: [1;32m3
+[1;37mMissile launchers: [1;32m3   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
 [1;37mZipper launcher: [1;32mYes   [1;37mMine launcher: [1;32mYes   [1;37mFighter launcher: [1;32mYes   [1;37mCloak: [1;32mYes
 [1;37mAcceleration rate: [1;32m4,000 Su/T   [1;37mTop rated speed: [1;32mWarp 40   [1;37mKill points: [1;32m10,000
 [1;37mScanner range: [1;32m500,000 subsectors (50 sectors)   [1;37mCargo capacity: [1;32m100,000 Tons
@@ -2062,8 +2062,8 @@ S12HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mFreight Barge  [1;37mLength: [1;32m31250m    [1;37mWidth: [1;32m10416m   [1;37mHeight: [1;32m5462m
-[1;37mShields: [1;32mMark-6 maximum   [1;37mPhasers: [1;32mMark-3 maximum   [1;37mTorpedo launcher: [0;31mNo
-[1;37mMissile launcher: [0;31mNo   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
+[1;37mShields: [1;32mMark-6 maximum   [1;37mPhasers: [1;32mMark-3 maximum   [1;37mTorpedo launchers: [0;31m0
+[1;37mMissile launchers: [0;31m0   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
 [1;37mZipper launcher: [0;31mNo   [1;37mMine launcher: [0;31mNo   [1;37mFighter launcher: [1;32mYes   [1;37mCloak: [0;31mNo
 [1;37mAcceleration rate: [1;32m2,000 Su/T   [1;37mTop rated speed: [1;32mWarp 15   [1;37mKill points: [1;32m5000
 [1;37mScanner range: [1;32m200,000 subsectors (20 sectors)   [1;37mCargo capacity: [1;32m1,000,000 Tons
@@ -2234,8 +2234,8 @@ S13HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mSurveyor  [1;37mLength: [1;32m625m    [1;37mWidth: [1;32m208m   [1;37mHeight: [1;32m147m
-[1;37mShields: [1;32mMark-12 maximum   [1;37mPhasers: [0;31mNo   [1;37mTorpedo launcher: [0;31mNo
-[1;37mMissile launcher: [0;31mNo   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
+[1;37mShields: [1;32mMark-12 maximum   [1;37mPhasers: [0;31mNo   [1;37mTorpedo launchers: [0;31m0
+[1;37mMissile launchers: [0;31m0   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
 [1;37mZipper launcher: [0;31mNo   [1;37mMine launcher: [0;31mNo   [1;37mFighter launcher: [0;31mNo   [1;37mCloak: [1;32mYes
 [1;37mAcceleration rate: [1;32m15,000 Su/T   [1;37mTop rated speed: [1;32mWarp 75   [1;37mKill points: [1;32m2500
 [1;37mScanner range: [1;32m400,000 subsectors (40 sectors)   [1;37mCargo capacity: [1;32m20,000 Tons
@@ -2404,8 +2404,8 @@ S14HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mPlanetary Transport [1;37mLength: [1;32m25,000km  [1;37mWidth: [1;32m8333km  [1;37mHeight: [1;32m7842km
-[1;37mShields: [1;32mMark-19 maximum   [1;37mPhasers: [0;31mNo   [1;37mTorpedo launcher: [1;32mYes
-[1;37mMissile launcher: [0;31mNo   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [0;31mNo
+[1;37mShields: [1;32mMark-19 maximum   [1;37mPhasers: [0;31mNo   [1;37mTorpedo launchers: [1;32m1
+[1;37mMissile launcher: [0;31m0   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [0;31mNo
 [1;37mZipper launcher: [0;31mNo   [1;37mMine launcher: [0;31mNo   [1;37mFighter launcher: [0;31mNo   [1;37mCloak: [0;31mNo
 [1;37mAcceleration rate: [1;32m200 Su/T   [1;37mTop rated speed: [1;32mImpulse 99   [1;37mKill points: [1;32m10000
 [1;37mScanner range: [1;32m100,000 subsectors (10 sectors)  [1;37mCargo capacity: [1;32m800,000,000 Tons
@@ -2583,8 +2583,8 @@ S15HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mMBM Dreadnought  [1;37mLength: [1;32m1250m    [1;37mWidth: [1;32m416m   [1;37mHeight: [1;32m500m
-[1;37mShields: [1;32mMark-19 maximum   [1;37mPhasers: [1;32mMark-19 maximum   [1;37mTorpedo launcher: [1;32mYes
-[1;37mMissile launcher: [1;32mYes   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
+[1;37mShields: [1;32mMark-19 maximum   [1;37mPhasers: [1;32mMark-19 maximum   [1;37mTorpedo launchers: [1;32m3
+[1;37mMissile launchers: [1;32m3   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
 [1;37mZipper launcher: [1;32mYes   [1;37mMine launcher: [1;32mYes   [1;37mFighter launcher: [1;32mYes   [1;37mCloak: [1;32mYes
 [1;37mAcceleration rate: [1;32m15,000 Su/T  [1;37mTop rated speed: [1;32mWarp 50  [1;37mKill points: [1;32m20,000
 [1;37mScanner range: [1;32m500,000 subsectors (50 sectors)   [1;37mCargo capacity: [1;32m40,000 Tons
@@ -2595,13 +2595,13 @@ S15HELP {
 That's certainly the case when it comes to the MBM DREADNOUGHT, available from
 Zygor. With phasers and shields upgradable to Mark-19, a warp 50 rated
 engine with an amazing acceleration rate, and a full compliment of all the
-offensive and defensive weapons systems available, you'll be partying like
-it's 3250.
+weapons systems available, you'll be partying like it's 3250.
 
 The MBM Dreadnought hasn't been in production for decades, as the demand for
 larger cargo spaces has made this model and its relatively paltry 40,000-ton
-capacity out of style. However, Zygor still has a few of these collector's
-items in stock at the slightly inflated price of [0;33m32,000,000[1;36m each.
+capacity out of style. It's also not as durable as the modern Dreadnought.
+However, Zygor still has a few of these collector's items in stock at the
+slightly inflated price of [0;33m32,000,000[1;36m each.
 
 Fun fact: The MBM Dreadnought is named after a celebrated computer programmer
 from 20th-century Earth whose code is still used in the interstellar flight
@@ -2761,8 +2761,8 @@ S16HELP {
 [1;36mDetailed Class Specification
 [0;31m-----------------------------------------------------------------------------
 [1;37mShip class: [1;32mFleet Command  [1;37mLength: [1;32m31250m    [1;37mWidth: [1;32m10416m   [1;37mHeight: [1;32m8500m
-[1;37mShields: [1;32mMark-17 maximum   [1;37mPhasers: [1;32mMark-17 maximum   [1;37mTorpedo launcher: [1;32mYes
-[1;37mMissile launcher: [1;32mYes   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
+[1;37mShields: [1;32mMark-17 maximum   [1;37mPhasers: [1;32mMark-17 maximum   [1;37mTorpedo launchers: [1;32m3
+[1;37mMissile launchers: [1;32m3   [1;37mDecoy launcher: [1;32mYes   [1;37mJammer launcher: [1;32mYes
 [1;37mZipper launcher: [1;32mYes   [1;37mMine launcher: [1;32mYes   [1;37mFighter launcher: [0;31mNo   [1;37mCloak: [0;31mNo
 [1;37mAcceleration rate: [1;32m10,000 Su/T   [1;37mTop rated speed: [1;32mWarp 65   [1;37mKill points: [1;32m20,000
 [1;37mScanner range: [1;32m800,000 subsectors (80 sectors)   [1;37mCargo capacity: [1;32m1,000,000 Tons

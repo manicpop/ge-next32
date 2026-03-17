@@ -219,6 +219,7 @@ struct hlpcmd gehlp[] = {
 		{"battle",			HLPBATTL},
 		{"battle2",			HLPBATT2},
 		{"battle3",			HLPBATT3},
+		{"battle4",			HLPBATT4},
 		{"class",			HLPCLS1},
 		{"communicate",			HLPCOMMU},
 		{"cybertrons",			HLPCYBER},
@@ -228,6 +229,7 @@ struct hlpcmd gehlp[] = {
 		{"lydorians",			HLPLYDO},
 		{"murdonians",			HLPMURD},
 		{"moving",			HLPNAVIG},
+		{"nebulas",			HLPNEB},
 		{"planets",			HLPPLANT},
 		{"planets2",			HLPPLAN2},
 		{"planets3",			HLPPLAN3},
@@ -1149,7 +1151,10 @@ if (ptr->phasr >=PMINFIRE)
 									prfmsg(PHITHIM,gechrbuf,username(wptr));
 								outprfge(ALWAYS,usrn);
 								if (nebmask)
-									prfmsg(PHITYOUN,gechrbuf);
+									{
+									bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading)+.5);
+									prfmsg(PHITYOUN,bearing,gechrbuf);
+									}
 								else
 								if (ptr->status == GESTAT_AUTO)
 									prfmsg(PNPCHIT,username(ptr),gechrbuf);
@@ -1183,7 +1188,10 @@ if (ptr->phasr >=PMINFIRE)
 									prfmsg(PDEFLECT,username(wptr));
 								outprfge(ALWAYS,usrn);
 								if (nebmask)
-									prfmsg(PHITDEFN,(factor < 1.0) ? "<1" : spr("%d",(int)factor));
+									{
+									bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading)+.5);
+									prfmsg(PHITDEFN,bearing,(factor < 1.0) ? "<1" : spr("%d",(int)factor));
+									}
 								else
 								if (ptr->status == GESTAT_AUTO)
 									prfmsg(PNPCDEF,username(ptr),(factor < 1.0) ? "<1" : spr("%d",(int)factor));
@@ -1285,7 +1293,10 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 									prfmsg(HPHITM,gechrbuf,username(wptr));
 								outprfge(ALWAYS,usrn);
 								if (nebmask)
-									prfmsg(HPHITUN,gechrbuf);
+									{
+									bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading)+.5);
+									prfmsg(HPHITUN,bearing,gechrbuf);
+									}
 								else
 								if (ptr->status == GESTAT_AUTO)
 									prfmsg(HPNHITU,username(ptr),gechrbuf);

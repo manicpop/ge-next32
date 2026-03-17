@@ -11,7 +11,7 @@ Commands: [1;32mabandon  abort  admin  attack  buy  cloak  cls  decoy  destruct
           report  roster  rotate  scan  sell  send  set  shield  spy  stop
           team  torpedo  transfer  warp  who  x  zipper
 
-[1;36m Topics:  [1;32mbattle  class  communicate  distress  flux  galaxy  moving
+[1;36m Topics:  [1;32mbattle  class  communicate  distress  flux  galaxy  moving  nebulas
           planets  scoring  starting  strategy  wormholes  Cybertrons
           Lydorians  Murdonians  Sartens  Tryklons  Vakories  Zygorians
 
@@ -28,9 +28,8 @@ seek out an ideal planet to colonize, claim it, and transport down a basic
 compliment of colonists and supplies.
 
 After starting your colony, give it some time to grow. Your planet's population
-will soon be large enough to generate taxes and put cash in your pocket. With
-this cash you can purchase more powerful ships and additional goods to expand
-your empire. 
+will soon be large enough to generate supplies and revenue, making it possible
+to purchase additional ships, create items, and expand your empire.
 
 Additionally, you can engage in combat with other ships. Cybertrons and other
 automated ships are plentiful in the galaxy, and if you can destroy them you
@@ -43,57 +42,33 @@ with them or try to build alliances. A sneak attack on an unsuspecting fellow
 player might bring short term gains, but long term trouble.
 
 Good luck and enjoy the game.
-
-Further hints are available under other help topics.
 [1;37m} T GE help starting message
 
 HLPGALXY {
 [1;36mTopic: Galaxy
-
 The game takes place in a galaxy with hundreds of thousands of sectors and
 thousands of planets. Each sector is 10000 by 10000 subsectors square. The
 entire navigable galaxy is 600 by 600 sectors numbered from the center of the
-galaxy to the edges. Sectors are mapped on a two coordinate system, giving a
-galactic map that looks something like this:
+galaxy to the edges. Sectors are mapped on a two coordinate system, and each
+sector is measured from the top left to bottom right as shown below:
 
-       [1;37m+------------------------------+
-       |-300 -300             300 -300|
-       |                              |
-       |                              |
-       |                              |
-       |                              |
-       |                              |
-       |                              |
-       |             0 0              |
-       |                              |
-       |                              |
-       |                              |
-       |                              |
-       |                              |
-       |                              |
-       |-300 300               300 300|
-       +------------------------------+
-
-[1;36mEach sector is measured 10000 by 10000 subsectors square measured from the top
-left to bottom right as follows:
-
-       [1;37m+------------------------------+
-       |0 0                     0 9999|
-       |                              |
-       |                              |
-       |                              |
-       |                              |
-       |                              |
-       |                              |
-       |          5000 5000           |
-       |                              |
-       |                              |
-       |                              |
-       |                              |
-       |                              |
-       |                              |
-       |9999 0               9999 9999|
-       +------------------------------+
+[0;31m+-------------------------------+   +-------------------------------+
+|[1;37m-300 -300              300 -300[0;31m|   |[1;37m0 0                      0 9999[0;31m|
+|                               |   |                               |
+|                               |   |                               |
+|[1;37m       Sample galaxy map       [0;31m|   |[1;37m       Sample sector map       [0;31m|
+|                               |   |                               |
+|                               |   |                               |
+|                               |   |                               |
+|[1;37m              0 0              [0;31m|   |[1;37m           5000 5000           [0;31m|
+|                               |   |                               |
+|                               |   |                               |
+|                               |   |                               |
+|                               |   |                               |
+|                               |   |                               |
+|                               |   |                               |
+|[1;37m-300 300                300 300[0;31m|   |[1;37m9999 0                9999 9999[0;31m|
++-------------------------------+   +-------------------------------+[1;37m
 } T GE help galaxy message
 
 HLPCOMMU {
@@ -103,9 +78,9 @@ Each ship has a communications console with three separate transmission
 channels. You can set each to a specific channel or to the [1;37mHAIL[1;36m setting which
 permits you to receive all general hailing messages. If you create alliances,
 you can set one radio to an agreed upon channel and have a private and secure
-communications path between members of your alliance. 
+communications path between members of your alliance.
 
-Use the [1;37mFREQ[1;36m command to change the communications frequency. 
+Use the [1;37mFREQ[1;36m command to change the communications frequency.
 
 Note that if the frequency is set above 20000 then it is determined to be a
 hyperspace communications packet code and transmissions will be sent via
@@ -120,18 +95,17 @@ throughout the galaxy. If you wish (and are in range), you can defend the ship
 in distress by trying to take out its attacker. If you're successful, you will
 earn an additional point bonus and the appreciation of those that you rescued.
 
-Your ship's phasers are programmed to not damage a ship in distress (unless
-you are the one attacking it). This way, you can fire on a ship in the same
-area and not worry about hitting the ship in distress. If you want to override
-this behavior, use the [1;37mLOCK[1;36m command on the ship in distress, you can then fire
-as normal.
+Your ship's phasers are programmed to not damage a ship in distress (unless you
+are the one attacking it). This way, you can fire on a ship in the same area
+and not worry about hitting the ship in distress. If you want to override this
+behavior, use the [1;37mLOCK[1;36m command on the ship in distress, you can then fire as
+normal.
 [1;37m} T GE help distress message
 
 HLPNAVIG {
 [1;36mTopic: Moving (Navigating)
 All directional information in Galactic Empire functions on a 360 degree
-compass and is strictly two dimensional. The major bearings are illustrated
-as follows:
+compass and is strictly two dimensional. The major bearings are as follows:
 
        [1;37m315  0  45
           \ | /
@@ -152,8 +126,8 @@ indicate when a ship is facing toward or away from you. A heading of 0 means
 the ship is facing toward you, while a heading of 180 is away from you.
 
 GALACTIC HEADING -- This is the absolute heading in the galaxy. A galactic
-heading of 0 means you (or the other ship) is facing north up.
-[1;37m} T GE help navigate message
+heading of 0 means you (or the other ship) is facing north up.[1;37m
+} T GE help navigate message
 
 HLPPLANT {
 [1;36mTopic: Owning planets
@@ -164,14 +138,14 @@ command. You should be choosy at first about which planets you put a population
 on, as surviving on a poor planet can be very difficult and require frequent
 supply runs.
 
-Planets are rated on two factors, resources and environment, with the
-following categories: POOR, MARGINAL, GOOD, and VERY GOOD. The resources factor
-rates the natural resources of the planet. A rating of good or very good will
-insure that your population has plenty of natural resources to use in the
-establishment of the colony, and the manufacture of goods. The environment
-factor rates the hospitality of the planet and how difficult it will be for a
-colony to survive. A rating of good, or very good, will insure that the
-majority of their efforts go toward producing goods and not simply surviving.
+Planets are rated on two factors, resources and environment, with the following
+categories: POOR, MARGINAL, GOOD, and VERY GOOD. The resources factor rates the
+natural resources of the planet. A rating of good or very good will insure that
+your population has plenty of natural resources to use in the establishment of
+the colony, and the manufacture of goods. The environment factor rates the
+hospitality of the planet and how difficult it will be for a colony to survive.
+A rating of good, or very good, will insure that the majority of their efforts
+go toward producing goods and not simply surviving.
 
 Once you have claimed a planet, you need to establish a population on it. This
 is done with the [1;37mTRANSFER[1;36m command to shuttle items from your ship to a planet.
@@ -182,8 +156,7 @@ Type [1;37mHELP PLANETS2[1;36m for more information on planets.
 HLPPLAN2 {
 [1;36mTopic: Owning planets (section 2)
 
-It is a good idea to leave some additional items on a planet besides men. They
-are:
+It is a good idea to leave some additional items on a planet. They are:
 
 FOOD -- If you fail to leave food on the planet you will find your men and
 troops all dead when you return next time. It is a good idea to leave a case
@@ -197,11 +170,10 @@ well, and will fight to the death when attacked.
 FIGHTERS -- Fighters will defend your planet from both ground troop invasions
 and fighter attacks. They provide a primary defense force for your planet.
 
-ION CANNON -- This is a large defensive cannon which will attack any hostile
-ship that is in orbit around your planet. It will fire once every few seconds,
-and can destroy a ship in just a few blasts. An attacking ship won't stay long
-with an ion cannon firing upon them. You can have multiple ion cannons, but
-only one will be active at a time.
+ION CANNON -- This is a large defensive cannon which fire every few seconds on
+any ship that attacks your planet, and is capable of destroying a ship in a
+few shots. Only one ion cannon is active at a time, but it's wise to keep
+additional on hand in case any are destroyed in an attack.
 
 Type [1;37mHELP PLANETS3[1;36m for more information on planets.
 [1;37m} T GE help planets2 message
@@ -209,13 +181,9 @@ Type [1;37mHELP PLANETS3[1;36m for more information on planets.
 HLPPLAN3 {
 [1;36mTopic: Owning planets (section 3)
 
-There are several other factors you may adjust when you establish a planet.
-When the planet is first established, your colony is instructed to divide
-their efforts evenly between reproducing and growing food. You may wish to
-instruct the colony to boost your planetary defenses or create weapons for
-your or your team's use. Additionally, you can tax your planet at a specific
-rate. The harsher the tax, the less the productivity. This tax is kept in the
-planetary bank until you arrive to collect it.
+When a planet is first established, your colony will divide their efforts
+between reproducing and growing food. You may wish to instruct the colony to
+boost your planetary defenses or create weapons for your or your team's use.
 
 Your colony will produce all the supplies you need for your ship if managed
 properly. You can also choose to sell items to other commanders if you choose.
@@ -227,7 +195,7 @@ your planetary bank stays full.
 If you wish to be selective in who can purchase from your planets, you can
 establish a trade password for your planet and only those who know the password
 can buy from you. This is also useful in establishing an alliance with other
-players where you all would set your planets to the same password and agree on 
+players where you all would set your planets to the same password and agree on
 the price to charge each other. Non-members will be excluded from trading with
 your alliance.
 
@@ -240,32 +208,23 @@ for your colony.
 HLPSTRAT {
 [1;36mTopic: Game strategy
 
-Your ship is equipped with nothing but a few flux pods when you first enter
-the game, but you are not in any imminent danger as sector 0 0 is a neutral
-zone. You are provided with an Interceptor and an amount of cash with which
-you must decide what you are going to do.
+Your ship is equipped with nothing but a few flux pods when you first enter the
+game, but you are not in any imminent danger as sector 0 0 is a neutral zone.
 
 On Zygor you can purchase shield systems, phaser systems, missiles, torpedoes,
 jammers, decoys, mines, and zippers. Note: some of these may not be available
 or useful on some ship classes (see [1;37mHELP CLASS[1;36m for more info). You can also
-purchase fighters and ion cannons for your planets. On Tahanian Station you
-can purchase colonists (men), troops, and food.
+purchase fighters and ion cannons for your planets. On Tahanian Station you can
+purchase colonists (men), troops, and food.
 
-Your first goal should be to secure an income for yourself, and therefore
-provide a source for taxes you will need to expand your empire, and keep your
-ships fully stocked. To do this you should purchase men, troops, food, and some
-fighters. Locate as good of a planet as you can find and colonize it. It is
-advisable that you steer clear of other ships unless you know they are
-friendly.
+Your first goal should be to colonize at least one planet to provide a source
+for revenue you will need to expand your empire and keep your ships fully
+stocked. To do this you should purchase men, troops, food, and some fighters.
+Locate the best planet you can find and use [1;37mADMIN[1;36m to claim it.
 
 An alternative, albeit somewhat immoral, strategy is to purchase weapons and
 lie waiting for other ships to leave sector 0 0. When they do, mount an attack.
-Upon destroying their ship, you will gain what remains of the supplies on
-their ship.
-
-When you do colonize a planet you should redirect the majority of the effort to
-producing men, food, and troops, and gaining cash with which you can purchase
-larger and more powerful ships and expand your empire.
+Upon destroying their ship, you will gain what remains of their supplies.
 
 Remember, these are only a couple suggested strategies, and others are only
 limited by your imagination.
@@ -281,25 +240,28 @@ simply put forth here to get you started.
 When in a potential battle situation make sure your shields are up, and keep
 moving. The easiest target is a ship with shields down, sitting still.
 
-If you have a cloaking system, use it sparingly as it consumes incredible
-amounts of energy; it is most useful in covering a retreat.
-
 If you have incoming torpedoes, you can ditch them easily by making a jump to
 light speed (provided you have warp drive). Missiles, however, can travel
 through hyperspace; you can only shake them off by fleeing at high warp.
 
-Launching decoys does not guarantee that the incoming missiles or torpedoes
-will be destroyed. Launching more decoys than incoming weapons increases the
-chance of destroying an incoming weapon.
-
-When launching an attack try to get close to the target and use the faster
-torpedoes as they will have less time to react.
+The more charge a missile carries, the more damage it does when it hits, but
+heavily charged missiles travel more slowly. Missiles use energy as they
+travel, and will eventually run out of charge and disappear if they don't hit
+their target. Since the payload from a missile is mostly flux energy, shields
+are incredibly effective at absorbing a missile blast.
 
 Type [1;37mHELP BATTLE2[1;36m for more information on battling.
 [1;37m} T GE help battle message
 
 HLPBATT2 {
 [1;36mTopic: Battle strategy (section 2)
+
+If you have a cloaking system, use it sparingly as it consumes incredible
+amounts of energy; it is most useful in covering a retreat.
+
+Launching decoys does not guarantee that the incoming missiles or torpedoes
+will be destroyed. Launching more decoys than incoming weapons increases the
+chance of destroying an incoming weapon.
 
 If a target goes to light speed, be prepared to make the jump with them and use
 hyper-phasers as soon as you pass warp 1.
@@ -308,6 +270,12 @@ If you get hit with a hyper-phaser, immediately go into a series of high speed
 turns as your opponent will have difficulty locating you. Go out of light speed
 in another sector and immediately cloak as a last ditch effort to lose your
 pursuers.
+
+Type [1;37mHELP BATTLE3[1;36m for more information on battling.
+[1;36m} T GE help battle 2 message
+
+HLPBATT3 {
+[1;36mTopic: Battle strategy (section 3)
 
 Form alliances to help protect each other from marauders. Remember, two ships
 are twice as powerful as one.
@@ -323,11 +291,11 @@ Remember, the cost for everything is much more expensive in Sector 0 0.
 When you destroy another ship, you will get some of the goods that were on that
 ship. This can be very helpful when you are running low.
 
-Type [1;37mHELP BATTLE3[1;36m for more information on battling.
-[1;36m} T GE help battle 2 message
+Type [1;37mHELP BATTLE4[1;36m for more information on battling.
+[1;37m} T GE help battle 3 message
 
-HLPBATT3 {
-[1;36mTopic: Battle strategy (section 3, planetary battles)
+HLPBATT4 {
+[1;36mTopic: Battle strategy (section 4, planetary battles)
 
 Planets can defend themselves with troops, fighters, and ion cannons. If you
 have no troops or fighters, your planet can be easily overrun.
@@ -341,25 +309,17 @@ TROOPS are trained mercenaries, and serve no other function than the defense of
 (or attack on) a planet. They consume food, maintain their skills, and mostly
 play cards, but when needed they will fight to the death.
 
-ION CANNONS are the very powerful fixed focus, ion-plasma transmitters, capable
-of taking out a large ship with only a few strikes. They are strictly defensive
-weapons controlled by a fully automated system. When the planet comes under
-attack, they will automatically locate the attacker and commence firing upon
-the ship.
+ION CANNONS are very powerful fixed focus, ion-plasma transmitters, capable of
+taking out a large ship with only a few strikes. When the planet comes under
+attack, they will automatically locate the attacker's ship and commence firing.
 
 When attacking a planet you are always at a disadvantage, as the local troops
 and fighters are better supported and fresh. Knowing this, you should always
-plan on commencing a battle with superior numbers.
-
-If the planet has fighters, begin with a fighter attack. Clear out all fighters
-from the planet before attempting to attack with troops. Once the fighters are
-eliminated, you can begin attacking with troops.
-
-After each wave, some fighters or troops may return to your ship if they are
-not all eliminated in the attack. If you wish to send them back, you can do
-so. Remember, you will not take a planet so long as 1 fighter or 1 squad of
-troops (5) exists on the planet.
-[1;37m} T GE help battle 3 message
+plan on commencing a battle with superior numbers. If the planet has fighters,
+begin with a fighter attack. Clear out all fighters from the planet before
+attempting to attack with troops. Remember, you will not take a planet so long
+as 1 fighter or 1 squad of troops (5) exists on the planet.
+[1;37m} T GE help battle 4 message
 
 HLPCYBER {
 [1;36mTopic: Cybertrons
@@ -373,31 +333,30 @@ decades, leading them to turn against the Sartens, with whom they once shared
 an uneasy alliance. Cybertrons are now bent on the destruction of all organic
 life from the galaxy, including the Sartens, Murdonians, and (presumably) you.
 
-All Cybertrons are equipped with a pursuit capability to identify
-non-Cybertron ships throughout the galaxy, and are capability of traversing
-the galaxy in mere moments to reach a ship, at speeds far beyond warp as
-currently understood. All attempts by the Galactic Command to reverse engineer
-this technology have so far failed. A scan of a Cybertron ship traveling at
-this pursuit speed will display "??.??" for speed.
+All Cybertrons are equipped with a pursuit capability to identify non-Cybertron
+ships throughout the galaxy, and are capability of traversing the galaxy in
+mere moments to reach a ship, at speeds far beyond warp as currently
+understood. All attempts by the Galactic Command to reverse engineer this
+technology have so far failed. A scan of a Cybertron ship traveling at this
+pursuit speed will display "??.??" for speed.
 
 The least powerful Cybertron is a Cybertron Interceptor, which can be
 identified by its "1x" marking. The top cruising speed of a Cybertron
 Interceptor is warp 8.0, and it is equipped only with phaser, shield, and
 torpedo systems. As you destroy Cybertrons and upgrade to more powerful ships,
-you will find additional, more powerful classes of Cybertrons will be
-dispatched to intercept you. It is up to you to discover the capabilities of
-these ships.
+you will find more powerful classes of Cybertrons will be dispatched to
+intercept you. It is up to you to discover the capabilities of these ships.
 [1;37m} T GE help Cybertron message
 
 HLPLYDO {
 [1;36mTopic: Lydorians
 
-Eight hundred years ago, the Lydorians and the Sartens fought a war that
-nearly brought both powers to mutual destruction. However, when the Sartens
-finally developed faster-than-light travel, the war effectively ended. The
-Lydorians were offered a treaty with the Sartens ending all hostilities as
-long as the Lydorians agreed to never develop hyperspace technology of their
-own. Facing certain defeat, the Lydorians reluctantly agreed.
+Eight hundred years ago, the Lydorians and the Sartens fought a war that nearly
+brought both powers to mutual destruction. However, when the Sartens finally
+developed faster-than-light travel, the war effectively ended. The Lydorians
+were offered a treaty with the Sartens ending all hostilities as long as the
+Lydorians agreed to never develop hyperspace technology of their own. Facing
+certain defeat, the Lydorians reluctantly agreed.
 
 Today, this treaty is still in effect and the Lydorians have adopted a
 pacifist, isolationist lifestyle. Some Lydorians operate garbage scows that
@@ -407,31 +366,31 @@ galaxy at all.
 During the Cybertron-Sarten War, the Lydorians developed the Planetary
 Transport vessel, capable of evacuating entire populations of planets out of
 the path of destruction. When hostilities died down, the government of Lydoria
-sold the design specifications to the Galactic Command. The Planetary
-Transport is sold at Zygor today.
+sold the design specifications to the Galactic Command. The Planetary Transport
+is sold at Zygor today.
 [1;37m} T GE help Lydorian message
 
 HLPMURD {
 [1;36mTopic: Murdonians
 
 The Murdonians are one of the few powers in the galaxy to never get caught up
-in full-scale war or galactic conquest. After acquiring warp capability
-several hundred years ago, the Murdonian government eventually spun off their
-space program into the Trans-Gal Corporation, serving the transportation
-needs of the entire galaxy.
+in full-scale war or galactic conquest. After acquiring warp capability several
+hundred years ago, the Murdonian government eventually spun off their space
+program into the Trans-Gal Corporation, serving the transportation needs of the
+entire galaxy.
 
-Today, the Trans-Gal Corporation moves tens of thousands of people and
-hundreds of thousands of tons of equipment throughout the galaxy every day.
-While the Murdonians possess no military force of their own, Trans-Gal vessels
-are capable of self-defense to protect their passengers and cargo from
-Cybertrons and other marauders.
+Today, the Trans-Gal Corporation moves tens of thousands of people and hundreds
+of thousands of tons of equipment throughout the galaxy every day. While the
+Murdonians possess no military force of their own, Trans-Gal vessels are
+capable of self-defense to protect their passengers and cargo from Cybertrons
+and other marauders.
 [1;37m} T GE help Murdonians message
 
 HLPSART {
 [1;36mTopic: Sartens
 
 Once a proud warrior race, and the dominant military power in the galaxy, the
-Sarten Empire is in ruins after the Cybertron-Sarten War of 3274. 
+Sarten Empire is in ruins after the Cybertron-Sarten War of 3274.
 
 In the past thirty years, Cybertrons have greatly upgraded their fleet with
 newer, more powerful ships, and quickly outclassed even the most powerful
@@ -445,9 +404,9 @@ They also control a handful of defense drones which will seek out Cybertrons
 and anyone else who has threatened what remains of their empire.
 
 While no longer a threat to the galaxy at large, many ship commanders have not
-forgotten the terror that Sartens have wrought in the past. Whether you wish
-to attack, ignore, or defend the Sartens is up to you, but be advised that
-they will respond in kind.
+forgotten the terror that Sartens have wrought in the past. Whether you wish to
+attack, ignore, or defend the Sartens is up to you, but be advised that they
+will respond in kind.
 [1;37m} T GE help Sartens message
 
 HLPTRYK {
@@ -455,17 +414,17 @@ HLPTRYK {
 
 The Tryklons are a nomadic species, and whether they are real or simply a
 legend had been debated for many years. Several ship commanders have reported
-approaching a unknown vessel, but being quickly thrown off course by an
-unknown force, and returning to find no trace of the ship.
+approaching a unknown vessel, but being quickly thrown off course by an unknown
+force, and returning to find no trace of the ship.
 
 In 3277, a Vakory Survey Drone captured what are believed to be the first
 visual scans of a Tryklon ship ever recorded. However, the drone mysteriously
 vanished after transmitting its findings to the Vakory High Command.
 
-Legend says the Tryklons were the first spacefaring race in the galaxy,
-possess unknown and powerful technology, and are responsible for seeding the
-galaxy with the wormholes that are commonly used today. However, Zygorian
-scientists dismiss these claims.
+Legend says the Tryklons were the first spacefaring race in the galaxy, possess
+unknown and powerful technology, and are responsible for seeding the galaxy
+with the wormholes that are commonly used today. However, Zygorian scientists
+dismiss these claims.
 
 One of the wormholes in the neutral zone was named the Tryklon Portal in honor
 of these legends.
@@ -476,9 +435,9 @@ HLPVAKO {
 
 One hundred years ago, the Vakories believed they were alone in the galaxy,
 until their fledgling space program led them to discover Sarten vessels in a
-neighboring sector. Fearing hostility, the Vakories developed unmanned
-research vessels to help them understand the giant galaxy that they now
-understood they inhabited.
+neighboring sector. Fearing hostility, the Vakories developed unmanned research
+vessels to help them understand the giant galaxy that they now understood they
+inhabited.
 
 Today, the Vakory Survey Drone program is considered the leading scientific
 research program in the galaxy. Vakory Survey Drones map the galaxy, study
@@ -501,14 +460,14 @@ the Galactic Monetary Reserve Fund, the only duly authorized financial
 institution in the galaxy.
 
 In 3250, the Galactic Command established the neutral zone, a perimeter around
-sector 0 0 inside which no hostility is permitted. This policy is maintained
-by the Enforcer Planet, home to a secret base capable of nullifying any
-weapons fire detected within the sector.
+sector 0 0 inside which no hostility is permitted. This policy is maintained by
+the Enforcer Planet, home to a secret base capable of nullifying any weapons
+fire detected within the sector.
 
-While at Zygor, ship commanders may buy and sell goods, purchase new ships
-and upgrades, and get their ships repaired. Also in the neutral zone is
-Tahanian Station, a embarking station for colonists and mercenary soldiers,
-where you can find men, troops, and food for your own planets.
+While at Zygor, ship commanders may buy and sell goods, purchase new ships and
+upgrades, and get their ships repaired. Also in the neutral zone is Tahanian
+Station, a embarking station for colonists and mercenary soldiers, where you
+can find men, troops, and food for your own planets.
 
 Galactic Command Freighters are dispatched from Zygor to bring supplies to
 planets throughout the galaxy. Any hostility towards these ships may result in
@@ -538,11 +497,11 @@ HLPWORM {
 [1;36mTopic: Wormholes
 
 Wormholes are fairly rare galactic anomalies caused by a paired spatial
-singularity. In effect, they create a means of "leaping" across the galaxy
-to another sector. To navigate through a wormhole you must carefully approach
-it directly at about 1/4 impulse. You will be pulled into the wormhole and
-emerge at the terminal sector. If you approach too fast, you will simply miss
-the event horizon. If you approach too slow, you may oscillate between terminal
+singularity. In effect, they create a means of "leaping" across the galaxy to
+another sector. To navigate through a wormhole you must carefully approach it
+directly at about 1/4 impulse. You will be pulled into the wormhole and emerge
+at the terminal sector. If you approach too fast, you will simply miss the
+event horizon. If you approach too slow, you may oscillate between terminal
 sectors.
 
 Each time you pass through a wormhole, some damage to systems may occur.
@@ -550,6 +509,28 @@ Passing through a wormhole while severely damaged is not recommended. Wormholes
 are usually bidirectional, but an even rarer form of one way wormhole has been
 speculated to exist.
 [1;37m} T GE help wormhole message
+
+HLPNEB {
+[1;36mTopic: Nebulas
+
+Nebulas are sectors in the galaxy filled with ionized hydrogen and cosmic dust.
+Inside a nebula, your ship's scanners will be extremely limited. Scanners will
+only be able to work within a small radius around the ship in sector view and
+all scanner functionality outside the nebula will be blocked.
+
+A ship inside the nebula is also completely shielded from all scans from
+outside the nebula. This means a nebula can be an effective place to hide, but
+you won't have any idea what's going on outside of it.
+
+Phaser fire is not affected by nebulas, and you can fire into and out of them
+as you please. If you think someone's hiding in a nebula, that's certainly an
+effective way to check.
+
+Planets and wormholes can exist in a nebula just like any other sector, but
+your scanners will not be able to locate them unless they're very close to you.
+A high quality planet in a nebula can be very valuable, as it adds an extra
+layer of security for your colony. Just don't forget where you left it.
+[1;37m} T GE help nebula message
 
 HLPADM {
 [1;36mThe [1;37mADMIN[1;36m command permits you to claim and administer a planet once in orbit.
@@ -612,20 +593,13 @@ follows:
            [1;37mmax[1;36m to fill your ship to capacity
 
   [1;32mitem[1;36m:
-    [1;37mmen[1;36m = buy men
-    [1;37mtro[1;36m = buy troops
-    [1;37mmis[1;36m = buy missiles
-    [1;37mtor[1;36m = buy torpedoes
-    [1;37mion[1;36m = buy ion cannons
-    [1;37mflu[1;36m = buy flux pods
-    [1;37mfoo[1;36m = buy food
-    [1;37mfig[1;36m = buy fighters
-    [1;37mdec[1;36m = buy decoys
-    [1;37mmin[1;36m = buy mines
-    [1;37mjam[1;36m = buy jammers
-    [1;37mzip[1;36m = buy zippers
-    [1;37mgol[1;36m = buy gold
-    [1;37mspy[1;36m = buy spies
+    [1;37mmen[1;36m = buy men          [1;37mfig[1;36m = buy fighters
+    [1;37mtro[1;36m = buy troops       [1;37mdec[1;36m = buy decoys
+    [1;37mmis[1;36m = buy missiles     [1;37mmin[1;36m = buy mines
+    [1;37mtor[1;36m = buy torpedoes    [1;37mjam[1;36m = buy jammers
+    [1;37mion[1;36m = buy ion cannons  [1;37mzip[1;36m = buy zippers
+    [1;37mflu[1;36m = buy flux pods    [1;37mgol[1;36m = buy gold
+    [1;37mfoo[1;36m = buy food         [1;37mspy[1;36m = buy spies
 
   [1;32mpassword[1;36m = optional trade password may be required by planet
 
@@ -674,19 +648,19 @@ HLPFLU {
 All ships operate by the power provided by the neutron flux drive. The neutron
 flux is recharged by loading in a new flux pod. Until recently, this was
 occasionally a challenging process, as many ship systems would sometimes
-completely drain the flux before a pod could be replaced. All ships now sold
-at Zygor will now automatically replace flux pods as needed; it is no longer
+completely drain the flux before a pod could be replaced. All ships now sold at
+Zygor will now automatically replace flux pods as needed; it is no longer
 necessary to manually switch pods.
 
 If you wish, you can enter [1;37mFLUX[1;36m to replace your current flux pod. This command
 presumes that you want it changed now, and does not warn you if there is still
-a good percentage of power left in the old pod. The old pod is jettisoned.
-Your power is restored to full charge automatically.
+a good percentage of power left in the old pod. The old pod is jettisoned. Your
+power is restored to full charge automatically.
 
 Ships are also capable of recharging the flux pile by absorbing the naturally
-occuring background ion radiation of the galaxy, at a rate of 1 unit every
-three seconds. This means a ship can still travel at impulse even if a ship
-has run out of flux pods.
+occuring background ion radiation of the galaxy, at a rate of 2 units every
+three seconds. This means a ship can still travel at impulse even if a ship has
+run out of flux pods.
 
 It is your responsibility to make sure that you keep your ship stocked with
 flux pods, because if you run out, it will be a long trip to the nearest base
@@ -738,7 +712,9 @@ Examples: [1;37mimpulse 5     [1;36malter the speed to warp 0.05, not changing
 HLPJAM {
 [1;36mThe [1;37mJAMMER[1;36m command will launch a jammer device from your ship. It disrupts all
 scanner systems on all ships within range of the device, yours included. It is
-useful for covering an escape or distracting an opponent.
+useful for covering an escape or distracting an opponent. The closer you are to
+the jammer, the more severe the jamming effect is, so don't assume someone
+can't see you just because you can't see them.
 [1;37m} T GE help jam message
 
 HLPLOC {
@@ -749,6 +725,12 @@ that specific ship.
 Commands like [1;37mMISSILE[1;36m, [1;37mTORPEDO[1;36m, and [1;37mSCAN[1;36m can then be used with [1;37m@[1;36m instead of the
 ship letter. When you are locked onto a ship, its name will appear highlighted
 in scans and reports.
+
+When you lock onto a ship, that ship's scanners will detect the lock and report
+that information to the ship's commander, however once the lock is engaged,
+that ship will not be able to detect how often you are scanning it.
+
+Cybertrons are known to consider setting a scanner lock to be a hostile act.
 
 Issue the command as follows:
 
@@ -766,8 +748,8 @@ ship and charge you a nominal fee of [0;33m2500[1;36m at Zygor and [0;33m200
 Leaving orbit early will cease all repairs on the ship. If the planet has a
 trade password set, it will be required.
 
-Maintenance crews will not operate on any ship that is determined to be
-engaged in hostilities, as defined by the Galactic Codes of Engagement.
+Maintenance crews will not operate on any ship that is determined to be engaged
+in hostilities, as defined by the Galactic Codes of Engagement.
 
 Cloaked ships will not be serviced unless the ship owner and planet owner are
 the same.
@@ -789,12 +771,11 @@ follows:
 HLPMIS {
 [1;36mThe [1;37mMISSILE[1;36m command fires a hyper-missile at a given ship with a given charge.
 This missile guidance system will attempt to lock on the ship prior to firing
-the missile. If a lock is made the missile is launched.
+the missile. If a lock is made, the missile is launched.
 
 Missiles must be charged from your neutron flux pile, and will drain your
-ship's flux pile by the amount of the charge. A missile's charge can be
-between 2000 and 20000; if you don't specify an amount a default of 5000
-is used.
+ship's flux pile by the amount of the charge. A missile's charge can be between
+2000 and 20000; if you don't specify the default of 5000 is used.
 
 Issue the command as follows:
 
@@ -809,6 +790,8 @@ Examples: [1;37mmissile A 2000   [1;36mfires a missile at ship A which cause m
                    damage, and drains your ship's flux by 20000
           [1;37mmis @            [1;36mfires on the ship that a previous [1;37mLOCK[1;36m command has
                    locked onto, and drains your ship's flux by 5000
+
+Type [1;37mHELP BATTLE[1;36m for more information on missiles.
 [1;37m} T GE help missile message
 
 HLPNAV {
@@ -861,14 +844,13 @@ Mark-19......200.0m             Mark-19......180.0m
 
 HLPORB {
 [1;36mThe [1;37mORBIT[1;36m command is used to orbit a given planet. You must be traveling at
-impulse or at a dead stop. If you are traveling at impulse, issuing the
-command will stop the impulse engines.
+impulse or at a dead stop. If you are traveling at impulse, issuing the command
+will stop the impulse engines.
 
 Issue the command as follows:
 
 [1;37m  orbit [1;32m[planet number]
-[1;36m
-You must be within 250 subsectors of a planet to establish an orbit.
+[1;36m You must be within 250 subsectors of a planet to establish an orbit.
 [1;37m} T GE help orbit message
 
 HLPPHA {
@@ -908,20 +890,13 @@ Issue the command as follows:
   amount[1;36m = the amount you want priced
 
   [1;32mitem[1;36m:
-    [1;37mmen[1;36m = price of men
-    [1;37mtro[1;36m = price of troops
-    [1;37mmis[1;36m = price of missiles
-    [1;37mtor[1;36m = price of torpedoes
-    [1;37mion[1;36m = price of ion cannons
-    [1;37mflu[1;36m = price of flux pods
-    [1;37mfoo[1;36m = price of food
-    [1;37mfig[1;36m = price of fighters
-    [1;37mdec[1;36m = price of decoys
-    [1;37mmin[1;36m = price of mines
-    [1;37mjam[1;36m = price of jammers
-    [1;37mzip[1;36m = price of zippers
-    [1;37mgol[1;36m = price of gold
-    [1;37mspy[1;36m = price of spies
+    [1;37mmen[1;36m = price of men          [1;37mfig[1;36m = price of fighters
+    [1;37mtro[1;36m = price of troops       [1;37mdec[1;36m = price of decoys
+    [1;37mmis[1;36m = price of missiles     [1;37mmin[1;36m = price of mines
+    [1;37mtor[1;36m = price of torpedoes    [1;37mjam[1;36m = price of jammers
+    [1;37mion[1;36m = price of ion cannons  [1;37mzip[1;36m = price of zippers
+    [1;37mflu[1;36m = price of flux pods    [1;37mgol[1;36m = price of gold
+    [1;37mfoo[1;36m = price of food         [1;37mspy[1;36m = price of spies
 [1;37m} T GE help price message
 
 HLPREN {
@@ -947,8 +922,11 @@ inventory, accounting, and deployed ordnance. Issue the command as follows:
 [1;37m} T GE help report message
 
 HLPROS {
-[1;36mThe [1;37mROSTER[1;36m command will display the top players roster. Players that have yet
-to score any points will not be displayed. Issue the command as follows:
+[1;36mThe [1;37mROSTER[1;36m command will display the top players roster. Your current ranking
+number will also be displayed. Players that have yet to score any points will
+not be displayed unless you specify [1;37mall[1;36m.
+
+Issue the command as follows:
 
   [1;37mroster [1;32m[[1;37mall[1;32m]
 
@@ -1002,8 +980,8 @@ Examples:
 } T GE help set message
 
 HLPSCA {
-[1;36mThe [1;37mSCAN[1;36m command displays information from your ship's tactical scanners.
-Issue the command as follows:
+[1;36mThe [1;37mSCAN[1;36m command displays information from your ship's tactical scanners. Issue
+the command as follows:
 
 [1;37m  scan [1;32m[type] [ship letter/planet number/range]
 
@@ -1018,20 +996,17 @@ Issue the command as follows:
   [1;37mlo[1;36m = long range scan (10x) showing ships
      [1;32mh[1;36m can be specified for half range, and [1;32mq[1;36m for one quarter range.
 
-[1;36mExamples: [1;37mscan se
-          scan sh a
-          scan pl 1
-          sca ra
-          sca ra 4
-          sca lo
-          sca lo q
+[1;36mExamples: [1;37mscan se            scan sh a
+          scan sh @          scan pl 1
+          sca ra             sca ra 4
+          sca lo             sca lo q
 
-[1;36mSee the [1;37mSET[1;36m command for additional configuration options for [1;37mSCAN[1;36m.
-[1;37m} T GE help scan message
+[1;36mSee the [1;37mSET[1;36m command for additional configuration options for [1;37mSCAN[1;36m.[1;37m
+} T GE help scan message
 
 HLPSEL {
-[1;36mUse the [1;37mSELL[1;36m command to sell items to Zygor. The Galactic Command will charge
-a small transfer tax on each transaction.
+[1;36mUse the [1;37mSELL[1;36m command to sell items to Zygor. The Galactic Command will charge a
+small transfer tax on each transaction.
 
 Issue the command as follows:
 
@@ -1040,20 +1015,13 @@ Issue the command as follows:
   amount[1;36m = the amount you want to sell (or [1;37mall[1;36m to sell all onboard)
 
   [1;32mitem[1;36m:
-[1;37m    men[1;36m = sell men
-[1;37m    tro[1;36m = sell troops
-[1;37m    mis[1;36m = sell missiles
-[1;37m    tor[1;36m = sell torpedoes
-[1;37m    ion[1;36m = sell ion cannons
-[1;37m    flu[1;36m = sell flux pods
-[1;37m    foo[1;36m = sell food
-[1;37m    fig[1;36m = sell fighters
-[1;37m    dec[1;36m = sell decoys
-[1;37m    min[1;36m = sell mines
-[1;37m    jam[1;36m = sell jammers
-[1;37m    zip[1;36m = sell zippers
-[1;37m    gol[1;36m = sell gold
-[1;37m    spy[1;36m = sell spies
+[1;37m    men[1;36m = sell men          [1;37mfig[1;36m = sell fighters
+[1;37m    tro[1;36m = sell troops       [1;37mdec[1;36m = sell decoys
+[1;37m    mis[1;36m = sell missiles     [1;37mmin[1;36m = sell mines
+[1;37m    tor[1;36m = sell torpedoes    [1;37mjam[1;36m = sell jammers
+[1;37m    ion[1;36m = sell ion cannons  [1;37mzip[1;36m = sell zippers
+[1;37m    flu[1;36m = sell flux pods    [1;37mgol[1;36m = sell gold
+[1;37m    foo[1;36m = sell food         [1;37mspy[1;36m = sell spies
 
 Examples:[1;37m sell 1000 men
           sel 3 ion
@@ -1077,12 +1045,10 @@ HLPFRE {
 monitor and use to broadcast. Issue the command as follows:
 
 [1;37m  freq [1;32m[channel] [[1;37mhail[1;32m/freq]
-[1;36m
-Examples: [1;37mfreq A 12345
+[1;36m Examples: [1;37mfreq A 12345
           freq b hail
           fre c 23221
-[1;36m
-Channel frequencies above 20000 are converted to hyperspace modulation packets
+[1;36m Channel frequencies above 20000 are converted to hyperspace modulation packets
 and transmitted through hyperspace. Channel frequencies below 20000 are
 transmitted in the current star system only.
 [1;37m} T GE help freq message
@@ -1102,9 +1068,11 @@ lowered. They WILL NOT be automatically raised after the firing.
 [1;37m} T GE help shield message
 
 HLPTOR {
-[1;36mThe [1;37mTORPEDO[1;36m command fires a torpedo at a given ship. Your ship's fire control
+[1;36mThe [1;37mTORPEDO[1;36m command fires a torpedo at a given ship. The torpedo guidance
 system will attempt to lock on the ship prior to firing the torpedo. If a lock
-is made, the torpedo is launched. Issue the command as follows:
+is made, the torpedo is launched.
+
+Issue the command as follows:
 
   [1;37mtorpedo [1;32m[ship letter/[1;37m@[1;32m]
 
@@ -1113,6 +1081,8 @@ is made, the torpedo is launched. Issue the command as follows:
 
   examples: [1;37mtorpedo A   [1;36mfires a torpedo at ship A.
             [1;37mtor @       [1;36mfires at the ship you locked on with the [1;37mLOCK[1;36m cmd
+
+Type [1;37mHELP BATTLE[1;36m for more information on torpedoes.
 [1;37m} T GE help torpedo message
 
 HLPTRA {
@@ -1126,22 +1096,15 @@ or from a planet to your ship. Issue the command as follows:
            [1;37mmax[1;36m to fill your ship to capacity (up only)
 
   [1;32mitem[1;36m:
-[1;37m    men [1;36m= transfer men
-[1;37m    tro [1;36m= transfer troops
-[1;37m    mis [1;36m= transfer missiles
-[1;37m    tor [1;36m= transfer torpedoes
-[1;37m    ion [1;36m= transfer ion cannons
-[1;37m    flu [1;36m= transfer flux pods
-[1;37m    foo [1;36m= transfer food
-[1;37m    fig [1;36m= transfer fighters
-[1;37m    dec [1;36m= transfer decoys
-[1;37m    min [1;36m= transfer mines
-[1;37m    jam [1;36m= transfer jammers
-[1;37m    zip [1;36m= transfer zippers
-[1;37m    gol [1;36m= transfer gold
-[1;37m    spy [1;36m= transfer spies
+[1;37m    men [1;36m= transfer men          [1;37mfig [1;36m= transfer fighters
+[1;37m    tro [1;36m= transfer troops       [1;37mdec [1;36m= transfer decoys
+[1;37m    mis [1;36m= transfer missiles     [1;37mmin [1;36m= transfer mines
+[1;37m    tor [1;36m= transfer torpedoes    [1;37mjam [1;36m= transfer jammers
+[1;37m    ion [1;36m= transfer ion cannons  [1;37mzip [1;36m= transfer zippers
+[1;37m    flu [1;36m= transfer flux pods    [1;37mgol [1;36m= transfer gold
+[1;37m    foo [1;36m= transfer food         [1;37mspy [1;36m= transfer spies
 
-Examples:[1;37m transfer up 3 ion 
+Examples:[1;37m transfer up 3 ion
           tra down 500 foo
           tra u max foo
           tra d all mis
@@ -1167,8 +1130,8 @@ Examples: [1;37mwarp 5     [1;36malters the speed to warp 5 and does not chang
 [1;37m} T GE help warp message
 
 HLPSTO {
-[1;36mThe [1;37mSTOP[1;36m command cuts the engines and brings your ship to a complete stop,
-even if your ship's helm is damaged and not accepting commands.
+[1;36mThe [1;37mSTOP[1;36m command cuts the engines and brings your ship to a complete stop, even
+if your ship's helm is damaged and not accepting commands.
 [1;37m} T GE help stop message
 
 
@@ -1182,8 +1145,7 @@ opponent's own ship.
 [1;37m} T GE help zipper message
 
 HLPCLS1 {
-[1;36mThese are the classes of ships manufactured at Zygor and their capabilities:
-[0;37m
+[1;36mThese are the classes of ships manufactured at Zygor and their capabilities: [0;37m
                                 P  W  S  P T M M F D J Z C   A    S    T     P
                                 r  r  h  h o i i i e a i l   c    c    o     t
                                 c  p  i  a r s n g c m p o   l    n    n     s
@@ -1199,14 +1161,7 @@ HLPCLS3 {
 } T GE help class invalid class message
 
 HLPTEA {
-[1;36mThe [1;37mTEAM[1;36m command performs a number of functions related to teams. It allows
-you to join a team, create a new team, leave a team, and get team scores.
-Additionally, the team founder (or anyone with the founder password) can expel
-a team member, change the team password, or change the team name.
-
-Teams are identified by a 5 digit team code created by the founder when they
-started the team. This code never changes even though the team name may be
-changed. 
+[1;36mThe [1;37mTEAM[1;36m command performs a number of functions related to teams.
 
 Team founder commands are:
 [1;37m   team start [1;32mnnnnn ssssssssss pppppppppp [team name]
@@ -1225,15 +1180,10 @@ Team founder commands are:
 
 [1;36mTeam member commands are:
 [1;37m   team join [1;32mnnnnn pppppppppp
-[1;36m      permits a player to join the team [1;32mnnnnn[1;36m provided they have the correct
-      member password [1;32mpppppppppp[1;36m.
-[1;37m   team unjoin
-[1;36m      permits the player to leave the current team they are a member of.
-[1;37m   team score
-[1;36m      displays a list of the current teams and their scores.
-[1;37m   team members
-[1;36m      displays a list of the members of the player's current team.
-[1;37m} T GE team help message
+   team unjoin
+   team score
+   team members
+} T GE team help message
 
 HLPSPY {
 [1;36mThe [1;37mSPY[1;36m command will transport a spy (provided you have one on board) to the
@@ -1247,29 +1197,22 @@ spies who sneak onto your planet.
 
 HLPJET {
 [1;36mThe [1;37mJETTISON[1;36m command permits you to dump goods from your ship. You can dump a
-specific number, or all you have of a item type. Issue the command as follows:
+specific number, or all you have of a item type. You are not allowed to
+jettison people. Issue the command as follows:
 
 [1;37m  jettison [1;32m[[1;37mall[1;32m/amount] [item]
 
   amount[1;36m = the amount you want to jettison (or [1;37mall[1;36m)
 
   [1;32mitem[1;36m:
-    [1;37mmen[1;36m = jettison men
-    [1;37mtro[1;36m = jettison troops
-    [1;37mmis[1;36m = jettison missiles
-    [1;37mtor[1;36m = jettison torpedoes
-    [1;37mion[1;36m = jettison ion cannons
-    [1;37mflu[1;36m = jettison flux pods
+    [1;37mfig[1;36m = jettison fighters     [1;37mdec[1;36m = jettison decoys
+    [1;37mmis[1;36m = jettison missiles     [1;37mmin[1;36m = jettison mines
+    [1;37mtor[1;36m = jettison torpedoes    [1;37mjam[1;36m = jettison jammers
+    [1;37mion[1;36m = jettison ion cannons  [1;37mzip[1;36m = jettison zippers
+    [1;37mflu[1;36m = jettison flux pods    [1;37mgol[1;36m = jettison gold
     [1;37mfoo[1;36m = jettison food
-    [1;37mfig[1;36m = jettison fighters
-    [1;37mdec[1;36m = jettison decoys
-    [1;37mmin[1;36m = jettison mines
-    [1;37mjam[1;36m = jettison jammers
-    [1;37mzip[1;36m = jettison zippers
-    [1;37mgol[1;36m = jettison gold
-    [1;37mspy[1;36m = jettison spies
 
-Examples: [1;37mjettison ALL ion 
+Examples: [1;37mjettison ALL ion
           jet 500 foo 
 } T GE help jettison message
 
@@ -1286,32 +1229,33 @@ available for the use of sysops, game administrators, or their designees:
 [1;37m  sys shieldtype [1;32m[number][1;36m -- change current ship shield to specified class
 [1;37m  sys phasertype [1;32m[number][1;36m -- change current ship phaser to specified class
 [1;37m  sys maint [1;32m[[1;37mnow[1;32m][1;36m -- repair ship without having to orbit
-[1;37m  sys unjam [1;36m -- clear jamming
+[1;37m  sys unjam[1;36m -- clear jamming
 [1;37m  sys list [1;32m[number][1;36m -- list 50 ships in game beginning with specified number
-[1;37m  sys classlist [1;36m -- show complete list of ship classes, including NPCs
+[1;37m  sys classlist[1;36m -- show complete list of ship classes, including NPCs
 [1;37m  sys cybpause [1;32m[number][1;36m -- pause the Cybertrons for the specified seconds
 [1;37m  sys multiply [1;32m[number][1;36m -- run the planetary update cycle of the orbited planet
 [1;37m  sys orbit [1;32m[number][1;36m -- orbit planet in the current sector, even if not close
-[1;37m  sys assigncybs [1;32m[number][1;36m -- reshuffle Cybs pursuing you based on distance
+[1;37m  sys assigncybs[1;36m -- reshuffle Cybs pursuing you based on distance
+[1;37m  sys fill [1;32m[number][1;36m -- fill your ship with this many of each item
+[1;37m  sys fillslots[1;36m -- fill all vacant NPC slots
 [1;37m
 } T GE help sys message 
 
 HLPWHO {
 [1;36mThe [1;37mWHO[1;36m command displays a list of users online.
-[1;37m} T GE help cls message
+[1;37m} T GE help who message
 
 HLPEXT {
 [1;36mThe [1;37mX[1;36m command powers down your ship and exits Galactic Empire.
 
 The Galactic Codes of Engagement state that a user may not power down their
-ship during hostilities until a cease fire period has passed. If you
-disconnect from Galactic Empire by any other means during this period, when
-you return you will find that your ship was destroyed, and credit for
-destroying the ship will be assigned to the last ship to fire upon you.
+ship during hostilities until a cease fire period has passed. If you disconnect
+from Galactic Empire by any other means during this period, when you return you
+will find that your ship was destroyed, and credit for destroying the ship will
+be assigned to the last ship to fire upon you.
 
 An amendment to these rules was ratified in 3280, allowing ships to power down
 at any time if they are in the neutral zone and no projectiles are incoming.
 [1;37m} T GE help exit message
-
 
 
