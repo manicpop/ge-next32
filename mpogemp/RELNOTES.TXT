@@ -221,6 +221,8 @@ Other stuff:
   predictable and more formidable.
 * If you destroy a ship and there aren't other ships in weapons
   range, your "can't exit" timer is significantly reduced.
+* Ineffective phaser hits now apply a reduced "can't exit" timer
+  value.
 * You will no longer lose your ship if your "can't exit" timer
   is set when the board shuts down for midnight cleanup. Good
   news for insomniac ge-next players.

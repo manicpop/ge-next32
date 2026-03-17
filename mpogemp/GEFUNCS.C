@@ -3277,7 +3277,6 @@ switch (a)
 		if (shipclass[ptr->shpclass].max_shlds > 0 && ptr->shieldstat != SHIELDDM && dosys == 1)
 			{
 			prfmsg(SHDAMAG);
-			outprfge(ALWAYS,usrn);
 			ptr->shield = (int)(-2 - r % (damcomb/3));
 			ptr->shieldstat = SHIELDDM;
 			dosys = 2;
@@ -3288,7 +3287,6 @@ switch (a)
 		if (shipclass[ptr->shpclass].max_phasr > 0 && ptr->phasr >= 0 && dosys == 1)
 			{
 			prfmsg(RNDPHSR);
-			outprfge(ALWAYS,usrn);
 			ptr->phasr = (int)(-2 - r % (damcomb/3));
 			dosys = 2;
 			}
@@ -3298,7 +3296,6 @@ switch (a)
 		if (shipclass[ptr->shpclass].max_cloak > 0 && ptr->cloak >= 0 && dosys == 1)
 			{
 			prfmsg(RNDCLOK);
-			outprfge(ALWAYS,usrn);
 			ptr->cloak = -2 - r % (damcomb/3);
 			dosys = 2;
 			}
@@ -3308,7 +3305,6 @@ switch (a)
 		if (ptr->tactical == 0 && dosys == 1)
 			{
 			prfmsg(RNDTACT);
-			outprfge(ALWAYS,usrn);
 			ptr->tactical = -2 - r % (damcomb/6);
 			dosys = 2;
 			}
@@ -3318,7 +3314,6 @@ switch (a)
 		if (ptr->helm == 0 && dosys == 1)
 			{
 			prfmsg(RNDNAVG);
-			outprfge(ALWAYS,usrn);
 			ptr->helm = -2 - r % (damcomb/9);
 			dosys = 2;
 			}

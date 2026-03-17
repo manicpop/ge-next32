@@ -1264,8 +1264,8 @@ if (warsptr->status == GESTAT_USER)
 			prfmsg(EXIWAR2,warsptr->shipname);
 			outsect(ALWAYS,&warsptr->coord,usrnum,0);
 			cleartm(usrnum);
+			clearitm(usrnum);
 			gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
-
 			geudb(GEUPDATE,waruptr->userid,waruptr);
 			}
 		--numwar;
