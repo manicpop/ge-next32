@@ -2222,6 +2222,9 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 if (ptr->status == GESTAT_AUTO)
 	prfmsg(ZIPPER3N,ptr->shipname);
 else
+if (ptr->shipname[0] == '\0')
+	prfmsg(ZIPPER3O,ptr->userid);
+else
 	prfmsg(ZIPPER3,ptr->shipname);
 outrange(FILTER,&ptr->coord);
 --ptr->items[I_ZIPPERS];
@@ -2387,7 +2390,10 @@ if (margc > 2)
 			if (warsptr->freq[letter-'A'] == 0)
 				{
 				rstrin();
-				prfmsg(MSGSNT1,warsptr->shipname,letter,margv[2]);
+				if (warsptr->shipname[0] == '\0')
+					prfmsg(MSGSNT1O,waruptr->userid,letter,margv[2]);
+				else
+					prfmsg(MSGSNT1,warsptr->shipname,letter,margv[2]);
 				outwar(FILTER,usrnum,0);
 				prfmsg(MSGSNT2);
 				}
@@ -2395,7 +2401,10 @@ if (margc > 2)
 			if (warsptr->freq[letter-'A'] < 20000)
 				{
 				rstrin();
-				prfmsg(MSGSNT3,warsptr->shipname,letter,margv[2]);
+				if (warsptr->shipname[0] == '\0')
+					prfmsg(MSGSNT3O,waruptr->userid,letter,margv[2]);
+				else
+					prfmsg(MSGSNT3,warsptr->shipname,letter,margv[2]);
 				outsect(ALWAYS,&warsptr->coord,usrnum,warsptr->freq[letter-'A']);
 				prfmsg(MSGSNT4,warsptr->freq[letter - 'A']);
 				}
@@ -2403,7 +2412,10 @@ if (margc > 2)
 			if (warsptr->freq[letter-'A'] >= 20000)
 				{
 				rstrin();
-				prfmsg(MSGSNT5,warsptr->shipname,letter,margv[2]);
+				if (warsptr->shipname[0] == '\0')
+					prfmsg(MSGSNT5O,waruptr->userid,letter,margv[2]);
+				else
+					prfmsg(MSGSNT5,warsptr->shipname,letter,margv[2]);
 				outwar(ALWAYS,usrnum,warsptr->freq[letter-'A']);
 				prfmsg(MSGSNT6,warsptr->freq[letter - 'A']);
 				}
@@ -2508,7 +2520,10 @@ damage	= (unsigned)warsptr->damage +.5;
 speed	= ((unsigned)warsptr->speed  +.5);
 heading	= (int)(warsptr->heading+.5);
 
-prfmsg(REP01,shipclass[warsptr->shpclass].typename,warsptr->shipname);
+if (warsptr->shipname[0] == '\0')
+	prfmsg(REP01O,shipclass[warsptr->shpclass].typename,waruptr->userid);
+else
+	prfmsg(REP01,shipclass[warsptr->shpclass].typename,warsptr->shipname);
 prfmsg(DASHES);
 
 if (sameas(margv[1],"nav"))
@@ -3702,7 +3717,17 @@ if (ratio > 1L || won == 1)
 	mail.int1 = sector.xsect;
 	mail.int2 = sector.ysect;
 	mail.long1 = num;
-	sprintf(mail.name2,"%s",warsptr->shipname);
+	if (warsptr->shipname[0] == '\0')
+		{
+		mail.name2[0] = 0;
+		if (mail.type == MESG02)
+			mail.type = MESG02O;
+		else
+		if (mail.type == MESG03)
+			mail.type = MESG03O;
+		}
+	else
+		sprintf(mail.name2,"%s",warsptr->shipname);
 	sprintf(mail.string1,"%s",warsptr->userid);
 
 	mailit(1);
@@ -3862,7 +3887,17 @@ if (ratio > 2 || won == 1)
 	mail.int1 = sector.xsect;
 	mail.int2 = sector.ysect;
 	mail.long1 = num;
-	sprintf(mail.name2,"%s",warsptr->shipname);
+	if (warsptr->shipname[0] == '\0')
+		{
+		mail.name2[0] = 0;
+		if (mail.type == MESG04)
+			mail.type = MESG04O;
+		else
+		if (mail.type == MESG05)
+			mail.type = MESG05O;
+		}
+	else
+		sprintf(mail.name2,"%s",warsptr->shipname);
 	sprintf(mail.string1,"%s",warsptr->userid);
 
 	mailit(1);
@@ -3879,7 +3914,10 @@ void FUNC call_4_help(int send_spy_mail, int won)
 {
 if (instat(plptr->userid,gestt) && othusp->substt >= FIGHTSUB)
 	{
-	prfmsg(ATTACK6,plptr->name,xsect,ysect,warsptr->userid,warsptr->shipname);
+	if (warsptr->shipname[0] == '\0')
+		prfmsg(ATTACK6O,plptr->name,xsect,ysect,warsptr->userid);
+	else
+		prfmsg(ATTACK6,plptr->name,xsect,ysect,warsptr->userid,warsptr->shipname);
 	outprf(othusn);
 	prfmsg(ATTACK7);
 	outprfge(ALWAYS,usrnum);
@@ -5073,7 +5111,7 @@ if (sameas("class",margv[1]) && margc == 3)
 		{
 		warsptr->shpclass = atoi(margv[2])-1;
 		warsptr->topspeed = shipclass[warsptr->shpclass].max_warp;
-		prfmsg(SYSCLS,warsptr->shipname,shipclass[warsptr->shpclass].typename);
+		prfmsg(SYSCLS,shipclass[warsptr->shpclass].typename);
 		outprfge(ALWAYS,usrnum);
 		return;
 		}
@@ -5310,11 +5348,15 @@ if (margc >= 2)
 	rstrin();
 	strncpy(warsptr->shipname,margv[1],19);
 	warsptr->shipname[19] = 0;
-	prfmsg(RENAME1,warsptr->shipname);
+	if (warsptr->shipname[0] == '\0')
+		prfmsg(RENAME1O);
+	else
+		prfmsg(RENAME1,warsptr->shipname);
 	}
 else
 	{
-	prfmsg(RENAME3);
+	warsptr->shipname[0] = '\0';
+	prfmsg(RENAME1O);
 	}
 outprfge(ALWAYS,usrnum);
 }
@@ -5350,7 +5392,10 @@ if (warsptr->destruct > (byte)0)
 	{
 	if (warsptr->destruct < 10)
 		{
-		prfmsg(SELFD4A,warsptr->shipname);
+		if (warsptr->shipname[0] == '\0')
+			prfmsg(SELFD4AO,warsptr->userid);
+		else
+			prfmsg(SELFD4A,warsptr->shipname);
 		outrange(ALWAYS,&warsptr->coord);
 		}
 	prfmsg(SELFD4);
@@ -5441,7 +5486,10 @@ if (shpnum >= 0)
 		warshpoff(shpnum)->npcmsg = 255;	/* reset annoy msg tracking */
 		}
 	if (warshpoff(shpnum)->status == GESTAT_USER)
-		prfmsg(LOCK02, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
+		if (warshpoff(shpnum)->shipname[0] == '\0')
+			prfmsg(LOCK02O, username(warshpoff(shpnum)));
+		else
+			prfmsg(LOCK02, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
 	else
 		prfmsg(LOCK02N, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
 	outprfge(FILTER,usrnum);
@@ -6237,7 +6285,7 @@ if (sameas(margv[2],"report"))
 	setsect(warsptr);
 
 	prf("SD1:%s,%d*\r",
-		warsptr->shipname,
+		(warsptr->status == GESTAT_USER && warsptr->shipname[0] == '\0' ? warsptr->userid : warsptr->shipname),
 		warsptr->shpclass);
 
 	prf("SD2:%s,%s,%d,%d,%d,%d,%s,%s*\r",

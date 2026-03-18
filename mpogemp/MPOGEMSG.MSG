@@ -2033,8 +2033,16 @@ EXIWAR2 {***
 [0;37mSensors can no longer locate the [0;36m%s[0;37m.[1;37m
 } T GE sensors cannot locate message
 
+EXIWARN {***
+[0;37mSensors can no longer locate [0;36m%s[0;37m's ship.[1;37m
+} T GE sensors cannot locate message
+
 PEACEOUT {***
 [0;36m%s[1;36m's ship, the [0;36m%s[1;36m, has powered down.[1;37m
+} T GE ship enters game message
+
+PEACEONO {***
+[0;36m%s[1;36m's ship has powered down.[1;37m
 } T GE ship enters game message
 
 NOSHPS {
@@ -2068,6 +2076,10 @@ YRDEAD2 {
 
 DIED {***
 [1;36mThe [0;36m%s[1;36m, commanded by [0;36m%s[1;36m, has been destroyed![1;37m
+} T GE someone got blowed up message
+
+DIEDNO {***
+[1;36mThe ship commanded by [0;36m%s[1;36m has been destroyed![1;37m
 } T GE someone got blowed up message
 
 DIEDNPC {***
@@ -2317,7 +2329,7 @@ CLOKDWN {
 } T GE cloak already down message
 
 CLOKUP {***
-[1;32mThe [0;36m%s[1;32m is now completely invisible![1;37m
+[1;32mThis ship is now completely invisible![1;37m
 } T GE your ship cloaked message
 
 CLOKON {
@@ -2484,11 +2496,15 @@ FCNONO {
 } T GE can't fire into neutral zone message
 
 HYPERIN {***
-[1;35mHelm reports the [0;36m%s[1;35m is entering HYPERSPACE![1;37m
+[1;35mHelm reports entering hyperspace.[1;37m
 } T GE entering hyperspace message
 
 HYPERIN2 {***
 [0;37mSensors detect the [0;36m%s[0;37m has gone to hyperspace![1;37m
+} T GE someone else entering hyperspace message
+
+HYPERIN3 {***
+[0;37mSensors detect [0;36m%s[0;37m's ship has gone to hyperspace![1;37m
 } T GE someone else entering hyperspace message
 
 HYPERINN {***
@@ -2496,7 +2512,7 @@ HYPERINN {***
 } T GE someone else entering hyperspace message
 
 HYPEROUT {***
-[1;35mHelm reports the [0;36m%s[1;35m is leaving hyperspace.[1;37m
+[1;35mHelm reports leaving hyperspace.[1;37m
 } T GE leaving hyperspace message
 
 HYPEROU2 {***
@@ -2505,6 +2521,10 @@ HYPEROU2 {***
 
 HYPEROUN {***
 [0;37mSensors detect the [0;36m%s[0;37m coming out of hyperspace.[1;37m
+} T GE someone else leaving hyperspace message
+
+HYPERONO {***
+[0;37mSensors detect [0;36m%s[0;37m's ship coming out of hyperspace.[1;37m
 } T GE someone else leaving hyperspace message
 
 NOTORPS {
@@ -2633,6 +2653,14 @@ MTACC2N {***
 [0;37mSensors indicate a hyper-missile has hit ship [0;36m%c[0;37m, [0;36m%s[0;37m.[1;37m
 } T GE your missile hit npc message
 
+MTACC1NO {***
+[0;37mSensors indicate a torpedo has hit ship [0;36m%c[0;37m, [0;36m%s[0;37m's ship.[1;37m
+} T GE your torp hit npc message
+
+MTACC2NO {***
+[0;37mSensors indicate a hyper-missile has hit ship [0;36m%c[0;37m, [0;36m%s[0;37m's ship.[1;37m
+} T GE your missile hit npc message
+
 MTACC3 {***
 [0;37mSensors indicate %d torpedoes have hit ship [0;36m%c[0;37m, the [0;36m%s[0;37m.[1;37m
 } T GE your torp multi-hit message
@@ -2647,6 +2675,14 @@ MTACC3N {***
 
 MTACC4N {***
 [0;37mSensors indicate %d hyper-missiles have hit ship [0;36m%c[0;37m, [0;36m%s[0;37m.[1;37m
+} T GE your missile multi-hit npc message
+
+MTACC3NO {***
+[0;37mSensors indicate %d torpedoes have hit ship [0;36m%c[0;37m, [0;36m%s[0;37m's ship.[1;37m
+} T GE your torp multi-hit npc message
+
+MTACC4NO {***
+[0;37mSensors indicate %d hyper-missiles have hit ship [0;36m%c[0;37m, [0;36m%s[0;37m's ship.[1;37m
 } T GE your missile multi-hit npc message
 
 MISMISS {***
@@ -2709,6 +2745,10 @@ SCAN1 {***
 [0;37mSensors indicate this ship is being scanned by ship [0;36m%c[0;37m, the [0;36m%s[0;37m.[1;37m
 } T GE you are being scanned message
 
+SCAN1O {***
+[0;37mSensors indicate this ship is being scanned by ship [0;36m%c[0;37m, [0;36m%s[0;37m's ship.[1;37m
+} T GE you are being scanned message
+
 SCAN2 {***
 [0;37mSensors indicate this ship is being scanned by a ship beyond scanner range,
 bearing [1;37m%d[0;37m.[1;37m
@@ -2720,6 +2760,10 @@ SCAN3 {***
 
 ENTWAR {***
 [0;37mThe [0;36m%s[0;37m just appeared in this sector![1;37m
+} T GE ship just appeared message
+
+ENTWARNO {***
+[0;36m%s[0;37m's ship just appeared in this sector![1;37m
 } T GE ship just appeared message
 
 FIRSTIME {
@@ -2739,6 +2783,10 @@ Type [1;37m?[0;37m if you need assistance.[1;37m
 ANNOUN {***
 [1;36mThe %s [0;36m%s[1;36m, commanded by [0;36m%s[1;36m,
 has been detected cruising the galaxy.[1;37m
+} T GE ship enters game message
+
+ANNOUNO {***
+[0;36m%s[1;36m's %s has been detected cruising the galaxy.[1;37m
 } T GE ship enters game message
 
 NOPLNT {
@@ -2834,6 +2882,11 @@ MSGSNT1 {***
 [1;36m<[1;37m %s [1;36m>[1;37m
 } T GE hail received message
 
+MSGSNT1O {***
+[0;37mHailing message from [0;36m%s[0;37m's ship (channel [1;34m%c[0;37m)
+[1;36m<[1;37m %s [1;36m>[1;37m
+} T GE hail received message
+
 MSGSNT2 {
 [0;37mMessage sent on all hailing channels.[1;37m
 } T GE hail sent message
@@ -2843,12 +2896,22 @@ MSGSNT3 {***
 [1;36m<[1;37m %s [1;36m>[1;37m
 } T GE message received message
 
+MSGSNT3O {***
+[0;37mMessage from [0;36m%s[0;37m's ship (channel [1;34m%c[0;37m)
+[1;36m<[1;37m %s [1;36m>[1;37m
+} T GE message received message
+
 MSGSNT4 {
 [0;37mMessage sent to all ships in this star system on frequency [1;34m%u[0;37m.[1;37m
 } T GE message sent message
 
 MSGSNT5 {***
 [0;37mHyperspace message from the [0;36m%s[0;37m (channel [1;34m%c[0;37m)
+[1;36m<[1;37m %s [1;36m>[1;37m
+} T GE hyp message received message
+
+MSGSNT5O {***
+[0;37mHyperspace message from [0;36m%s[0;37m's ship (channel [1;34m%c[0;37m)
 [1;36m<[1;37m %s [1;36m>[1;37m
 } T GE hyp message received message
 
@@ -3001,6 +3064,11 @@ ADMENU1A {
 ADMENU1B {
 [0m[1;36mWe hereby declare planet [1;34m%d[1;36m to be named [1;34m%s[1;36m, and added to
 the empire of [0;36m%s[1;36m the Great, commander of the [0;36m%s[1;36m.[1;37m
+} T GE planet is yours message
+
+ADMNU1BO {
+[0m[1;36mWe hereby declare planet [1;34m%d[1;36m to be named [1;34m%s[1;36m, and added to
+the empire of [0;36m%s[1;36m the Great.[1;37m
 } T GE planet is yours message
 
 ADMENU2 {
@@ -3178,6 +3246,12 @@ They are under attack from [1;34m%s[0;37m in the [1;34m%s[0;37m
 and are requesting immediate assistance!
 } T GE distress message to owner message
 
+ATTACK6O {***
+[0;37mIncoming distress message from [1;34m%s[0;37m in star system [1;34m%d %d[0;37m!
+They are under attack from [1;34m%s[0;37m
+and are requesting immediate assistance!
+} T GE distress message to owner message
+
 ATTACK6A {***
 [36m GALACTIC EMPIRE ALERT! *** 
 Planet under attack... Check GE Mail for details.[37m
@@ -3280,6 +3354,10 @@ PHANONE {
 
 REP01 {
 [1;37m%s: the %s
+} T GE report 01
+
+REP01O {
+[1;37m%s: %s's ship
 } T GE report 01
 
 REP02 {[1;35mTraveling in hyperspace (sector [1;34m%d %d[1;35m)[1;37m
@@ -3468,6 +3546,10 @@ SCAN01 {[0;37m
 Scanning the [1;34m%s[0;37m:
 } T GE scan 01
 
+SCAN01O {[0;37m
+Scanning [1;34m%s[0;37m's ship:
+} T GE scan 01
+
 SCAN01N {[0;37m
 Scanning [1;34m%s[0;37m:
 } T GE scan 01
@@ -3619,6 +3701,10 @@ KILLGOT1 {***
 [1;36mYou have destroyed the [0;36m%s[1;36m. All usable flotsam have been retrieved.
 You have retrieved[1;37m} T GE you destroyed a ship message
 
+KILLGTNO {***
+[1;36mYou have destroyed [0;36m%s[1;36m's ship. All usable flotsam have been retrieved.
+You have retrieved[1;37m} T GE you destroyed a ship message
+
 KILLGOTN {***
 [1;36mYou have destroyed [0;36m%s[1;36m. All usable flotsam have been retrieved.
 You have retrieved[1;37m} T GE you destroyed a ship message
@@ -3727,12 +3813,20 @@ MOVE2N {***
 [0;37mSensors indicate [0;36m%s[0;37m has left this sector.[1;37m
 } T GE someone else left your sector message
 
+MOVE2NO {***
+[0;37mSensors indicate [0;36m%s[0;37m's ship left this sector.[1;37m
+} T GE someone else left your sector message
+
 MOVE3 {***
 [0;37mSensors indicate the [0;36m%s[0;37m has entered this sector.[1;37m
 } T GE someone else entered your sector message
 
 MOVE3N {***
 [0;37mSensors indicate [0;36m%s[0;37m has entered this sector.[1;37m
+} T GE someone else entered your sector message
+
+MOVE3NO {***
+[0;37mSensors indicate [0;36m%s[0;37m's ship has entered this sector.[1;37m
 } T GE someone else entered your sector message
 
 MOVE4 {***
@@ -3869,6 +3963,10 @@ ZIPPER2 {
 
 ZIPPER3 {***
 [0;37m[[1;31mCAUTION[0;37m] Sensors detect the [0;36m%s[0;37m just launched a zipper.[1;37m
+} T GE someone else fired a zipper message
+
+ZIPPER3O {***
+[0;37m[[1;31mCAUTION[0;37m] Sensors detect [0;36m%s[0;37m's ship just launched a zipper.[1;37m
 } T GE someone else fired a zipper message
 
 ZIPPER3N {***
@@ -4009,7 +4107,7 @@ SYSCASH {
 } T GE sysop get money message
 
 SYSCLS {
-[1;36mThe [0;36m%s[1;36m is now a %s.[1;37m
+[1;36mYour ship is now a %s.[1;37m
 } T GE sysop change ship class message
 
 SYSLST {
@@ -4048,36 +4146,67 @@ The message was garbled beyond reconstruction / type - %d
 } T GE mail 3
 
 MESG02 {
-Distress message from %s in sector %d %d, they
-were attacked by Commander %s in the
+Distress message from %s in sector %d %d,
+they were attacked by Commander %s in the
 %s with %s troops.
  
 They successfully defended the planet.
 } T GE mesg 02
 
+MESG02O {
+Distress message from %s in sector %d %d,
+they were attacked by Commander %s
+with %s troops.
+ 
+They successfully defended the planet.
+} T GE mesg 02
 
 MESG03 {
-Distress message from %s in sector %d %d, they
-were attacked by Commander %s in the
+Distress message from %s in sector %d %d,
+they were attacked by Commander %s in the
 %s with %s troops. 
+
+They have surrendered the planet.
+} T GE mesg 03
+
+MESG03O {
+Distress message from %s in sector %d %d,
+they were attacked by Commander %s
+with %s troops. 
 
 They have surrendered the planet.
 } T GE mesg 03
 
 
 MESG04 {
-Distress message from %s in sector %d %d, they
-were attacked by Commander %s in the
+Distress message from %s in sector %d %d,
+they were attacked by Commander %s in the
 %s with %s fighters. 
+
+They successfully defended the planet.
+} T GE mesg 04
+
+MESG04O {
+Distress message from %s in sector %d %d,
+they were attacked by Commander %s
+with %s fighters. 
 
 They successfully defended the planet.
 } T GE mesg 04
 
 
 MESG05 {
-Distress message from %s in sector %d %d, they
-were attacked by Commander %s in the
+Distress message from %s in sector %d %d,
+they were attacked by Commander %s in the
 %s with %s fighters. 
+
+They have surrendered the planet.
+} T GE mesg 05
+
+MESG05O {
+Distress message from %s in sector %d %d,
+they were attacked by Commander %s
+with %s fighters.
 
 They have surrendered the planet.
 } T GE mesg 05
@@ -4219,6 +4348,10 @@ RENAME1 {
 [1;36mYour ship is now named the [0;36m%s[1;36m.[1;37m
 } T GE you renamed your ship message
 
+RENAME1O {
+[1;36mYour ship now has no name.[1;37m
+} T GE you renamed your ship message
+
 RENAME3 {
 [1;36mType [1;37mHELP RENAME[1;36m for the correct usage.[1;37m
 } T GE rename error message
@@ -4239,12 +4372,24 @@ SELFD2A {***
 [0;37m[[1;31mCAUTION[0;37m] Sensors detect a large neutron flux buildup in the [0;36m%s[0;37m.[1;37m
 } T GE someone is self destructing message 1
 
+SELFD2AO {***
+[0;37m[[1;31mCAUTION[0;37m] Sensors detect a large neutron flux buildup in [0;36m%s[0;37m's ship.[1;37m
+} T GE someone is self destructing message 1
+
 SELFD2B {***
 [0;37m[[0;31mWARNING![0;37m] Dangerous neutron flux overload condition in the [0;36m%s[0;37m.[1;37m
 } T GE someone is self destructing message 2
 
+SELFD2BO {***
+[0;37m[[0;31mWARNING![0;37m] Dangerous neutron flux overload condition in [0;36m%s[0;37m's ship.[1;37m
+} T GE someone is self destructing message 2
+
 SELFD2C {***
 [0;37m[[0;31mWARNING![0;37m] Critical neutron flux overload condition in the [0;36m%s[0;37m.[1;37m
+} T GE someone is self destructing message 3
+
+SELFD2CO {***
+[0;37m[[0;31mWARNING![0;37m] Critical neutron flux overload condition in [0;36m%s[0;37m's ship.[1;37m
 } T GE someone is self destructing message 3
 
 SELFD3 {***
@@ -4253,6 +4398,10 @@ SELFD3 {***
 
 SELFD3A {***
 [0;37m[[0;31mWARNING![0;37m] The [0;36m%s[0;37m just exploded with a massive neutron implosion.[1;37m
+} T GE someone self destructed message
+
+SELFD3AO {***
+[0;37m[[0;31mWARNING![0;37m] [0;36m%s[0;37m's ship just exploded with a massive neutron implosion.[1;37m
 } T GE someone self destructed message
 
 SELFD3N {[0;37mThe neutron shock wave caused [0;31m%s[0;37m damage to [0;36m%s[0;37m's ship![1;37m
@@ -4267,6 +4416,10 @@ SELFD4 {
 
 SELFD4A {***
 [0;37mThe neutron flux overload on the [0;36m%s[0;37m appears to have been resolved.[1;37m
+} T GE someone canceled their self destruct message
+
+SELFD4AO {***
+[0;37mThe neutron flux overload on [0;36m%s[0;37m's ship appears to have been resolved.[1;37m
 } T GE someone canceled their self destruct message
 
 SELFD5 {
@@ -4349,6 +4502,10 @@ LOCK01 {
 
 LOCK02 {
 [0;37mScanners locked on [0;36m%s[0;37m commanded by [0;36m%s[0;37m.[1;37m
+} T GE fire control locked message
+
+LOCK02O {
+[0;37mScanners locked on [0;36m%s[0;37m's ship.[1;37m
 } T GE fire control locked message
 
 LOCK02N {

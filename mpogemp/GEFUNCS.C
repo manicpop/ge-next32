@@ -156,7 +156,10 @@ tossingegame();
 void FUNC tossingegame()
 {
 
-prfmsg(ANNOUN,shipclass[warsptr->shpclass].typename, warsptr->shipname, waruptr->userid);
+if (warsptr->shipname[0] == '\0')
+	prfmsg(ANNOUNO,waruptr->userid,shipclass[warsptr->shpclass].typename);
+else
+	prfmsg(ANNOUN,shipclass[warsptr->shpclass].typename, warsptr->shipname, waruptr->userid);
 outwar(FILTER,usrnum,0);
 
 prfmsg(ENTSHP,waruptr->userid);
@@ -166,7 +169,10 @@ update_scantab(warshpoff(usrnum),usrnum);
 
 if (warsptr->cloak != 10)
 	{
-	prfmsg(ENTWAR, warsptr->shipname);
+	if (warsptr->shipname[0] == '\0')
+		prfmsg(ENTWARNO,waruptr->userid);
+	else
+		prfmsg(ENTWAR,warsptr->shipname);
 	outsect(FILTER,&warsptr->coord,usrnum,0);
 	}
 
@@ -198,7 +204,7 @@ tmpshp.shpclass		= type;
 
 if (shipclass[type].max_type == CLASSTYPE_USER)
 	{
-	strncpy(tmpshp.shipname," <NO NAME> ",20);
+	tmpshp.shipname[0]	= '\0';
 
 	tmpshp.coord.xcoord = NEUTRAL_X + rndm(.9999);
 	tmpshp.coord.ycoord = NEUTRAL_Y + rndm(.9999);
@@ -409,7 +415,8 @@ do
 	if (!quiet)
 		{
 		prf("%s%2d  %-20s %-20s %6d %6d  ", CLR_WHITE2, found+1,
-			shipclass[warsptr->shpclass].typename, warsptr->shipname, xsect, ysect);
+			shipclass[warsptr->shpclass].typename,
+			(warsptr->shipname[0] == '\0' ? " <NO NAME> " : warsptr->shipname), xsect, ysect);
 
 		if (warsptr->energy < 5000 && warsptr->items[I_FLUXPOD] == 0)
 			prf("%sflux depleted%s",CLR_RED1,CLR_WHITE2);
@@ -807,13 +814,16 @@ if (flag == 1)
 		prfmsg(CLOKOFF);
 		ptr->cloak = 3;
 		}
-	prfmsg(HYPERIN,ptr->shipname);
+	prfmsg(HYPERIN);
 	outprfge(FILTER,usrn);
 
 	ptr->where = 1;
 
 	if (ptr->status == GESTAT_AUTO)
 		prfmsg(HYPERINN,ptr->shipname);
+	else
+	if (ptr->shipname[0] == '\0')
+		prfmsg(HYPERIN3,ptr->userid);
 	else
 		prfmsg(HYPERIN2,ptr->shipname);
 	outsect(FILTER,&(warshpoff(usrn)->coord),usrn,0);
@@ -836,7 +846,7 @@ if (flag == 1)
 	}
 else
 	{
-	prfmsg(HYPEROUT,ptr->shipname);
+	prfmsg(HYPEROUT);
 	outprfge(FILTER,usrn);
 
 	ptr->where = 0;
@@ -848,6 +858,9 @@ else
 			shieldup(ptr,usrn);
 		prfmsg(HYPEROU2,ptr->shipname);
 		}
+	else
+	if (ptr->shipname[0] == '\0')
+		prfmsg(HYPERONO,ptr->userid);
 	else
 		prfmsg(HYPEROUN,ptr->shipname);
 	outsect(FILTER,&(warshpoff(usrn)->coord),usrn,0);
@@ -994,6 +1007,9 @@ if (ptr->speed > 0)
 				if (ptr->status == GESTAT_AUTO)
 					prfmsg(MOVE2N,ptr->shipname);
 				else
+				if (ptr->shipname[0] == '\0')
+					prfmsg(MOVE2NO,ptr->userid);
+				else
 					prfmsg(MOVE2,ptr->shipname);
 				outsect(FILTER,&oldsect,usrn,0);
 				}
@@ -1001,6 +1017,9 @@ if (ptr->speed > 0)
 				{
 				if (ptr->status == GESTAT_AUTO)
 					prfmsg(MOVE3N,ptr->shipname);
+				else
+				if (ptr->shipname[0] == '\0')
+					prfmsg(MOVE3NO,ptr->userid);
 				else
 					prfmsg(MOVE3,ptr->shipname);
 				outsect(FILTER,&newsect,usrn,0);
@@ -1542,6 +1561,9 @@ if (who >= 0 && who < nships && who != usrn)
 	if (ptr->status == GESTAT_AUTO)
 		prfmsg(KILLGOTN,ptr->shipname);
 	else
+	if (ptr->shipname[0] == '\0')
+		prfmsg(KILLGTNO,ptr->userid);
+	else
 		prfmsg(KILLGOT1,ptr->shipname);
 
 	if (shipclass[wptr->shpclass].max_tons <= calcweight(wptr))
@@ -1842,6 +1864,9 @@ else
 	{
 	if (shipclass[ptr->shpclass].max_type != CLASSTYPE_USER)
 		prfmsg(DIEDNPC,ptr->shipname);
+	else
+	if (ptr->shipname[0] == '\0')
+		prfmsg(DIEDNO,username(ptr));
 	else
 		prfmsg(DIED,ptr->shipname,username(ptr));
 	outwar(ALWAYS,usrn,0);
@@ -2617,7 +2642,7 @@ else
 if (ptr->cloak == 2)
 	{
 	ptr->cloak = 10;
-	prfmsg(CLOKUP,ptr->shipname);
+	prfmsg(CLOKUP);
 	outprfge(ALWAYS,usrn);
 	if (ptr->lock >= 0)
 		{
@@ -2729,12 +2754,18 @@ if (channel != 255)
 		if (ptr->status == GESTAT_AUTO)
 			prfmsg(MTACC1N+mt,shpltr(channel,usrn),ptr->shipname);
 		else
+		if (ptr->shipname[0] == '\0')
+			prfmsg(MTACC1NO+mt,shpltr(channel,usrn),ptr->userid);
+		else
 			prfmsg(MTACC1+mt,shpltr(channel,usrn),ptr->shipname);
 		}
 	else
 		{
 		if (ptr->status == GESTAT_AUTO)
 			prfmsg(MTACC3N+mt,count,shpltr(channel,usrn),ptr->shipname);
+		else
+		if (ptr->shipname[0] == '\0')
+			prfmsg(MTACC3NO+mt,count,shpltr(channel,usrn),ptr->userid);
 		else
 			prfmsg(MTACC3+mt,count,shpltr(channel,usrn),ptr->shipname);
 		}
@@ -2899,19 +2930,28 @@ if (ptr->destruct > (byte)0)
 		{
 		if (ptr->destruct==10)
 			{
-			prfmsg(SELFD2A,ptr->shipname);
+			if (ptr->shipname[0] == '\0')
+				prfmsg(SELFD2AO,ptr->userid);
+			else
+				prfmsg(SELFD2A,ptr->shipname);
 			outrange(ALWAYS,&ptr->coord);
 			}
 
 		if (ptr->destruct==5)
 			{
-			prfmsg(SELFD2B,ptr->shipname);
+			if (ptr->shipname[0] == '\0')
+				prfmsg(SELFD2BO,ptr->userid);
+			else
+				prfmsg(SELFD2B,ptr->shipname);
 			outrange(ALWAYS,&ptr->coord);
 			}
 
 		if (ptr->destruct==2)
 			{
-			prfmsg(SELFD2C,ptr->shipname);
+			if (ptr->shipname[0] == '\0')
+				prfmsg(SELFD2CO,ptr->userid);
+			else
+				prfmsg(SELFD2C,ptr->shipname);
 			outrange(ALWAYS,&ptr->coord);
 			}
 
@@ -2923,7 +2963,10 @@ if (ptr->destruct > (byte)0)
 		prfmsg(SELFD3);
 		ptr->damage = 101;
 		outprfge(ALWAYS,usrn);
-		prfmsg(SELFD3A,ptr->shipname);
+		if (ptr->shipname[0] == '\0')
+			prfmsg(SELFD3AO,ptr->userid);
+		else
+			prfmsg(SELFD3A,ptr->shipname);
 		outrange(ALWAYS,&ptr->coord);
 		if (ptr->shieldstat == SHIELDUP)
 			{

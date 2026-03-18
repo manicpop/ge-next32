@@ -905,7 +905,8 @@ command as follows:
 
 [1;37m  rename [1;32m[new ship name]
 
-[1;36mYour ship name can be up to 19 characters long.
+[1;36mYour ship name can be up to 19 characters long. Ship names are optional; to
+clear your ship name simply enter [1;37mRENAME[1;36m.
 [1;37m} T GE help rename message
 
 HLPREP {

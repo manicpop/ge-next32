@@ -132,16 +132,64 @@ prf("%s", gechrbuf);
 }
 
 
+int FUNC build_ship_name(int othusn)
+{
+WARSHP *wptr;
+int ulen,slen,show,maxlen;
+
+wptr = warshpoff(othusn);
+maxlen = 36;
+if ((warsptr->lock == othusn || wptr->distress != 255) && warsptr->jam_sev < (byte)3)
+	maxlen -= 2;
+
+if (wptr->status == GESTAT_AUTO)
+	{
+	slen = (int)strlen(wptr->shipname);
+	if (slen >= 254)
+		slen = 254;
+	memcpy(gechrbuf,wptr->shipname,slen);
+	gechrbuf[slen] = '\0';
+	return(slen);
+	}
+
+if (wptr->shipname[0] == '\0')
+	{
+	ulen = (int)strlen(wptr->userid);
+	if (ulen >= 254)
+		ulen = 254;
+	memcpy(gechrbuf,wptr->userid,ulen);
+	gechrbuf[ulen] = '\0';
+	return(ulen);
+	}
+
+ulen = (int)strlen(wptr->userid);
+slen = (int)strlen(wptr->shipname);
+if (ulen + slen + 3 <= maxlen)
+	{
+	sprintf(gechrbuf,"%s (%s)",wptr->userid,wptr->shipname);
+	return(ulen + slen + 3);
+	}
+
+show = maxlen - ulen - 6;
+if (show < 1)
+	{
+	memcpy(gechrbuf,wptr->userid,ulen);
+	gechrbuf[ulen] = '\0';
+	return(ulen);
+	}
+memcpy(gechrbuf2,wptr->shipname,show);
+gechrbuf2[show] = '\0';
+sprintf(gechrbuf,"%s (%s...)",wptr->userid,gechrbuf2);
+return((int)strlen(gechrbuf));
+}
+
 void FUNC print_ship_name(int othusn)
 {
 int len, k;
 unsigned int rseed = gernd();
 
-len = (int)strlen(username(warshpoff(othusn)));
-if (len >= 254)
-	len = 254;
-memcpy(gechrbuf, username(warshpoff(othusn)), len);
-gechrbuf[len] = '\0';
+/* User ships show userid, or userid plus ship name if one exists. */
+len = build_ship_name(othusn);
 
 if (warsptr->jam_sev > (byte)7)
 	for (k = 0; k < len; k++)
@@ -374,7 +422,7 @@ if (right < NOSCANTAB && sptr->ship[right].flag == 1 && (long)(sptr->ship[right]
 prf("\r");
 
 othusn = sptr->ship[left].shipno;
-pad = strlen(username(warshpoff(othusn)));
+pad = build_ship_name(othusn);
 prf("   ");
 print_ship_name(othusn);
 for (i = 0; i < 36 - pad; ++i)
@@ -613,12 +661,18 @@ if (shpnum >= 0)
 
 		speed = ((unsigned)(wptr->speed+.5));
 
-		sprintf(gechrbuf,"%s",wptr->shipname);
+		if (wptr->status == GESTAT_USER && wptr->shipname[0] == '\0')
+			sprintf(gechrbuf,"%s",wuptr->userid);
+		else
+			sprintf(gechrbuf,"%s",wptr->shipname);
 
 		if (warsptr->jam_sev > 2)
 			jam_scramble(gechrbuf, warsptr->jam_sev, &rseed);
 		if (wptr->status == GESTAT_AUTO)
 			prfmsg(SCAN01N,gechrbuf);
+		else
+		if (wptr->shipname[0] == '\0')
+			prfmsg(SCAN01O,gechrbuf);
 		else
 			prfmsg(SCAN01,gechrbuf);
 		prfmsg(DASHES);
@@ -626,7 +680,8 @@ if (shpnum >= 0)
 			prfmsg(SCAN01A,shipclass[wptr->shpclass].typename);
 		if (wptr->status == GESTAT_USER && warsptr->jam_sev < (byte)3)
 			{
-			prfmsg(SCAN02,username(wptr));
+			if (wptr->shipname[0] != '\0')
+				prfmsg(SCAN02,username(wptr));
 			if (warusroff(shpnum)->teamcode >0)
 				prfmsg(SCAN02A,teamname(wuptr));
 			}
@@ -669,7 +724,10 @@ if (shpnum >= 0)
 				prfmsg(SCAN08,wptr->kills);
 			else
 				{
-				prfmsg(SCAN09,wptr->shipname,wptr->kills,wptr->ukills);
+				if (wptr->shipname[0] == '\0')
+					prfmsg(SCAN09,"this ship",wptr->kills,wptr->ukills);
+				else
+					prfmsg(SCAN09,wptr->shipname,wptr->kills,wptr->ukills);
 				prfmsg(SCAN09,wuptr->userid,wuptr->kills,wuptr->ukills);
 				}
 			}
@@ -692,7 +750,10 @@ if (shpnum >= 0)
 				if (warsptr->cloak != 10)
 					{
 					ltr = shpltr(shpnum,usrnum);
-					prfmsg(SCAN1,ltr,warsptr->shipname);
+					if (warsptr->shipname[0] == '\0')
+						prfmsg(SCAN1O,ltr,waruptr->userid);
+					else
+						prfmsg(SCAN1,ltr,warsptr->shipname);
 					}
 				else
 					prfmsg(SCAN3);
@@ -1435,4 +1496,3 @@ if (maptype == SECTORNOMAP)
 prf("\r");
 prf(CLR_WHITE2);
 }
-

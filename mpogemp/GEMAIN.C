@@ -1259,9 +1259,15 @@ if (warsptr->status == GESTAT_USER)
 #endif
 		else
 			{
-			prfmsg(PEACEOUT,waruptr->userid,warsptr->shipname);
+			if (warsptr->shipname[0] == '\0')
+				prfmsg(PEACEONO,waruptr->userid);
+			else
+				prfmsg(PEACEOUT,waruptr->userid,warsptr->shipname);
 			outwar(ALWAYS,usrnum,0);
-			prfmsg(EXIWAR2,warsptr->shipname);
+			if (warsptr->shipname[0] == '\0')
+				prfmsg(EXIWARN,waruptr->userid);
+			else
+				prfmsg(EXIWAR2,warsptr->shipname);
 			outsect(ALWAYS,&warsptr->coord,usrnum,0);
 			cleartm(usrnum);
 			clearitm(usrnum);
@@ -2642,9 +2648,15 @@ if (sameas(input,"x"))
 		geudb(GEUPDATE,waruptr->userid,waruptr);
 		disp_main_menu();
 		outprfge(ALWAYS,usrnum);
-		prfmsg(PEACEOUT,waruptr->userid,warsptr->shipname);
+		if (warsptr->shipname[0] == '\0')
+			prfmsg(PEACEONO,waruptr->userid);
+		else
+			prfmsg(PEACEOUT,waruptr->userid,warsptr->shipname);
 		outwar(ALWAYS,usrnum,0);
-		prfmsg(EXIWAR2,warsptr->shipname);
+		if (warsptr->shipname[0] == '\0')
+			prfmsg(EXIWARN,waruptr->userid);
+		else
+			prfmsg(EXIWAR2,warsptr->shipname);
 		outsect(ALWAYS,&warsptr->coord,usrnum,0);
 		numwar = 0;
 		usrptr->substt = 1;
@@ -2748,7 +2760,10 @@ if (margc > 0)
 	pkey.plnum = plnum;
 	gesdb(GEUPDATE,(PKEY *)&pkey,(GALSECT *)&planet);
 
-	prfmsg(ADMENU1B,plnum,plptr->name,warsptr->userid,warsptr->shipname);
+	if (warsptr->shipname[0] == '\0')
+		prfmsg(ADMNU1BO,plnum,plptr->name,warsptr->userid);
+	else
+		prfmsg(ADMENU1B,plnum,plptr->name,warsptr->userid,warsptr->shipname);
 
 	prfmsg(ADMENU2);
 	outprfge(ALWAYS,usrnum);
