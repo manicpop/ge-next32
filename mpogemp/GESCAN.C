@@ -113,7 +113,7 @@ if (warsptr->jam_sev > (byte)7)
 	for (i = 0; gechrbuf[i]; ++i)
 		{
 		if (gechrbuf[i] != ' ' && gechrbuf[i] != '-' && gechrbuf[i] != '\0')
-	                gechrbuf[i] = '?';
+			gechrbuf[i] = '?';
 		}
 	}
 
@@ -475,7 +475,7 @@ if (shp < NOSCANTAB && sptr->ship[shp].flag == 1 && (long)(sptr->ship[shp].dist)
 	prf("   ");
 	print_ship_data(sptr->ship[shp].dist, sptr->ship[shp].bearing,
 		sptr->ship[shp].heading, sptr->ship[shp].speed);
-        return 1; /* move onto next ship */
+	return 1; /* move onto next ship */
 	}
 return 0; /* no ship, don't increment */
 }

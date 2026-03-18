@@ -112,13 +112,13 @@ waruptr->kills = 0;     /* new droid so clear this */
 if (shipclass[ptr->shpclass].loadout == 1)	/* Garbage Scows stay close to 0 0 */
 	{
 	ptr->coord.xcoord = rndm((double)univmax/6);
-        ptr->coord.ycoord = rndm((double)univmax/6);
+	ptr->coord.ycoord = rndm((double)univmax/6);
 	}
 else
 if (shipclass[ptr->shpclass].loadout == 4)	/* SCTs, a little more room */
 	{
 	ptr->coord.xcoord = rndm((double)univmax/4);
-        ptr->coord.ycoord = rndm((double)univmax/4);
+	ptr->coord.ycoord = rndm((double)univmax/4);
 	}
 else
 if (shipclass[ptr->shpclass].loadout == 2 || shipclass[ptr->shpclass].loadout == 6)	/* TGs, GCFs */
@@ -130,7 +130,7 @@ else
 if (shipclass[ptr->shpclass].loadout == 5 && univmax > 30)	/* SDDs, halfway between neut and barrier */
 	{
 	ptr->coord.xcoord = ((double)univmax/2.0)+(rndm(29.9)-14.8);
-        ptr->coord.ycoord = ((double)univmax/2.0)+(rndm(29.9)-14.8);
+	ptr->coord.ycoord = ((double)univmax/2.0)+(rndm(29.9)-14.8);
 	}
 else
 	{

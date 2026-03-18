@@ -465,7 +465,7 @@ if (!quiet && waruptr->noships > NOSCANTAB)
 
 		/* restore cursor to this page's first ship */
 		gepdb(GEGET, usaptr->userid, first_shipno, warsptr);
-	        }
+		}
 
 	thispage = (before / NOSCANTAB) + 1;
 	lastpage = (waruptr->noships + NOSCANTAB - 1) / NOSCANTAB;
@@ -1895,12 +1895,10 @@ logthis(spr("GE:INF:%s died!",waruptr->userid));
 ** Recharge energy pool                                                  **
 **************************************************************************/
 
-void FUNC recharge(ptr,usrn)
+void FUNC recharge(ptr)
 
 WARSHP	*ptr;
-int	usrn;
 {
-	usrn = usrn; /* avoid the warning */
 	if (ptr->energy < ENGYMAX)
 		ptr->energy = ptr->energy + ENGRECHG;
 	else
@@ -1962,7 +1960,7 @@ if (ptr->shieldstat == SHIELDUP)
 		prfmsg(SHDNNOP);
 		outprfge(ALWAYS,usrn);
 		}
-	 else
+	else
 		{
 		shieldchg(ptr,usrn);
 		}
@@ -1995,9 +1993,9 @@ if (ptr->cloak > 0 && ptr->cloak != 3)
 		prfmsg(CLOK2);
 		outrange(FILTER,&ptr->coord);
 		}
-	 else
+	else
 		ptr->energy -= clenguse;
-	 }
+	}
 }
 
 int FUNC isvisible(ptr,wptr)
@@ -3406,7 +3404,7 @@ if (doitems == 1 && dosys != 2)
 			for (i = 0; i < types; ++i)
 				{
 				idx = (r2 >> (i*4)) % count; /* each 4 bits gives new entropy slice */
-			        item = allowed[idx];
+				item = allowed[idx];
 
 				/* swap-remove to prevent repeats without looping */
 				allowed[idx] = allowed[--count];
@@ -3717,6 +3715,7 @@ return(FALSE);
 
 int mailread(userid,class)
 char	*userid;
+int	class;
 {
 
 strncpy(mailkey.userid,userid,UIDSIZ);
@@ -3868,7 +3867,7 @@ gemsg->nreply = cofdat(today());
 
 prf2tx();
 
-return(sendgemsg(gemsg,mail.userid));
+return(sendgemsg(gemsg));
 
 }
 
@@ -3893,11 +3892,10 @@ clrprf();
 }
 
 
-int FUNC sendgemsg(struct message *msgptr,char *usrid)
+int FUNC sendgemsg(msgptr)
+struct message *msgptr;
 
 {
-
-usrid=usrid;
 
 setbtv(gebb4);
 
@@ -3927,7 +3925,6 @@ void FUNC shielddn(wptr,usrn)
 WARSHP	*wptr;
 int	usrn;
 {
-usrn = usrn; /* avoid the warning */
 prfmsg(SHLDDN);
 outprfge(FILTER,usrn);
 wptr->shieldstat = SHIELDDN;

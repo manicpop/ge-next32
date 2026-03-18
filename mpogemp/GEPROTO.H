@@ -131,7 +131,7 @@
 /*     973 */ void FUNC refresh P((WARSHP *ptr , int usrn ));
 /*    1012 */ void FUNC checkdam P((WARSHP *ptr , int usrn ));
 /*    1126 */ void FUNC killem P((WARSHP *ptr , int usrn ));
-/*    1414 */ void FUNC recharge P((WARSHP *ptr , int usrn ));
+/*    1414 */ void FUNC recharge P((WARSHP *ptr ));
 /*    1431 */ int FUNC fluxstat P((WARSHP *ptr , int usrn , int energy ));
 /*    1466 */ void FUNC shieldstat P((WARSHP *ptr , int usrn ));
 /*    1498 */ void FUNC cloakstat P((WARSHP *ptr , int usrn ));
@@ -139,7 +139,7 @@
 /*    1535 */ void FUNC checkmines P((void ));
 /*    1660 */ void FUNC checktm P((WARSHP *ptr , int usrn ));
 /*         */ void FUNC validate_lock P((WARSHP *ptr , int usrn ));
-/*    1903 */ void FUNC acctm P((WARSHP *ptr , int usrn , int mt , unsigned int channel ));
+/*    1903 */ void FUNC acctm P((WARSHP *ptr , int usrn , int mt , unsigned char channel , int count ));
 /*    1926 */ int FUNC chkitm P((int usrn ));
 /*    1926 */ void FUNC clearitm P((int usrn ));
 /*    1926 */ void FUNC cleartm P((int channel ));
@@ -158,7 +158,7 @@
 /*    2439 */ void FUNC mailit P((int flag ));
 /*    2533 */ int FUNC sendit P((void ));
 /*    2564 */ void FUNC prf2tx P((void ));
-/*    2585 */ int FUNC sendgemsg P((struct message *msgptr , char *usrid ));
+/*    2585 */ int FUNC sendgemsg P((struct message *msgptr ));
 /*    2605 */ void FUNC shieldup P((WARSHP *wptr , int usrn ));
 /*    2615 */ void FUNC shielddn P((WARSHP *wptr , int usrn ));
 /*    2626 */ void FUNC shieldhit P((WARSHP *wptr , int usrn , int dam ));
@@ -207,7 +207,7 @@
 /*    1781 */ void FUNC cmd_jammer P((void ));
 /*    1818 */ void FUNC jam P((WARSHP *ptr , int usrn ));
 /*    1856 */ void FUNC cmd_zipper P((void ));
-/*    1894 */ void FUNC zip P((WARSHP *ptr , int usrn ));
+/*    1894 */ void FUNC zip P((WARSHP *ptr ));
 /*    1930 */ void FUNC cmd_mine P((void ));
 /*    1993 */ int FUNC laymine P((WARSHP *ptr , int usrn , int timer ));
 /*    2033 */ void FUNC cmd_send P((void ));
@@ -215,11 +215,12 @@
 /*    2154 */ void FUNC cmd_report P((void ));
 /*    2598 */ void FUNC cmd_scan P((void ));
 /*    2647 */ void FUNC scan_sh P((void ));
+/*         */ int FUNC build_ship_name P((int othusn ));
 /*    2743 */ void FUNC scan_pl P((void ));
 /*    2932 */ void FUNC scan_ra P((void ));
 /*    3091 */ void FUNC scan_se P((void ));
 /*    3160 */ void FUNC scan_lo P((void ));
-/*    3736 */ void FUNC printmap P((int mask ));
+/*    3736 */ void FUNC printmap P((int maptype , long dist_filter ));
 /*    3803 */ void FUNC cmd_shields P((void ));
 /*    3870 */ void FUNC cmd_cloak P((void ));
 /*    3954 */ void FUNC cmd_transfer P((void ));
@@ -275,8 +276,8 @@
 /*     589 */ void FUNC cyb_lay_decoys P((WARSHP *ptr ));
 /*     610 */ void FUNC cyb_check_damage P((WARSHP *ptr , int usrn ));
 /*     641 */ void FUNC cyb_check_lockon P((WARSHP *ptr , int usrn ));
-/*     875 */ void FUNC cyb_won P((WARSHP *ptr , int usrn , WARSHP *wptr ));
-/*     887 */ void FUNC cyb_died P((WARSHP *ptr , int usrn , WARSHP *wptr ));
+/*     875 */ void FUNC cyb_won P((WARSHP *ptr , int usrn ));
+/*     887 */ void FUNC cyb_died P((WARSHP *ptr ));
 /*     903 */ void FUNC cyb_cruise P((WARSHP *ptr , int usrn , int call ));
 /*     967 */ int FUNC cyb_pick_fight P((int usrn , int call ));
 /*    1023 */ void FUNC cyb_check_misl P((WARSHP *ptr ));

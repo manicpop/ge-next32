@@ -2067,7 +2067,7 @@ for (zothusn=0 ; zothusn < nships ;zothusn++)
 			{
 			shieldstat(wptr,zothusn);
 			cloakstat(wptr,zothusn);
-			recharge(wptr,zothusn);
+			recharge(wptr);
 			}
 		checktm(wptr,zothusn);		/* check torps, missl, and decoys */
 		fireion(wptr,zothusn);
@@ -2469,7 +2469,6 @@ char	*str;
 {
 char	tmpbuf[40];
 /* kill warning */
-str = str;
 
 /* Always display */
 if (opt == 0)

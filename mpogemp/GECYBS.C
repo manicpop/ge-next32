@@ -340,7 +340,7 @@ if (ptr->jam_sev <= (byte)3)
 					/* if target is user, and attackable class... */
 					(wptr->status == GESTAT_USER && (shipclass[wptr->shpclass].cybs_can_att ||
 					/* ...or i've fired recently or my target has fired recently or gets too close to me */
-					 ptr->cantexit > 0 || wptr->cantexit > 0 || ddist < (tooclose+rndm(tooclose))))))
+					ptr->cantexit > 0 || wptr->cantexit > 0 || ddist < (tooclose+rndm(tooclose))))))
 						{
 						if (wptr->where == 1)
 							{
@@ -630,7 +630,7 @@ if (zipden < 3)
 if (gernd()%zipden == 0 && shipclass[ptr->shpclass].has_zip && ptr->items[I_ZIPPERS] > 0 && ptr->zipload == 0
 	&& shipclass[ptr->shpclass].max_accel > 0 && wptr->minesnear == TRUE)
 	{
-	zip(ptr,usrn);
+	zip(ptr);
 	acted = 1;
 	/* get the hell out of here ...then come back */
 	cyb_cruise(ptr,usrn,3);
@@ -1030,27 +1030,20 @@ else
 	}
 }
 
-void FUNC cyb_won(ptr,usrn,wptr)
+void FUNC cyb_won(ptr,usrn)
 WARSHP	*ptr;				/* ptr to Cyber who won */
 int	usrn;				/* usernum of cyber who won */
-WARSHP	*wptr;				/* ptr to ship cyber killed */
 
 {
-usrn = usrn;
-wptr = wptr;
 cyb_cruise(ptr,usrn,0);
 ptr->cybupdate = 0;
 }
 
-void FUNC cyb_died(ptr,usrn,wptr)
+void FUNC cyb_died(ptr)
 WARSHP	*ptr;				/* ptr to Cyber who died */
-int	usrn;				/* usernum of cyber who died */
-WARSHP	*wptr;				/* ptr to ship who killed cyber*/
 
 
 {
-usrn = usrn;
-wptr = wptr;
 ptr->status = GESTAT_AVAIL;
 }
 

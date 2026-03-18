@@ -188,10 +188,10 @@
 
 
 #define MAIL_CLASS_DISTRESS 1
-#define MAIL_CLASS_MAXOUT 2
+#define MAIL_CLASS_UNUSED1 2
 #define MAIL_CLASS_PRODRPT 3
-#define MAIL_CLASS_GAMESTATS 4
-#define MAIL_CLASS_PLSTATS 5
+#define MAIL_CLASS_UNUSED2 4
+#define MAIL_CLASS_UNUSED3 5
 
 /* user options */
 
@@ -275,18 +275,18 @@
 /* message structure from GME.H, Copyright (c) 1994-1995 GALACTICOMM, Inc. */
 
 struct message {
-    long msgno;
-    char userto[UIDSIZ];
-    char from[UIDSIZ];
-    char to[UIDSIZ];
-    char topic[TPCSIZ];
-    char auxtpc[HSTSIZ];
-    unsigned crdate;
-    unsigned crtime;
-    int nreply;
-    int flags;
-    char spare[5];
-    char text[1];
+	long msgno;
+	char userto[UIDSIZ];
+	char from[UIDSIZ];
+	char to[UIDSIZ];
+	char topic[TPCSIZ];
+	char auxtpc[HSTSIZ];
+	unsigned crdate;
+	unsigned crtime;
+	int nreply;
+	int flags;
+	char spare[5];
+	char text[1];
 };
 
 #define COORD struct _coord

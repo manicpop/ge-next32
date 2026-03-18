@@ -2194,18 +2194,16 @@ if (warsptr->zipload < 0)
 
 prfmsg(ZIPPER2);
 outprfge(FILTER,usrnum);
-zip(warsptr,usrnum);
+zip(warsptr);
 }
 
-void FUNC zip(ptr,usrn)
+void FUNC zip(ptr)
 WARSHP	*ptr;
-int	usrn;
 {
 MINE	*mptr;
 int	i;
 double	ddist;
 
-usrn = usrn;
 
 for (i=0,mptr = mines; i<nummines;++mptr,++i)
 	{
