@@ -11,7 +11,7 @@ Please contact with me thoughts and suggestions.
 === 0.3 === (in progress)
 
 ge-next's main executable is now MPOGEMP.DLL and all MBM*
-filenames have been move to MPO*. ge-next should now run
+filenames have been moved to MPO*. ge-next should now run
 alongside classic Galactic Empire.
 
 The main focus of 0.3 is enhancements for user ships:
@@ -51,11 +51,8 @@ The main focus of 0.3 is enhancements for user ships:
   - There are new options for scans in the SET command,
     including showing more than 8 ships in a SCAN RA, or
     displaying just text and no map. See HELP SET for more info.
-    If upgrading a game from 0.2, users will need to set this.
   - Color code usage has been optimized, so scans might feel
     a little "snappier."
-  - All users need to read HELP SET and set SET SCAN properly,
-    especially if you are upgrading a 0.2 game.
 * Jamming has been overhauled:
   - Instead of jamming causing scanners not to function, a
     "jamming effect" will be applied to your scans if you are
@@ -212,7 +209,8 @@ Other stuff:
   lessened so the radius of actual damage is bigger.
 * Higher warp speeds now use more flux. Stock up on pods.
 * Impulse now uses 1 flux unit per tick. Ships now "background
-  charge" flux twice as fast so that impluse is "free."
+  charge" flux twice as fast so that impluse is "free." You
+  can no longer cruise at warp 1 with no flux.
 * Instead of a "yes/no" for torpedo and missile capability,
   ships now have from 0 to 3 torpedo and missile launchers and
   a small reload delay. Ships can fire up to that many projectiles
@@ -226,6 +224,23 @@ Other stuff:
 * You will no longer lose your ship if your "can't exit" timer
   is set when the board shuts down for midnight cleanup. Good
   news for insomniac ge-next players.
+* A number of things were addressed regarding teams:
+  - Team member lists and counts are built in real time instead of
+    at cleanup so they should always be current. TEAM START, TEAM
+    JOIN, TEAM UNJOIN, and TEAM KICK all update immediately.
+  - Team scores are calculated in real time so they should always
+    be current.
+  - Empty teams are removed immediately but their teamcodes are
+    saved in the DB so they can't be reused (which was potentially
+    exploitable).
+  - If you're on a team you have to UNJOIN before you can join a
+    different team.
+  - Team names must be at least five characters long and start with
+    a letter.
+  - If a planet is set to "team" for a password and that team
+    ceases to exist, the planet will return to having no password.
+  - You can no longer damage a teammate with phaser fire unless you
+    LOCK onto them first (same behavior as NPCs in distress).
 
 === 0.2.6 === 2025-08-15
 

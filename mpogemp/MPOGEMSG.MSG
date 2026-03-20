@@ -3143,7 +3143,8 @@ ADMENU2H {
 [1;36mEnter the new tax rate (0-100):[1;37m } T GE tax rate question
 
 ADMENU2I {
-[1;36mEnter the new password, [1;37mteam[1;36m, or [1;37mnone[1;36m:[1;37m } T GE password question
+[1;36m(Never use a password you use in real life. It can be visible to others.)
+Enter the new password, [1;37mteam[1;36m, or [1;37mnone[1;36m:[1;37m } T GE password question
 
 ADMEN2I1 {
 [1;36mThe new password is [1;37m%s[1;36m.
@@ -4134,6 +4135,10 @@ SYSACY {
 [1;36mClosest Cybertrons assigned.[1;37m
 } GE sysop assign cybs message
 
+SYSTEAM {
+[1;36m Code  Team name                      Mbers   Del date       Pswd      FPswd [1;37m
+} GE team dump header
+
 MAIL1 {
    You have no messages waiting...
 } T GE no messages message
@@ -4540,6 +4545,22 @@ TEAMEXST {
 [1;36mThat team name or team code already exists... choose another.[1;37m
 } T GE team already exists message
 
+TEAMDEAC {
+[1;36mThat team code has already been used and may not be reused.[1;37m
+} T GE team already exists message
+
+TEAMNINV {
+[1;36mTeam names must start with a letter.[1;37m
+} T GE team already exists message
+
+TEAMALRD {
+[1;36mYou are already on a team. Use [1;37mTEAM UNJOIN[1;36m to leave your current team first.[1;37m
+} T GE team already exists message
+
+TEAMALR2 {
+[1;36mYou are already on that team.[1;37m
+} T GE team already exists message
+
 TEAMCRT {
 [1;36m-- Team Created --
 Name: [0;36m%s[1;36m
@@ -4572,8 +4593,9 @@ TEAMUNJN {
 } T GE team left message
 
 TEAMHDR {
-[1;36mCode   Team Name                    Members Score
-[0;31m------------------------------------------------------[1;37m
+[1;36mTeam scores
+[0;31m--------------------------------------------------------------------
+[1;34mCode   Team name                             Members           Score[1;37m
 } T GE team display header message
 
 TEAMTLR {

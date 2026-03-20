@@ -871,6 +871,10 @@ Examples: [1;37mphaser -15     [1;36mfire 15 degrees off port, focus 1.
           [1;37mpha 4 2        [1;36mfire 4 degrees off starboard, focus 2.
           [1;37mphaser 180 5   [1;36mfire directly behind, focus 5.
 
+Phasers are programmed to avoid damaging ships in distress (unless you're the
+one who attacked them first) or your teammates. To override this behavior, use
+the [1;37mLOCK[1;36m command on the ship you're targeting first.
+
 If you are traveling at warp speed, the hyper-phasers will be used instead. For
 more information on hyper-phasers, see [1;37mHELP HYPER[1;36m.
 [1;37m} T GE help phaser message
@@ -1163,6 +1167,7 @@ HLPCLS3 {
 
 HLPTEA {
 [1;36mThe [1;37mTEAM[1;36m command performs a number of functions related to teams.
+(Never use a password you use in real life. It can be visible to others.)
 
 Team founder commands are:
 [1;37m   team start [1;32mnnnnn ssssssssss pppppppppp [team name]
@@ -1181,7 +1186,7 @@ Team founder commands are:
 
 [1;36mTeam member commands are:
 [1;37m   team join [1;32mnnnnn pppppppppp
-   team unjoin
+[1;37m   team unjoin
    team score
    team members
 } T GE team help message

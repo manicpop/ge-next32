@@ -940,7 +940,6 @@ void FUNC gemidnighta(void)
 int	i;
 int	foundit;
 int	intkey = PLTYPE_PLNT;
-long	scr;
 
 setmbk(gemb);
 
@@ -1060,11 +1059,10 @@ if (qlobtv(0))
 geshocst(1,spr("GE:INF:Cleanup Phase-4"));
 setbtv(gebb5);
 
-/* zero out the team count and score */
+/* zero out the team count */
 for (i=0;i<MAXTEAMS;++i)
 	{
 	teamtab[i].teamcount = 0;
-	teamtab[i].teamscore = 0;
 	}
 
 /* first count up the members of a team */
@@ -1079,7 +1077,8 @@ if (qlobtv(0))
 			{
 			for (i=0;i<MAXTEAMS;++i)
 				{
-				if (teamtab[i].teamcode == tmpusr.teamcode)
+				if (teamtab[i].teamcode == tmpusr.teamcode
+					&& teamtab[i].teamname[0] != '@')
 					{
 					foundit=TRUE;
 					break;
@@ -1103,7 +1102,7 @@ if (qlobtv(0))
 		} while (qnxbtv());
 	}
 
-/* update player and team scores */
+/* update player scores */
 
 if (qlobtv(0))
 	{
@@ -1111,33 +1110,6 @@ if (qlobtv(0))
 		{
 		gcrbtv(&tmpusr,0);
 		tmpusr.score = tmpusr.plscore + tmpusr.klscore;
-
-		if (tmpusr.teamcode > 0)
-			{
-			for (i=0;i<MAXTEAMS;++i)
-				{
-				if (teamtab[i].teamcode == tmpusr.teamcode)
-					{
-					break;
-					}
-				}
-
-			/* just incase things get messed up */
-			if (teamtab[i].teamcount == 0)
-			teamtab[i].teamcount = 1;
-
-			teamtab[i].teamscore += teambonus;
-
-			sprintf(gechrbuf,"++Teamscr=%ld+(%ld/%d) %s",
-				teamtab[i].teamscore,
-				tmpusr.score,
-				teamtab[i].teamcount,
-				tmpusr.userid);
-			logthis(gechrbuf);
-
-			scr = tmpusr.score/(long)teamtab[i].teamcount;
-			teamtab[i].teamscore += scr;
-			}
 		updbtv(&tmpusr);
 		gcrbtv(&tmpusr,0);
 		} while (qnxbtv());
@@ -1147,10 +1119,15 @@ if (qlobtv(0))
 
 for (i=0;i<MAXTEAMS;++i)
 	{
-	if (teamtab[i].teamcode > 0 && teamtab[i].teamcount == 0)
+	if (teamtab[i].teamcode > 0
+		&& teamtab[i].teamname[0] != '@'
+		&& teamtab[i].teamcount == 0)
 		{
-		teamtab[i].teamcode = -1;
 		geshocst(0,spr("GE:INF:Removed Team %s",teamtab[i].teamname));
+		strcpy(teamtab[i].teamname,"@DELETED@");
+		teamtab[i].teamdeldate = cofdat(today());
+		teamtab[i].password[0] = 0;
+		teamtab[i].secret[0] = 0;
 		}
 	}
 /* update the team scores on disk */
@@ -1663,6 +1640,39 @@ if (plnum > 0 && plnum <= MAXPLANETS)
 return(TRUE);
 }
 
+void FUNC fixplanetteam()
+{
+int	i;
+
+if (!sameas(plptr->password,"team"))
+	return;
+
+if (plptr->teamcode <= 0)
+	{
+	plptr->teamcode = 0;
+	plptr->password[0] = 0;
+	setsect(warsptr); /* build PKEY */
+	pkey.plnum = plnum;
+	gesdb(GEUPDATE,(PKEY *)&pkey,(GALSECT *)&planet);
+	return;
+	}
+
+for (i=0;i<MAXTEAMS;++i)
+	{
+	if (teamtab[i].teamcode == plptr->teamcode)
+		break;
+	}
+
+if (i >= MAXTEAMS || teamtab[i].teamname[0] == '@')
+	{
+	plptr->teamcode = 0;
+	plptr->password[0] = 0;
+	setsect(warsptr); /* build PKEY */
+	pkey.plnum = plnum;
+	gesdb(GEUPDATE,(PKEY *)&pkey,(GALSECT *)&planet);
+	}
+}
+
 
 /**************************************************************************
 ** Team Table Database functions                                         **
@@ -1683,7 +1693,7 @@ for (i=0;i<MAXTEAMS;++i)
 	teamtab[i].teamcode = 0;
 	teamtab[i].teamname[0] = 0;
 	teamtab[i].teamcount = 0;
-	teamtab[i].teamscore = 0;
+	teamtab[i].teamdeldate = 0;
 	teamtab[i].password[0] = 0;
 	teamtab[i].secret[0] = 0;
 	}
@@ -1715,8 +1725,8 @@ if ((mzfp=fopen("MPOGETEA.DAT","r")) != NULL)
 
 			strncpy(gechrbuf,&buffer[48],10);
 			gechrbuf[10]=0;
-			teamtab[i].teamscore = atol(gechrbuf);
-			logthis(spr(" Team Score [%s]",gechrbuf));
+			teamtab[i].teamdeldate = atoi(gechrbuf);
+			logthis(spr(" Team Del [%s]",gechrbuf));
 
 			strncpy(teamtab[i].password,&buffer[59],10);
 			stripb(teamtab[i].password);
@@ -1749,13 +1759,13 @@ if(hdl != (FILE *)0)
 	{
 	for (i=0;i<MAXTEAMS;++i)
 		{
-		if (teamtab[i].teamcode != -1)
+		if (teamtab[i].teamcode != 0)
 			{
-			fprintf(hdl,"TEAM|%5ld|%-30s|%5d|%10ld|%-10s|%-10s|\n",
+			fprintf(hdl,"TEAM|%5ld|%-30s|%5d|%10u|%-10s|%-10s|\n",
 				teamtab[i].teamcode,
 				teamtab[i].teamname,
 				teamtab[i].teamcount,
-				teamtab[i].teamscore,
+				teamtab[i].teamdeldate,
 				teamtab[i].password,
 				teamtab[i].secret);
 			}
@@ -2790,6 +2800,7 @@ if (margc > 0)
 		plnum = warsptr->where - 10;
 
 		getplanetdat(usrnum);
+		fixplanetteam();
 
 		switch (*margv[0])
 			{
@@ -3098,6 +3109,7 @@ return(1);
 
 int FUNC mnu_admenu2i()
 {
+int i;
 
 if (margc == 1)
 	{
@@ -3106,10 +3118,6 @@ if (margc == 1)
 
 	strncpy(plptr->password,margv[0],sizeof(plptr->password)-1);
 	plptr->password[sizeof(plptr->password)-1] = 0;
-
-	setsect(warsptr); /* build PKEY */
-	pkey.plnum = plnum;
-	gesdb(GEUPDATE,(PKEY *)&pkey,(GALSECT *)&planet);
 
 	if (sameas(plptr->password,"none"))
 		{
@@ -3121,8 +3129,23 @@ if (margc == 1)
 		{
 		if (waruptr->teamcode > 0)
 			{
-			plptr->teamcode = waruptr->teamcode;
-			prfmsg(ADMEN2I3);
+			for (i=0;i<MAXTEAMS;++i)
+				{
+				if (teamtab[i].teamcode == waruptr->teamcode
+					&& teamtab[i].teamname[0] != '@')
+					break;
+				}
+			if (i < MAXTEAMS)
+				{
+				plptr->teamcode = waruptr->teamcode;
+				prfmsg(ADMEN2I3);
+				}
+			else
+				{
+				plptr->teamcode = 0;
+				plptr->password[0] = 0;
+				prfmsg(ADMEN2I4);
+				}
 			}
 		else
 			{
@@ -3136,6 +3159,10 @@ if (margc == 1)
 		prfmsg(ADMEN2I1,plptr->password);
 		plptr->teamcode = 0;
 		}
+
+	setsect(warsptr); /* build PKEY */
+	pkey.plnum = plnum;
+	gesdb(GEUPDATE,(PKEY *)&pkey,(GALSECT *)&planet);
 
 	prfmsg(ADMENU2);
 	outprfge(ALWAYS,usrnum);

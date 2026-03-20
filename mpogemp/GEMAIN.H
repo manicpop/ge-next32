@@ -807,7 +807,7 @@ TEAM	{
 	long		teamcode;
 	char		teamname[31];
 	unsigned int	teamcount;
-	unsigned long	teamscore;
+	unsigned int	teamdeldate;
 	char		password[11];
 	char		secret[11];
 	int		flag;

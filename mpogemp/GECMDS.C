@@ -1075,11 +1075,15 @@ if (ptr->phasr >=PMINFIRE)
 	for (othusn=0 ; othusn < nships ; othusn++)
 		{
 		wptr=warshpoff(othusn);
+		if (ptr->status == GESTAT_USER && wptr->status == GESTAT_USER)
+			wuptr = warusroff(othusn);
 		ddistance = cdistance(&ptr->coord,&wptr->coord)*10000;
 		if (ingegame(othusn) && (wptr->where != 1 || ptr->phasrtype >= phatowrp) && ddistance < 100000.0)
 			{
 			if (othusn != usrn && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
-				|| shipclass[ptr->shpclass].faction == 0) && (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn))
+				|| shipclass[ptr->shpclass].faction == 0) && (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn)
+				&& (ptr->status != GESTAT_USER || wptr->status != GESTAT_USER || warusroff(usrn)->teamcode == 0
+				|| wuptr->teamcode != warusroff(usrn)->teamcode || ptr->lock == othusn))
 				{
 				heading = (unsigned)(vector(&ptr->coord,&wptr->coord) + 0.5);
 				if (smallest(heading,deg) < ptr->percent+PHABIAS)
@@ -1254,11 +1258,15 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 	for (othusn=0 ; othusn < nships ; othusn++)
 		{
 		wptr=warshpoff(othusn);
+		if (ptr->status == GESTAT_USER && wptr->status == GESTAT_USER)
+			wuptr = warusroff(othusn);
 		ddistance = cdistance(&ptr->coord,&wptr->coord)*10000;
 		if (ingegame(othusn) && wptr->where == 1 && ddistance < 100000.0)
 			{
 			if (othusn != usrn && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
-				|| shipclass[ptr->shpclass].faction == 0) && (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn))
+				|| shipclass[ptr->shpclass].faction == 0) && (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn)
+				&& (ptr->status != GESTAT_USER || wptr->status != GESTAT_USER || warusroff(usrn)->teamcode == 0
+				|| wuptr->teamcode != warusroff(usrn)->teamcode || ptr->lock == othusn))
 				{
 				heading = (unsigned)vector(&ptr->coord,&wptr->coord);
 				if (smallest(heading,deg) < HPBEAMW)
@@ -3363,6 +3371,8 @@ getplanetdat(usrnum);
 if (sameas(plptr->userid,warsptr->userid))
 	{
 	plptr->userid[0] = 0;
+	plptr->password[0] = 0;
+	plptr->teamcode = 0;
 	if(--waruptr->planets <0)
 		waruptr->planets = 0;
 	geudb(GEUPDATE,waruptr->userid,waruptr);
@@ -3977,6 +3987,11 @@ if (olduid[0] && !sameas(olduid, warsptr->userid))
 
 /* assign planet to new owner */
 strncpy(plptr->userid, warsptr->userid, UIDSIZ);
+if (sameas(plptr->password,"team"))
+	{
+	plptr->password[0] = 0;
+	plptr->teamcode = 0;
+	}
 warsptr->hostile = 0;
 
 /* add planet to winner */
@@ -4319,6 +4334,7 @@ if (warsptr->where < 10)
 plnum = warsptr->where - 10;
 
 getplanetdat(usrnum);
+fixplanetteam();
 
 if (neutral(&warsptr->coord) && plnum == 1 && waruptr->factions[gcnum] > 100)	/* if Zygor, don't sell to jerks */
 	{
@@ -4326,15 +4342,6 @@ if (neutral(&warsptr->coord) && plnum == 1 && waruptr->factions[gcnum] > 100)	/*
 	outprfge(ALWAYS,usrnum);
 	return;
 	}
-
-/* two problems:
-   1 - trading player has no team affiliation and planet was designated
-	    TEAM while the owner had no team affiliation...hence they both are
-		 on the same team. Need to find out what the teamcode is when no team
-		 is set... 0 I suspect.
-	2 - players can just specify the password "team" and trade anyway
-*/
-
 
 if (sameas(plptr->password,"team")
 	&& plptr->teamcode > 0
@@ -5075,6 +5082,26 @@ if (sameas("midnight",margv[1]) && margc == 2)
 	return;
 	}
 else
+if (sameas("teamdump",margv[1]) && margc == 2)
+	{
+	prfmsg(SYSTEAM);
+	for (i=0;i<MAXTEAMS;++i)
+		{
+		if (teamtab[i].teamcode == 0)
+			continue;
+		sprintf(gechrbuf,"|%5ld|%-30s|%5d|%10u|%-10s|%-10s|\r\n",
+			teamtab[i].teamcode,
+			teamtab[i].teamname,
+			teamtab[i].teamcount,
+			teamtab[i].teamdeldate,
+			teamtab[i].password,
+			teamtab[i].secret);
+		prf(gechrbuf);
+		outprfge(ALWAYS,usrnum);
+		}
+	return;
+	}
+else
 if (sameas("goto",margv[1]) && margc == 4)
 	{
 	if (margc == 4)
@@ -5690,14 +5717,18 @@ outprfge(ALWAYS,usrnum);
 **   Add logic to compare if the team member got kicked off and tell     **
 **   him in a mail message. nice                                         **
 **                                                                       **
-**   Add logic to remove a teamcode that has no members at cleanup       **
 **************************************************************************/
 
 void FUNC cmd_team()
 
 
 {
-int	i,j,numteams,next;
+int	i,j,next;
+unsigned int	tmcount[MAXTEAMS];
+unsigned long	tmscore[MAXTEAMS];
+int	tmflag[MAXTEAMS];
+char	oldteamname[31];
+unsigned int	olddel;
 
 long	highscore;
 int	highpos;
@@ -5716,6 +5747,21 @@ if (margc < 2)
 
 if (sameas(margv[1],"join"))
 	{
+	if (waruptr->teamcode > 0)
+		{
+		for (i=0;i<MAXTEAMS;++i)
+			{
+			if (waruptr->teamcode == teamtab[i].teamcode
+				&& teamtab[i].teamname[0] != '@')
+				break;
+			}
+		if (i >= MAXTEAMS)
+			{
+			waruptr->teamcode = 0;
+			geudb(GEUPDATE,waruptr->userid,waruptr);
+			}
+		}
+
 	/* got enough parameters */
 	if (margc != 4)
 		{
@@ -5747,13 +5793,22 @@ if (sameas(margv[1],"join"))
 
 	tmp.teamcode = atol(gechrbuf);
 
+	if (waruptr->teamcode > 0)
+		{
+		if (waruptr->teamcode == tmp.teamcode)
+			prfmsg(TEAMALR2);
+		else
+			prfmsg(TEAMALRD);
+		outprfge(ALWAYS,usrnum);
+		return;
+		}
+
 	/* verify that this is an actual team */
 
 	for (i=0;i<MAXTEAMS;++i)
 		{
-		if (teamtab[i].teamcode == 0)
-			break;
-		if (tmp.teamcode == teamtab[i].teamcode)
+		if (tmp.teamcode == teamtab[i].teamcode
+			&& teamtab[i].teamname[0] != '@')
 			{
 			break;
 			}
@@ -5785,6 +5840,7 @@ if (sameas(margv[1],"join"))
 	/* add the teamcode to this users record */
 
 	waruptr->teamcode = tmp.teamcode;
+	geudb(GEUPDATE,waruptr->userid,waruptr);
 
 
 	/* update the team count */
@@ -5794,7 +5850,7 @@ if (sameas(margv[1],"join"))
 
 	update_team_tab();
 
-	/* tell user that team has been created */
+	/* tell user that team has been joined */
 
 	prfmsg(TEAMJOIN,teamtab[i].teamname);
 	outprfge(ALWAYS,usrnum);
@@ -5806,10 +5862,42 @@ if (sameas(margv[1],"score"))
 	{
 	/*sort the table*/
 	highpos = 0;
+	setbtv(gebb5);
 
 	for (i=0;i < MAXTEAMS; ++i)
 		{
-		teamtab[i].flag = 0; /* flag the records for sorting*/
+		temptab[i] = 0;
+		tmcount[i] = 0;
+		tmscore[i] = 0L;
+		tmflag[i] = 0; /* flag the records for sorting*/
+		}
+
+	if (qlobtv(0))
+		{
+		do
+			{
+			gcrbtv(&tmpusr,0);
+
+			if (tmpusr.teamcode > 0)
+				{
+				for (i=0;i<MAXTEAMS;++i)
+					{
+					if (teamtab[i].teamcode == tmpusr.teamcode
+						&& teamtab[i].teamname[0] != '@')
+						{
+						++tmcount[i];
+						tmscore[i] += (tmpusr.plscore + tmpusr.klscore);
+						break;
+						}
+					}
+				}
+			} while (qnxbtv());
+		}
+
+	for (i=0;i < MAXTEAMS; ++i)
+		{
+		if (tmcount[i] > 0)
+			tmscore[i] = (tmscore[i] / (long)tmcount[i]) + ((long)tmcount[i] * (long)teambonus);
 		}
 
 	/* sort the records*/
@@ -5820,13 +5908,13 @@ if (sameas(margv[1],"score"))
 		highpos = 0;
 		for (j=0;j < MAXTEAMS;++j)
 			{
-			if (teamtab[j].teamscore >= highscore && teamtab[j].flag != 1)
+			if (tmscore[j] >= highscore && tmflag[j] != 1)
 				{
-				highscore = teamtab[j].teamscore;
+				highscore = tmscore[j];
 				highpos = j;
 				}
 			}
-		teamtab[highpos].flag = 1; /* take it out of the running */
+		tmflag[highpos] = 1; /* take it out of the running */
 		temptab[i]=highpos;
 		}
 
@@ -5834,13 +5922,14 @@ if (sameas(margv[1],"score"))
 	for (i=0;i<MAXTEAMS;++i)
 		{
 		j = temptab[i];
-		if (teamtab[j].teamcode != 0)
+		if (teamtab[j].teamcode > 0
+			&& teamtab[j].teamname[0] != '@')
 			{
-			prf("%-6s %-30s %-5d %s\r",
+			prf("%-6s %-38s%7u %15lu\r",
 				spr("%ld",teamtab[j].teamcode),
 				teamtab[j].teamname,
-				teamtab[j].teamcount,
-				spr("%ld",teamtab[j].teamscore));
+				tmcount[j],
+				tmscore[j]);
 			outprfge(ALWAYS,usrnum);
 			}
 		}
@@ -5851,15 +5940,29 @@ if (sameas(margv[1],"score"))
 else
 if (sameas(margv[1],"unjoin"))
 	{
+	if (waruptr->teamcode > 0)
+		{
+		for (i=0;i<MAXTEAMS;++i)
+			{
+			if (waruptr->teamcode == teamtab[i].teamcode
+				&& teamtab[i].teamname[0] != '@')
+				break;
+			}
+		if (i >= MAXTEAMS)
+			{
+			waruptr->teamcode = 0;
+			geudb(GEUPDATE,waruptr->userid,waruptr);
+			}
+		}
+
 	if (waruptr->teamcode >0)
 		{
 		/* verify that this is still a good team */
 
 		for (i=0;i<MAXTEAMS;++i)
 			{
-			if (teamtab[i].teamcode == 0)
-				break;
-			if (waruptr->teamcode == teamtab[i].teamcode)
+			if (waruptr->teamcode == teamtab[i].teamcode
+				&& teamtab[i].teamname[0] != '@')
 				{
 				prfmsg(TEAMUNJN,teamname(waruptr));
 				outprfge(ALWAYS,usrnum);
@@ -5871,6 +5974,14 @@ if (sameas(margv[1],"unjoin"))
 				teamtab[i].teamcount--;
 				if (teamtab[i].teamcount > 65000U) /* roll over */
 					teamtab[i].teamcount = 0;
+
+				if (teamtab[i].teamcount == 0)
+					{
+					strcpy(teamtab[i].teamname,"@DELETED@");
+					teamtab[i].teamdeldate = cofdat(today());
+					teamtab[i].password[0] = 0;
+					teamtab[i].secret[0] = 0;
+					}
 
 				/* update the disk copy of team database */
 
@@ -5892,25 +6003,57 @@ if (sameas(margv[1],"unjoin"))
 else
 if (sameas(margv[1],"start"))
 	{
+	if (waruptr->teamcode > 0)
+		{
+		for (i=0;i<MAXTEAMS;++i)
+			{
+			if (waruptr->teamcode == teamtab[i].teamcode
+				&& teamtab[i].teamname[0] != '@')
+				break;
+			}
+		if (i >= MAXTEAMS)
+			{
+			waruptr->teamcode = 0;
+			geudb(GEUPDATE,waruptr->userid,waruptr);
+			}
+		}
+
+	if (waruptr->teamcode > 0)
+		{
+		prfmsg(TEAMALRD);
+		outprfge(ALWAYS,usrnum);
+		return;
+		}
+
 	if (margc < 6)
 		{
 		prfmsg(FORMAT,"TEAM");
 		outprfge(ALWAYS,usrnum);
 		return;
 		}
-	/* see how many teams are already created */
-	numteams = 0;
+	olddel = 65535U;
 	for (next=0;next<MAXTEAMS;++next)
 		{
 		if (teamtab[next].teamcode == 0)
 			break;
-		numteams++;
 		}
-	if (numteams >= MAXTEAMS)
+	if (next >= MAXTEAMS)
 		{
-		prfmsg(TOOMANY,MAXTEAMS);
-		outprf(usrnum);
-		return;
+		next = -1;
+		for (i=0;i<MAXTEAMS;++i)
+			{
+			if (teamtab[i].teamname[0] == '@' && teamtab[i].teamdeldate <= olddel)
+				{
+				olddel = teamtab[i].teamdeldate;
+				next = i;
+				}
+			}
+		if (next < 0)
+			{
+			prfmsg(TOOMANY,MAXTEAMS);
+			outprf(usrnum);
+			return;
+			}
 		}
 	/* verify that the teamcode is valid */
 	strcpy(gechrbuf,margv[2]);
@@ -5942,23 +6085,41 @@ if (sameas(margv[1],"start"))
 	/* save off the passwords before we rstrin */
 	strncpy(tmp.secret,margv[3],10);
 	strncpy(tmp.password,margv[4],10);
+	tmp.secret[10] = 0;
+	tmp.password[10] = 0;
 
 	rstrin();
 	strncpy(tmp.teamname, margv[5], 30);
+	tmp.teamname[30] = 0;
+	if (strlen(tmp.teamname) < 5)
+		{
+		prfmsg(TEAMBNAM);
+		outprfge(ALWAYS,usrnum);
+		return;
+		}
+	if (!((tmp.teamname[0] >= 'A' && tmp.teamname[0] <= 'Z')
+		|| (tmp.teamname[0] >= 'a' && tmp.teamname[0] <= 'z')))
+		{
+		prfmsg(TEAMNINV);
+		outprfge(ALWAYS,usrnum);
+		return;
+		}
 	tmp.teamcount = 1;
 
 	/* check to see that this team does not already exist */
 	for (i=0;i<MAXTEAMS;++i)
 		{
-		if (teamtab[i].teamcode == 0)
-			break;
 		if (tmp.teamcode == teamtab[i].teamcode)
 			{
-			prfmsg(TEAMEXST);
+			if (teamtab[i].teamname[0] == '@')
+				prfmsg(TEAMDEAC);
+			else
+				prfmsg(TEAMEXST);
 			outprfge(ALWAYS,usrnum);
 			return;
 			}
-		if (sameas(tmp.teamname,teamtab[i].teamname))
+		if (teamtab[i].teamname[0] != '@'
+			&& sameas(tmp.teamname,teamtab[i].teamname))
 			{
 			prfmsg(TEAMEXST);
 			outprfge(ALWAYS,usrnum);
@@ -5970,13 +6131,18 @@ if (sameas(margv[1],"start"))
 
 	teamtab[next].teamcode = tmp.teamcode;
 	strncpy(teamtab[next].teamname, tmp.teamname, 30);
+	teamtab[next].teamname[30] = 0;
 	teamtab[next].teamcount = tmp.teamcount;
+	teamtab[next].teamdeldate = 0;
 	strncpy(teamtab[next].password, tmp.password, 10);
+	teamtab[next].password[10] = 0;
 	strncpy(teamtab[next].secret, tmp.secret, 10);
+	teamtab[next].secret[10] = 0;
 
 	/* add the teamcode to this users record */
 
 	waruptr->teamcode = tmp.teamcode;
+	geudb(GEUPDATE,waruptr->userid,waruptr);
 
 	/* update the disk copy of team database */
 
@@ -5992,6 +6158,20 @@ if (sameas(margv[1],"start"))
 else
 if (sameas(margv[1],"members"))
 	{
+	if (waruptr->teamcode > 0)
+		{
+		for (i=0;i<MAXTEAMS;++i)
+			{
+			if (waruptr->teamcode == teamtab[i].teamcode
+				&& teamtab[i].teamname[0] != '@')
+				break;
+			}
+		if (i >= MAXTEAMS)
+			{
+			waruptr->teamcode = 0;
+			geudb(GEUPDATE,waruptr->userid,waruptr);
+			}
+		}
 
 	if (waruptr->teamcode == 0)
 		{
@@ -6033,7 +6213,11 @@ if (sameas(margv[1],"members"))
 		}
 	else
 		{
-		logthis("No one in team yet");
+		waruptr->teamcode = 0;
+		geudb(GEUPDATE,waruptr->userid,waruptr);
+		prfmsg(TEAMNOT);
+		outprfge(ALWAYS,usrnum);
+		return;
 		}
 	}
 else
@@ -6049,11 +6233,12 @@ if (sameas(margv[1],"kick"))
 	/* locate this players team in the list*/
 	for (i=0;i<MAXTEAMS;++i)
 		{
-		if (teamtab[i].teamcode == 0)
-			break;
-
-		if (waruptr->teamcode == teamtab[i].teamcode)
+		if (waruptr->teamcode == teamtab[i].teamcode
+			&& teamtab[i].teamname[0] != '@')
 			{
+			strncpy(oldteamname,teamtab[i].teamname,30);
+			oldteamname[30] = 0;
+
 			/* check to see that the passwords match */
 			if (sameas(margv[2],teamtab[i].secret))
 				{
@@ -6072,9 +6257,25 @@ if (sameas(margv[1],"kick"))
 						/* re-write the users record */
 						geudb(GEUPDATE,tmpusr.userid,&tmpusr);
 
+						/* update the team count */
+						teamtab[i].teamcount--;
+						if (teamtab[i].teamcount > 65000U) /* roll over */
+							teamtab[i].teamcount = 0;
+
+						if (teamtab[i].teamcount == 0)
+							{
+							strcpy(teamtab[i].teamname,"@DELETED@");
+							teamtab[i].teamdeldate = cofdat(today());
+							teamtab[i].password[0] = 0;
+							teamtab[i].secret[0] = 0;
+							}
+
+						/* update the disk copy of team database */
+						update_team_tab();
+
 						/* send the guy mail telling him he got kicked off the team */
 						clrprf();
-						prfmsg(TEAMKYOU,teamtab[i].teamname,warsptr->userid);
+						prfmsg(TEAMKYOU,oldteamname,warsptr->userid);
 						strcpy(mail.userid,tmpusr.userid);
 						strcpy(mail.topic,"Team Membership Revoked");
 						sendit();
@@ -6106,6 +6307,11 @@ if (sameas(margv[1],"kick"))
 			return;
 			}
 		}
+	if (waruptr->teamcode > 0)
+		{
+		waruptr->teamcode = 0;
+		geudb(GEUPDATE,waruptr->userid,waruptr);
+		}
 	prfmsg(TEAMNOT);
 	outprfge(ALWAYS,usrnum);
 	}
@@ -6123,10 +6329,8 @@ if (sameas(margv[1],"newpass"))
 	/* locate this players team in the list*/
 	for (i=0;i<MAXTEAMS;++i)
 		{
-		if (teamtab[i].teamcode == 0)
-			break;
-
-		if (waruptr->teamcode == teamtab[i].teamcode)
+		if (waruptr->teamcode == teamtab[i].teamcode
+			&& teamtab[i].teamname[0] != '@')
 			{
 			/* check to see that the passwords match */
 			if (sameas(margv[2],teamtab[i].secret))
@@ -6152,6 +6356,11 @@ if (sameas(margv[1],"newpass"))
 			return;
 			}
 		}
+	if (waruptr->teamcode > 0)
+		{
+		waruptr->teamcode = 0;
+		geudb(GEUPDATE,waruptr->userid,waruptr);
+		}
 	prfmsg(TEAMNOT);
 	outprfge(ALWAYS,usrnum);
 	}
@@ -6168,10 +6377,8 @@ if (sameas(margv[1],"newname"))
 	/* locate this players team in the list*/
 	for (i=0;i<MAXTEAMS;++i)
 		{
-		if (teamtab[i].teamcode == 0)
-			break;
-
-		if (waruptr->teamcode == teamtab[i].teamcode)
+		if (waruptr->teamcode == teamtab[i].teamcode
+			&& teamtab[i].teamname[0] != '@')
 			{
 			/* check to see that the passwords match */
 			if (sameas(margv[2],teamtab[i].secret))
@@ -6184,7 +6391,26 @@ if (sameas(margv[1],"newname"))
 					outprfge(ALWAYS,usrnum);
 					return;
 					}
+				if (!((margv[3][0] >= 'A' && margv[3][0] <= 'Z')
+					|| (margv[3][0] >= 'a' && margv[3][0] <= 'z')))
+					{
+					prfmsg(TEAMNINV);
+					outprfge(ALWAYS,usrnum);
+					return;
+					}
+				for (j=0;j<MAXTEAMS;++j)
+					{
+					if (j != i
+						&& teamtab[j].teamname[0] != '@'
+						&& sameas(margv[3],teamtab[j].teamname))
+						{
+						prfmsg(TEAMEXST);
+						outprfge(ALWAYS,usrnum);
+						return;
+						}
+					}
 				strncpy(teamtab[i].teamname,margv[3],30);
+				teamtab[i].teamname[30] = 0;
 				prfmsg(TEAMNNAM,teamtab[i].teamname);
 				outprfge(ALWAYS,usrnum);
 				update_team_tab();
@@ -6198,25 +6424,13 @@ if (sameas(margv[1],"newname"))
 			return;
 			}
 		}
+	if (waruptr->teamcode > 0)
+		{
+		waruptr->teamcode = 0;
+		geudb(GEUPDATE,waruptr->userid,waruptr);
+		}
 	prfmsg(TEAMNOT);
 	outprfge(ALWAYS,usrnum);
-	}
-else
-if (sameas(margv[1],"dumpitout"))
-	{
-	for (i=0;i<MAXTEAMS;++i)
-		{
-		prf("code name count score\r\n");
-		sprintf(gechrbuf,"|%5ld|%-30s|%5d|%10ld|%-10s|%-10s|\r\n",
-			teamtab[i].teamcode,
-			teamtab[i].teamname,
-			teamtab[i].teamcount,
-			teamtab[i].teamscore,
-			teamtab[i].password,
-			teamtab[i].secret);
-		prf(gechrbuf);
-		outprfge(ALWAYS,usrnum);
-		}
 	}
 prfmsg(FORMAT,"TEAM");
 outprfge(ALWAYS,usrnum);
@@ -6229,9 +6443,8 @@ static	char	badteamname[]={"Invalid Team Code"};
 
 for (i=0;i<MAXTEAMS;++i)
 	{
-	if (teamtab[i].teamcode == 0)
-		return(&badteamname[0]);
-	if (ptr->teamcode == teamtab[i].teamcode)
+	if (ptr->teamcode == teamtab[i].teamcode
+		&& teamtab[i].teamname[0] != '@')
 		{
 		return(teamtab[i].teamname);
 		}

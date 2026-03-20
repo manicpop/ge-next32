@@ -66,6 +66,7 @@
 /*    1458 */ int FUNC geudb P((int func , char *usrname , WARUSR *geptr ));
 /*    1533 */ int FUNC gesdb P((int func , PKEY *sect , GALSECT *geptr ));
 /*    1618 */ int FUNC getplanetdat P((int usrn ));
+/*         */ void FUNC fixplanetteam P((void ));
 /*    1675 */ void FUNC load_team_tab P((void ));
 /*    1743 */ void FUNC update_team_tab P((void ));
 /*    1776 */ void FUNC pplarti P((void ));
