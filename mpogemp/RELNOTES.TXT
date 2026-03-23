@@ -241,6 +241,11 @@ Other stuff:
     ceases to exist, the planet will return to having no password.
   - You can no longer damage a teammate with phaser fire unless you
     LOCK onto them first (same behavior as NPCs in distress).
+* Planet beacon messages can now be seen if you are within 1000
+  of a planet and not at warp. You no longer have to scan the
+  planet first to see it, and it will be send out at regular
+  intervals, not random.
+
 
 === 0.2.6 === 2025-08-15
 

@@ -73,7 +73,7 @@ extern	MINE		*mines;				/* place to stuff mines */
 extern	MAIL		mail;
 extern	MAILSTAT	tmpstat;
 
-extern	BEACONTAB	*beacon;
+extern	unsigned char	beacontimer;
 
 extern	struct message *gemsg;
 

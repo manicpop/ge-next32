@@ -138,7 +138,7 @@ MINE		*mines;		/* place to stuff mines */
 MAIL		mail;
 MAILSTAT	tmpstat;
 
-BEACONTAB	*beacon;
+unsigned char	beacontimer;
 
 struct message	*gemsg;
 
@@ -727,10 +727,7 @@ s00=(S00 *)alcmem(n=s00plnum*sizeof(S00));
 setmem(s00,n,0);
 geshocst(1,spr("GE:INF:S00 Mem: %d",n));
 
-/* allocate memory for beacon table */
-beacon=(BEACONTAB *)alcmem(n=nships*sizeof(BEACONTAB));
-setmem(beacon,n,0);
-geshocst(1,spr("GE:INF:Beacontab Mem: %d",n));
+beacontimer = 0;
 
 /* allocate memory for the mail message table*/
 gemsg=(struct message *)alcmem(sizeof(struct message)+GEMSGSIZ);
@@ -1591,7 +1588,6 @@ return(rtn);
 int FUNC getplanetdat(usrn)          /* plnum MUST be set before this is called */
 int	usrn;
 {
-int	i,bbad;
 
 if (plnum > 0 && plnum <= MAXPLANETS)
 	{
@@ -1607,29 +1603,6 @@ if (plnum > 0 && plnum <= MAXPLANETS)
 		if (plptr->type == PLTYPE_WORM)
 			{
 			memcpy(&worm,&planet,sizeof(GALWORM));	/* make it the current user */
-			}
-		else
-			{
-			if (plptr->beacon[0] != 0)
-				{
-				bbad = FALSE;
-
-				for (i=0;i<BEACONMSGSZ;++i)
-					{
-					if (plptr->beacon[i] < ' ' || plptr->beacon[i] > '~')
-						{
-						plptr->beacon[0] = 0;
-						bbad = TRUE;
-						break;
-						}
-					}
-				if (!bbad)
-					{
-					movecoord(&beacon[usrn].coord,&plptr->coord);
-					beacon[usrn].plnum = plnum;
-					strncpy(beacon[usrn].beacon,plptr->beacon,BEACONMSGSZ);
-					}
-				}
 			}
 		}
 	else
@@ -2247,6 +2220,9 @@ WARSHP 	*wptr;
 static int	clicker = 0;
 
 logthis("TICK:PWarrti2 entered");
+
+if (beacontimer > 0)
+	--beacontimer;
 
 zothusn = clicker;
 

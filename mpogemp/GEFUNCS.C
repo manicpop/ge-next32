@@ -1114,10 +1114,6 @@ if (ptr->speed > 0)
 			}
 
 		}
-	/* Cybertrons ignore gravity */
-	if (ptr->where == 0 && ptr->status == GESTAT_USER)
-		gravity(ptr,usrn);
-
 	if (ptr->hostile > 0)
 		checkdist(ptr,usrn);
 	}
@@ -1127,17 +1123,9 @@ else
 		ptr->where = 0;
 	}
 
-
-
-/* if there is a beacon message and same sector display it */
-if (samesect(&beacon[usrn].coord,&ptr->coord))
-	{
-	if (beacon[usrn].beacon[0] != 0 && gernd()%10 == 0)
-		{
-		prfmsg(BEAC01,beacon[usrn].plnum,beacon[usrn].beacon);
-		outprfge(FILTER,usrn);
-		}
-	}
+/* users check local planet proximity */
+if (ptr->where == 0 && ptr->status == GESTAT_USER)
+	proximity(ptr,usrn);
 }
 
 void FUNC telezip(ptr,usrn)
@@ -1171,7 +1159,7 @@ else
 }
 
 
-void FUNC gravity(ptr,usrn)
+void FUNC proximity(ptr,usrn)
 
 WARSHP	*ptr;
 int	usrn;
@@ -1188,8 +1176,26 @@ for (i=0; i<MAXPLANETS;++i)
 	if (ptab[usrn].planets[i].type != 0)
 		{
 		dist = (unsigned)(cdistance(&ptr->coord,&ptab[usrn].planets[i].coord)*10000);
+
+		if (ptab[usrn].planets[i].type == PLTYPE_PLNT
+			&& dist <= 1000
+			&& beacontimer == 0)
+			{
+			getplanet(&ptr->coord,i+1);
+			if (planet.type == PLTYPE_PLNT && planet.beacon[0] != 0)
+				{
+				if (planet.name[0] != 0)
+					prfmsg(BEAC02,i+1,planet.name,planet.beacon);
+				else
+					prfmsg(BEAC01,i+1,planet.beacon);
+				outprfge(FILTER,usrn);
+				beacontimer = 60;
+				}
+			}
 	/*      prf("dist to planet %u is %d\r",i,dist);
 		outprfge(ALWAYS,usrn);*/
+		if (ptr->speed <= 0)
+			continue;
 		if (dist < 250 && ptr->damage < 101.0)	/* no addl msgs after crash */
 			{
 			if (dist >= 50)

@@ -814,12 +814,6 @@ TEAM	{
 	};
 
 
-#define BEACONTAB struct _beacontab
-extern
-BEACONTAB	{
-		COORD	coord;
-		int	plnum;
-		char	beacon[BEACONMSGSZ];
-		};
+extern unsigned char	beacontimer;
 
 #define FUNC _export

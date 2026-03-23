@@ -4671,7 +4671,12 @@ MSGPRF {
 } T GE bad word message
 
 BEAC01 {***
-[0;37mBeacon message from planet [1;34m%d
+[0;37mBeacon message from planet [0;34m%d
+[1;36m< [1;37m%s[1;36m >[1;37m
+} T GE beacon message received message
+
+BEAC02 {***
+[0;37mBeacon message from planet [0;34m%d[0;37m, [0;34m%s
 [1;36m< [1;37m%s[1;36m >[1;37m
 } T GE beacon message received message
 

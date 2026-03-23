@@ -127,7 +127,7 @@
 /*     565 */ void FUNC hyperspace P((WARSHP *ptr , int usrn , int flag ));
 /*     633 */ void FUNC moveship P((WARSHP *ptr , int usrn ));
 /*     844 */ void FUNC telezip P((WARSHP *ptr , int usrn ));
-/*     875 */ void FUNC gravity P((WARSHP *ptr , int usrn ));
+/*     875 */ void FUNC proximity P((WARSHP *ptr , int usrn ));
 /*     949 */ void FUNC checkdist P((WARSHP *ptr , int usrn ));
 /*     973 */ void FUNC refresh P((WARSHP *ptr , int usrn ));
 /*    1012 */ void FUNC checkdam P((WARSHP *ptr , int usrn ));
