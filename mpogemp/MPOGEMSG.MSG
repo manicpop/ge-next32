@@ -2029,14 +2029,6 @@ CANTEXT {
 [1;36mYou can't exit during battle. (Type [1;37mHELP X[1;36m for more info.)[1;37m
 } T GE cannot exit message
 
-EXIWAR2 {***
-[0;37mSensors can no longer locate the [0;36m%s[0;37m.[1;37m
-} T GE sensors cannot locate message
-
-EXIWARN {***
-[0;37mSensors can no longer locate [0;36m%s[0;37m's ship.[1;37m
-} T GE sensors cannot locate message
-
 PEACEOUT {***
 [0;36m%s[1;36m's ship, the [0;36m%s[1;36m, has powered down.[1;37m
 } T GE ship enters game message

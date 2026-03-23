@@ -1238,11 +1238,6 @@ if (warsptr->status == GESTAT_USER)
 			else
 				prfmsg(PEACEOUT,waruptr->userid,warsptr->shipname);
 			outwar(ALWAYS,usrnum,0);
-			if (warsptr->shipname[0] == '\0')
-				prfmsg(EXIWARN,waruptr->userid);
-			else
-				prfmsg(EXIWAR2,warsptr->shipname);
-			outsect(ALWAYS,&warsptr->coord,usrnum,0);
 			cleartm(usrnum);
 			clearitm(usrnum);
 			gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
@@ -2638,11 +2633,6 @@ if (sameas(input,"x"))
 		else
 			prfmsg(PEACEOUT,waruptr->userid,warsptr->shipname);
 		outwar(ALWAYS,usrnum,0);
-		if (warsptr->shipname[0] == '\0')
-			prfmsg(EXIWARN,waruptr->userid);
-		else
-			prfmsg(EXIWAR2,warsptr->shipname);
-		outsect(ALWAYS,&warsptr->coord,usrnum,0);
 		numwar = 0;
 		usrptr->substt = 1;
 		btupmt(usrnum,0);

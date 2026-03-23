@@ -3098,12 +3098,23 @@ if (sameas(margv[1],"off"))
 	else
 	if (warsptr->cloak > 0)
 		{
+		if (warsptr->cloak == 10)
+			{
+			warsptr->cloak = 3;
+			assign_cybs(usrnum,1);	/* don't pull far away cybs if close ones around */
+			prfmsg(CLOKOFF);
+			outprfge(FILTER,usrnum);
+			prfmsg(CLOK2);
+			outrange(FILTER,&warsptr->coord);
+			suddenappear(warsptr,usrnum);
+			}
+		else
+			{
 		warsptr->cloak = 3;
 		assign_cybs(usrnum,1);	/* don't pull far away cybs if close ones around */
 		prfmsg(CLOKOFF);
 		outprfge(FILTER,usrnum);
-		prfmsg(CLOK2);
-		outrange(FILTER,&warsptr->coord);
+			}
 		}
 	return;
 	}

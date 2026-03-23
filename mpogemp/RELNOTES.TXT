@@ -245,6 +245,11 @@ Other stuff:
   of a planet and not at warp. You no longer have to scan the
   planet first to see it, and it will be send out at regular
   intervals, not random.
+* The notification when a ship in the same sector as you exits has
+  been removed, since there's a game-wide notification now.
+* You'll get an "appeared in the sector" message now if someone
+  decloaks in the same sector as you or enters the same sector as
+  you from a a wormhole.
 
 
 === 0.2.6 === 2025-08-15

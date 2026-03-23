@@ -153,6 +153,18 @@ tossingegame();
 ** Toss this yokel into the arena - God rest his soul                    **
 **************************************************************************/
 
+void FUNC suddenappear(ptr,usrn)
+
+WARSHP	*ptr;
+int	usrn;
+{
+if (ptr->shipname[0] == '\0')
+	prfmsg(ENTWARNO,ptr->userid);
+else
+	prfmsg(ENTWAR,ptr->shipname);
+outsect(FILTER,&ptr->coord,usrn,0);
+}
+
 void FUNC tossingegame()
 {
 
@@ -169,11 +181,7 @@ update_scantab(warshpoff(usrnum),usrnum);
 
 if (warsptr->cloak != 10)
 	{
-	if (warsptr->shipname[0] == '\0')
-		prfmsg(ENTWARNO,waruptr->userid);
-	else
-		prfmsg(ENTWAR,warsptr->shipname);
-	outsect(FILTER,&warsptr->coord,usrnum,0);
+	suddenappear(warsptr,usrnum);
 	}
 
 btupmt(usrnum,'>');
@@ -1245,6 +1253,8 @@ for (i=0; i<MAXPLANETS;++i)
 						coord1(worm.destination.xcoord),coord1(worm.destination.ycoord));
 					ptr->damage+= 5.5;
 					outprfge(ALWAYS,usrn);
+					if (ptr->cloak != 10)
+						suddenappear(ptr,usrn);
 					clearitm(usrn);	 /* clear the tors and missiles */
 					ptr->jam_time = (byte)0;
 					ptr->jam_sev = (byte)0;
@@ -1988,16 +1998,22 @@ void FUNC cloakstat(ptr,usrn)
 WARSHP	*ptr;
 int	usrn;
 {
+int	oldcloak;
 
 if (ptr->cloak > 0 && ptr->cloak != 3)
 	{
 	if (fluxstat(ptr,usrn,clenguse) == 0)
 		{
+		oldcloak = ptr->cloak;
 		ptr->cloak = 3;
 		prfmsg(CLOKNOP);
 		outprfge(ALWAYS,usrn);
-		prfmsg(CLOK2);
-		outrange(FILTER,&ptr->coord);
+		if (oldcloak == 10)
+			{
+			prfmsg(CLOK2);
+			outrange(FILTER,&ptr->coord);
+			suddenappear(ptr,usrn);
+			}
 		}
 	else
 		ptr->energy -= clenguse;
