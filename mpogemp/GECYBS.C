@@ -334,7 +334,7 @@ if (ptr->jam_sev <= (byte)3)
 				/* in range, and target not in neutral zone, AND... */
 				if (ddist < 30000.0+((double)shipclass[ptr->shpclass].tough_factor * 2000.0) && !neutral(&wptr->coord) &&
 					/* if target is NPC, and not traveling to neutral zone or is already targeting me */
-					((wptr->status == GESTAT_AUTO && ((wptr->freq[1] < 2 || wptr->freq[1] > 7) || wptr->cybmine == usrn)
+					((wptr->status == GESTAT_AUTO && ((wptr->freq < 2 || wptr->freq > 7) || wptr->cybmine == usrn)
 					/* ...and is attackable class and i've already targeted it or decide to do so */
 					&& (shipclass[wptr->shpclass].cybs_can_att && (ptr->cybmine == zothusn || cyb_pick_fight(zothusn,0)))) ||
 					/* if target is user, and attackable class... */

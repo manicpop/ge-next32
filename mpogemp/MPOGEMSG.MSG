@@ -2857,63 +2857,31 @@ FLUXLOAD {***
 [0;37mFlux pod loaded, neutron flux levels back to normal.[1;37m
 } T GE flux pod loaded message
 
-RADSET1 {
-[0;37mCommunications channel [1;34m%c[0;37m is set to the general hailing frequency.[1;37m
-} T GE set to hail message
-
-RADSET2 {
-[0;37mCommunications channel [1;34m%c[0;37m is set to frequency [1;34m%u[0;37m.[1;37m
-} T GE set to freq message
-
-RADSET3 {
-[0;37mCommunications channel [1;34m%c[0;37m is set to hyperspace packet code [1;34m%u[0;37m.[1;37m
-} T GE set to hyp freq message
-
 MSGSNT1 {***
-[0;37mHailing message from the [0;36m%s[0;37m (channel [1;34m%c[0;37m)
+[0;37m%s message from the [0;36m%s[0;37m's ship, the [0;36m%s
 [1;36m<[1;37m %s [1;36m>[1;37m
-} T GE hail received message
+} T GE message received with name message
 
 MSGSNT1O {***
-[0;37mHailing message from [0;36m%s[0;37m's ship (channel [1;34m%c[0;37m)
+[0;37m%s message from [0;36m%s[0;37m's ship
 [1;36m<[1;37m %s [1;36m>[1;37m
-} T GE hail received message
+} T GE message received without name message
 
-MSGSNT2 {
-[0;37mMessage sent on all hailing channels.[1;37m
-} T GE hail sent message
+MSGSNT2 {***
+[0;37m%s message sent.[1;37m
+} T GE message received with name message
 
 MSGSNT3 {***
-[0;37mMessage from the [0;36m%s[0;37m (channel [1;34m%c[0;37m)
-[1;36m<[1;37m %s [1;36m>[1;37m
-} T GE message received message
+[0;37mEncoded message sent on frequency %u.[1;37m
+} T GE message received with name message
 
-MSGSNT3O {***
-[0;37mMessage from [0;36m%s[0;37m's ship (channel [1;34m%c[0;37m)
-[1;36m<[1;37m %s [1;36m>[1;37m
-} T GE message received message
+MSGSNT4 {***
+[0;37mEncoded communications are set to frequency %u.[1;37m
+} T GE message received with name message
 
-MSGSNT4 {
-[0;37mMessage sent to all ships in this star system on frequency [1;34m%u[0;37m.[1;37m
-} T GE message sent message
-
-MSGSNT5 {***
-[0;37mHyperspace message from the [0;36m%s[0;37m (channel [1;34m%c[0;37m)
-[1;36m<[1;37m %s [1;36m>[1;37m
-} T GE hyp message received message
-
-MSGSNT5O {***
-[0;37mHyperspace message from [0;36m%s[0;37m's ship (channel [1;34m%c[0;37m)
-[1;36m<[1;37m %s [1;36m>[1;37m
-} T GE hyp message received message
-
-MSGSNT6 {
-[0;37mHyperspace message encoded [1;34m%u[0;37m and sent.[0;37m
-} T GE hyp message sent message
-
-BADCOM {
-[0;37m[[1;31mERROR[0;37m] Please specify channel [1;37mA[0;37m, [1;37mB[0;37m, or [1;37mC[0;37m.[1;37m
-} T GE invalid channel message
+MSGSNT4N {***
+[0;37mEncoded communications are turned off.[1;37m
+} T GE message received with name message
 
 DASHES {[0;31m--------------------------------------[1;37m
 } T GE dashes
@@ -3468,9 +3436,6 @@ REP24 {[1;37mPhasers (Mark-%d)...... [0;31m<inoperable>[1;37m
 REP24S {[1;37mPhasers (Mark-%d)..... [0;31m<inoperable>[1;37m
 } T GE report 24 short
 
-REP24A {[1;37mComm frequencies...... [1;34mA[1;37m:[1;34m%u  B[1;37m:[1;34m%u  C[1;37m:[1;34m%u[1;37m
-} T GE report 24A
-
 REP25 {[1;37mAccounting report:
 } T GE report 25
 
@@ -3835,7 +3800,7 @@ ZAPHIM1 {***
 } T GE got hit with enforcer beam message
 
 ZAPHIM2 {***
-[0;37mHailing message from the Enforcer Planet
+[0;37mBeacon message from the Enforcer Planet
 [1;36m<[1;37m This sector is a neutral zone; any hostilities will be dealt with severely! [1;36m>[1;37m
 } T GE you are in the neutral zone message
 
@@ -5413,7 +5378,7 @@ DR6M12 {***
 DRLASTM {DO NOT REMOVE THIS MESSAGE!!!!!!} T Droid message end divider
 
 DRDISMSG {***
-[0;37mHyperspace distress message from [0;36m%s
+[0;37mDistress message from [0;36m%s
 [1;36m<[1;37m %s under attack by [1;34m%s[1;37m!
   Requesting immediate assistance to sector [1;34m%d %d[1;37m! [1;36m>[1;37m
 } T GE Droid distress message

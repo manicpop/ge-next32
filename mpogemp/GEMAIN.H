@@ -425,7 +425,9 @@ WARSHP	{
 /*209*/
 	byte		jam_time;		/*   time left in jamming                    */
 /*210*/
-	unsigned	freq[3];		/*   sub space, hyper space, planetary       */
+	unsigned	freq;			/*   encoded message freq / npc state trckr  */
+/*212*/
+	char		filler2[4];		/*   eventually i will restruct this struct  */
 /*216*/
 	unsigned long	items[NUMITEMS];	/*   all the items                           */
 /*272*/

@@ -172,7 +172,7 @@ if (warsptr->shipname[0] == '\0')
 	prfmsg(ANNOUNO,waruptr->userid,shipclass[warsptr->shpclass].typename);
 else
 	prfmsg(ANNOUN,shipclass[warsptr->shpclass].typename, warsptr->shipname, waruptr->userid);
-outwar(FILTER,usrnum,0);
+outwar(FILTER,usrnum,0,0);
 
 prfmsg(ENTSHP,waruptr->userid);
 outprfge(ALWAYS,usrnum);
@@ -269,8 +269,7 @@ tmpshp.train		= 0;
 tmpshp.where		= 0;
 tmpshp.jam_sev		= 0;
 tmpshp.jam_time		= 0;
-for (i=0;i<3;++i)
-	tmpshp.freq[i] = 0;
+tmpshp.freq		= 0;
 tmpshp.titem		= 0;
 tmpshp.hostile		= 0;
 tmpshp.repair		= 0;
@@ -1563,7 +1562,7 @@ if (who >= 0 && who < nships && who != usrn)
 		prfmsg(KILLDNPC,username(ptr),username(wptr));
 	else
 		prfmsg(KILLEDBY,username(ptr),username(wptr));
-	outwar(FILTER,usrn,0);
+	outwar(FILTER,usrn,0,0);
 
 	++wuptr->kills;
 	++wptr->kills;
@@ -1885,7 +1884,7 @@ else
 		prfmsg(DIEDNO,username(ptr));
 	else
 		prfmsg(DIED,ptr->shipname,username(ptr));
-	outwar(ALWAYS,usrn,0);
+	outwar(ALWAYS,usrn,0,0);
 	if (shipclass[ptr->shpclass].kill_func != NULL)
 		shipclass[ptr->shpclass].kill_func(ptr,usrn,NULL);
 	}

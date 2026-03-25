@@ -250,6 +250,12 @@ Other stuff:
 * You'll get an "appeared in the sector" message now if someone
   decloaks in the same sector as you or enters the same sector as
   you from a a wormhole.
+* The SEND command has been overhauled and the FREQ command removed.
+  You can now specify between messages that go to everyone, only
+  to team members, or only between players tuned to a specific
+  frequency. You can use SEND FREQ to set the frequency.
+* You can also now just type '>' in place of SEND A; this should
+  chatting in-game much easier.
 
 
 === 0.2.6 === 2025-08-15

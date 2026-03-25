@@ -102,7 +102,7 @@ void	cmd_gehelp(), cmd_cloak(), cmd_impulse(), cmd_phas(), cmd_report(),
 	cmd_price(), cmd_planet(), cmd_maint(), cmd_new(), cmd_sell(), cmd_sysop(),
 	cmd_rename(), cmd_destruct(), cmd_abort(), cmd_jammer(), cmd_mine(),
 	cmd_abandon(), cmd_zipper(), cmd_lock(), cmd_navigate(), cmd_who(),
-	cmd_displ(), cmd_freq(), cmd_cls(), cmd_data(), cmd_team(), cmd_spy(),
+	cmd_displ(), cmd_cls(), cmd_data(), cmd_team(), cmd_spy(),
 	cmd_jettison(), cmd_stop();
 
 #define GECMDSIZ (sizeof(gecmds)/sizeof(struct cmd))
@@ -122,7 +122,6 @@ struct	cmd	gecmds[]={
 			{"dec",	cmd_decoy,	1},
 			{"des",	cmd_destruct,	1},
 			{"flu",	cmd_flux,	1},
-			{"fre",	cmd_freq,	0},
 			{"hel",	cmd_gehelp,	1},
 			{"imp",	cmd_impulse,	1},
 			{"jam",	cmd_jammer,	1},
@@ -177,7 +176,6 @@ struct hlpcmd gehlp[] = {
 		{"cls",				HLPCLS},
 		{"decoy",			HLPDEC},
 		{"destruct",			HLPDES},
-		{"freq",			HLPFRE},
 		{"help",			HLPHEL},
 		{"hyper",			HLPHYP},
 		{"impulse",			HLPIMP},
@@ -221,7 +219,6 @@ struct hlpcmd gehlp[] = {
 		{"battle3",			HLPBATT3},
 		{"battle4",			HLPBATT4},
 		{"class",			HLPCLS1},
-		{"communicate",			HLPCOMMU},
 		{"cybertrons",			HLPCYBER},
 		{"distress",			HLPDIST},
 		{"flux",			HLPFLU},
@@ -314,6 +311,23 @@ else
 	for (mv0ptr = margv[0]; *mv0ptr != '\0'; mv0ptr++)
 		{
 		*mv0ptr = tolower(*mv0ptr);
+		}
+	if (sameas(margv[0],">"))
+		{
+#ifdef PHARLAP
+		if (!hasmkey(PLAYKEY))
+#else
+		if (usrptr->class < PAYING)
+#endif
+			{
+			prfmsg(NOCANDO);
+			outprfge(ALWAYS,usrnum);
+			}
+		else
+			{
+			cmd_send();
+			}
+		return;
 		}
 	if ((cmdptr = gesearch(margv[0], gecmds, GECMDSIZ)) != NULL)
 		{
@@ -2379,12 +2393,51 @@ return(1);
 
 void FUNC cmd_send()
 {
-char letter;
+int	i;
+int	validteam = FALSE;
+unsigned long	val;
+char	*msgptr;
 
-if (margc > 2)
+if (sameas(margv[0],">") && margc < 2)
 	{
-	letter = toupper(*margv[1]);
-	if (letter >= 'A' && letter <= 'C')
+	prfmsg(FORMAT,"SEND");
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if (!sameas(margv[0],">") && margc >= 2 && genearas(margv[1],"freq"))
+	{
+	if (margc == 2)
+		{
+		if (warsptr->freq == 0)
+			prfmsg(MSGSNT4N);
+		else
+			prfmsg(MSGSNT4,warsptr->freq);
+		}
+	else
+	if (margc == 3)
+		{
+		val = atol(margv[2]);
+		if (val <= 65535L)
+			{
+			warsptr->freq = (unsigned)val;
+			if (warsptr->freq == 0)
+				prfmsg(MSGSNT4N);
+			else
+				prfmsg(MSGSNT4,warsptr->freq);
+			}
+		else
+			prfmsg(FORMAT,"SEND");
+		}
+	else
+		prfmsg(FORMAT,"SEND");
+	outprfge(ALWAYS,usrnum);
+	return;
+	}
+
+if ((sameas(margv[0],">") && margc > 1) || margc > 2)
+	{
+	if (sameas(margv[0],">") || genearas(margv[1],"all"))
 		{
 		/* CHGD:MBM22e */
 		if (pfnlvl >= 2 && profon)
@@ -2393,114 +2446,91 @@ if (margc > 2)
 			}
 		else
 			{
-			if (warsptr->freq[letter-'A'] == 0)
+			if (sameas(margv[0],">"))
+				msgptr = margv[1];
+			else
+				msgptr = margv[2];
+			rstrin();
+			if (warsptr->shipname[0] == '\0')
+				prfmsg(MSGSNT1O,"Hailing",waruptr->userid,msgptr);
+			else
+				prfmsg(MSGSNT1,"Hailing",waruptr->userid,warsptr->shipname,msgptr);
+			outwar(FILTER,usrnum,0,0);
+			prfmsg(MSGSNT2,"Hailing");
+			}
+		}
+	else
+	if (genearas(margv[1],"team"))
+		{
+		if (pfnlvl >= 2 && profon)
+			{
+			prfmsg(MSGPRF);
+			}
+		else
+			{
+			if (waruptr->teamcode > 0)
 				{
-				rstrin();
-				if (warsptr->shipname[0] == '\0')
-					prfmsg(MSGSNT1O,waruptr->userid,letter,margv[2]);
-				else
-					prfmsg(MSGSNT1,warsptr->shipname,letter,margv[2]);
-				outwar(FILTER,usrnum,0);
-				prfmsg(MSGSNT2);
+				for (i=0;i<MAXTEAMS;++i)
+					{
+					if (teamtab[i].teamcode == waruptr->teamcode && teamtab[i].teamname[0] != '@')
+						{
+						validteam = TRUE;
+						break;
+						}
+					}
+				}
+			if (!validteam)
+				{
+				if (waruptr->teamcode > 0)
+					{
+					waruptr->teamcode = 0;
+					geudb(GEUPDATE,waruptr->userid,waruptr);
+					}
+				prfmsg(TEAMNOT);
 				}
 			else
-			if (warsptr->freq[letter-'A'] < 20000)
 				{
 				rstrin();
 				if (warsptr->shipname[0] == '\0')
-					prfmsg(MSGSNT3O,waruptr->userid,letter,margv[2]);
+					prfmsg(MSGSNT1O,"Team",waruptr->userid,margv[2]);
 				else
-					prfmsg(MSGSNT3,warsptr->shipname,letter,margv[2]);
-				outsect(ALWAYS,&warsptr->coord,usrnum,warsptr->freq[letter-'A']);
-				prfmsg(MSGSNT4,warsptr->freq[letter - 'A']);
+					prfmsg(MSGSNT1,"Team",waruptr->userid,warsptr->shipname,margv[2]);
+				outwar(ALWAYS,usrnum,waruptr->teamcode,2);
+				prfmsg(MSGSNT2,"Team");
 				}
+			}
+		}
+	else
+	if (genearas(margv[1],"encoded"))
+		{
+		if (pfnlvl >= 2 && profon)
+			{
+			prfmsg(MSGPRF);
+			}
+		else
+			{
+			if (warsptr->freq == 0)
+				prfmsg(MSGSNT4N);
 			else
-			if (warsptr->freq[letter-'A'] >= 20000)
 				{
 				rstrin();
 				if (warsptr->shipname[0] == '\0')
-					prfmsg(MSGSNT5O,waruptr->userid,letter,margv[2]);
+					prfmsg(MSGSNT1O,"Encoded",waruptr->userid,margv[2]);
 				else
-					prfmsg(MSGSNT5,warsptr->shipname,letter,margv[2]);
-				outwar(ALWAYS,usrnum,warsptr->freq[letter-'A']);
-				prfmsg(MSGSNT6,warsptr->freq[letter - 'A']);
+					prfmsg(MSGSNT1,"Encoded",waruptr->userid,warsptr->shipname,margv[2]);
+				outwar(ALWAYS,usrnum,warsptr->freq,1);
+				prfmsg(MSGSNT3,warsptr->freq);
 				}
 			}
 		}
 	else
 		{
-		prfmsg(BADCOM);
+		prfmsg(FORMAT,"SEND");
 		}
-
 	}
 else
-	{
 	prfmsg(FORMAT,"SEND");
-	}
-outprfge(FILTER,usrnum);
-}
-
-
-
-/**************************************************************************
-** Set Com Freq                                                          **
-**************************************************************************/
-
-void FUNC cmd_freq()
-{
-unsigned freq;
-char letter;
-
-if (margc < 3)
-	{
-	prfmsg(FORMAT,"FREQ");
-	outprfge(ALWAYS,usrnum);
-	return;
-	}
-
-letter = toupper(*margv[1]);
-
-if (letter < 'A' || letter > 'C')
-	{
-	prfmsg(FORMAT,"FREQ");
-	outprfge(ALWAYS,usrnum);
-	return;
-	}
-
-
-if (sameas(margv[2],"hail"))
-	{
-	warsptr->freq[letter - 'A'] = 0;
-	prfmsg(RADSET1,letter);
-	outprfge(ALWAYS,usrnum);
-	return;
-	}
-
-freq = atoi(margv[2]);
-
-if (freq == 0)
-	{
-	prfmsg(FORMAT,"FREQ");
-	outprfge(ALWAYS,usrnum);
-	return;
-	}
-
-if (freq < 20000)
-	{
-	warsptr->freq[letter - 'A'] = freq;
-	prfmsg(RADSET2,letter,freq);
-	outprfge(ALWAYS,usrnum);
-	return;
-	}
-
-if (freq >= 20000)
-	{
-	warsptr->freq[letter - 'A'] = freq;
-	prfmsg(RADSET3,letter,freq);
-	outprfge(ALWAYS,usrnum);
-	return;
-	}
-
+outprfge(ALWAYS,usrnum);
 }
 
 /**************************************************************************
@@ -2632,10 +2662,6 @@ if (sameas(margv[1],"sys"))
 				prfmsg(REP24S,warsptr->phasrtype);
 			}
 		}
-
-	prfmsg(REP24A,warsptr->freq[0],warsptr->freq[1],warsptr->freq[2]);
-
-
 
 	if (shipclass[warsptr->shpclass].max_cloak == 1)
 		{
@@ -5632,6 +5658,7 @@ void FUNC cmd_set()
 /* this is temporary until i decide what options i'm putting here */
 
 int invalid = FALSE;
+unsigned long val;
 
 if (margc < 2 || margc > 3)
 	{
@@ -5671,6 +5698,15 @@ if (sameas(margv[1],"filter"))
 		invalid = TRUE;
 	}
 else
+if (genearas(margv[1],"freq"))
+	{
+	val = atol(margv[2]);
+	if (val <= 65535L)
+		warsptr->freq = (unsigned)val;
+	else
+		invalid = TRUE;
+	}
+else
 if (sameas(margv[1],"?"))
 	{
 	invalid = 2;
@@ -5699,6 +5735,7 @@ if (sameas(margv[1],"?"))
 		prf("false.\r");
 	else
 		prf("undefined.\r");
+	prf("Option freq set to %u.\r",warsptr->freq);
 	}
 else
 	invalid = TRUE;
@@ -6551,13 +6588,11 @@ if (sameas(margv[2],"report"))
 		if (warsptr->decout[i] > 0)
 			++j;
 
-	prf("SD7:%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d*\r",
+	prf("SD7:%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d*\r",
 		j,
 		(int)warsptr->jam_time,
 		warsptr->kills,
-		warsptr->freq[0],
-		warsptr->freq[1],
-		warsptr->freq[2],
+		warsptr->freq,
 		warsptr->hostile,
 		warsptr->cantexit,
 		warsptr->repair,

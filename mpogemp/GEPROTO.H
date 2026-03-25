@@ -61,7 +61,7 @@
 /*    1291 */ int FUNC clswar P((void ));
 /*    1298 */ void FUNC clswara P((void ));
 /*    1319 */ int FUNC galemp P((void ));
-/*    1344 */ void FUNC outwar P((int filter , unsigned exclude , unsigned freq ));
+/*    1344 */ void FUNC outwar P((int filter , unsigned exclude , unsigned freq , int mode ));
 /*    1376 */ int FUNC gepdb P((int func , char *usrname , int shipnum , WARSHP *geptr ));
 /*    1458 */ int FUNC geudb P((int func , char *usrname , WARUSR *geptr ));
 /*    1533 */ int FUNC gesdb P((int func , PKEY *sect , GALSECT *geptr ));

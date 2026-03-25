@@ -892,24 +892,24 @@ if (ptr->jam_sev <= (byte)3)
 	if (ptr->cybmine == 255)
 		{
 		/* one ship should be traveling to/from neutral zone */
-		/* for now, we'll toss this in freq[1] because i don't feel like making something new */
+		/* use freq to store state because NPCs don't otherwise use it */
 		for (zothusn = nterms; zothusn < nships ; zothusn++)	/* are any GCFs already doing it */
 			{
 			wptr=warshpoff(zothusn);
 			if (ingegame(zothusn) && wptr->status == GESTAT_AUTO && shipclass[wptr->shpclass].loadout ==
-				shipclass[ptr->shpclass].loadout && wptr->freq[1] != 0)
+				shipclass[ptr->shpclass].loadout && wptr->freq != 0)
 				{
 				setship = FALSE;
 				break;
 				}
 			}
-		if (ptr->freq[1] == 9)	/* if i just did it, put me at the back of the line */
+		if (ptr->freq == 9)	/* if i just did it, put me at the back of the line */
 			{
-			ptr->freq[1] = 0;
+			ptr->freq = 0;
 			ptr->tick = CYBTICKTIME*10;
 			}
 		if (setship == TRUE || ptr->damage > 50)	/* if i'm picked, or if i'm damaged, go to Zygor */
-			ptr->freq[1] = 1;
+			ptr->freq = 1;
 		/* look at user ships only */
 		for (zothusn=0 ; zothusn < nterms ; zothusn++)
 			{
@@ -928,14 +928,14 @@ if (ptr->jam_sev <= (byte)3)
 				}
 			}
 		++ptr->npcmsg;
-		if (ptr->freq[1] != 0)
+		if (ptr->freq != 0)
 			{
-			if (ptr->freq[1] == 1 || ptr->freq[1] == 2 || (neutral(&ptr->coord) && ptr->freq[1] < 7))	/* go to Zygor */
+			if (ptr->freq == 1 || ptr->freq == 2 || (neutral(&ptr->coord) && ptr->freq < 7))	/* go to Zygor */
 				{
-				if (ptr->freq[1] < 3)
+				if (ptr->freq < 3)
 					ptr->head2b = normal(vector(&ptr->coord,&neutsect));
-				if (ptr->freq[1] == 1 && cdistance(&ptr->coord,&neutsect) < 8)	/* keep cybs from picking off ships right outside neutral zone */
-					ptr->freq[1] = 2;
+				if (ptr->freq == 1 && cdistance(&ptr->coord,&neutsect) < 8)	/* keep cybs from picking off ships right outside neutral zone */
+					ptr->freq = 2;
 				if (cdistance(&ptr->coord,&neutsect) > 1.5)
 					cyb_cruise(ptr,usrn,4);
 				else
@@ -945,7 +945,7 @@ if (ptr->jam_sev <= (byte)3)
 				if (cdistance(&ptr->coord,&neutsect) > .025)
 					ptr->speed2b = 250;
 				else
-				if (ptr->freq[1] == 1 || ptr->freq[1] == 2)
+				if (ptr->freq == 1 || ptr->freq == 2)
 					{
 					ptr->speed2b = 0;
 					ptr->speed = ptr->speed2b;
@@ -953,26 +953,26 @@ if (ptr->jam_sev <= (byte)3)
 						ptr->damage -= 3.0;
 					else
 						{
-						ptr->freq[1] = 3;
+						ptr->freq = 3;
 						ptr->damage = 0.0;
 						}
 					}
 				else
-				if (ptr->freq[1] > 2 && ptr->freq[1] < 6)	/* hang out a little longer */
-					++ptr->freq[1];
-				if (ptr->freq[1] == 6)
+				if (ptr->freq > 2 && ptr->freq < 6)	/* hang out a little longer */
+					++ptr->freq;
+				if (ptr->freq == 6)
 					{
 					droid_zyg_loadout(ptr);		/* reset ship contents */
 					ptr->head2b = rndm(359.9);
 					cyb_cruise(ptr,usrn,4);
-					ptr->freq[1] = 7;
+					ptr->freq = 7;
 					}
 				}
 			else
-			if (ptr->freq[1] == 7 && cdistance(&ptr->coord,&neutsect) > 15)		/* get a little distance */
-				ptr->freq[1] = 8;
+			if (ptr->freq == 7 && cdistance(&ptr->coord,&neutsect) > 15)		/* get a little distance */
+				ptr->freq = 8;
 			else
-			if (ptr->freq[1] == 8)	/* go the other way for a bit then let another ship do it */
+			if (ptr->freq == 8)	/* go the other way for a bit then let another ship do it */
 				{
 				if (cdistance(&ptr->coord,&neutsect) < univmax/3)
 					{
@@ -982,7 +982,7 @@ if (ptr->jam_sev <= (byte)3)
 				else
 					{
 					cyb_cruise(ptr,usrn,1);
-					ptr->freq[1] = 9;	/* done */
+					ptr->freq = 9;	/* done */
 					}
 				}
 			}

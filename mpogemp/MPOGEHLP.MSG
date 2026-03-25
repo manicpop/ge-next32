@@ -6,14 +6,14 @@ HLPINDEX {
 [1;36mHelp is available on the following commands and topics:
 
 Commands: [1;32mabandon  abort  admin  attack  buy  cloak  cls  decoy  destruct
-          freq  help  impulse  jammer  jettison  lock  maintenance  mine
-          missile  navigate  new  orbit  phaser  planet  price  rename
-          report  roster  rotate  scan  sell  send  set  shield  spy  stop
-          team  torpedo  transfer  warp  who  x  zipper
+          help  impulse  jammer  jettison  lock  maintenance  mine  missile
+          navigate  new  orbit  phaser  planet  price  rename  report  roster
+          rotate  scan  sell  send  set  shield  spy  stop  team  torpedo
+          transfer  warp  who  x  zipper
 
-[1;36m Topics:  [1;32mbattle  class  communicate  distress  flux  galaxy  moving  nebulas
-          planets  scoring  starting  strategy  wormholes  Cybertrons
-          Lydorians  Murdonians  Sartens  Tryklons  Vakories  Zygorians
+[1;36mTopics:   [1;32mbattle  class  distress  flux  galaxy  moving  nebulas  planets
+          scoring  starting  strategy  wormholes  Cybertrons  Lydorians
+          Murdonians  Sartens  Tryklons  Vakories  Zygorians
 
 [1;36mEnter [1;37mHELP[1;36m followed by any of these commands or topics for more information.[1;37m
 } T GE help list of subjects message
@@ -70,22 +70,6 @@ sector is measured from the top left to bottom right as shown below:
 |[1;37m-300 300                300 300[0;31m|   |[1;37m9999 0                9999 9999[0;31m|
 +-------------------------------+   +-------------------------------+[1;37m
 } T GE help galaxy message
-
-HLPCOMMU {
-[1;36mTopic: Communications
-
-Each ship has a communications console with three separate transmission
-channels. You can set each to a specific channel or to the [1;37mHAIL[1;36m setting which
-permits you to receive all general hailing messages. If you create alliances,
-you can set one radio to an agreed upon channel and have a private and secure
-communications path between members of your alliance.
-
-Use the [1;37mFREQ[1;36m command to change the communications frequency.
-
-Note that if the frequency is set above 20000 then it is determined to be a
-hyperspace communications packet code and transmissions will be sent via
-hyperspace to anyone with the same packet code anywhere in the galaxy.
-[1;37m} T GE help communicate message
 
 HLPDIST {
 [1;36mTopic: Distress signals
@@ -1037,26 +1021,27 @@ HLPSEN {
 [1;36mUse the [1;37mSEND[1;36m command to communicate with other ships and team members. Issue
 the command as follows:
 
-  [1;37msend [1;32m[channel] [message]
+  [1;37msend [1;32m[type] [message]
 
-  [1;32mchannel [1;36m= Your communications channel A, B, or C as set by the [1;37mFREQ[1;36m command
+  [1;32mtype [1;36m= [A]LL, [T]EAM, or [E]NCODED
 
-Examples: [1;37msend A Why you scum guzzler, I am gonna get you
-          sen C This is a warning to all ships.... I am here!!!!
+ALL messages are sent on all standard hyperspace hailing frequencies and will
+be received by all ships in the galaxy. You can also use the [1;37m>[1;36m shortcut.
+
+TEAM messages will be received by all ships belonging to members of your team;
+you must be on a team to use this.
+
+ENCODED messages will be received only by ships that have their communications
+module tuned to the same hyperspace frequency. Use [1;37mSEND FREQ [1;32mxxxxx[1;36m to set the
+current ship's frequency. Valid frequencies are 1-65535; set to 0 to turn off.
+[1;37mSEND FREQ[1;36m by itself will display the current frequency.
+
+Examples: [1;37msend A This is a warning to all ships, I am here!
+          sen TEAM OK, now is the time to strike!
+          sen E No one else can know about this secret!
+          send FREQ 38146
+          > What's up everyone
 } T GE help send message
-
-HLPFRE {
-[1;36mUse the [1;37mFREQ[1;36m command to set the communications channels which your ship will
-monitor and use to broadcast. Issue the command as follows:
-
-[1;37m  freq [1;32m[channel] [[1;37mhail[1;32m/freq]
-[1;36m Examples: [1;37mfreq A 12345
-          freq b hail
-          fre c 23221
-[1;36m Channel frequencies above 20000 are converted to hyperspace modulation packets
-and transmitted through hyperspace. Channel frequencies below 20000 are
-transmitted in the current star system only.
-[1;37m} T GE help freq message
 
 HLPSHI {
 [1;36mThe [1;37mSHIELD[1;36m command will raise or lower the ship's shields. The shields will

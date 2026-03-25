@@ -1237,7 +1237,7 @@ if (warsptr->status == GESTAT_USER)
 				prfmsg(PEACEONO,waruptr->userid);
 			else
 				prfmsg(PEACEOUT,waruptr->userid,warsptr->shipname);
-			outwar(ALWAYS,usrnum,0);
+			outwar(ALWAYS,usrnum,0,0);
 			cleartm(usrnum);
 			clearitm(usrnum);
 			gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
@@ -1315,27 +1315,32 @@ return(1);
 ** Send message to all ships                                             **
 **************************************************************************/
 
-void FUNC outwar(int filter,unsigned exclude,unsigned freq)
+void FUNC outwar(int filter,unsigned exclude,unsigned channel,int mode)
 {
-int	i;
-
 int	zothusn;
+
 for (zothusn=0; zothusn < nships; zothusn++)
 	{
 	if (zothusn != exclude && ingegame(zothusn))
 		{
-		if (freq == 0)
+		if (mode == 0)
 			{
 			outprfge(filter,zothusn);
 			}
 		else
+		if (mode == 1)
 			{
-			for (i=0; i<3; ++i)
+			if (channel == warshpoff(zothusn)->freq)
 				{
-				if (freq == warshpoff(zothusn)->freq[i])
-					{
-					outprfge(filter,zothusn);
-					}
+				outprfge(filter,zothusn);
+				}
+			}
+		else
+		if (mode == 2)
+			{
+			if (channel == warusroff(zothusn)->teamcode)
+				{
+				outprfge(filter,zothusn);
 				}
 			}
 		}
@@ -2334,12 +2339,11 @@ clrprf();
 ** Send message to all ships in this sector                              **
 **************************************************************************/
 
-void FUNC outsect(filter,coordptr,exclude,freq)
+void FUNC outsect(filter,coordptr,exclude,channel)
 int	filter;
 COORD	*coordptr;
-unsigned exclude,freq;
+unsigned exclude,channel;
 {
-int	i;
 int	zothusn;
 double	ddist;
 byte	src_neb,oth_neb;
@@ -2354,7 +2358,7 @@ for (zothusn=0; zothusn < nterms ; zothusn++)
 		wptr=warshpoff(zothusn);
 		if (samesect(&(wptr->coord),coordptr))
 			{
-			if (freq == 0)
+			if (channel == 0)
 				{
 				oth_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
 				if (src_neb || oth_neb)
@@ -2368,12 +2372,9 @@ for (zothusn=0; zothusn < nterms ; zothusn++)
 				}
 			else
 				{
-				for (i=0; i<3; ++i)
+				if (channel == wptr->freq)
 					{
-					if (freq == wptr->freq[i])
-						{
-						outprfge(filter,zothusn);
-						}
+					outprfge(filter,zothusn);
 					}
 				}
 			}
@@ -2632,7 +2633,7 @@ if (sameas(input,"x"))
 			prfmsg(PEACEONO,waruptr->userid);
 		else
 			prfmsg(PEACEOUT,waruptr->userid,warsptr->shipname);
-		outwar(ALWAYS,usrnum,0);
+		outwar(ALWAYS,usrnum,0,0);
 		numwar = 0;
 		usrptr->substt = 1;
 		btupmt(usrnum,0);
