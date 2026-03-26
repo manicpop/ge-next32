@@ -1429,7 +1429,16 @@ shpnum = findshp(margv[1],1);
 
 if (shpnum == usrnum)
 	{
-	prfmsg(FRCTER);
+	if (margv[1][0] == '@')
+		{
+		warsptr->lock = -1;
+		prfmsg(NOLOCK);
+		}
+	else
+		{
+		update_scantab(warsptr,usrnum);
+		prfmsg(NOSHIP);
+		}
 	outprfge(FLT_NONE,usrnum);
 	}
 else
@@ -1641,7 +1650,16 @@ shpnum = findshp(margv[1],1);
 
 if (shpnum == usrnum)
 	{
-	prfmsg(FRCTER);
+	if (margv[1][0] == '@')
+		{
+		warsptr->lock = -1;
+		prfmsg(NOLOCK);
+		}
+	else
+		{
+		update_scantab(warsptr,usrnum);
+		prfmsg(NOSHIP);
+		}
 	outprfge(FLT_NONE,usrnum);
 	}
 else

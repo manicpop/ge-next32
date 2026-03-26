@@ -256,6 +256,9 @@ Other stuff:
   frequency. You can use SEND FREQ to set the frequency.
 * You can also now just type '>' in place of SEND A; this should
   chatting in-game much easier.
+* The ALWAYS/FILTER display message filters in SET have been
+  reworked to give you much more control over the types of messages
+  shown. Everything is on by default for new players.
 
 
 === 0.2.6 === 2025-08-15
