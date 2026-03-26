@@ -1237,7 +1237,7 @@ if (warsptr->status == GESTAT_USER)
 				prfmsg(PEACEONO,waruptr->userid);
 			else
 				prfmsg(PEACEOUT,waruptr->userid,warsptr->shipname);
-			outwar(ALWAYS,usrnum,0,0);
+			outwar(FLT_ENTRY,usrnum,0,0);
 			cleartm(usrnum);
 			clearitm(usrnum);
 			gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
@@ -2284,7 +2284,7 @@ prfmsg(ZAPHIM2);
 
 tmpcoord.xcoord = 0.0;
 tmpcoord.ycoord = 0.0;
-outsect(FILTER,&tmpcoord,99,0);
+outsect(FLT_BEACON,&tmpcoord,99,0);
 #ifdef PHARLAP
 rtkick(120,pwarrti3);
 #else
@@ -2308,26 +2308,75 @@ int	class;
 int	shpno;
 
 {
+unsigned char	msgfilter;
 /* added 12/17/91 as a safty check */
 if (shpno >= 0 && shpno < nterms)
 	{
 	if (user[shpno].state == gestt)
 		{
-		if (class == ALWAYS)
+		msgfilter = warusroff(shpno)->options[MSG_FILTER];
+		switch (class)
 			{
-			outprf(shpno);
-			return;
-			}
-		else
-		if (class == FILTER && (warusroff(shpno)->options[MSG_FILTER] == TRUE))
-			{
-			clrprf();
-			return;
-			}
-		else
-			{
-			outprf(shpno);
-			return;
+			case FLT_NONE:
+				outprf(shpno);
+				return;
+			case FLT_CYB_ALL:
+				if ((msgfilter & MSGF_CYBS_MASK) == 0x00)
+					{
+					outprf(shpno);
+					return;
+					}
+				break;
+			case FLT_CYB_BAT:
+				if ((msgfilter & MSGF_CYBS_MASK) == 0x00 ||
+					(msgfilter & MSGF_CYBS_MASK) == 0x01)
+					{
+					outprf(shpno);
+					return;
+					}
+				break;
+			case FLT_CYB_APP:
+				if ((msgfilter & MSGF_CYBS_MASK) != 0x03)
+					{
+					outprf(shpno);
+					return;
+					}
+				break;
+			case FLT_DISTRESS:
+				if (!(msgfilter & MSGF_DISTRESS))
+					{
+					outprf(shpno);
+					return;
+					}
+				break;
+			case FLT_BEACON:
+				if (!(msgfilter & MSGF_BEACON))
+					{
+					outprf(shpno);
+					return;
+					}
+				break;
+			case FLT_HAIL:
+				if (!(msgfilter & MSGF_HAIL))
+					{
+					outprf(shpno);
+					return;
+					}
+				break;
+			case FLT_ENTRY:
+				if ((msgfilter & MSGF_ENTRY_MASK) != 0x40)
+					{
+					outprf(shpno);
+					return;
+					}
+				break;
+			case FLT_SHIP:
+				if (!(msgfilter & MSGF_SHIP))
+					{
+					outprf(shpno);
+					return;
+					}
+				break;
 			}
 		}
 	}
@@ -2497,7 +2546,7 @@ int FUNC mnu_main()
 {
 prfmsg(INTRO,VERSION);
 disp_main_menu();
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 usrptr->substt = 1;
 return(1);
 }
@@ -2509,7 +2558,7 @@ int FUNC mnu_main_ans()
 if (margc == 0 || margc > 1)
 	{
 	prfmsg(REPRMT);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return(1);
 	}
 else
@@ -2521,17 +2570,17 @@ if (margc == 1)
 		if (!hasmkey(PLAYKEY))
 			{
 			prfmsg(FORPLAY);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			prfmsg(REPRMT);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 #else
 		if (usrptr->class < PAYING && gefreebies == 0)
 			{
 			prfmsg(FORLIVE);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			prfmsg(REPRMT);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 #endif
 		else
@@ -2545,9 +2594,9 @@ if (margc == 1)
 			else
 				{
 				prfmsg(NOSHPS);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				prfmsg(REPRMT);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				return(1);
 				}
 			}
@@ -2556,9 +2605,9 @@ if (margc == 1)
 	if (sameas(input,"G"))
 		{
 		prfmsg(EXPLAIN);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		prfmsg(REPRMT);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return(1);
 		}
 	else
@@ -2566,35 +2615,35 @@ if (margc == 1)
 		{
 		cmd_geroster();
 		prfmsg(REPRMT);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return(1);
 		}
 	else
 	if (sameas(input,"M"))
 		{
 		disp_menu_d();
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return(1);
 		}
 	else
 	if (sameas(input,"I"))
 		{
 		prfmsg(COINFO);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return(1);
 		}
 	else
 	if (sameas(input,"?"))
 		{
 		disp_main_menu();
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return(1);
 		}
 	else
 	if (sameas(input,"X"))
 		{
 		prfmsg(EXIWAR);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		btupmt(usrnum,0);
 		return(0);
 		}
@@ -2609,7 +2658,7 @@ if (margc == 1)
 			}
 		}
 	prfmsg(REPRMT);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return(1);
 	}
 return(1);
@@ -2628,12 +2677,12 @@ if (sameas(input,"x"))
 		gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
 		geudb(GEUPDATE,waruptr->userid,waruptr);
 		disp_main_menu();
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		if (warsptr->shipname[0] == '\0')
 			prfmsg(PEACEONO,waruptr->userid);
 		else
 			prfmsg(PEACEOUT,waruptr->userid,warsptr->shipname);
-		outwar(ALWAYS,usrnum,0,0);
+		outwar(FLT_ENTRY,usrnum,0,0);
 		numwar = 0;
 		usrptr->substt = 1;
 		btupmt(usrnum,0);
@@ -2642,7 +2691,7 @@ if (sameas(input,"x"))
 	else
 		{
 		prfmsg(CANTEXT);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 else
@@ -2652,7 +2701,7 @@ else
 	else
 		{
 		prfmsg(FORHELP);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 return(1);
@@ -2696,21 +2745,21 @@ if (margc > 0)
 		gesdb(GEUPDATE,(PKEY *)&pkey,(GALSECT *)&planet);
 
 		prfmsg(ADMENU1A);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		usrptr->substt = ADMENU1A;
 		}
 	else
 	if (genearas("n",margv[0]))
 		{
 		prfmsg(ADMIN3);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		usrptr->substt = FIGHTSUB;
 		}
 	}
 else
 	{
 	prfmsg(ADMENU1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 return(1);
 }
@@ -2742,13 +2791,13 @@ if (margc > 0)
 		prfmsg(ADMENU1B,plnum,plptr->name,warsptr->userid,warsptr->shipname);
 
 	prfmsg(ADMENU2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	usrptr->substt = ADMENU2;
 	}
 else
 	{
 	prfmsg(ADMENU1A);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 return(1);
 }
@@ -2831,25 +2880,25 @@ if (margc > 0)
 
 			}
 
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	else
 	if (sameas(input,"x"))
 		{
 		prfmsg(ADMIN3);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		usrptr->substt = FIGHTSUB;
 		}
 	else
 		{
 		prfmsg(ADMENU2);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 else
 	{
 	prfmsg(ADMENU2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 return(1);
 }
@@ -2871,13 +2920,13 @@ if (amt <= plptr->tax)
 		{
 		sprintf(gechrbuf,"%lu",ULCAP);
 		prfmsg(TOORICH,gechrbuf);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	else
 		{
 		sprintf(gechrbuf,"%lu",amt);
 		prfmsg(ADMENU2C,gechrbuf);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		waruptr->cash += amt;
 		plptr->tax -= amt;
 		setsect(warsptr); /* build PKEY */
@@ -2890,7 +2939,7 @@ else
 	prfmsg(ADMENU2D);
 	}
 prfmsg(ADMENU2);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 usrptr->substt = ADMENU2;
 return(1);
 }
@@ -2910,14 +2959,14 @@ for (i=0; i<NUMITEMS; ++i) /* skip notused */
 		{
 		warsptr->titem = i;
 		prfmsg(ADMEN2F1,item_name[warsptr->titem],plptr->items[warsptr->titem].rate);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		usrptr->substt = ADMEN2F1;
 		return(1);
 		}
 	}
 usrptr->substt = ADMENU2;
 prfmsg(ADMENU2);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 return(1);
 }
 
@@ -2936,7 +2985,7 @@ if (margc == 0)
 	{
 	titems[usrnum].rate = plptr->items[warsptr->titem].rate;
 	prfmsg(ADMEN2F2,item_name[warsptr->titem],plptr->items[warsptr->titem].markup2a);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	usrptr->substt = ADMEN2F2;
 	return(1);
 	}
@@ -2944,12 +2993,12 @@ if (margc == 1 && amt <=100)
 	{
 	titems[usrnum].rate = amt;
 	prfmsg(ADMEN2F2,item_name[warsptr->titem],plptr->items[warsptr->titem].markup2a);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	usrptr->substt = ADMEN2F2;
 	return(1);
 	}
 prfmsg(ADMEN2F1,item_name[warsptr->titem],plptr->items[warsptr->titem].rate);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 return(1);
 }
 
@@ -2966,7 +3015,7 @@ if (margc == 0)
 	{
 	titems[usrnum].markup2a = plptr->items[warsptr->titem].markup2a;
 	prfmsg(ADMEN2F3,item_name[warsptr->titem],plptr->items[warsptr->titem].sell);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	usrptr->substt = ADMEN2F3;
 	return(1);
 	}
@@ -2974,13 +3023,13 @@ if (margc == 1 && amt <=32000)
 	{
 	titems[usrnum].markup2a = amt;
 	prfmsg(ADMEN2F3,item_name[warsptr->titem],plptr->items[warsptr->titem].sell);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	usrptr->substt = ADMEN2F3;
 	return(1);
 	}
 
 prfmsg(ADMEN2F2,item_name[warsptr->titem],plptr->items[warsptr->titem].markup2a);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 return(1);
 }
 
@@ -2995,7 +3044,7 @@ if (margc == 0)
 	{
 	titems[usrnum].sell = plptr->items[warsptr->titem].sell;
 	prfmsg(ADMEN2F4,item_name[warsptr->titem],plptr->items[warsptr->titem].reserve);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	usrptr->substt = ADMEN2F4;
 	return(1);
 	}
@@ -3003,12 +3052,12 @@ if (margc == 1 && (genearas("y",margv[0]) || genearas("n",margv[0])))
 	{
 	titems[usrnum].sell = toupper(*margv[0]);
 	prfmsg(ADMEN2F4,item_name[warsptr->titem],plptr->items[warsptr->titem].reserve);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	usrptr->substt = ADMEN2F4;
 	return(1);
 	}
 prfmsg(ADMEN2F3,item_name[warsptr->titem],plptr->items[warsptr->titem].sell);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 return(1);
 }
 
@@ -3026,7 +3075,7 @@ if (margc == 0)
 	titems[usrnum].reserve = plptr->items[warsptr->titem].reserve;
 	update_items();
 	prfmsg(ADMENU2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	usrptr->substt = ADMENU2;
 	return(1);
 	}
@@ -3035,12 +3084,12 @@ if (margc == 1 && amt <=32000)
 	titems[usrnum].reserve = amt;
 	update_items();
 	prfmsg(ADMENU2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	usrptr->substt = ADMENU2;
 	return(1);
 	}
 prfmsg(ADMEN2F4,item_name[warsptr->titem],plptr->items[warsptr->titem].reserve);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 return(1);
 }
 
@@ -3063,12 +3112,12 @@ if (margc == 1 && amt <=100)
 	gesdb(GEUPDATE,(PKEY *)&pkey,(GALSECT *)&planet);
 
 	prfmsg(ADMENU2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	usrptr->substt = ADMENU2;
 	return(1);
 	}
 prfmsg(ADMENU2H);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 return(1);
 }
 
@@ -3132,12 +3181,12 @@ if (margc == 1)
 	gesdb(GEUPDATE,(PKEY *)&pkey,(GALSECT *)&planet);
 
 	prfmsg(ADMENU2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	usrptr->substt = ADMENU2;
 	return(1);
 	}
 prfmsg(ADMENU2I);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 return(1);
 }
 
@@ -3169,7 +3218,7 @@ pkey.plnum = plnum;
 gesdb(GEUPDATE,(PKEY *)&pkey,(GALSECT *)&planet);
 
 prfmsg (ADMENU2);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 usrptr->substt = ADMENU2;
 return(1);
 }
@@ -3198,12 +3247,12 @@ if (margc > 0)
 		if (mailread(usaptr->userid,MAIL_CLASS_DISTRESS))
 			{
 			prfmsg(usrptr->substt = MENUG1);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		else
 			{
 			disp_menu_d();
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		break;
 
@@ -3212,33 +3261,33 @@ if (margc > 0)
 		if (mailread(usaptr->userid,MAIL_CLASS_PRODRPT))
 			{
 			prfmsg(usrptr->substt = MENUG2);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		else
 			{
 			disp_menu_d();
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		break;
 
 	case 'x':
 
 		disp_main_menu();
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		usrptr->substt = 1;
 		break;
 
 	default:
 
 		disp_menu_d();
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		break;
 		}
 	}
 else
 	{
 	disp_menu_d();
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 return(1);
 }
@@ -3261,32 +3310,32 @@ if (margc > 0)
 		if (mailread(usaptr->userid,MAIL_CLASS_DISTRESS))
 			{
 			prfmsg(usrptr->substt = MENUG1);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		else
 			{
 			disp_menu_d();
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		break;
 
 	case 'x':
 
 		disp_menu_d();
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		break;
 
 	default:
 
 		prfmsg(MENUG1);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		break;
 		}
 	}
 else
 	{
 	prfmsg(MENUG1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 return(1);
 }
@@ -3308,32 +3357,32 @@ if (margc > 0)
 		if (mailread(usaptr->userid,MAIL_CLASS_PRODRPT))
 			{
 			prfmsg(usrptr->substt = MENUG2);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		else
 			{
 			disp_menu_d();
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		break;
 
 	case 'x':
 
 		disp_menu_d();
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		break;
 
 	default:
 
 		prfmsg(MENUG2);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		break;
 		}
 	}
 else
 	{
 	prfmsg(MENUG2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 return(1);
 }
@@ -3393,14 +3442,14 @@ if ((titems[usrnum].rate + pcnt) > 100)
 		titems[usrnum].rate = 0;
 
 	prfmsg(ADMEN2FA,item_name[warsptr->titem],titems[usrnum].rate);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 i = (titems[usrnum].rate + pcnt);
 if (i < 100)
 	{
 	i = 100 - i;
 	prfmsg(ADMEN2FB,i);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 plptr->items[warsptr->titem].rate = titems[usrnum].rate;
 plptr->items[warsptr->titem].sell = titems[usrnum].sell;
@@ -3433,7 +3482,7 @@ if (hdl != (FILE *)0)
 			{
 			logthis(gechrbuf);
 			prf(gechrbuf);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		else
 			{
@@ -3453,13 +3502,13 @@ if (hdl != (FILE *)0)
 		{
 		logthis(spr("optdisp: seek error fpos = %ld",opttbl[usrnum]));
 		prf("\r*** Seek Err in text file ***\r");
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 else
 	{
 	prf("*** FILE MISSING - Notify Sysop!! ***");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 return;
 }
@@ -3488,7 +3537,7 @@ if (status == CYCLE)
 			setmbk(gemb);
 			usrptr->substt = 1;
 			disp_main_menu();
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 
 		default:

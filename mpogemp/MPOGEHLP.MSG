@@ -12,8 +12,9 @@ Commands: [1;32mabandon  abort  admin  attack  buy  cloak  cls  decoy  destruct
           transfer  warp  who  x  zipper
 
 [1;36mTopics:   [1;32mbattle  class  distress  flux  galaxy  moving  nebulas  planets
-          scoring  starting  strategy  wormholes  Cybertrons  Lydorians
-          Murdonians  Sartens  Tryklons  Vakories  Zygorians
+Topics:   battle  class  distress  filter  flux  galaxy  moving  nebulas
+          planets  scoring  starting  strategy  wormholes  Cybertrons
+          Lydorians  Murdonians  Sartens  Tryklons  Vakories  Zygorians
 
 [1;36mEnter [1;37mHELP[1;36m followed by any of these commands or topics for more information.[1;37m
 } T GE help list of subjects message
@@ -949,24 +950,51 @@ follows:
 [1;37m  set [1;32m[option/[1;37m?[1;32m] [setting]
 [1;36m
   [1;32moptions[1;36m:
-[1;37m    scan [1;36m(affects SE and RA only)
+[1;37m    scan [1;36m-- change SCAN SE/RA display
 [1;37m       simple       [1;36m-- display maps only
 [1;37m       full         [1;36m-- display maps with list of ships or planets
 [1;37m       fullnames    [1;36m-- include ship names in list on second line
 [1;37m       fullextra    [1;36m-- include more than 8 ships if necessary
 [1;37m       nomap        [1;36m-- do not display map, text only
 
-[1;37m    filter
-[1;37m       off          [1;36m-- receive all messages
-[1;37m       on           [1;36m-- filter out battle messages and etc
+[1;37m    display [1;36m-- adjust messages shown
+[1;36mEnter [1;37mHELP SET2[1;36m for more information on display filters.
 
 [1;36mEnter [1;37mSET ?[1;36m to show a list of options and their current settings.
 
 Examples:
 [1;37m  set scan fullnames
-  set filter off
+  set display cybs off
   set ?     
 } T GE help set message
+
+HLPSET2 {
+The type of messages displayed can be filtered with the [1;37mSET DISPLAY[1;36m command:
+
+[1;37mcybs (off / approach / battle / on)
+[1;36m  OFF -- show no Cybertron hails
+  APPROACH -- only show hails from Cybertron tracking you as they approach
+  BATTLE -- only show battle messages (includes APPROACH)
+  ON -- show all Cybertron hails, including taunts
+[1;37mdistress (off / on)
+[1;36m  show distress messages from non-Cybertron ships
+[1;37mbeacon (off / on)
+[1;36m  show beacon messages from ships and planets
+[1;37mhail (off / on)
+[1;36m  show hailing messages from users (SEND ALL)
+[1;37mentry (off / reduced / on)
+[1;36m  OFF -- show no entry/exit messages
+  REDUCED -- show messages immediately if player is in your scan range,
+    otherwise only show if player has stayed in game for a while
+  ON -- show all entry/exit messages
+[1;37mship (off / on)
+[1;36m  show non-critical ship functions (e.g. flux reload, sector change)
+
+Examples:
+[1;37m  set display hail on
+  set display cybs off
+
+[1;37m} T GE help set2 message
 
 HLPSCA {
 [1;36mThe [1;37mSCAN[1;36m command displays information from your ship's tactical scanners. Issue

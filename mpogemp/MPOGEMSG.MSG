@@ -3313,6 +3313,12 @@ PHANONE {
 [0;37m[[1;31mERROR[0;37m] There is insufficient phaser power to fire![1;37m
 } T GE no phaser power message
 
+SETOPT {
+[1;36mOption %s set to %s.[1;37m} T GE set options one arg message
+
+SETOPT2 {
+[1;36mOption %s %s set to %s.[1;37m} T GE set option two arg message
+
 REP01 {
 [1;37m%s: the %s
 } T GE report 01

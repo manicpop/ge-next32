@@ -212,9 +212,26 @@
 #define HSTSIZ 57
 #define TPCSIZ 51
 
-#define	ALWAYS 1
-#define	FILTER 2
-#define	BLOCK 3
+/* message filter types */
+
+#define	FLT_CYB_ALL 0
+#define	FLT_CYB_BAT 1
+#define	FLT_CYB_APP 2
+#define	FLT_DISTRESS 3
+#define	FLT_BEACON 4
+#define	FLT_HAIL 5
+#define	FLT_ENTRY 6
+#define	FLT_SHIP 7
+#define	FLT_NONE 8
+
+/* message filter bit masks */
+
+#define	MSGF_CYBS_MASK 0x03
+#define	MSGF_DISTRESS 0x04
+#define	MSGF_BEACON 0x08
+#define	MSGF_HAIL 0x10
+#define	MSGF_ENTRY_MASK 0x60
+#define	MSGF_SHIP 0x80
 
 /* Cybertron message types */
 

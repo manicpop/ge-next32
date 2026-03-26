@@ -603,14 +603,14 @@ int	nebmask,target_neb;
 if (margc != 3)
 	{
 	prfmsg(FORMAT,"SCAN");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->jam_sev > (byte)7 || (warsptr->jam_sev > (byte)2 && rseed%(9 - (int)warsptr->jam_sev) == 0))
 	{
 	prfmsg(JAMMER4);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -630,7 +630,7 @@ if (shpnum >= 0)
 			prfmsg(SCAN27);
 		else
 			prfmsg(NOSHIP);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	}
@@ -638,14 +638,14 @@ else
 if (nebmask)
 	{
 	prfmsg(SCAN27);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (shpnum == usrnum)
 	{
 	prfmsg(SCANER);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 else
 if (shpnum >= 0)
@@ -733,7 +733,7 @@ if (shpnum >= 0)
 			}
 
 		prfmsg(DASHES);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 
 		/* if beyond the "scanned" ships range disply this msg */
 		/* if scanner is already locked onto target, suppress scan notification */
@@ -758,19 +758,19 @@ if (shpnum >= 0)
 				else
 					prfmsg(SCAN3);
 				}
-			outprfge(FILTER,shpnum);
+			outprfge(FLT_NONE,shpnum);
 			}
 		}
 	else
 		{
 		prfmsg(NOSHIP);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 else
 	{
 	prfmsg(NOSHIP);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 }
 
@@ -786,14 +786,14 @@ int	nebmask;
 if (margc != 3)
 	{
 	prfmsg(FORMAT,"SCAN");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->jam_sev > (byte)7 || (warsptr->jam_sev > (byte)2 && rseed%(9 - (int)warsptr->jam_sev) == 0))
 	{
 	prfmsg(JAMMER4);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -811,20 +811,20 @@ if (plnum <= MAXPLANETS && plnum > 0)
 		if (plnum > sector.numplan)
 			{
 			prfmsg(SCAN26);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		if (cdistance(&warsptr->coord,&plptr->coord)*10000.0 > (double)NEBRNG)
 			{
 			prfmsg(SCAN26);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		}
 	if (plnum > sector.numplan)
 		{
 		prfmsg(NOPLNT);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	else
 	if (plptr->type == PLTYPE_PLNT)
@@ -973,7 +973,7 @@ if (plnum <= MAXPLANETS && plnum > 0)
 				}
 			}
 		prfmsg(DASHES);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	else
 	if (plptr->type == PLTYPE_WORM)
@@ -995,19 +995,19 @@ if (plnum <= MAXPLANETS && plnum > 0)
 			}
 		prfmsg(SCAN12,gechrbuf2,gechrbuf3);
 		prfmsg(DASHES);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 
 		else
 		{
 		prfmsg(NOPLNT);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 else
 	{
 	prfmsg(NOPLNT);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 }
 
@@ -1028,7 +1028,7 @@ MINE   *mptr;
 if (margc < 2 || margc > 3)
 	{
 	prfmsg(FORMAT, "SCAN");
-	outprfge(ALWAYS, usrnum);
+	outprfge(FLT_NONE, usrnum);
 	return;
 	}
 
@@ -1037,7 +1037,7 @@ setsect(warsptr);
 if (innebula(xsect,ysect))
 	{
 	prfmsg(SCAN27);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -1174,7 +1174,7 @@ if (waruptr->options[SCANOPTS] == NOMAP)
 else
 	printmap(RANGE,0L);
 
-outprfge(ALWAYS, usrnum);
+outprfge(FLT_NONE, usrnum);
 }
 
 void FUNC scan_se()
@@ -1276,7 +1276,7 @@ if (waruptr->options[SCANOPTS] == SIMPLE)
 else
 	printmap(SECTORFULL,0L);
 se_nebula = FALSE;
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 void FUNC scan_lo()
@@ -1296,7 +1296,7 @@ WARSHP *wptr;
 if (margc < 2 || margc > 3)
 	{
 	prfmsg(FORMAT,"SCAN");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -1305,7 +1305,7 @@ setsect(warsptr);
 if (innebula(xsect,ysect))
 	{
 	prfmsg(SCAN27);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -1437,7 +1437,7 @@ else
 	}
 
 printmap(LONG,0L);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 /**************************************************************************
@@ -1450,7 +1450,7 @@ SCANTAB *sptr = &scantab[usrnum];
 int i, shp = 0, ff = 0;
 
 print_map_header(maptype);
-outprfge(ALWAYS, usrnum);
+outprfge(FLT_NONE, usrnum);
 
 for (i = 0; i < MAXY + 1; ++i)
 	{

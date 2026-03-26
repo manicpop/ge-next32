@@ -112,7 +112,7 @@ if (noships == 0)
 	memcpy(warsptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
 	waruptr->noships = 1;
 	prfmsg(FIRSTIME);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 else
 if (noships > 1)
@@ -120,7 +120,7 @@ if (noships > 1)
 	findships(0, 0);
 	prfmsg(FLEET3);
 	usrptr->substt = CHOOSESH;
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 else
@@ -142,7 +142,7 @@ if (noships == 1)
 		gepdb(GEADD,tmpshp.userid,tmpshp.shipno,&tmpshp);
 		memcpy(warsptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
 		prfmsg(FIRSTIME);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 tossingegame();
@@ -162,7 +162,7 @@ if (ptr->shipname[0] == '\0')
 	prfmsg(ENTWARNO,ptr->userid);
 else
 	prfmsg(ENTWAR,ptr->shipname);
-outsect(FILTER,&ptr->coord,usrn,0);
+outsect(FLT_NONE,&ptr->coord,usrn,0);
 }
 
 void FUNC tossingegame()
@@ -172,10 +172,10 @@ if (warsptr->shipname[0] == '\0')
 	prfmsg(ANNOUNO,waruptr->userid,shipclass[warsptr->shpclass].typename);
 else
 	prfmsg(ANNOUN,shipclass[warsptr->shpclass].typename, warsptr->shipname, waruptr->userid);
-outwar(FILTER,usrnum,0,0);
+outwar(FLT_ENTRY,usrnum,0,0);
 
 prfmsg(ENTSHP,waruptr->userid);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 
 update_scantab(warshpoff(usrnum),usrnum);
 
@@ -186,7 +186,7 @@ if (warsptr->cloak != 10)
 
 btupmt(usrnum,'>');
 prfmsg(WELCOM,waruptr->userid);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 usrptr->substt = FIGHTSUB;
 warsptr->status = GESTAT_USER;
 assign_cybs(usrnum,0);
@@ -486,7 +486,7 @@ if (!quiet && waruptr->noships > NOSCANTAB)
 		prf("\"p\" for previous page, \"n\" for next page.\r");
 	}
 warsptr->status = 0;
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 
 return (found);
 }
@@ -505,7 +505,7 @@ int	page_count;
 if ((sameas(margv[0],"x")) || (sameas(margv[0],"X")))
 	{
 	disp_main_menu();
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	usrptr->substt = 1;
 	return;
 	}
@@ -534,7 +534,7 @@ if (sameas(margv[0], "N") || sameas(margv[0], "n"))
 		}
 	prfmsg(FLEET3);
 	usrptr->substt = CHOOSESH;
-	outprfge(ALWAYS, usrnum);
+	outprfge(FLT_NONE, usrnum);
 	return;
 	}
 
@@ -548,7 +548,7 @@ if (sameas(margv[0], "P") || sameas(margv[0], "p"))
 		}
 	prfmsg(FLEET3);
 	usrptr->substt = CHOOSESH;
-	outprfge(ALWAYS, usrnum);
+	outprfge(FLT_NONE, usrnum);
 	return;
 	}
 
@@ -557,7 +557,7 @@ prfmsg(FLEET4);
 page_count = findships(0, 0);
 prfmsg(FLEET3);
 usrptr->substt = CHOOSESH;
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 /**************************************************************************
@@ -575,7 +575,7 @@ if (ptr->repair > 0)
 		{
 		prfmsg(MAINT10);
 		ptr->repair = 0;
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		return;
 		}
 
@@ -611,7 +611,7 @@ if (ptr->repair > 0)
 		ptr->topspeed = shipclass[ptr->shpclass].max_warp;
 		ptr->overspeed = 0;
 		prfmsg(MAINT7);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	}
 }
@@ -639,7 +639,7 @@ if (ptr->heading != ptr->head2b)
 		ptr->heading = ptr->head2b;
 		angle = (int)ptr->heading;
 		prfmsg(NOWTHER,angle);
-		outprfge(FILTER,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	else
 		{
@@ -650,7 +650,7 @@ if (ptr->heading != ptr->head2b)
 			ptr->heading = normal(ptr->heading + rotamt);
 		angle = (int)ptr->heading;
 		prfmsg(NOWTRNP,angle);
-		outprfge(FILTER,usrn);
+		outprfge(FLT_SHIP,usrn);
 		}
 	}
 }
@@ -693,7 +693,7 @@ if (ptr->speed < ptr->speed2b)
 			ptr->energy -= usage;
 
 			prfmsg(SPEEDIS, showarp(ptr->speed));
-			outprfge(FILTER,usrn);
+			outprfge(FLT_NONE,usrn);
 			}
 		else
 			{
@@ -701,7 +701,7 @@ if (ptr->speed < ptr->speed2b)
 				prfmsg(MOVE5);
 			else
 				prfmsg(NOACCEL,(int)(ptr->speed/1000.0));
-			outprfge(ALWAYS,usrn);
+			outprfge(FLT_NONE,usrn);
 			decelrate = (double)shipclass[ptr->shpclass].max_accel * 2.0;
 			if ((ptr->speed/1000 >=1) && ((ptr->speed-decelrate)/1000 <1))
 				hyperspace(ptr,usrn,0);
@@ -728,7 +728,7 @@ if (ptr->speed < ptr->speed2b)
 				{
 				sprintf(gechrbuf,"%.2f",(ptr->speed + accelrate)/1000.0);
 				prfmsg(WARP,gechrbuf);
-				outprfge(FILTER,usrn);
+				outprfge(FLT_SHIP,usrn);
 				}
 			ptr->speed += accelrate;
 			ptr->energy -= usage;
@@ -739,7 +739,7 @@ if (ptr->speed < ptr->speed2b)
 				prfmsg(MOVE5);
 			else
 				prfmsg(NOACCEL,(int)(ptr->speed/1000.0));
-			outprfge(ALWAYS,usrn);
+			outprfge(FLT_NONE,usrn);
 			decelrate = (double)shipclass[ptr->shpclass].max_accel * 2.0;
 			if ((ptr->speed/1000 >=1) && ((ptr->speed-decelrate)/1000 <1))
 				hyperspace(ptr,usrn,0);
@@ -764,12 +764,12 @@ if (ptr->speed > ptr->speed2b)
 		if (ptr->speed > 0)
 			{
 			prfmsg(SPEEDIS,showarp(ptr->speed));
-			outprfge(FILTER,usrn);
+			outprfge(FLT_NONE,usrn);
 			}
 		else
 			{
 			prfmsg(DEADSTOP);
-			outprfge(FILTER,usrn);
+			outprfge(FLT_NONE,usrn);
 			}
 		}
 	else
@@ -780,12 +780,12 @@ if (ptr->speed > ptr->speed2b)
 				{
 				sprintf(gechrbuf,"%.2f",(ptr->speed - decelrate)/1000.0);
 				prfmsg(WARP,gechrbuf);
-				outprfge(FILTER,usrn);
+				outprfge(FLT_SHIP,usrn);
 				}
 			else
 				{
 				prfmsg(DEADSTOP);
-				outprfge(FILTER,usrn);
+				outprfge(FLT_NONE,usrn);
 				}
 			}
 		if (ptr->speed/1000 > ptr->topspeed && (ptr->speed - decelrate)/1000 <= ptr->topspeed &&
@@ -822,7 +822,7 @@ if (flag == 1)
 		ptr->cloak = 3;
 		}
 	prfmsg(HYPERIN);
-	outprfge(FILTER,usrn);
+	outprfge(FLT_SHIP,usrn);
 
 	ptr->where = 1;
 
@@ -833,7 +833,7 @@ if (flag == 1)
 		prfmsg(HYPERIN3,ptr->userid);
 	else
 		prfmsg(HYPERIN2,ptr->shipname);
-	outsect(FILTER,&(warshpoff(usrn)->coord),usrn,0);
+	outsect(FLT_NONE,&(warshpoff(usrn)->coord),usrn,0);
 
 	for(i=0;i<MAXTORPS;++i)
 		{
@@ -842,7 +842,7 @@ if (flag == 1)
 			if (flag == 1 && ingegame(ptr->ltorps[i].channel) && ptr->ltorps[i].channel < nterms)
 				{
 				prfmsg(TORMISS2,shpltr(ptr->ltorps[i].channel,usrn));
-				outprfge(FILTER,ptr->ltorps[i].channel);
+				outprfge(FLT_NONE,ptr->ltorps[i].channel);
 				}
 			flag = 0;
 			}
@@ -854,7 +854,7 @@ if (flag == 1)
 else
 	{
 	prfmsg(HYPEROUT);
-	outprfge(FILTER,usrn);
+	outprfge(FLT_SHIP,usrn);
 
 	ptr->where = 0;
 
@@ -870,7 +870,7 @@ else
 		prfmsg(HYPERONO,ptr->userid);
 	else
 		prfmsg(HYPEROUN,ptr->shipname);
-	outsect(FILTER,&(warshpoff(usrn)->coord),usrn,0);
+	outsect(FLT_NONE,&(warshpoff(usrn)->coord),usrn,0);
 	}
 }
 
@@ -910,7 +910,7 @@ if (ptr->speed > 0)
 				prfmsg(MOVE5);
 			else
 				prfmsg(MOVE4);
-			outprfge(FILTER,usrn);
+			outprfge(FLT_NONE,usrn);
 			if ((ptr->speed/1000 >=1) && ((ptr->speed-((double)shipclass[ptr->shpclass].max_accel * 2.0))/1000 <1))
 				hyperspace(ptr,usrn,0);
 			if (fabs(ptr->speed) <= ((double)shipclass[ptr->shpclass].max_accel * 2.0))
@@ -1006,7 +1006,7 @@ if (ptr->speed > 0)
 			coord1(oldsect.xcoord),coord1(oldsect.ycoord),
 			(innebula(coord1(newsect.xcoord),coord1(newsect.ycoord)) ? CLR_GREEN2 "nebula" : "sector"),
 			coord1(newsect.xcoord),coord1(newsect.ycoord));
-		outprfge(FILTER,usrn);
+		outprfge(FLT_SHIP,usrn);
 		if (ptr->cloak != 10)
 			{
 			if (ptr->speed < 21000.0)
@@ -1018,7 +1018,7 @@ if (ptr->speed > 0)
 					prfmsg(MOVE2NO,ptr->userid);
 				else
 					prfmsg(MOVE2,ptr->shipname);
-				outsect(FILTER,&oldsect,usrn,0);
+				outsect(FLT_NONE,&oldsect,usrn,0);
 				}
 			if (ptr->speed < 21000.0)
 				{
@@ -1029,14 +1029,14 @@ if (ptr->speed > 0)
 					prfmsg(MOVE3NO,ptr->userid);
 				else
 					prfmsg(MOVE3,ptr->shipname);
-				outsect(FILTER,&newsect,usrn,0);
+				outsect(FLT_NONE,&newsect,usrn,0);
 				}
 			}
 		ptr->hostile = 0;
 		if (ptr->destruct > 0 && neutral(&newsect))
 			{
 			prfmsg(SELFD4);
-			outprfge(ALWAYS,usrn);
+			outprfge(FLT_NONE,usrn);
 			ptr->destruct = 0;
 			}
 		}
@@ -1066,7 +1066,7 @@ if (ptr->speed > 0)
 						/* slop it up +- 10 degrees on either side */
 						bearing += ((r >> 11) % 20) - 10;
 						prfmsg(CLOK3,bearing);
-						outprfge(ALWAYS,zothusn);
+						outprfge(FLT_NONE,zothusn);
 						}
 					}
 				}
@@ -1084,7 +1084,7 @@ if (ptr->speed > 0)
 			if (newtop < 1.0f)
 				{
 				prfmsg(WARPBRK);
-				outprfge(ALWAYS,usrn);
+				outprfge(FLT_NONE,usrn);
 				ptr->topspeed = 0;
 				ptr->speed2b = 0;
 				ptr->damage += r%20;
@@ -1102,7 +1102,7 @@ if (ptr->speed > 0)
 				if ((overamt >= 110 || ptr->overspeed > 4000000000UL) && ptr->topspeed != 0)
 					{
 					prfmsg(WARPBRK);
-					outprfge(ALWAYS,usrn);
+					outprfge(FLT_NONE,usrn);
 					ptr->topspeed = 0;
 					ptr->speed2b = 0;
 					ptr->damage += r%20;
@@ -1113,7 +1113,7 @@ if (ptr->speed > 0)
 					if (overamt >= 60 && overamt/10 != ptr->npcmsg/10)
 						{
 						prfmsg(WARPFAST+(int)((overamt/10)-6));
-						outprfge(FILTER,usrn);
+						outprfge(FLT_NONE,usrn);
 						}
 					ptr->npcmsg = overamt;
 					}
@@ -1153,7 +1153,7 @@ if (ptr->status == GESTAT_USER)
 	damstr(TELEDAM);
 	prfmsg(TELEPORT,gechrbuf);
 	prfmsg(NOWTHER,(int)ptr->heading);	/* show now pointing towards 0 0 */
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 else
 	{
@@ -1195,12 +1195,12 @@ for (i=0; i<MAXPLANETS;++i)
 					prfmsg(BEAC02,i+1,planet.name,planet.beacon);
 				else
 					prfmsg(BEAC01,i+1,planet.beacon);
-				outprfge(FILTER,usrn);
+				outprfge(FLT_BEACON,usrn);
 				beacontimer = 60;
 				}
 			}
 	/*      prf("dist to planet %u is %d\r",i,dist);
-		outprfge(ALWAYS,usrn);*/
+		outprfge(FLT_NONE,usrn);*/
 		if (ptr->speed <= 0)
 			continue;
 		if (dist < 250 && ptr->damage < 101.0)	/* no addl msgs after crash */
@@ -1212,7 +1212,7 @@ for (i=0; i<MAXPLANETS;++i)
 				else
 					prfmsg(GRAVWRM1,i+1);
 
-				outprfge(ALWAYS,usrn);
+				outprfge(FLT_NONE,usrn);
 				}
 			else
 			if (dist >= 25)
@@ -1222,7 +1222,7 @@ for (i=0; i<MAXPLANETS;++i)
 				else
 					prfmsg(GRAVWRM2,i+1);
 
-				outprfge(ALWAYS,usrn);
+				outprfge(FLT_NONE,usrn);
 				}
 			else
 			if (dist < 25 )
@@ -1232,7 +1232,7 @@ for (i=0; i<MAXPLANETS;++i)
 				else
 					prfmsg(GRAVWRM3,i+1);
 
-				outprfge(ALWAYS,usrn);
+				outprfge(FLT_NONE,usrn);
 				if (ptab[usrn].planets[i].type == PLTYPE_PLNT)
 					{
 					ptr->damage = 101.0;
@@ -1251,7 +1251,7 @@ for (i=0; i<MAXPLANETS;++i)
 						(innebula(coord1(worm.destination.xcoord),coord1(worm.destination.ycoord)) ? CLR_GREEN2 "nebula" : "sector"),
 						coord1(worm.destination.xcoord),coord1(worm.destination.ycoord));
 					ptr->damage+= 5.5;
-					outprfge(ALWAYS,usrn);
+					outprfge(FLT_SHIP,usrn);
 					if (ptr->cloak != 10)
 						suddenappear(ptr,usrn);
 					clearitm(usrn);	 /* clear the tors and missiles */
@@ -1340,11 +1340,11 @@ if (ptr->damage >= 100.0)
 	{
 	ptr->damage = 0.0;	/* reset damage so he can get back on */
 	prfmsg(YOURDEAD);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 
 /* DEBUG
 	prf ("lastfired = %u\r",ptr->lastfired);
-	outprfge(ALWAYS,usrn); */
+	outprfge(FLT_NONE,usrn); */
 
 	killem(ptr,usrn);
 
@@ -1383,7 +1383,7 @@ if (ptr->phasr < 100 && ptr->phasr >= 0)
 		if (ptr->phasr < PMINFIRE && ptr->phasr + preload >= PMINFIRE && ptr->phasr + preload < 100)
 			{
 			prfmsg(PHSRUP);
-			outprfge(ALWAYS,usrn);
+			outprfge(FLT_NONE,usrn);
 			}
 
 		ptr->phasr = ptr->phasr + preload;
@@ -1392,7 +1392,7 @@ if (ptr->phasr < 100 && ptr->phasr >= 0)
 		if (ptr->phasr >= 100)
 			{
 			prfmsg(PHSRMAX);
-			outprfge(ALWAYS,usrn);
+			outprfge(FLT_NONE,usrn);
 			ptr->phasr = 100;
 			}
 		}
@@ -1407,7 +1407,7 @@ if (ptr->helm < 0)
 	if (ptr->helm == 0)
 		{
 		prfmsg(HLREPR);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	return;
 	}
@@ -1419,7 +1419,7 @@ if (ptr->tactical < 0)
 	if (ptr->tactical == 0)
 		{
 		prfmsg(TAREPR);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	return;
 	}
@@ -1431,7 +1431,7 @@ if (ptr->phasr < 0)
 	if (ptr->phasr == 0)
 		{
 		prfmsg(PHREPR);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	return;
 	}
@@ -1443,7 +1443,7 @@ if (ptr->torpcntl > 0)
 	if (ptr->torpcntl == 0)
 		{
 		prfmsg(FCREPRT);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	return;
 	}
@@ -1455,7 +1455,7 @@ if (ptr->mislcntl > 0)
 	if (ptr->mislcntl == 0)
 		{
 		prfmsg(FCREPRM);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	return;
 	}
@@ -1467,7 +1467,7 @@ if (ptr->cloak < 0)
 	if (ptr->cloak == 0)
 		{
 		prfmsg(CLREPR);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	return;
 	}
@@ -1479,7 +1479,7 @@ if (ptr->jamload < 0)
 	if (ptr->jamload == 0)
 		{
 		prfmsg(REPRJ);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	return;
 	}
@@ -1491,7 +1491,7 @@ if (ptr->decload < 0)
 	if (ptr->decload == 0)
 		{
 		prfmsg(REPRD);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	return;
 	}
@@ -1503,7 +1503,7 @@ if (ptr->zipload < 0)
 	if (ptr->zipload == 0)
 		{
 		prfmsg(REPRZ);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	return;
 	}
@@ -1515,7 +1515,7 @@ if (ptr->mineload < 0)
 	if (ptr->mineload == 0)
 		{
 		prfmsg(REPRMN);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	return;
 	}
@@ -1562,7 +1562,7 @@ if (who >= 0 && who < nships && who != usrn)
 		prfmsg(KILLDNPC,username(ptr),username(wptr));
 	else
 		prfmsg(KILLEDBY,username(ptr),username(wptr));
-	outwar(FILTER,usrn,0,0);
+	outwar(FLT_NONE,usrn,0,0);
 
 	++wuptr->kills;
 	++wptr->kills;
@@ -1647,7 +1647,7 @@ if (who >= 0 && who < nships && who != usrn)
 	if (full == TRUE)
 		prfmsg(KILLFULL);
 
-	outprfge(ALWAYS,who);
+	outprfge(FLT_NONE,who);
 
 	/* grant points for the kill */
 	scr = (long)shipclass[ptr->shpclass].max_points;
@@ -1708,7 +1708,7 @@ if (who >= 0 && who < nships && who != usrn)
 		{
 		sprintf(gechrbuf, "%lu", ded_amt);
 		prfmsg(YRDEAD2, gechrbuf);
-		outprfge(ALWAYS, usrn);
+		outprfge(FLT_NONE, usrn);
 		}
 
 	(wuptr->score) += amt;
@@ -1740,7 +1740,7 @@ if (who >= 0 && who < nships && who != usrn)
 			}
 		}
 
-	outprfge(ALWAYS,who);
+	outprfge(FLT_NONE,who);
 
 	if (scr > 0 && chgloser > 0
 		&& ptr->status == GESTAT_USER
@@ -1759,14 +1759,14 @@ if (who >= 0 && who < nships && who != usrn)
 				amt = ULCAP - wuptr->cash;
 				sprintf(gechrbuf,"%lu",ULCAP);
 				prfmsg(TOORICH,gechrbuf);
-				outprfge(ALWAYS,who);
+				outprfge(FLT_NONE,who);
 				}
 			wuptr->cash += amt;
 			sprintf(gechrbuf,"%ld",amt);
 			prfmsg(CHGLSR1,gechrbuf);
-			outprfge(ALWAYS,usrn);
+			outprfge(FLT_NONE,usrn);
 			prfmsg(CHGLSR2,gechrbuf,ptr->userid);
-			outprfge(ALWAYS,who);
+			outprfge(FLT_NONE,who);
 			}
 
 		}
@@ -1791,7 +1791,7 @@ if (who >= 0 && who < nships && who != usrn)
 				prfmsg(KILLDIS,gechrbuf,disptr->shipname);
 				prfmsg(FACNAME0+shipclass[disptr->shpclass].faction);
 				prf("\r");
-				outprfge(ALWAYS,who);
+				outprfge(FLT_NONE,who);
 				wuptr->score += amt;
 				wuptr->klscore += amt;
 				wuptr->factions[shipclass[disptr->shpclass].faction] = 0;
@@ -1828,7 +1828,7 @@ if (who >= 0 && who < nships && who != usrn)
 						prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
 						++i;
 						if (i % 5 == 0)		/* cat five lines then print */
-							outprfge(ALWAYS,who);
+							outprfge(FLT_NONE,who);
 						}
 					}
 				else
@@ -1844,7 +1844,7 @@ if (who >= 0 && who < nships && who != usrn)
 				prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
 				}
 			if (i % 5 != 0)	/* if we're not on a multiple of 5, we still have to print the remainder */
-				outprfge(ALWAYS,who);
+				outprfge(FLT_NONE,who);
 			}
 		}
 
@@ -1884,7 +1884,7 @@ else
 		prfmsg(DIEDNO,username(ptr));
 	else
 		prfmsg(DIED,ptr->shipname,username(ptr));
-	outwar(ALWAYS,usrn,0,0);
+	outwar(FLT_NONE,usrn,0,0);
 	if (shipclass[ptr->shpclass].kill_func != NULL)
 		shipclass[ptr->shpclass].kill_func(ptr,usrn,NULL);
 	}
@@ -1939,15 +1939,18 @@ if (ptr->energy < energy)
 		ptr->energy = ENGYMAX;
 		--ptr->items[I_FLUXPOD];
 		prfmsg(FLUXLOAD);
+		outprfge(FLT_SHIP,usrn);
 		if (ptr->items[I_FLUXPOD] == 0)
+			{
 			prfmsg(LASTFLUX);
-		outprfge(ALWAYS,usrn);
+			outprfge(FLT_NONE,usrn);
+			}
 		return(1);
 		}
 	else
 		{
 		prfmsg(NOFLUX);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		return(0);
 		}
 	}
@@ -1973,7 +1976,7 @@ if (ptr->shieldstat == SHIELDUP)
 		ptr->shieldstat = SHIELDDN;
 		ptr->shield = 0;
 		prfmsg(SHDNNOP);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	else
 		{
@@ -2006,11 +2009,11 @@ if (ptr->cloak > 0 && ptr->cloak != 3)
 		oldcloak = ptr->cloak;
 		ptr->cloak = 3;
 		prfmsg(CLOKNOP);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		if (oldcloak == 10)
 			{
 			prfmsg(CLOK2);
-			outrange(FILTER,&ptr->coord);
+			outrange(FLT_NONE,&ptr->coord);
 			suddenappear(ptr,usrn);
 			}
 		}
@@ -2101,7 +2104,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 								damfact = damfact/(gernd()%5+wptr->shieldtype);
 								damstr((int)damfact);
 								prfmsg(MINE4,bearing,udist,gechrbuf);
-								outprfge(FILTER,zothusn);
+								outprfge(FLT_NONE,zothusn);
 								shieldhit(wptr,zothusn,(int)damfact+20);
 								}
 							else
@@ -2111,7 +2114,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 
 								damstr((int)damfact);
 								prfmsg(MINE4,bearing,udist,gechrbuf);
-								outprfge(FILTER,zothusn);
+								outprfge(FLT_NONE,zothusn);
 								}
 							wptr->damage += damfact;
 							randamage(wptr,zothusn,damfact);
@@ -2125,7 +2128,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 							wptr->minesnear = FALSE;
 							/*DEBUG
 							prf("MINE: chn # %d gets credit\r",wptr->lastfired);
-							outprfge(ALWAYS,zothusn);*/
+							outprfge(FLT_NONE,zothusn);*/
 							}
 						else
 							{
@@ -2135,7 +2138,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 								if (!(mine_neb || ship_neb) || (mine_neb && ship_neb && ddist < (double)NEBRNG))
 									{
 									prfmsg(MINE6,bearing,udist);
-									outprfge(FILTER,zothusn);
+									outprfge(FLT_NONE,zothusn);
 									}
 								}
 							wptr->minesnear = TRUE;
@@ -2148,7 +2151,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 						if (!(mine_neb || ship_neb) || (mine_neb && ship_neb && ddist < (double)NEBRNG))
 							{
 							prfmsg(MINE5,bearing);
-							outprfge(FILTER,zothusn);
+							outprfge(FLT_NONE,zothusn);
 							}
 						}
 					}
@@ -2234,7 +2237,7 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 					if ((int)tptr->channel < nterms)
 						{
 						prfmsg(TORMISS,shpltr(tptr->channel,usrn));
-						outprfge(FILTER,tptr->channel);
+						outprfge(FLT_NONE,tptr->channel);
 						}
 					continue;
 					}
@@ -2245,7 +2248,7 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 			tptr->distance = 0;
 			++shotdown;
 			prfmsg(TORMISS,shpltr(tptr->channel,usrn));
-			outprfge(FILTER,tptr->channel);
+			outprfge(FLT_NONE,tptr->channel);
 			}
 		else
 		if (tptr->distance <= torpsped)
@@ -2318,11 +2321,11 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 					if (tptr->distance < 5000 && (gernd()%decodds == 0))
 						{
 						prfmsg(TORDEST);
-						outprfge(FILTER,usrn);
+						outprfge(FLT_NONE,usrn);
 						if (tptr->channel < nterms)
 							{
 							prfmsg(TORDEST2);
-							outprfge(FILTER,tptr->channel);
+							outprfge(FLT_NONE,tptr->channel);
 							}
 						dptr[j] = 0;
 						tptr->distance = 0;
@@ -2347,7 +2350,7 @@ if (sh_cnt > 0)
 		prfmsg(THIT1,gechrbuf);
 	else
 		prfmsg(THIT3,sh_cnt,gechrbuf);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 
 if (un_cnt > 0)
@@ -2357,7 +2360,7 @@ if (un_cnt > 0)
 		prfmsg(THIT2,gechrbuf);
 	else
 		prfmsg(THIT4,un_cnt,gechrbuf);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 
 if ((sh_dam + un_dam) > 0.0)
@@ -2369,19 +2372,19 @@ if (shotdown > 0)
 		prfmsg(TORENF1);
 	else
 		prfmsg(TORENF,shotdown);
-	outprfge(FILTER,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 
 if (track_cnt == 1)
 	{
 	prfmsg(TORP1);
-	outprfge(FILTER,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 else
 if (track_cnt > 1)
 	{
 	prfmsg(TORP4,track_cnt);
-	outprfge(FILTER,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 
 for (k=0;k<acc_used;++k)
@@ -2416,7 +2419,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 					if ((int)mptr->channel < nterms)
 						{
 						prfmsg(MISMISS,shpltr(mptr->channel,usrn));
-						outprfge(FILTER,mptr->channel);
+						outprfge(FLT_NONE,mptr->channel);
 						}
 					continue;
 					}
@@ -2438,7 +2441,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 			mptr->distance = 0;
 			++shotdown;
 			prfmsg(MISMISS,shpltr(mptr->channel,usrn));
-			outprfge(FILTER,mptr->channel);
+			outprfge(FLT_NONE,mptr->channel);
 			}
 		else
 		if (mptr->distance <= mstep)
@@ -2515,11 +2518,11 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 					if (mptr->distance < 3000 && (gernd()%decodds == 0))
 						{
 						prfmsg(MISDEST);
-						outprfge(FILTER,usrn);
+						outprfge(FLT_NONE,usrn);
 						if (ingegame(mptr->channel) && mptr->channel < nterms)
 							{
 							prfmsg(MISDEST2);
-							outprfge(FILTER,mptr->channel);
+							outprfge(FLT_NONE,mptr->channel);
 							}
 						dptr[j] = 0;
 						mptr->distance = 0;
@@ -2538,7 +2541,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 					if (ingegame(mptr->channel) && mptr->channel < nterms)
 						{
 						prfmsg(MISMISS,shpltr(mptr->channel,usrn));
-						outprfge(FILTER,mptr->channel);
+						outprfge(FLT_NONE,mptr->channel);
 						}
 					}
 				else
@@ -2556,13 +2559,13 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 if (lost_cnt == 1)
 	{
 	prfmsg(MISSL2);
-	outprfge(FILTER,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 else
 if (lost_cnt > 1)
 	{
 	prfmsg(MISSL4,lost_cnt);
-	outprfge(FILTER,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 
 if (sh_cnt > 0)
@@ -2572,7 +2575,7 @@ if (sh_cnt > 0)
 		prfmsg(MHIT1,gechrbuf);
 	else
 		prfmsg(MHIT3,sh_cnt,gechrbuf);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 
 if (un_cnt > 0)
@@ -2582,7 +2585,7 @@ if (un_cnt > 0)
 		prfmsg(MHIT2,gechrbuf);
 	else
 		prfmsg(MHIT4,un_cnt,gechrbuf);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 
 if ((sh_dam + un_dam) > 0.0)
@@ -2597,19 +2600,19 @@ if (shotdown > 0)
 		prfmsg(MISENF1);
 	else
 		prfmsg(MISENF,shotdown);
-	outprfge(FILTER,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 
 if (track_cnt == 1)
 	{
 	prfmsg(MISSL1);
-	outprfge(FILTER,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 else
 if (track_cnt > 1)
 	{
 	prfmsg(MISSL3,track_cnt);
-	outprfge(FILTER,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 
 shotdown = 0;
@@ -2633,13 +2636,13 @@ for (i=0,dptr=ptr->decout;i<MAXDECOY;++i)
 if (shotdown == 1)
 	{
 	prfmsg(DECGONE);
-	outprfge(FILTER,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 else
 if (shotdown > 1)
 	{
 	prfmsg(DECGONE2,shotdown);
-	outprfge(FILTER,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 /* and Jammers too */
 if (ptr->jam_time > (byte)0)
@@ -2649,7 +2652,7 @@ if (ptr->jam_time > (byte)0)
 		{
 		ptr->jam_sev = (byte)0;
 		prfmsg(JAMMER5);
-		outprfge(FILTER,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	}
 /* and cloak too */
@@ -2662,17 +2665,17 @@ if (ptr->cloak == 2)
 	{
 	ptr->cloak = 10;
 	prfmsg(CLOKUP);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	if (ptr->lock >= 0)
 		{
 		if (ptr->lock < nships && ingegame(ptr->lock))
 			{
 			prfmsg(LOCK04,shpltr(usrn,ptr->lock));
-			outprfge(FILTER,ptr->lock);
+			outprfge(FLT_NONE,ptr->lock);
 			}
 		ptr->lock = -1;
 		prfmsg(LOCK01);
-		outprfge(FILTER,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	}
 /* small weapon delay */
@@ -2680,7 +2683,7 @@ if (ptr->cloak == 3)
 	{
 	ptr->cloak = 0;
 	prfmsg(CLOKW);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 
 
@@ -2707,7 +2710,7 @@ if (ptr->lock >= nships)
 	{
 	ptr->lock = -1;
 	prfmsg(LOCK01);
-	outprfge(FILTER,usrn);
+	outprfge(FLT_NONE,usrn);
 	return;
 	}
 
@@ -2724,9 +2727,9 @@ if (lptr->cloak >= 10)
 	{
 	ptr->lock = -1;
 	prfmsg(LOCK05,shpltr(lockee,usrn));
-	outprfge(FILTER,usrn);
+	outprfge(FLT_NONE,usrn);
 	prfmsg(LOCK04,shpltr(usrn,lockee));
-	outprfge(FILTER,lockee);
+	outprfge(FLT_NONE,lockee);
 	return;
 	}
 
@@ -2739,9 +2742,9 @@ if (locker_neb || lockee_neb)
 		{
 		ptr->lock = -1;
 		prfmsg(LOCK05,shpltr(lockee,usrn));
-		outprfge(FILTER,usrn);
+		outprfge(FLT_NONE,usrn);
 		prfmsg(LOCK04,shpltr(usrn,lockee));
-		outprfge(FILTER,lockee);
+		outprfge(FLT_NONE,lockee);
 		return;
 		}
 	}
@@ -2750,9 +2753,9 @@ if (dist > (double)shipclass[ptr->shpclass].scanrange)
 	{
 	ptr->lock = -1;
 	prfmsg(LOCK05,shpltr(lockee,usrn));
-	outprfge(FILTER,usrn);
+	outprfge(FLT_NONE,usrn);
 	prfmsg(LOCK04,shpltr(usrn,lockee));
-	outprfge(FILTER,lockee);
+	outprfge(FLT_NONE,lockee);
 	return;
 	}
 }
@@ -2788,7 +2791,7 @@ if (channel != 255)
 		else
 			prfmsg(MTACC3+mt,count,shpltr(channel,usrn),ptr->shipname);
 		}
-	outprfge(ALWAYS,channel);
+	outprfge(FLT_NONE,channel);
 	ptr->lastfired = channel;
 	}
 else
@@ -2836,7 +2839,7 @@ for (i=0;i<MAXTORPS;++i)
 		if (first == TRUE)
 			{
 			prfmsg(TORMISS2,shpltr(ptr->ltorps[i].channel,usrn));
-			outprfge(FILTER,ptr->ltorps[i].channel);
+			outprfge(FLT_NONE,ptr->ltorps[i].channel);
 			first = FALSE;
 			}
 		}
@@ -2852,7 +2855,7 @@ for (i=0;i<MAXMISSL;++i)
 		if (first == TRUE)
 			{
 			prfmsg(MISMISS2,shpltr(ptr->lmissl[i].channel,usrn));
-			outprfge(FILTER,ptr->lmissl[i].channel);
+			outprfge(FLT_NONE,ptr->lmissl[i].channel);
 			first = FALSE;
 			}
 		}
@@ -2914,7 +2917,7 @@ if (ptr->hostile > 1)
 			hitdam = (idammax * rndm(.15));
 			ptr->damage += hitdam;
 			prfmsg(IHIT1);
-			outprfge(ALWAYS,usrn);
+			outprfge(FLT_NONE,usrn);
 			shieldhit(ptr,usrn,(gernd()%50)+40);
 			}
 		else
@@ -2922,7 +2925,7 @@ if (ptr->hostile > 1)
 			hitdam = (idammax * (rndm(.50) + .50));
 			ptr->damage += hitdam;
 			prfmsg(IHIT2);
-			outprfge(ALWAYS,usrn);
+			outprfge(FLT_NONE,usrn);
 			}
 		randamage(ptr,usrn,hitdam);
 		}
@@ -2953,7 +2956,7 @@ if (ptr->destruct > (byte)0)
 				prfmsg(SELFD2AO,ptr->userid);
 			else
 				prfmsg(SELFD2A,ptr->shipname);
-			outrange(ALWAYS,&ptr->coord);
+			outrange(FLT_NONE,&ptr->coord);
 			}
 
 		if (ptr->destruct==5)
@@ -2962,7 +2965,7 @@ if (ptr->destruct > (byte)0)
 				prfmsg(SELFD2BO,ptr->userid);
 			else
 				prfmsg(SELFD2B,ptr->shipname);
-			outrange(ALWAYS,&ptr->coord);
+			outrange(FLT_NONE,&ptr->coord);
 			}
 
 		if (ptr->destruct==2)
@@ -2971,26 +2974,26 @@ if (ptr->destruct > (byte)0)
 				prfmsg(SELFD2CO,ptr->userid);
 			else
 				prfmsg(SELFD2C,ptr->shipname);
-			outrange(ALWAYS,&ptr->coord);
+			outrange(FLT_NONE,&ptr->coord);
 			}
 
 		prfmsg(SELFD2,ptr->destruct);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		}
 	else
 		{
 		prfmsg(SELFD3);
 		ptr->damage = 101;
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		if (ptr->shipname[0] == '\0')
 			prfmsg(SELFD3AO,ptr->userid);
 		else
 			prfmsg(SELFD3A,ptr->shipname);
-		outrange(ALWAYS,&ptr->coord);
+		outrange(FLT_NONE,&ptr->coord);
 		if (ptr->shieldstat == SHIELDUP)
 			{
 			prfmsg(SELFD3S);
-			outprfge(ALWAYS,usrn);
+			outprfge(FLT_NONE,usrn);
 			}
 		else
 			for (zothusn=0 ; zothusn < nships ; zothusn++)
@@ -3014,7 +3017,7 @@ if (ptr->destruct > (byte)0)
 							damage = damage/(gernd()%5+wptr->shieldtype);
 							damstr(damage);
 							prfmsg(SELFD6,gechrbuf);
-							outprfge(ALWAYS,zothusn);
+							outprfge(FLT_NONE,zothusn);
 							shieldhit(wptr,zothusn,damage+20);
 							}
 						else
@@ -3023,12 +3026,12 @@ if (ptr->destruct > (byte)0)
 							damage = damage*(shipclass[ptr->shpclass].damfact / 100);
 							damstr(damage);
 							prfmsg(SELFD7,gechrbuf);
-							outprfge(ALWAYS,zothusn);
+							outprfge(FLT_NONE,zothusn);
 							}
 						wptr->damage += (double)damage;
 						wptr->lastfired = -1;
 						prfmsg(SELFD3N,gechrbuf,username(wptr));
-						outprfge(ALWAYS,usrn);
+						outprfge(FLT_NONE,usrn);
 						}
 					}
 				}
@@ -3063,7 +3066,7 @@ if (inplen != 0)
 		}
 	}
 prfmsg(NUMOOR,minnum,maxnum);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 return(0);
 }
 
@@ -3086,7 +3089,7 @@ if (strlen(ptr) != 0)
 		}
 	}
 prfmsg(NUMOOR,-180,180);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 return(0);
 }
 
@@ -3560,7 +3563,7 @@ if (doitems == 1 && dosys != 2)
 			break;
 		}
 	}
-outprfge(ALWAYS,usrn);
+outprfge(FLT_NONE,usrn);
 }
 
 /**************************************************************************
@@ -3753,7 +3756,7 @@ if (qeqbtv(&mailkey,1))
 	prf("%s------------------------------------------------------------------------------%s\r",CLR_BLUE2,CLR_CYAN2);
 	prf(gemsg->text);
 	prf("%s------------------------------------------------------------------------------%s",CLR_BLUE2,CLR_WHITE2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 
 	delbtv();
 
@@ -3762,7 +3765,7 @@ if (qeqbtv(&mailkey,1))
 
 
 prfmsg(MAIL1);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 return(FALSE);
 }
 
@@ -3937,7 +3940,7 @@ WARSHP	*wptr;
 int	usrn;
 {
 prfmsg(SHLDCHP);
-outprfge(FILTER,usrn);
+outprfge(FLT_NONE,usrn);
 wptr->shieldstat = SHIELDUP;
 }
 
@@ -3947,7 +3950,7 @@ WARSHP	*wptr;
 int	usrn;
 {
 prfmsg(SHLDDN);
-outprfge(FILTER,usrn);
+outprfge(FLT_NONE,usrn);
 wptr->shieldstat = SHIELDDN;
 }
 
@@ -3975,7 +3978,7 @@ wptr->shield -= knock;
 if (wptr->shield <=2 )
 	{
 	prfmsg(SHDAMAG);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	wptr->shieldstat = SHIELDDM;
 	wptr->shield -= (knock*3);
 	}
@@ -3983,7 +3986,7 @@ else
 if (wptr->shield < SHMINCHG )
 	{
 	prfmsg(SHKNKDN);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 }
 
@@ -3999,7 +4002,7 @@ if (wptr->shield > 0)
 	wptr->shieldstat = SHIELDDN;
 	wptr->shield = 0;
 	prfmsg(SHREPR);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 }
 
@@ -4025,13 +4028,14 @@ if (wptr->shield < maxcharge)
 		{
 		wptr->shield = maxcharge;
 		prfmsg(SHLDUP);
+		outprfge(FLT_NONE,usrn);
 		}
 	else
 		{
 		charge(wptr,&maxcharge,&pcnt); /* go figure maxcharge and percent */
 		prfmsg(SHLDAT,pcnt);
+		outprfge(FLT_SHIP,usrn);
 		}
-	outprfge(FILTER,usrn);
 	}
 }
 

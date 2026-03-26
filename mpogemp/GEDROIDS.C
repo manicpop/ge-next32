@@ -203,13 +203,13 @@ for (zothusn=0; zothusn<nterms; zothusn++)
 			{
 			bearing = cbearing(&wptr->coord,&ptr->coord,wptr->heading);
 			prfmsg(DROIDNEW,bearing);
-			outprfge(FILTER,zothusn);
+			outprfge(FLT_SHIP,zothusn);
 			}
 		else
 			{
 			setsect(ptr);
 			prfmsg(DROIDNW2,xsect,ysect);
-			outprfge(FILTER,zothusn);
+			outprfge(FLT_SHIP,zothusn);
 			}
 		}
 	}
@@ -343,10 +343,15 @@ if (ptr->cybmine == 255)
 			return;
 			}
 		if (warusroff(usrn)->factions[shipclass[ptr->shpclass].faction] > 50)
+			{
 			prfmsg(sel+4,ptr->shipname);
+			outprfge(FLT_BEACON,usrn);
+			}
 		else
+			{
 			prfmsg(sel,ptr->shipname);
-		outprfge(FILTER,usrn);
+			outprfge(FLT_NONE,usrn);
+			}
 		}
 	}
 else
@@ -362,7 +367,7 @@ else
 	if (ptr->npcmsg == 255)
 		{
 		prfmsg(sel,ptr->shipname);
-		outprfge(FILTER,usrn);
+		outprfge(FLT_NONE,usrn);
 		ptr->npcmsg = 0;
 		}
 	}
@@ -380,7 +385,7 @@ if (ptr->distress != ptr->cybmine && ptr->cybmine < nships)
 	{
 	setsect(ptr);
 	prfmsg(DRDISMSG,ptr->shipname,shipclass[ptr->shpclass].typename,username(warshpoff(ptr->cybmine)),xsect,ysect);
-	outwar(FILTER,usrn,0);
+	outwar(FLT_DISTRESS,usrn,0);
 	ptr->distress = ptr->cybmine;
 	}
 }

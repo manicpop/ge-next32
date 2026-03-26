@@ -235,13 +235,13 @@ if (geudb(GELOOKUP,cybname, waruptr))
 					{
 					bearing = cbearing(&wptr->coord,&ptr->coord,wptr->heading);
 					prfmsg(CYBNEW,bearing);
-					outprfge(FILTER,zothusn);
+					outprfge(FLT_SHIP,zothusn);
 					}
 				else
 					{
 					setsect(ptr);
 					prfmsg(CYBNEW2,xsect,ysect);
-					outprfge(FILTER,zothusn);
+					outprfge(FLT_SHIP,zothusn);
 					}
 				}
 			}
@@ -533,7 +533,13 @@ sel = base+(gernd()%4)+1;
 if (sel < CYBLASTM)
 	{
 	prfmsg(sel,ptr->shipname);
-	outprfge(FILTER,usrn);
+	if (msgtype == APPROACH)
+		outprfge(FLT_CYB_APP,usrn);
+	else
+	if (msgtype == LOATTACK || msgtype == HIATTACK || msgtype == CYBTORP || msgtype == CYBBASEB || msgtype == FLEE)
+		outprfge(FLT_CYB_BAT,usrn);
+	else
+		outprfge(FLT_CYB_ALL,usrn);
 	}
 }
 

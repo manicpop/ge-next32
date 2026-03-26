@@ -200,6 +200,7 @@ struct hlpcmd gehlp[] = {
 		{"sell",			HLPSEL},
 		{"send",			HLPSEN},
 		{"set",				HLPSET},
+		{"set2",			HLPSET2},
 		{"shield",			HLPSHI},
 		{"spy",				HLPSPY},
 		{"stop",			HLPSTO},
@@ -321,7 +322,7 @@ else
 #endif
 			{
 			prfmsg(NOCANDO);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		else
 			{
@@ -338,7 +339,7 @@ else
 #endif
 			{
 			prfmsg(NOCANDO);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		else
 			{
@@ -348,7 +349,7 @@ else
 	else
 		{
 		prfmsg(INVCMD);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 }
@@ -361,7 +362,7 @@ else
 void FUNC warnop()
 {
 prfmsg(FORHELP);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 
@@ -385,7 +386,7 @@ setmbk(gehlpmb);
 if (margc < 2 || margc > 3)
 	{
 	prfmsg(HLPINDEX);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -393,14 +394,14 @@ if (genearas(margv[1],"version"))
 	{
 	prf(VERSION);
 	prf("\r\r");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (genearas(margv[1],"sys") && syshelp == FALSE)
 	{
 	prfmsg(HLPINDEX);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -484,7 +485,7 @@ if (genearas(margv[1],"class"))
 				}
 			}
 		prfmsg(HLPCLS2);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	else
@@ -495,20 +496,20 @@ if (genearas(margv[1],"class"))
 			{
 			setmbk(geshmb);
 			prfmsg(shipclass[i].hlpmsg);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		else
 			{
 			prfmsg(HLPCLS3);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		}
 	else
 		{
 		prfmsg(HLPINDEX);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	}
@@ -519,14 +520,14 @@ while (gehlp[ndx].command != NULL)
 	if (genearas(margv[1], gehlp[ndx].command))
 		{
 		prfmsg(gehlp[ndx].helptxt);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	++ndx;
 	}
 
 prfmsg(HLPINDEX);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 /**************************************************************************
@@ -540,21 +541,21 @@ unsigned deg;
 if (margc < 2 || margc > 3)
 	{
 	prfmsg(FORMAT,"IMPULSE");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->where == 1)
 	{
 	prfmsg(IMPULSE1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDNAVG);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -570,7 +571,7 @@ if (*gechrbuf == '@')
 	if (deg > 359)
 		{
 		prfmsg(NUMOOR,0,359);
-		outprfge(ALWAYS, usrnum);
+		outprfge(FLT_NONE, usrnum);
 		return;
 		}
 	}
@@ -586,6 +587,7 @@ if (valpcnt(margv[1],0,99))
 			{
 			refresh(warsptr,usrnum);
 			prfmsg(LEAVEORB);
+			outprfge(FLT_SHIP,usrnum);
 			warsptr->where = 0;
 			warsptr->repair = 0;
 			}
@@ -597,7 +599,7 @@ if (valpcnt(margv[1],0,99))
 				deg = warsptr->head2b;
 			}
 		prfmsg(ENGFIRE,deg);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		warsptr->speed2b = 1000.0 * ((double)warsptr->percent/100.0);
 		if (deg != warsptr->head2b)
 			warsptr->head2b = (double)deg;
@@ -607,7 +609,7 @@ if (valpcnt(margv[1],0,99))
 		prfmsg(HLBROKE);
 		if (warsptr->speed != 0)
 			prfmsg(HLBROKE2);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 }
@@ -625,28 +627,28 @@ int	speed,topspeed,cap;
 if (shipclass[warsptr->shpclass].max_warp == 0 && atoi(margv[1]) != 0)
 	{
 	prfmsg(WARP01);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->topspeed == 0 && atoi(margv[1]) != 0)
 	{
 	prfmsg(WARPSPD2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDNAVG);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (margc < 2 || margc > 3)
 	{
 	prfmsg(FORMAT,"WARP");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 else
 	{
@@ -656,7 +658,7 @@ else
 	if (speed < 0)
 		{
 		prfmsg(FORMAT,"WARP");
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 
@@ -670,7 +672,7 @@ else
 			if (warsptr->speed/1000 > cap)
 				{
 				prfmsg(WARPSPD3);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				return;
 				}
 			/* if not, change to 150% cruising speed */
@@ -678,13 +680,13 @@ else
 				{
 				speed = cap;
 				prfmsg(WARPSPD4,speed);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				}
 			}
 		else
 			{
 			prfmsg(WARP03);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		}
@@ -701,7 +703,7 @@ else
 		if (deg > 359)
 			{
 			prfmsg(NUMOOR,0,359);
-			outprfge(ALWAYS, usrnum);
+			outprfge(FLT_NONE, usrnum);
 			return;
 			}
 		}
@@ -713,13 +715,14 @@ else
 		if (speed > topspeed && warsptr->speed/1000 <= topspeed)
 			{
 			prfmsg(WARP04,topspeed);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 
 		if (warsptr->where >= 10)
 			{
 			refresh(warsptr,usrnum);
 			prfmsg(LEAVEORB);
+			outprfge(FLT_SHIP,usrnum);
 			warsptr->where = 0;
 			warsptr->repair = 0;
 			}
@@ -732,7 +735,7 @@ else
 				deg = warsptr->head2b;
 			}
 		prfmsg(ENGFIRE,deg);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		if (shipclass[warsptr->shpclass].max_accel >= 1000 && warsptr->speed < 1000.0 && speed != 0)
 			warsptr->speed = 0.0;	/* no fractional warp speeds */
 		warsptr->speed2b = 1000.0 * (float)speed;
@@ -744,7 +747,7 @@ else
 		prfmsg(HLBROKE);
 		if (warsptr->speed != 0)
 			prfmsg(HLBROKE2);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 }
@@ -760,7 +763,7 @@ if (warsptr->helm < 0 && warsptr->speed > 0)
 else
 	prfmsg(ENGFIRE,(unsigned)warsptr->head2b);
 
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 warsptr->speed2b = 0;
 }
 
@@ -776,7 +779,7 @@ unsigned deg;
 if (margc != 2)
 	{
 	prfmsg(FORMAT,"ROTATE");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 else
 if (*margv[1] == '@') /* turn absolute */
@@ -796,12 +799,12 @@ if (*margv[1] == '@') /* turn absolute */
 				prfmsg(NOWTURN,deg);
 				warsptr->head2b = (double)deg;
 				}
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		else
 			{
 			prfmsg(NUMOOR,0,359);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		}
@@ -810,7 +813,7 @@ if (*margv[1] == '@') /* turn absolute */
 		prfmsg(HLBROKE);
 		if (warsptr->speed != 0)
 			prfmsg(HLBROKE2);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 else
@@ -828,14 +831,14 @@ if (valdegree(margv[1]))
 			prfmsg(NOWTURN,deg);
 			warsptr->head2b = (double)deg;
 			}
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	else
 		{
 		prfmsg(HLBROKE);
 		if (warsptr->speed != 0)
 			prfmsg(HLBROKE2);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 }
@@ -864,21 +867,21 @@ byte nebmask;
 if (margc != 2)
 	{
 	prfmsg(FORMAT,"ORBIT");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->where == 1)
 	{
 	prfmsg(ORBIT4);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->where >= 10)
 	{
 	prfmsg(ORBIT3);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -893,13 +896,13 @@ if (plnum <= MAXPLANETS && plnum > 0)
 		if (!got_plt)
 			{
 			prfmsg(SCAN26);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		if (cdistance(&warsptr->coord,&plptr->coord)*10000.0 > (double)NEBRNG)
 			{
 			prfmsg(SCAN26);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		}
@@ -908,7 +911,7 @@ if (plnum <= MAXPLANETS && plnum > 0)
 		if (plptr->type == PLTYPE_WORM)
 			{
 			prfmsg(ORBIT0);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		distance = (unsigned)(cdistance(&warsptr->coord,&plptr->coord)*10000);
@@ -940,7 +943,7 @@ else
 	{
 	prfmsg(NOPLNT);
 	}
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 
@@ -957,14 +960,14 @@ void FUNC cmd_phas()
 if (shipclass[warsptr->shpclass].max_phasr == 0)
 	{
 	prfmsg(PHASER0);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->phasr < 0)
 	{
 	prfmsg(PHBROKE);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -981,14 +984,14 @@ if (warsptr->where == 1)
 			else
 				{
 				prfmsg(HPWAIT);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				}
 			}
 		}
 	else
 		{
 		prfmsg(FORMAT,"HYPER");
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 else
@@ -1006,7 +1009,7 @@ else
 		else
 			{
 			prfmsg(PHANONE);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		}
 	else
@@ -1022,13 +1025,13 @@ else
 		else
 			{
 			prfmsg(PHANONE);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		}
 	else
 		{
 		prfmsg(FORMAT,"PHASER");
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 }
@@ -1053,14 +1056,14 @@ fired = FALSE;
 if (ptr->cloak > 0 )
 	{
 	prfmsg(PCLOKUP,"The phasers are");
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	return;
 	}
 
 if (ptr->damage >= 100.0) /* no firing in the brief period between going over 100 and blowing up */
 	{
 	prfmsg(RNDPHSR);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	return;
 	}
 
@@ -1075,14 +1078,14 @@ if (ptr->phasr >=PMINFIRE)
 		{
 		zaphim(ptr,usrn);
 		prfmsg(FRCTER);
-		outprfge(ALWAYS,usrn);
+		outprfge(FLT_NONE,usrn);
 		return;
 		}
 	deg = (unsigned)(normal(ptr->heading + (double)ptr->degrees) + 0.5);
 	if (ptr->status == GESTAT_USER)
 		{
 		prfmsg(PFIRED,(int)ptr->phasr,ptr->percent);
-		outprfge(FILTER,usrn);
+		outprfge(FLT_NONE,usrn);
 		fired = TRUE;
 		}
 	src_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
@@ -1115,7 +1118,7 @@ if (ptr->phasr >=PMINFIRE)
 						if (neutral(&wptr->coord))
 							{
 							prfmsg(PDEFNEUT,username(wptr));
-							outprfge(ALWAYS,usrn);
+							outprfge(FLT_NONE,usrn);
 							}
 						else
 							{
@@ -1124,7 +1127,7 @@ if (ptr->phasr >=PMINFIRE)
 							if (fired == FALSE)
 								{
 								prfmsg(PFIRED,(int)ptr->phasr,ptr->percent);
-								outprfge(FILTER,usrn);
+								outprfge(FLT_NONE,usrn);
 								fired = TRUE;
 								}
 							underone = (factor < 1.0);
@@ -1167,7 +1170,7 @@ if (ptr->phasr >=PMINFIRE)
 									prfmsg(PHITNPC,gechrbuf,username(wptr));
 								else
 									prfmsg(PHITHIM,gechrbuf,username(wptr));
-								outprfge(ALWAYS,usrn);
+								outprfge(FLT_NONE,usrn);
 								if (nebmask)
 									{
 									bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading)+.5);
@@ -1178,7 +1181,7 @@ if (ptr->phasr >=PMINFIRE)
 									prfmsg(PNPCHIT,username(ptr),gechrbuf);
 								else
 									prfmsg(PHITYOU,username(ptr),gechrbuf);
-								outprfge(ALWAYS,othusn);
+								outprfge(FLT_NONE,othusn);
 								/* cap npc-on-npc phasers so big ships don't get one shot kills */
 								if (ptr->status == GESTAT_AUTO && wptr->status == GESTAT_AUTO &&
 									factor >= (double)((shipclass[ptr->shpclass].tough_factor+1)*5+5))
@@ -1204,7 +1207,7 @@ if (ptr->phasr >=PMINFIRE)
 									prfmsg(PDEFLNPC,username(wptr));
 								else
 									prfmsg(PDEFLECT,username(wptr));
-								outprfge(ALWAYS,usrn);
+								outprfge(FLT_NONE,usrn);
 								if (nebmask)
 									{
 									bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading)+.5);
@@ -1215,7 +1218,7 @@ if (ptr->phasr >=PMINFIRE)
 									prfmsg(PNPCDEF,username(ptr),(factor < 1.0) ? "<1" : spr("%d",(int)factor));
 								else
 									prfmsg(PHITDEF,username(ptr),(factor < 1.0) ? "<1" : spr("%d",(int)factor));
-								outprfge(ALWAYS,othusn);
+								outprfge(FLT_NONE,othusn);
 								}
 							}
 						}
@@ -1230,7 +1233,7 @@ if (ptr->phasr >=PMINFIRE)
 else
 	{
 	prfmsg(PHANONE);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 }
 
@@ -1249,7 +1252,7 @@ byte src_neb,targ_neb,nebmask;
 if (ptr->damage >= 100.0)
 	{
 	prfmsg(RNDPHSR);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	return;
 	}
 
@@ -1257,7 +1260,7 @@ if (neutral(&ptr->coord))
 	{
 	zaphim(ptr,usrn);
 	prfmsg(FRCTER);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	return;
 	}
 
@@ -1265,7 +1268,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 	{
 	deg = (unsigned)normal(ptr->heading + (double)ptr->degrees);
 	prfmsg(HPFIRED,deg);
-	outprfge(FILTER,usrn);
+	outprfge(FLT_NONE,usrn);
 	src_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
 	ptr->energy -= HPFIRAMT;
 	ptr->hypha = 1;
@@ -1296,7 +1299,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 							if (neutral(&wptr->coord))
 								{
 								prfmsg(PDEFNEUT,username(wptr));
-								outprfge(ALWAYS,usrn);
+								outprfge(FLT_NONE,usrn);
 								}
 							else
 								{
@@ -1313,7 +1316,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 									prfmsg(HPHITN,gechrbuf,username(wptr));
 								else
 									prfmsg(HPHITM,gechrbuf,username(wptr));
-								outprfge(ALWAYS,usrn);
+								outprfge(FLT_NONE,usrn);
 								if (nebmask)
 									{
 									bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading)+.5);
@@ -1324,7 +1327,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 									prfmsg(HPNHITU,username(ptr),gechrbuf);
 								else
 									prfmsg(HPHITU,username(ptr),gechrbuf);
-								outprfge(ALWAYS,othusn);
+								outprfge(FLT_NONE,othusn);
 								/* prioritize user hits over npcs so users get credit */
 								if (wptr->damage < 100.0 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
 									wptr->lastfired = usrn;
@@ -1356,7 +1359,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 else
 	{
 	prfmsg(HNOFIRP);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	}
 }
 
@@ -1376,21 +1379,21 @@ byte nebmask;
 if (shipclass[warsptr->shpclass].max_torps == 0)
 	{
 	prfmsg(TORP3);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->where == 1)
 	{
 	prfmsg(TORP2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->cloak > 0 )
 	{
 	prfmsg(PCLOKUP,"The torpedo launcher is");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -1402,21 +1405,21 @@ if (warsptr->shieldstat == SHIELDUP)
 if (warsptr->items[I_TORPEDO] == 0)
 	{
 	prfmsg(NOTORPS);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (margv[1] == NULL)
 	{
 	prfmsg(NOSHIP);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (margc < 2)
 	{
 	prfmsg(FORMAT,"TORPEDO");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -1427,7 +1430,7 @@ shpnum = findshp(margv[1],1);
 if (shpnum == usrnum)
 	{
 	prfmsg(FRCTER);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 else
 if ( shpnum >= 0)
@@ -1439,7 +1442,7 @@ if ( shpnum >= 0)
 			prfmsg(SCAN27);
 		else
 			prfmsg(NOSHIP);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	else
 		{
@@ -1447,7 +1450,7 @@ if ( shpnum >= 0)
 			{
 			zaphim(warsptr,usrnum);
 			prfmsg(FRCTER);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		torp(warsptr,usrnum,shpnum);
@@ -1459,7 +1462,7 @@ else
 		prfmsg(SCAN27);
 	else
 		prfmsg(NOSHIP);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 
 if (warsptr->shieldstat == SHIELDUP)
@@ -1483,7 +1486,7 @@ int	i,oi,slot;
 if (ptr->damage >= 100.0)
 	{
 	prfmsg(RNDTORP);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	return(0);
 	}
 
@@ -1536,7 +1539,7 @@ if (lockon(ptr,0,shpnum,usrn) == 1)
 			strcat(gechrbuf,(ocount > 1) ? " are" : " is");
 			prfmsg(TORMANY2,gechrbuf);
 			}
-		outprfge(FILTER,usrn);
+		outprfge(FLT_NONE,usrn);
 		return(0);
 		}
 	if (ptr->torps_fired >= shipclass[ptr->shpclass].max_torps)
@@ -1547,16 +1550,16 @@ if (lockon(ptr,0,shpnum,usrn) == 1)
 				prfmsg(TORPRELS);
 			else
 				prfmsg(TORPRELM);
-			outprfge(ALWAYS,usrn);
+			outprfge(FLT_NONE,usrn);
 			}
 		return(0);
 		}
 	prfmsg(TFIRE1);
-	outprfge(FILTER,usrn);
+	outprfge(FLT_NONE,usrn);
 	--ptr->items[I_TORPEDO];
 	++ptr->torps_fired;
 	prfmsg(TFIRE2,shpltr(shpnum,usrn));
-	outprfge(FILTER,shpnum);
+	outprfge(FLT_NONE,shpnum);
 	wptr->ltorps[slot].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
 	wptr->ltorps[slot].distance += 20;
 	wptr->ltorps[slot].channel = (unsigned char)usrn;
@@ -1583,14 +1586,14 @@ byte nebmask;
 if (shipclass[warsptr->shpclass].max_missl == 0)
 	{
 	prfmsg(MISS01);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->cloak > 0)
 	{
 	prfmsg(PCLOKUP,"The missile launcher is");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -1600,21 +1603,21 @@ if (warsptr->shieldstat == SHIELDUP)
 if (warsptr->items[I_MISSILE] == 0)
 	{
 	prfmsg(NOMISSL);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (margv[1] == NULL && margc == 3)
 	{
 	prfmsg(NOSHIP);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (margc < 2)
 	{
 	prfmsg(FORMAT,"MISSILE");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -1639,7 +1642,7 @@ shpnum = findshp(margv[1],1);
 if (shpnum == usrnum)
 	{
 	prfmsg(FRCTER);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 else
 if (shpnum >= 0)
@@ -1651,7 +1654,7 @@ if (shpnum >= 0)
 			prfmsg(SCAN27);
 		else
 			prfmsg(NOSHIP);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	else
 		{
@@ -1659,7 +1662,7 @@ if (shpnum >= 0)
 			{
 			zaphim(warsptr,usrnum);
 			prfmsg(FRCTER);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		misl(warsptr,usrnum,shpnum,energy,energy);
@@ -1671,7 +1674,7 @@ else
 		prfmsg(SCAN27);
 	else
 		prfmsg(NOSHIP);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 
 if (warsptr->shieldstat == SHIELDUP)
@@ -1694,7 +1697,7 @@ int	i,oi,slot;
 if (ptr->damage >= 100.0)
 	{
 	prfmsg(RNDMISL);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return(0);
 	}
 
@@ -1747,7 +1750,7 @@ if (lockon(ptr,1,shpnum,usrnum) == 1)
 			strcat(gechrbuf,(ocount > 1) ? " are" : " is");
 			prfmsg(MISMANY2,gechrbuf);
 			}
-		outprfge(FILTER,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return(0);
 		}
 	if (ptr->missl_fired >= shipclass[ptr->shpclass].max_missl)
@@ -1758,23 +1761,23 @@ if (lockon(ptr,1,shpnum,usrnum) == 1)
 				prfmsg(MISSRELS);
 			else
 				prfmsg(MISSRELM);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		return(0);
 		}
 	if (fluxstat(ptr,usrnum,eng_flu) == 0)
 		{
 		prfmsg(MISSHRT);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return(0);
 		}
 	prfmsg(MFIRE1,energy);
-	outprfge(FILTER,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	--(ptr->items[I_MISSILE]);
 	++ptr->missl_fired;
 	ptr->energy -= eng_flu;
 	prfmsg(MFIRE2,shpltr(shpnum,usrnum));
-	outprfge(FILTER,shpnum);
+	outprfge(FLT_NONE,shpnum);
 	wptr->lmissl[slot].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
 	wptr->lmissl[slot].distance += 20;
 	wptr->lmissl[slot].channel = (unsigned char)usrnum;
@@ -1797,21 +1800,21 @@ double dist,speed,fact=0.0;
 if (type == 0 && ptr->torpcntl > 0)
 	{
 	prfmsg(TRBROKE);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	return(0);
 	}
 
 if (type == 1 && ptr->mislcntl > 0)
 	{
 	prfmsg(MIBROKE);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	return(0);
 	}
 
 if (warsptr->jam_sev > (byte)2)
 	{
 	prfmsg(JAMMER4W);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	return(0);
 	}
 
@@ -1820,7 +1823,7 @@ wptr= warshpoff(ship);
 if (neutral(&(wptr->coord)))
 	{
 	prfmsg(FCNONO);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	return(0);
 	}
 
@@ -1859,14 +1862,14 @@ if (wptr->cloak < 10 && (dist*10000.0) < (double)shipclass[warsptr->shpclass].sc
 	else
 		{
 		prfmsg(FCNOLOCK,shpltr(usrn,ship));
-		outprfge(FILTER,usrn);
+		outprfge(FLT_NONE,usrn);
 		return(0);
 		}
 	}
 else
 	{
 	prfmsg(NOSHIP);
-	outprfge(ALWAYS,usrn);
+	outprfge(FLT_NONE,usrn);
 	return(0);
 	}
 }
@@ -1970,7 +1973,7 @@ int usrn;
 {
 damstr(se100dam);
 prfmsg(ZAPHIM1,gechrbuf);
-outprfge(ALWAYS,usrn);
+outprfge(FLT_NONE,usrn);
 ptr->damage += se100dam;
 }
 
@@ -1988,48 +1991,48 @@ int i;
 if (!shipclass[warsptr->shpclass].has_decoy)
 	{
 	prfmsg(DECOY0);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->where == 1)
 	{
 	prfmsg(DECOY1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->cloak > 0 )
 	{
 	prfmsg(PCLOKUP,"The decoy launcher is");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDDECY);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->items[I_DECOYS] == 0)
 	{
 	prfmsg(NODECOYS);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->decload < 0)
 	{
 	prfmsg(DEBROKE);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 if (warsptr->decload > 0)
 	{
 	prfmsg(DECOYREL);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -2041,12 +2044,12 @@ for (i=0; i<10;++i)
 		warsptr->decout[i] = DECOYTIME;
 		warsptr->decload = 1;
 		prfmsg(DECFIRE);
-		outprfge(FILTER,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	}
 prfmsg(DECMANY);
-outprfge(FILTER,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 
@@ -2061,47 +2064,47 @@ void FUNC cmd_jammer()
 if (warsptr->cloak > 0 )
 	{
 	prfmsg(PCLOKUP,"The jammer launcher is");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (!shipclass[warsptr->shpclass].has_jam)
 	{
 	prfmsg(JAMMER0);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->items[I_JAMMERS] == 0)
 	{
 	prfmsg(JAMMER1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDJAMR);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->jamload > 0 )
 	{
 	prfmsg(JAMMER6);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->jamload < 0)
 	{
 	prfmsg(JMBROKE);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 prfmsg(JAMMER2);
-outprfge(FILTER,usrnum);
+outprfge(FLT_NONE,usrnum);
 jam(warsptr,usrnum);
 }
 
@@ -2153,7 +2156,7 @@ for (zothusn=0; zothusn < nships ; zothusn++)
 	if (wptr->jam_time > 0 && usrn != zothusn)
 		{
 		prfmsg(JAMMER3);
-		outprfge(FILTER, zothusn);
+		outprfge(FLT_NONE, zothusn);
 		}
 	}
 
@@ -2174,7 +2177,7 @@ void FUNC cmd_zipper()
 if (!shipclass[warsptr->shpclass].has_zip)
 	{
 	prfmsg(ZIPPER0);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -2182,40 +2185,40 @@ if (!shipclass[warsptr->shpclass].has_zip)
 if (warsptr->cloak > 0 )
 	{
 	prfmsg(PCLOKUP,"The zipper launcher is");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDZIPR);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->items[I_ZIPPERS] == 0)
 	{
 	prfmsg(ZIPPER1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->zipload > 0 )
 	{
 	prfmsg(ZIPPER4);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->zipload < 0)
 	{
 	prfmsg(ZPBROKE);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 prfmsg(ZIPPER2);
-outprfge(FILTER,usrnum);
+outprfge(FLT_NONE,usrnum);
 zip(warsptr);
 }
 
@@ -2246,7 +2249,7 @@ if (ptr->shipname[0] == '\0')
 	prfmsg(ZIPPER3O,ptr->userid);
 else
 	prfmsg(ZIPPER3,ptr->shipname);
-outrange(FILTER,&ptr->coord);
+outrange(FLT_NONE,&ptr->coord);
 --ptr->items[I_ZIPPERS];
 ptr->cantexit = FIRETICKS;
 ptr->zipload = 1;
@@ -2265,35 +2268,35 @@ int mres;
 if (!shipclass[warsptr->shpclass].has_mine)
 	{
 	prfmsg(MINE0);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->mineload < 0)
 	{
 	prfmsg(MNBROKE);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (neutral(&warsptr->coord))
 	{
 	prfmsg(MINE7);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->cloak > 0 )
 	{
 	prfmsg(PCLOKUP,"The mine launcher is");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDMINE);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -2301,14 +2304,14 @@ if (warsptr->items[I_MINE] <= 0)
 	{
 	warsptr->items[I_MINE] = 0;
 	prfmsg(MINE1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (margc != 2 )
 	{
 	prfmsg(FORMAT,"MINE");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -2317,7 +2320,7 @@ i = atoi(margv[1]);
 if (i < 1 || i > 50)
 	{
 	prfmsg(FORMAT,"MINE");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -2325,7 +2328,7 @@ mres = laymine(warsptr,usrnum,i);
 if (mres == 1)
 	{
 	prfmsg(MINE3,i);
-	outprfge(FILTER,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -2336,7 +2339,7 @@ if (mres == 3)
 	prfmsg(MINE9);
 else
 	prfmsg(MINE2,usermines);
-outprfge(FILTER,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 /* split out so that cyb's can lay mines too */
@@ -2401,7 +2404,7 @@ char	*msgptr;
 if (sameas(margv[0],">") && margc < 2)
 	{
 	prfmsg(FORMAT,"SEND");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -2431,7 +2434,7 @@ if (!sameas(margv[0],">") && margc >= 2 && genearas(margv[1],"freq"))
 		}
 	else
 		prfmsg(FORMAT,"SEND");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -2455,7 +2458,7 @@ if ((sameas(margv[0],">") && margc > 1) || margc > 2)
 				prfmsg(MSGSNT1O,"Hailing",waruptr->userid,msgptr);
 			else
 				prfmsg(MSGSNT1,"Hailing",waruptr->userid,warsptr->shipname,msgptr);
-			outwar(FILTER,usrnum,0,0);
+			outwar(FLT_NONE,usrnum,0,0);
 			prfmsg(MSGSNT2,"Hailing");
 			}
 		}
@@ -2495,7 +2498,7 @@ if ((sameas(margv[0],">") && margc > 1) || margc > 2)
 					prfmsg(MSGSNT1O,"Team",waruptr->userid,margv[2]);
 				else
 					prfmsg(MSGSNT1,"Team",waruptr->userid,warsptr->shipname,margv[2]);
-				outwar(ALWAYS,usrnum,waruptr->teamcode,2);
+				outwar(FLT_NONE,usrnum,waruptr->teamcode,2);
 				prfmsg(MSGSNT2,"Team");
 				}
 			}
@@ -2518,7 +2521,7 @@ if ((sameas(margv[0],">") && margc > 1) || margc > 2)
 					prfmsg(MSGSNT1O,"Encoded",waruptr->userid,margv[2]);
 				else
 					prfmsg(MSGSNT1,"Encoded",waruptr->userid,warsptr->shipname,margv[2]);
-				outwar(ALWAYS,usrnum,warsptr->freq,1);
+				outwar(FLT_NONE,usrnum,warsptr->freq,1);
 				prfmsg(MSGSNT3,warsptr->freq);
 				}
 			}
@@ -2530,7 +2533,7 @@ if ((sameas(margv[0],">") && margc > 1) || margc > 2)
 	}
 else
 	prfmsg(FORMAT,"SEND");
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 /**************************************************************************
@@ -2547,7 +2550,7 @@ double	ddist;
 if (margc != 2 || (!sameas(margv[1],"nav") && !sameas(margv[1],"sys") && !sameas(margv[1],"inv") && !sameas(margv[1],"acc") && !sameas(margv[1],"ord")))
 	{
 	prfmsg(FORMAT,"REPORT");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -2924,7 +2927,7 @@ if (sameas(margv[1],"ord"))
 		}
 	}
 prfmsg(DASHES);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 /**************************************************************************
@@ -2936,14 +2939,14 @@ void FUNC cmd_scan()
 if (warsptr->tactical != 0)
 	{
 	prfmsg(TABROKE);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDTACT);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -2966,13 +2969,13 @@ if (margc > 1)
 	else
 		{
 		prfmsg(FORMAT,"SCAN");
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 else
 	{
 	prfmsg(FORMAT,"SCAN");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 }
 
@@ -2987,28 +2990,28 @@ void FUNC cmd_shields()
 if (shipclass[warsptr->shpclass].max_shlds == 0)
 	{
 	prfmsg(SHIELD0);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->where == 1)
 	{
 	prfmsg(SHLD1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->damage >= 100.0)
 	{
 	prfmsg(SHDAMAG);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (margc != 2)
 	{
 	prfmsg(FORMAT,"SHIELD");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -3017,7 +3020,7 @@ if (sameas(margv[1],"up"))
 	if (warsptr->shieldstat == SHIELDDM)
 		{
 		prfmsg(SHNORPR);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	if (fluxstat(warsptr,usrnum,SHENGUSE * warsptr->shieldtype) == 1)
@@ -3028,7 +3031,7 @@ if (sameas(margv[1],"up"))
 	else
 		{
 		prfmsg(SHNOPWR);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	}
@@ -3041,7 +3044,7 @@ if (sameas(margv[1],"down"))
 else
 	{
 	prfmsg(FORMAT,"SHIELD");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 }
@@ -3058,28 +3061,28 @@ void FUNC cmd_cloak()
 if (shipclass[warsptr->shpclass].max_cloak == 0)
 	{
 	prfmsg(CLOK01);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (margc != 2)
 	{
 	prfmsg(FORMAT,"CLOAK");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->where == 1)
 	{
 	prfmsg(CLOK1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->damage >= 100.0)
 	{
 	prfmsg(RNDCLOK);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -3088,7 +3091,7 @@ if (sameas(margv[1],"on"))
 	if (warsptr->cloak > 0)
 		{
 		prfmsg(CLOKCOM);
-		outprfge(FILTER,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	else
 	if (warsptr->cloak == 0)
@@ -3097,19 +3100,19 @@ if (sameas(margv[1],"on"))
 			{
 			warsptr->cloak = 1;
 			prfmsg(CLOKON);
-			outprfge(FILTER,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		else
 			{
 			prfmsg(CLOKPWR);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		}
 	else
 	if (warsptr->cloak < 0)
 		{
 		prfmsg(CLOKDAM);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	return;
 	}
@@ -3119,7 +3122,7 @@ if (sameas(margv[1],"off"))
 	if (warsptr->cloak <= 0)
 		{
 		prfmsg(CLOKDWN);
-		outprfge(FILTER,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	else
 	if (warsptr->cloak > 0)
@@ -3129,9 +3132,9 @@ if (sameas(margv[1],"off"))
 			warsptr->cloak = 3;
 			assign_cybs(usrnum,1);	/* don't pull far away cybs if close ones around */
 			prfmsg(CLOKOFF);
-			outprfge(FILTER,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			prfmsg(CLOK2);
-			outrange(FILTER,&warsptr->coord);
+			outrange(FLT_NONE,&warsptr->coord);
 			suddenappear(warsptr,usrnum);
 			}
 		else
@@ -3139,13 +3142,13 @@ if (sameas(margv[1],"off"))
 		warsptr->cloak = 3;
 		assign_cybs(usrnum,1);	/* don't pull far away cybs if close ones around */
 		prfmsg(CLOKOFF);
-		outprfge(FILTER,usrnum);
+		outprfge(FLT_NONE,usrnum);
 			}
 		}
 	return;
 	}
 prfmsg(FORMAT,"CLOAK");
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 /**************************************************************************
@@ -3160,7 +3163,7 @@ int i;
 if (warsptr->where < 10)
 	{
 	prfmsg(TRANSFR3);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -3177,14 +3180,14 @@ if (margc == 4)
 				trans_down(i);
 			else
 				prfmsg(FORMAT,"TRANSFER");
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		}
 	}
 
 prfmsg(FORMAT,"TRANSFER");
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 void trans_down(item)
@@ -3397,7 +3400,7 @@ void FUNC cmd_abandon()
 if (warsptr->where < 10)
 	{
 	prfmsg(ABAN01);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -3419,13 +3422,13 @@ if (sameas(plptr->userid,warsptr->userid))
 	gesdb(GEUPDATE,&pkey,(GALSECT *)&planet);
 
 	prfmsg(ABAN02);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 
 	}
 else
 	{
 	prfmsg(ADMIN2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 }
 
@@ -3442,7 +3445,7 @@ void FUNC cmd_admin()
 if (warsptr->where < 10)
 	{
 	prfmsg(ADMIN1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -3455,11 +3458,11 @@ if (plptr->userid[0] == 0)
 	if (waruptr->planets >= max_plnts)
 		{
 		prfmsg(ADMIN4,max_plnts);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	prfmsg(ADMENU1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	usrptr->substt = ADMENU1;
 	}
 else
@@ -3471,13 +3474,13 @@ if (sameas(plptr->userid,warsptr->userid) || (syscmds && !sysonly) || (sysonly &
 
 	{
 	prfmsg(ADMENU2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	usrptr->substt = ADMENU2;
 	}
 else
 	{
 	prfmsg(ADMIN2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 }
 
@@ -3495,7 +3498,7 @@ unsigned long num;
 if (warsptr->where < 10)
 	{
 	prfmsg(ADMIN1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -3506,7 +3509,7 @@ getplanetdat(usrnum);
 if (sameas(plptr->userid,warsptr->userid))
 	{
 	prfmsg(ATTACK0);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -3514,7 +3517,7 @@ if (neutral(&warsptr->coord))
 	{
 	zaphim(warsptr,usrnum);
 	prfmsg(ATTKER);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -3534,18 +3537,18 @@ if (margc == 3)
 			if (won == 1)
 				{
 				prfmsg(ATTACK8);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				}
 			else
 				{
 				prfmsg(ATTACK9);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				}
 			}
 		else
 			{
 			prfmsg(ATTACKM0);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		return;
 		}
@@ -3566,25 +3569,25 @@ if (margc == 3)
 				if (won == 1)
 					{
 					prfmsg(ATTACK8);
-					outprfge(ALWAYS,usrnum);
+					outprfge(FLT_NONE,usrnum);
 					}
 				else
 					{
 					prfmsg(ATTACK9);
-					outprfge(ALWAYS,usrnum);
+					outprfge(FLT_NONE,usrnum);
 					}
 				}
 			else
 				{
 				prfmsg(ATTACKF0);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				}
 			return;
 			}
 		else
 			{
 			prfmsg(ATTACK0A);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		}
@@ -3594,7 +3597,7 @@ else
 	{
 	prfmsg(FORMAT,"ATTACK");
 	}
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 int FUNC attack_men(num)
@@ -3612,7 +3615,7 @@ sprintf(gechrbuf,"%ld",num);
 
 /* tell him there gone*/
 prfmsg(ATTACKM1,gechrbuf);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 
 left1 = num;
 left2 = plptr->items[I_TROOPS].qty;
@@ -3733,7 +3736,7 @@ if (left1 > 0L && (left2 <= 0L && plptr->items[(int)I_FIGHTER].qty <= 0L) && !wo
 
 plptr->items[I_TROOPS].qty = left2;
 
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 clrprf();
 
 /* inform the player if he is not in game */
@@ -3799,7 +3802,7 @@ int	ii;
 warsptr->items[I_FIGHTER] -= num;
 sprintf(gechrbuf,"%ld",num);
 prfmsg(ATTACKF1,gechrbuf);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 
 left1 = num;
 left2 = plptr->items[I_FIGHTER].qty;
@@ -3904,7 +3907,7 @@ if (left1 > 0L)
 	prfmsg(ATTACKF6,gechrbuf);
 	}
 
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 clrprf();
 
 if (ratio > 5) /* big enough to let spy report on it */
@@ -3965,7 +3968,7 @@ if (instat(plptr->userid,gestt) && othusp->substt >= FIGHTSUB)
 		prfmsg(ATTACK6,plptr->name,xsect,ysect,warsptr->userid,warsptr->shipname);
 	outprf(othusn);
 	prfmsg(ATTACK7);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	clrprf();
 	}
 else
@@ -3974,7 +3977,7 @@ if (onsys(plptr->userid) && user[othusn].state != fse_state)
 	prfmsg(ATTACK6A);
 	injoth();
 	prfmsg(ATTACK7);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	clrprf();
 	}
 else
@@ -4059,13 +4062,13 @@ j = gemaxlist;
 if (margc == 2 && sameas(margv[1],"all"))
 	{
 	prfmsg(ROSTER1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	j = 200;
 	}
 else
 	{
 	prfmsg(ROSTER2,gemaxlist);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 
 if (showrank && qeqbtv(waruptr->userid, 0))
@@ -4086,15 +4089,15 @@ if (qhibtv(1))
 			if (showrank && absbtv() == target)
 				rank = i;
 			if (i % 5 == 0)
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 			}
 		} while (qprbtv() && i < j);
 	if (i % 5 != 0)
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 	if (rank != 0)
 		{
 		prfmsg(ROSTER3,rank);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 else
@@ -4118,7 +4121,7 @@ if (margc > 1)
 	if (page < 1 || page > ((max_plnts + 19)/20) || margc > 2)
 		{
 		prfmsg(FORMAT,"PLANET");
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	}
@@ -4143,11 +4146,11 @@ if (qlobtv(0))
 					}
 				++stepper;
 				if (stepper > inc && ((stepper-inc)%5) == 0)	/* cat five lines then print */
-					outprfge(ALWAYS,usrnum);
+					outprfge(FLT_NONE,usrnum);
 				if (stepper >= inc+20)
 					{
 					prfmsg(PLAMSG3,page+1);
-					outprfge(ALWAYS,usrnum);
+					outprfge(FLT_NONE,usrnum);
 					return;
 					}
 				}
@@ -4157,18 +4160,18 @@ if (qlobtv(0))
 				}
 			} while (qnxbtv());
 		if (stepper > inc && ((stepper-inc)%5) != 0)
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 		}
 	else
 		{
 		prfmsg(PLAMSG2);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 else
 	{
 	prfmsg(PLAMSG2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 }
 
@@ -4185,21 +4188,21 @@ int i;
 if (warsptr->where < 10)
 	{
 	prfmsg(SELL1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (!neutral(&warsptr->coord))
 	{
 	prfmsg(SELL1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (waruptr->factions[gcnum] > 100)	/* don't buy from jerks */
 	{
 	prfmsg(NOZYG,(int)((waruptr->factions[gcnum]-61)/40));
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -4216,7 +4219,7 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 			if (genearas(kwrd[i],margv[2]))
 				{
 				sell(i);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				return;
 				}
 			}
@@ -4224,7 +4227,7 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 	}
 
 prfmsg(FORMAT,"SELL");
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 void FUNC sell(item)
@@ -4364,7 +4367,7 @@ int i;
 if (warsptr->where < 10)
 	{
 	prfmsg(BUY1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -4376,7 +4379,7 @@ fixplanetteam();
 if (neutral(&warsptr->coord) && plnum == 1 && waruptr->factions[gcnum] > 100)	/* if Zygor, don't sell to jerks */
 	{
 	prfmsg(NOZYG,(int)((waruptr->factions[gcnum]-61)/40));
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -4385,7 +4388,7 @@ if (sameas(plptr->password,"team")
 	&& plptr->teamcode != waruptr->teamcode)
 	{
 	prfmsg(BUYPAS3);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 else
@@ -4394,13 +4397,13 @@ if (sameas(plptr->password,"team")
 	&& plptr->teamcode == waruptr->teamcode)
 	{
 	prfmsg(BUYPAS4);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 else
 if (!sameas(plptr->password,"none") && margc > 1 && margc < 4)
 	{
 	prfmsg(BUYPAS1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 else
@@ -4408,7 +4411,7 @@ if (!sameas(plptr->password,"none")
 	&& !sameas(plptr->password,margv[3]))
 	{
 	prfmsg(BUYPAS2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -4419,13 +4422,13 @@ if (margc > 2)
 		if (genearas(kwrd[i],margv[2]))
 			{
 			buy(i);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		}
 	}
 prfmsg(FORMAT,"BUY");
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 /**************************************************************************
@@ -4440,7 +4443,7 @@ int i;
 if (warsptr->where < 10)
 	{
 	prfmsg(BUY1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -4451,7 +4454,7 @@ getplanetdat(usrnum);
 if (neutral(&warsptr->coord) && plnum == 1 && waruptr->factions[gcnum] > 100)	/* if Zygor, don't price to jerks */
 	{
 	prfmsg(NOZYG,(int)((waruptr->factions[gcnum]-61)/40));
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -4462,13 +4465,13 @@ if (margc == 3)
 		if (genearas(kwrd[i],margv[2]))
 			{
 			buy(i);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		}
 	}
 prfmsg(FORMAT,"PRICE");
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 void FUNC buy(item)
@@ -4652,7 +4655,7 @@ unsigned price;
 if (warsptr->where < 10)
 	{
 	prfmsg(MAINT1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -4664,7 +4667,7 @@ getplanetdat(usrnum);
 if (!sameas(plptr->password,"none") && margc < 2)
 	{
 	prfmsg(MAINT2);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -4672,14 +4675,14 @@ if (!sameas(plptr->password,"none")
 	&& !sameas(plptr->password,margv[1]))
 	{
 	prfmsg(MAINT3);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (plptr->userid[0] == 0 || plptr->items[I_MEN].qty < 25000L)
 	{
 	prfmsg(MAINT8);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -4689,21 +4692,21 @@ if (neutral(&warsptr->coord) && chkitm(usrnum))
 if (warsptr->cantexit > 0)
 	{
 	prfmsg(MAINT9);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->cloak > 0 && !sameas(plptr->userid,warsptr->userid))
 	{
 	prfmsg(MAINT12);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->repair > 0)
 	{
 	prfmsg(MAINT11);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -4718,7 +4721,7 @@ if (neutral(&warsptr->coord))
 	else
 		{
 		prfmsg(MAINT4);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	}
@@ -4734,7 +4737,7 @@ else
 	prfmsg(MAINT6);
 	}
 
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 
 }
 
@@ -4752,14 +4755,14 @@ long	delta,credit,fee;
 if (margc != 3)
 	{
 	prfmsg(FORMAT,"NEW");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->where < 10)
 	{
 	prfmsg(NEW1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -4772,7 +4775,7 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 	if (waruptr->factions[gcnum] > 100)	/* don't sell to jerks */
 		{
 		prfmsg(NOZYG,(int)((waruptr->factions[gcnum]-61)/40));
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	if (sameas(margv[1],"ship"))
@@ -4827,7 +4830,7 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 			if (delta > 0)
 				{
 				prfmsg(NEW19,l2as(delta));
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				}
 			else
 				delta = 0;
@@ -4848,7 +4851,7 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 					prfmsg(TOORICH,spr("%lu",ULCAP));
 					}
 				prfmsg(NEW18,l2as(fee),l2as(credit));
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				delta = 0;
 				}
 
@@ -4856,7 +4859,7 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 			if (delta < 1000 && delta > 0)
 				{
 				prfmsg(NEW17);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				delta = 1000;
 				}
 
@@ -4906,7 +4909,7 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 			if (delta > 0)
 				{
 				prfmsg(NEW29,l2as(delta));
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				}
 			else
 				delta = 0;
@@ -4927,14 +4930,14 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 					prfmsg(TOORICH,spr("%lu",ULCAP));
 					}
 				prfmsg(NEW28,l2as(fee),l2as(credit));
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				delta = 0;
 				}
 
 			if (delta < 1000 && delta > 0)
 				{
 				prfmsg(NEW17);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				delta = 1000;
 				}
 
@@ -4971,7 +4974,7 @@ else
 	{
 	prfmsg(NEW5);
 	}
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 
@@ -4997,7 +5000,7 @@ if ((!syscmds) || (sysonly && !(usrptr->flags&ISYSOP)))
 #endif
 	{
 	prfmsg(INVCMD);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 if (sameas("factions",margv[1]) && margc == 2)
@@ -5007,7 +5010,7 @@ if (sameas("factions",margv[1]) && margc == 2)
 		prfmsg(FACNAME0+i);
 		prf("... %d\r",waruptr->factions[i]);
 		}
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 else
@@ -5015,14 +5018,14 @@ if (sameas("help",margv[1]) && margc == 2)
 	{
 	setmbk(gehlpmb);
 	prfmsg(gehlp[37].helptxt);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 else
 if (sameas("nebseed",margv[1]) && margc == 2)
 	{
 	prf("\rNebula seed: %s\r",spr("%lu",nebseed));
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 else
@@ -5057,7 +5060,7 @@ if (sameas("fillslots",margv[1]) && margc == 2)
 			}
 		}
 	prf("%d NPC slots filled.\r",count);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 else
@@ -5074,7 +5077,7 @@ if (sameas("get",margv[1]) && margc == 4)
 					warsptr->items[i] += amt;
 					sprintf(gechrbuf,"%ld",amt);
 					prfmsg(SYSGET,gechrbuf,item_name[i]);
-					outprfge(ALWAYS,usrnum);
+					outprfge(FLT_NONE,usrnum);
 					return;
 					}
 				}
@@ -5092,14 +5095,14 @@ if (sameas("kill",margv[1]) && margc == 3)
 			{
 			warshpoff(othusn)->damage = 101;
 			prfmsg(SYSKILL,warshpoff(othusn)->userid);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			gotone = TRUE;
 			}
 		}
 	if (!gotone)
 		{
 		prfmsg(SYSKILN);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	return;
 	}
@@ -5109,7 +5112,7 @@ if (sameas("cash",margv[1]) && margc == 3)
 	waruptr->cash += atol(margv[2]);
 	sprintf(gechrbuf,"%lu",atol(margv[2]));
 	prfmsg(SYSCASH,gechrbuf);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 else
@@ -5134,7 +5137,7 @@ if (sameas("teamdump",margv[1]) && margc == 2)
 			teamtab[i].password,
 			teamtab[i].secret);
 		prf(gechrbuf);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	return;
 	}
@@ -5161,7 +5164,7 @@ if (sameas("goto",margv[1]) && margc == 4)
 					xsect,ysect,
 					(innebula(i,j) ? CLR_GREEN2 "nebula" : "sector"),
 					i,j);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		}
@@ -5174,7 +5177,7 @@ if (sameas("class",margv[1]) && margc == 3)
 		warsptr->shpclass = atoi(margv[2])-1;
 		warsptr->topspeed = shipclass[warsptr->shpclass].max_warp;
 		prfmsg(SYSCLS,shipclass[warsptr->shpclass].typename);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	}
@@ -5185,7 +5188,7 @@ if (sameas("shieldtype",margv[1]) && margc == 3)
 		{
 		warsptr->shieldtype = atoi(margv[2]);
 		prfmsg(NEW7,"0",warsptr->shieldtype);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	}
@@ -5197,7 +5200,7 @@ if (sameas("phasertype",margv[1]) && margc == 3)
 		{
 		warsptr->phasrtype = atoi(margv[2]);
 		prfmsg(NEW10,"0",warsptr->phasrtype);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	}
@@ -5214,7 +5217,7 @@ if (sameas("maint",margv[1]))
 		if (warsptr->cantexit > 0)
 			{
 			prfmsg(MAINT9);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		warsptr->repair = (unsigned)(warsptr->damage/3.0)+1;
@@ -5223,7 +5226,7 @@ if (sameas("maint",margv[1]))
 		prfmsg(MAINT5,0);
 	else
 		prfmsg(MAINT5,warsptr->repair);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 else
@@ -5232,7 +5235,7 @@ if (sameas("unjam",margv[1]))
 	warsptr->jam_sev = (byte)0;
 	warsptr->jam_time = (byte)0;
 	prfmsg(JAMMER5);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 else
@@ -5258,7 +5261,7 @@ if (sameas("list",margv[1]))
 			prf("%3d %-20s %5d %5d %6d %4d %7d %5d %5d %4d\r",i,username(ptr),xsect,ysect,(int)(ptr->damage),(int)(ptr->tick),(int)(ptr->cybmine),(int)(ptr->holdcourse),(int)(ptr->cybupdate),(int)(ptr->lastfired));
 			}
 		}
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 else
@@ -5275,7 +5278,7 @@ if (sameas("classlist",margv[1]))
 				shipclass[i].noclaim);
 			}
 		}
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 else
@@ -5283,7 +5286,7 @@ if (sameas("cybpause",margv[1])&& margc == 3)
 	{
 	i = atoi(margv[2]);
 	prfmsg(SYSCYB,i);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	cybhaltflg = i;
 	return;
 	}
@@ -5293,7 +5296,7 @@ if (sameas("multiply",margv[1]) && (margc > 1 && margc < 4))
 	if (warsptr->where < 10)
 		{
 		prfmsg(ADMIN1);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	plnum = warsptr->where - 10;
@@ -5312,11 +5315,11 @@ if (sameas("multiply",margv[1]) && (margc > 1 && margc < 4))
 			}
 		gesdb(GEUPDATE,(PKEY *)&planet,(GALSECT *)&planet);
 		prfmsg(SYSPOP,j);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	prfmsg(SYSNP);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 else
@@ -5325,7 +5328,7 @@ if (sameas("orbit",margv[1]) && (margc == 3))
 	if (warsptr->where >= 10)
 		{
 		prfmsg(ORBIT3);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 
@@ -5339,7 +5342,7 @@ if (sameas("orbit",margv[1]) && (margc == 3))
 			if (plptr->type == PLTYPE_WORM)
 				{
 				prfmsg(ORBIT0);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				return;
 				}
 			if (strlen(plptr->name) == 0)
@@ -5350,10 +5353,10 @@ if (sameas("orbit",margv[1]) && (margc == 3))
 				{
 				prfmsg(ORBIT1,plnum,plptr->name);
 				}
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			sprintf(gechrbuf,"%lu (%d)",plptr->timestamp >> 4,(int)plptr->timestamp & 0xF);
 			prf("Planet timestamp: %s\r",gechrbuf);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			warsptr->where = 10 + plnum;
 			warsptr->speed = 0;
 			warsptr->speed2b = 0;
@@ -5362,14 +5365,14 @@ if (sameas("orbit",margv[1]) && (margc == 3))
 		else
 			{
 			prfmsg(NOPLNT);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		}
 	else
 		{
 		prfmsg(NOPLNT);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	}
@@ -5378,7 +5381,7 @@ if (sameas("assigncybs",margv[1]) && margc == 2)
 	{
 	assign_cybs(usrnum,0);
 	prfmsg(SYSACY);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 else
@@ -5395,7 +5398,7 @@ if (sameas("fill",margv[1]))
 else
 
 prfmsg(FORMAT,"SYS");
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 /**************************************************************************
@@ -5420,7 +5423,7 @@ else
 	warsptr->shipname[0] = '\0';
 	prfmsg(RENAME1O);
 	}
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 
@@ -5434,12 +5437,12 @@ void FUNC cmd_destruct()
 if (!neutral(&warsptr->coord))
 	{
 	prfmsg(SELFD1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	warsptr->destruct = (byte)COUNTDOWN;
 	return;
 	}
 prfmsg(SELFD1A);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 
@@ -5458,7 +5461,7 @@ if (warsptr->destruct > (byte)0)
 			prfmsg(SELFD4AO,warsptr->userid);
 		else
 			prfmsg(SELFD4A,warsptr->shipname);
-		outrange(ALWAYS,&warsptr->coord);
+		outrange(FLT_NONE,&warsptr->coord);
 		}
 	prfmsg(SELFD4);
 	warsptr->destruct = (byte)0;
@@ -5467,7 +5470,7 @@ else
 	{
 	prfmsg(SELFD5);
 	}
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 
@@ -5487,39 +5490,39 @@ if (margc == 1)
 	if (warsptr->lock >= 0 && warsptr->lock < nships && ingegame(warsptr->lock))
 		{
 		prfmsg(LOCK04,shpltr(usrnum,warsptr->lock));
-		outprfge(FILTER,warsptr->lock);
+		outprfge(FLT_NONE,warsptr->lock);
 		}
 	warsptr->lock = -1;
 	prfmsg(LOCK01);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (margv[1] == NULL)
 	{
 	prfmsg(NOSHIP);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (margv[1][0] == '@')
 	{
 	prfmsg(NOSHIP);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->cloak > 0 )
 	{
 	prfmsg(PCLOKUP,"Scanner lock is");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (warsptr->jam_sev > (byte)7 || (warsptr->jam_sev > (byte)2 && gernd()%(9 - (int)warsptr->jam_sev) == 0))
 	{
 	prfmsg(JAMMER4W);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -5535,7 +5538,7 @@ if (shpnum >= 0)
 			prfmsg(SCAN27);
 		else
 			prfmsg(NOSHIP);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	warsptr->lock = shpnum;
@@ -5554,9 +5557,9 @@ if (shpnum >= 0)
 			prfmsg(LOCK02, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
 	else
 		prfmsg(LOCK02N, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
-	outprfge(FILTER,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	prfmsg(LOCK03,shpltr(shpnum,usrnum));
-	outprfge(FILTER,shpnum);
+	outprfge(FLT_NONE,shpnum);
 	}
 else
 	{
@@ -5564,7 +5567,7 @@ else
 		prfmsg(SCAN27);
 	else
 		prfmsg(NOSHIP);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 }
 
@@ -5592,14 +5595,14 @@ if (margc == 1)
 else
 	{
 	prfmsg(FORMAT,"NAVIGATE");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (abs(x) > univmax || abs(y) > univmax)
 	{
 	prfmsg(FORMAT,"NAVIGATE");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -5622,7 +5625,7 @@ sprintf(gechrbuf,"Dist: %f, Bearing: %d",ddistance,bearing);
 logthis(gechrbuf);
 
 prfmsg(NAV01,x,y,bearing,spr("%ld",(long)ddistance));
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 /**************************************************************************
@@ -5643,7 +5646,7 @@ for (zothusn=0; zothusn < nterms; zothusn++)
 			prf("%s ",username(wptr));
 		}
 prf("\r");
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 
@@ -5655,20 +5658,21 @@ void FUNC cmd_set()
 
 {
 
-/* this is temporary until i decide what options i'm putting here */
-
 int invalid = FALSE;
-unsigned long val;
+unsigned char msgfilter;
 
-if (margc < 2 || margc > 3)
+if (margc < 2 || margc > 4)
 	{
 	prfmsg(FORMAT,"SET");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (sameas(margv[1],"scan"))
 	{
+	if (margc != 3)
+		invalid = TRUE;
+	else
 	if (sameas(margv[2],"simple"))
 		waruptr->options[SCANOPTS] = SIMPLE;
 	else
@@ -5687,55 +5691,161 @@ if (sameas(margv[1],"scan"))
 		invalid = TRUE;
 	}
 else
-if (sameas(margv[1],"filter"))
+if (sameas(margv[1],"display"))
 	{
-	if (sameas(margv[2],"on"))
-		waruptr->options[MSG_FILTER] = TRUE;
+	msgfilter = waruptr->options[MSG_FILTER];
+	if (margc != 4)
+		invalid = TRUE;
 	else
-	if (sameas(margv[2],"off"))
-		waruptr->options[MSG_FILTER] = FALSE;
+	if (sameas(margv[2],"cybs"))
+		{
+		msgfilter &= ~MSGF_CYBS_MASK;
+		if (sameas(margv[3],"on"))
+			msgfilter |= 0x00;
+		else
+		if (sameas(margv[3],"battle"))
+			msgfilter |= 0x01;
+		else
+		if (sameas(margv[3],"approach"))
+			msgfilter |= 0x02;
+		else
+		if (sameas(margv[3],"off"))
+			msgfilter |= 0x03;
+		else
+			invalid = TRUE;
+		}
+	else
+	if (sameas(margv[2],"distress"))
+		{
+		msgfilter &= ~MSGF_DISTRESS;
+		if (sameas(margv[3],"on"))
+			msgfilter |= 0x00;
+		else
+		if (sameas(margv[3],"off"))
+			msgfilter |= MSGF_DISTRESS;
+		else
+			invalid = TRUE;
+		}
+	else
+	if (sameas(margv[2],"beacon"))
+		{
+		msgfilter &= ~MSGF_BEACON;
+		if (sameas(margv[3],"on"))
+			msgfilter |= 0x00;
+		else
+		if (sameas(margv[3],"off"))
+			msgfilter |= MSGF_BEACON;
+		else
+			invalid = TRUE;
+		}
+	else
+	if (sameas(margv[2],"hail"))
+		{
+		msgfilter &= ~MSGF_HAIL;
+		if (sameas(margv[3],"on"))
+			msgfilter |= 0x00;
+		else
+		if (sameas(margv[3],"off"))
+			msgfilter |= MSGF_HAIL;
+		else
+			invalid = TRUE;
+		}
+	else
+	if (sameas(margv[2],"entry"))
+		{
+		msgfilter &= ~MSGF_ENTRY_MASK;
+		if (sameas(margv[3],"on"))
+			msgfilter |= 0x00;
+		else
+		if (sameas(margv[3],"reduced"))
+			msgfilter |= 0x20;
+		else
+		if (sameas(margv[3],"off"))
+			msgfilter |= 0x40;
+		else
+			invalid = TRUE;
+		}
+	else
+	if (sameas(margv[2],"ship"))
+		{
+		msgfilter &= ~MSGF_SHIP;
+		if (sameas(margv[3],"on"))
+			msgfilter |= 0x00;
+		else
+		if (sameas(margv[3],"off"))
+			msgfilter |= MSGF_SHIP;
+		else
+			invalid = TRUE;
+		}
 	else
 		invalid = TRUE;
-	}
-else
-if (genearas(margv[1],"freq"))
-	{
-	val = atol(margv[2]);
-	if (val <= 65535L)
-		warsptr->freq = (unsigned)val;
-	else
-		invalid = TRUE;
+	if (!invalid)
+		waruptr->options[MSG_FILTER] = msgfilter;
 	}
 else
 if (sameas(margv[1],"?"))
 	{
 	invalid = 2;
-	prf("Option scan set to ");
 	if (waruptr->options[SCANOPTS] == SIMPLE)
-		prf("simple.\r");
+		prfmsg(SETOPT,"scan","simple");
 	else
 	if (waruptr->options[SCANOPTS] == FULL)
-		prf("full.\r");
+		prfmsg(SETOPT,"scan","full");
 	else
 	if (waruptr->options[SCANOPTS] == FULLNAMES)
-		prf("fullnames.\r");
+		prfmsg(SETOPT,"scan","fullnames");
 	else
 	if (waruptr->options[SCANOPTS] == FULLEXTRA)
-		prf("fullextra.\r");
+		prfmsg(SETOPT,"scan","fullextra");
 	else
 	if (waruptr->options[SCANOPTS] == NOMAP)
-		prf("nomap.\r");
+		prfmsg(SETOPT,"scan","nomap");
 	else
-		prf("undefined.\r");
-	prf("Option filter set to ");
-	if (waruptr->options[MSG_FILTER] == TRUE)
-		prf("true.\r");
+		prfmsg(SETOPT,"scan","undefined");
+	switch (waruptr->options[MSG_FILTER] & MSGF_CYBS_MASK)
+		{
+		case 0:
+			prfmsg(SETOPT2,"display","cybs","on");
+			break;
+		case 1:
+			prfmsg(SETOPT2,"display","cybs","battle");
+			break;
+		case 2:
+			prfmsg(SETOPT2,"display","cybs","approach");
+			break;
+		default:
+			prfmsg(SETOPT2,"display","cybs","off");
+			break;
+		}
+	if (waruptr->options[MSG_FILTER] & MSGF_DISTRESS)
+		prfmsg(SETOPT2,"display","distress","off");
 	else
-	if (waruptr->options[MSG_FILTER] == FALSE)
-		prf("false.\r");
+		prfmsg(SETOPT2,"display","distress","on");
+	if (waruptr->options[MSG_FILTER] & MSGF_BEACON)
+		prfmsg(SETOPT2,"display","beacon","off");
 	else
-		prf("undefined.\r");
-	prf("Option freq set to %u.\r",warsptr->freq);
+		prfmsg(SETOPT2,"display","beacon","on");
+	if (waruptr->options[MSG_FILTER] & MSGF_HAIL)
+		prfmsg(SETOPT2,"display","hail","off");
+	else
+		prfmsg(SETOPT2,"display","hail","on");
+	switch (waruptr->options[MSG_FILTER] & MSGF_ENTRY_MASK)
+		{
+		case 0x00:
+			prfmsg(SETOPT2,"display","entry","on");
+			break;
+		case 0x20:
+			prfmsg(SETOPT2,"display","entry","reduced");
+			break;
+		default:
+			prfmsg(SETOPT2,"display","entry","off");
+			break;
+		}
+	if (waruptr->options[MSG_FILTER] & MSGF_SHIP)
+		prfmsg(SETOPT2,"display","ship","off");
+	else
+		prfmsg(SETOPT2,"display","ship","on");
+	prf("\r\r");
 	}
 else
 	invalid = TRUE;
@@ -5743,8 +5853,14 @@ else
 if (invalid == TRUE)
 	prfmsg(FORMAT,"SET");
 if (invalid == FALSE)
-	prf("Option %s set to %s\r",margv[1],margv[2]);
-outprfge(ALWAYS,usrnum);
+	{
+	if (margc == 4)
+		prfmsg(SETOPT2,margv[1],margv[2],margv[3]);
+	else
+		prfmsg(SETOPT,margv[1],margv[2]);
+	prf("\r\r");
+	}
+outprfge(FLT_NONE,usrnum);
 
 }
 
@@ -5789,7 +5905,7 @@ int	temptab[MAXTEAMS];
 if (margc < 2)
 	{
 	prfmsg(FORMAT,"TEAM");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -5814,7 +5930,7 @@ if (sameas(margv[1],"join"))
 	if (margc != 4)
 		{
 		prfmsg(FORMAT,"TEAM");
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 
@@ -5825,7 +5941,7 @@ if (sameas(margv[1],"join"))
 	if (strlen(gechrbuf) != 5)
 		{
 		prfmsg(FORMAT,"TEAM");
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	/* are they all digits */
@@ -5834,7 +5950,7 @@ if (sameas(margv[1],"join"))
 		if (gechrbuf[i] < '0' || gechrbuf[i] > '9')
 			{
 			prfmsg(FORMAT,"TEAM");
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		}
@@ -5847,7 +5963,7 @@ if (sameas(margv[1],"join"))
 			prfmsg(TEAMALR2);
 		else
 			prfmsg(TEAMALRD);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 
@@ -5865,7 +5981,7 @@ if (sameas(margv[1],"join"))
 	if (i >= MAXTEAMS)
 		{
 		prfmsg(TEAMBAD);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 
@@ -5873,7 +5989,7 @@ if (sameas(margv[1],"join"))
 	if (!sameas(teamtab[i].password,margv[3]))
 		{
 		prfmsg(TEAMBADP);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 
@@ -5881,7 +5997,7 @@ if (sameas(margv[1],"join"))
 	if (teamtab[i].teamcount >= team_max)
 		{
 		prfmsg(TEAMBIG);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 
@@ -5901,7 +6017,7 @@ if (sameas(margv[1],"join"))
 	/* tell user that team has been joined */
 
 	prfmsg(TEAMJOIN,teamtab[i].teamname);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 
 	return;
 	}
@@ -5978,11 +6094,11 @@ if (sameas(margv[1],"score"))
 				teamtab[j].teamname,
 				tmcount[j],
 				tmscore[j]);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			}
 		}
 	prfmsg(TEAMTLR);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 else
@@ -6013,7 +6129,7 @@ if (sameas(margv[1],"unjoin"))
 				&& teamtab[i].teamname[0] != '@')
 				{
 				prfmsg(TEAMUNJN,teamname(waruptr));
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				waruptr->teamcode = 0;
 				geudb(GEUPDATE,waruptr->userid,waruptr);
 
@@ -6039,12 +6155,12 @@ if (sameas(margv[1],"unjoin"))
 				}
 			}
 		prfmsg(TEAMNOT);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	else
 		{
 		prfmsg(TEAMNOT);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	}
@@ -6069,14 +6185,14 @@ if (sameas(margv[1],"start"))
 	if (waruptr->teamcode > 0)
 		{
 		prfmsg(TEAMALRD);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 
 	if (margc < 6)
 		{
 		prfmsg(FORMAT,"TEAM");
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	olddel = 65535U;
@@ -6108,7 +6224,7 @@ if (sameas(margv[1],"start"))
 	if (strlen(gechrbuf) != 5)
 		{
 		prfmsg(TEAMBAD);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	/* are they all digits */
@@ -6117,7 +6233,7 @@ if (sameas(margv[1],"start"))
 		if (gechrbuf[i] < '0' || gechrbuf[i] > '9')
 			{
 			prfmsg(TEAMBAD);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		}
@@ -6126,7 +6242,7 @@ if (sameas(margv[1],"start"))
 	if (tmp.teamcode <= 0)
 		{
 		prfmsg(TEAMBAD);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 
@@ -6142,14 +6258,14 @@ if (sameas(margv[1],"start"))
 	if (strlen(tmp.teamname) < 5)
 		{
 		prfmsg(TEAMBNAM);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	if (!((tmp.teamname[0] >= 'A' && tmp.teamname[0] <= 'Z')
 		|| (tmp.teamname[0] >= 'a' && tmp.teamname[0] <= 'z')))
 		{
 		prfmsg(TEAMNINV);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	tmp.teamcount = 1;
@@ -6163,14 +6279,14 @@ if (sameas(margv[1],"start"))
 				prfmsg(TEAMDEAC);
 			else
 				prfmsg(TEAMEXST);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		if (teamtab[i].teamname[0] != '@'
 			&& sameas(tmp.teamname,teamtab[i].teamname))
 			{
 			prfmsg(TEAMEXST);
-			outprfge(ALWAYS,usrnum);
+			outprfge(FLT_NONE,usrnum);
 			return;
 			}
 		}
@@ -6199,7 +6315,7 @@ if (sameas(margv[1],"start"))
 	/* tell user that team has been created */
 
 	prfmsg(TEAMCRT,tmp.teamname,gechrbuf,tmp.password,tmp.secret);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 
 	return;
 	}
@@ -6224,7 +6340,7 @@ if (sameas(margv[1],"members"))
 	if (waruptr->teamcode == 0)
 		{
 		prfmsg(TEAMNOT);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 
@@ -6247,7 +6363,7 @@ if (sameas(margv[1],"members"))
 				else
 					prf(", %s",tmpusr.userid);
 
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				++i;
 				}
 			else
@@ -6256,7 +6372,7 @@ if (sameas(margv[1],"members"))
 				}
 			} while (qnxbtv() && i < j);
 		prf("\r");
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	else
@@ -6264,7 +6380,7 @@ if (sameas(margv[1],"members"))
 		waruptr->teamcode = 0;
 		geudb(GEUPDATE,waruptr->userid,waruptr);
 		prfmsg(TEAMNOT);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 	}
@@ -6274,7 +6390,7 @@ if (sameas(margv[1],"kick"))
 	if (margc < 4)
 		{
 		prfmsg(FORMAT,"TEAM");
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 
@@ -6331,26 +6447,26 @@ if (sameas(margv[1],"kick"))
 
 						/* tell this user it is done */
 						prfmsg(TEAMKICK,tmpusr.userid);
-						outprfge(ALWAYS,usrnum);
+						outprfge(FLT_NONE,usrnum);
 						return;
 						}
 					else
 						{
 						prfmsg(TEAMNTM);
-						outprfge(ALWAYS,usrnum);
+						outprfge(FLT_NONE,usrnum);
 						}
 
 					}
 				else
 					{
 					prfmsg(TEAMNFND);
-					outprfge(ALWAYS,usrnum);
+					outprfge(FLT_NONE,usrnum);
 					}
 				}
 			else
 				{
 				prfmsg(TEAMBDSC);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				}
 			return;
 			}
@@ -6361,7 +6477,7 @@ if (sameas(margv[1],"kick"))
 		geudb(GEUPDATE,waruptr->userid,waruptr);
 		}
 	prfmsg(TEAMNOT);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 else
 if (sameas(margv[1],"newpass"))
@@ -6370,7 +6486,7 @@ if (sameas(margv[1],"newpass"))
 	if (margc < 4)
 		{
 		prfmsg(FORMAT,"TEAM");
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 
@@ -6387,19 +6503,19 @@ if (sameas(margv[1],"newpass"))
 				if (strlen(margv[3]) > 10)
 					{
 					prfmsg(TEAMBPSS);
-					outprfge(ALWAYS,usrnum);
+					outprfge(FLT_NONE,usrnum);
 					return;
 					}
 				strcpy(teamtab[i].password,margv[3]);
 				prfmsg(TEAMNPSS,teamtab[i].password);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				update_team_tab();
 				return;
 				}
 			else
 				{
 				prfmsg(TEAMBDSC);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				}
 			return;
 			}
@@ -6410,7 +6526,7 @@ if (sameas(margv[1],"newpass"))
 		geudb(GEUPDATE,waruptr->userid,waruptr);
 		}
 	prfmsg(TEAMNOT);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 else
 if (sameas(margv[1],"newname"))
@@ -6418,7 +6534,7 @@ if (sameas(margv[1],"newname"))
 	if (margc < 4)
 		{
 		prfmsg(FORMAT,"TEAM");
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		return;
 		}
 
@@ -6436,14 +6552,14 @@ if (sameas(margv[1],"newname"))
 				if (strlen(margv[3]) < 5)
 					{
 					prfmsg(TEAMBNAM);
-					outprfge(ALWAYS,usrnum);
+					outprfge(FLT_NONE,usrnum);
 					return;
 					}
 				if (!((margv[3][0] >= 'A' && margv[3][0] <= 'Z')
 					|| (margv[3][0] >= 'a' && margv[3][0] <= 'z')))
 					{
 					prfmsg(TEAMNINV);
-					outprfge(ALWAYS,usrnum);
+					outprfge(FLT_NONE,usrnum);
 					return;
 					}
 				for (j=0;j<MAXTEAMS;++j)
@@ -6453,21 +6569,21 @@ if (sameas(margv[1],"newname"))
 						&& sameas(margv[3],teamtab[j].teamname))
 						{
 						prfmsg(TEAMEXST);
-						outprfge(ALWAYS,usrnum);
+						outprfge(FLT_NONE,usrnum);
 						return;
 						}
 					}
 				strncpy(teamtab[i].teamname,margv[3],30);
 				teamtab[i].teamname[30] = 0;
 				prfmsg(TEAMNNAM,teamtab[i].teamname);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				update_team_tab();
 				return;
 				}
 			else
 				{
 				prfmsg(TEAMBDSC);
-				outprfge(ALWAYS,usrnum);
+				outprfge(FLT_NONE,usrnum);
 				}
 			return;
 			}
@@ -6478,10 +6594,10 @@ if (sameas(margv[1],"newname"))
 		geudb(GEUPDATE,waruptr->userid,waruptr);
 		}
 	prfmsg(TEAMNOT);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 prfmsg(FORMAT,"TEAM");
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 char	* FUNC teamname(WARUSR *ptr)
@@ -6504,7 +6620,7 @@ void FUNC cmd_clear()
 
 {
 prf("\33[2J\33[0;0H");
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 void FUNC cmd_data()
@@ -6516,14 +6632,14 @@ int i,j;
 if (margc != 3)
 	{
 	prfmsg(INVCMD);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	};
 
 if (!sameas(margv[1],"qazwsx"))
 	{
 	prfmsg(INVCMD);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	};
 
@@ -6539,7 +6655,7 @@ if (sameas(margv[2],"report"))
 	sprintf(gechrbuf2,"%lu",waruptr->cash);
 	sprintf(gechrbuf3,"%ld",waruptr->population);
 	prf("UD2:%s,%s,%s*\r",gechrbuf,gechrbuf2,gechrbuf3);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 
 	setsect(warsptr);
 
@@ -6602,7 +6718,7 @@ if (sameas(margv[2],"report"))
 		warsptr->destruct,
 		warsptr->status);
 
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 if (sameas(margv[2],"scan"))
@@ -6617,7 +6733,7 @@ if (sameas(margv[2],"sector"))
 	}
 
 prfmsg(INVCMD);
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 
@@ -6648,7 +6764,7 @@ prf(mask,'*',xsect,ysect,xcord,ycord,"0",0,
 if (warsptr->jam_sev > (byte)2)
 	{
 	prf("** Jammed **\r");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -6667,7 +6783,7 @@ for(i=0; i<NOSCANTAB;++i)
 		}
 	}
 
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 void FUNC scan_data2()
@@ -6699,7 +6815,7 @@ prfmsg(INVCMD,usrnum);
 
 #endif
 
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 
 }
 
@@ -6729,7 +6845,7 @@ void FUNC cmd_spy()
 if (warsptr->where < 10)
 	{
 	prfmsg(ADMIN1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -6740,14 +6856,14 @@ getplanetdat(usrnum);
 if (sameas(plptr->userid,warsptr->userid))
 	{
 	prfmsg(SPY0);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
 if (neutral(&warsptr->coord))
 	{
 	prfmsg(SPY0C);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -6755,7 +6871,7 @@ if (warsptr->items[I_SPY] > 0)
 	{
 	warsptr->items[I_SPY]--;
 	prfmsg(SPYM1);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	strcpy(plptr->spyowner,warsptr->userid);
 
 	setsect(warsptr); /* build PKEY */
@@ -6768,7 +6884,7 @@ else
 	{
 	prfmsg(SPYM0);
 	}
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 /**************************************************************************
@@ -6793,7 +6909,7 @@ if (margc == 3)
 	}
 
 prfmsg(FORMAT,"JETTISON");
-outprfge(ALWAYS,usrnum);
+outprfge(FLT_NONE,usrnum);
 }
 
 void FUNC jettison(item)
@@ -6807,7 +6923,7 @@ int	defuse = FALSE;
 if (item == I_MEN || item == I_TROOPS || item == I_SPY)
 	{
 	prfmsg(JETT2,item_name[item]);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
@@ -6822,7 +6938,7 @@ if (sameas("ALL",margv[1]) > 0L)
 		prfmsg(JETT3D,spr("%lu",amt),item_name[item]);
 	else
 		prfmsg(JETT3,spr("%lu",amt),item_name[item]);
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
 	return;
 	}
@@ -6837,19 +6953,19 @@ if ((req = atol(margv[1])) > 0L)
 			prfmsg(JETT3D,spr("%lu",amt),item_name[item]);
 		else
 			prfmsg(JETT3,spr("%lu",amt),item_name[item]);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
 		return;
 		}
 	else
 		{
 		prfmsg(JETT1);
-		outprfge(ALWAYS,usrnum);
+		outprfge(FLT_NONE,usrnum);
 		}
 	}
 else
 	{
 	prfmsg(FORMAT,"JETTISON");
-	outprfge(ALWAYS,usrnum);
+	outprfge(FLT_NONE,usrnum);
 	}
 }
