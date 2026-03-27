@@ -139,6 +139,10 @@ MAIL		mail;
 MAILSTAT	tmpstat;
 
 unsigned char	beacontimer;
+ENTRYTAB	*entrytab;
+unsigned char	*entrysent;
+unsigned char	*entrypend;
+int		entrybytes;
 
 struct message	*gemsg;
 
@@ -722,6 +726,15 @@ scantab=(SCANTAB *)alcmem(n=nships*sizeof(SCANTAB));
 setmem(scantab,n,0);
 geshocst(1,spr("GE:INF:Scantab Mem: %d",n));
 
+/* allocate memory for delayed entry message state */
+entrytab=(ENTRYTAB *)alcmem(n=nterms*sizeof(ENTRYTAB));
+setmem(entrytab,n,0);
+entrybytes = (nterms + 7) / 8;
+entrysent=(unsigned char *)alcmem(n=nterms*entrybytes);
+setmem(entrysent,n,0);
+entrypend=(unsigned char *)alcmem(n=nterms*entrybytes);
+setmem(entrypend,n,0);
+
 /* allocate memory for S00 table */
 s00=(S00 *)alcmem(n=s00plnum*sizeof(S00));
 setmem(s00,n,0);
@@ -1233,11 +1246,7 @@ if (warsptr->status == GESTAT_USER)
 #endif
 		else
 			{
-			if (warsptr->shipname[0] == '\0')
-				prfmsg(PEACEONO,waruptr->userid);
-			else
-				prfmsg(PEACEOUT,waruptr->userid,warsptr->shipname);
-			outwar(FLT_ENTRY,usrnum,0,0);
+			exit_entrymsg(usrnum);
 			cleartm(usrnum);
 			clearitm(usrnum);
 			gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
@@ -2224,6 +2233,8 @@ logthis("TICK:PWarrti2 entered");
 if (beacontimer > 0)
 	--beacontimer;
 
+tick_entrymsg();
+
 zothusn = clicker;
 
 while (zothusn < nships)
@@ -2678,11 +2689,7 @@ if (sameas(input,"x"))
 		geudb(GEUPDATE,waruptr->userid,waruptr);
 		disp_main_menu();
 		outprfge(FLT_NONE,usrnum);
-		if (warsptr->shipname[0] == '\0')
-			prfmsg(PEACEONO,waruptr->userid);
-		else
-			prfmsg(PEACEOUT,waruptr->userid,warsptr->shipname);
-		outwar(FLT_ENTRY,usrnum,0,0);
+		exit_entrymsg(usrnum);
 		numwar = 0;
 		usrptr->substt = 1;
 		btupmt(usrnum,0);

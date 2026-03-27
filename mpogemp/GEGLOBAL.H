@@ -74,6 +74,10 @@ extern	MAIL		mail;
 extern	MAILSTAT	tmpstat;
 
 extern	unsigned char	beacontimer;
+extern	ENTRYTAB	*entrytab;
+extern	unsigned char	*entrysent;
+extern	unsigned char	*entrypend;
+extern	int		entrybytes;
 
 extern	struct message *gemsg;
 

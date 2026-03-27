@@ -259,7 +259,14 @@ Other stuff:
 * The ALWAYS/FILTER display message filters in SET have been
   reworked to give you much more control over the types of messages
   shown. Everything is on by default for new players.
-
+* One new feature that may be helpful in busy games is the new
+  "display entry reduced" option. Setting this to reduced will
+  cause only entrances in your scan range to be shown immediately,
+  while all other entrance messages are delayed for 30 seconds. If
+  the entrant exits before the entry message is shown, you never see
+  the entry or exit message. This is not on by default, but if
+  you're in a game where players do a lot of quick enter and exit,
+  it can help filter out a lot of it.
 
 === 0.2.6 === 2025-08-15
 

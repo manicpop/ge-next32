@@ -118,6 +118,10 @@
 /*      71 */ void FUNC lookupshp P((void ));
 /*     141 */ void FUNC tossingegame P((void ));
 /*     156 */ void FUNC suddenappear P((WARSHP *ptr , int usrn ));
+/*         */ void FUNC clear_entrymsg P((int usrn ));
+/*         */ void FUNC start_entrymsg P((int usrn ));
+/*         */ void FUNC tick_entrymsg P((void ));
+/*         */ void FUNC exit_entrymsg P((int usrn ));
 /*     169 */ int FUNC initshp P((char *userid , int type ));
 /*     269 */ int FUNC initusr P((char *userid ));
 /*     301 */ int FUNC findships P((int direction , int quiet ));

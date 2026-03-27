@@ -165,14 +165,191 @@ else
 outsect(FLT_NONE,&ptr->coord,usrn,0);
 }
 
+int FUNC entryinrng(entrant,recipient)
+int	entrant,recipient;
+{
+WARSHP	*eptr,*rptr;
+double	dist;
+
+if (!ingegame(recipient))
+	return(FALSE);
+
+eptr = warshpoff(entrant);
+rptr = warshpoff(recipient);
+dist = cdistance(&eptr->coord,&rptr->coord) * 10000.0;
+return(dist <= (double)shipclass[rptr->shpclass].scanrange);
+}
+
+void FUNC send_entrymsg(entrant,recipient)
+int	entrant,recipient;
+{
+WARSHP	*eptr;
+WARUSR	*euptr;
+
+eptr = warshpoff(entrant);
+euptr = warusroff(entrant);
+
+	if (eptr->shipname[0] == '\0')
+		prfmsg(ANNOUNO,euptr->userid,shipclass[eptr->shpclass].typename);
+	else
+		prfmsg(ANNOUN,shipclass[eptr->shpclass].typename,eptr->shipname,euptr->userid);
+	outprfge(FLT_NONE,recipient);
+}
+
+void FUNC send_exitmsg(entrant,recipient)
+int	entrant,recipient;
+{
+WARSHP	*eptr;
+WARUSR	*euptr;
+
+eptr = warshpoff(entrant);
+euptr = warusroff(entrant);
+
+	if (eptr->shipname[0] == '\0')
+		prfmsg(PEACEONO,euptr->userid);
+	else
+		prfmsg(PEACEOUT,euptr->userid,eptr->shipname);
+	outprfge(FLT_NONE,recipient);
+}
+
+void FUNC clear_entrymsg(usrn)
+int	usrn;
+{
+entrytab[usrn].active = 0;
+entrytab[usrn].ticks = 0;
+setmem(entrysent + (usrn * entrybytes), entrybytes, 0);
+setmem(entrypend + (usrn * entrybytes), entrybytes, 0);
+}
+
+void FUNC start_entrymsg(usrn)
+int	usrn;
+{
+int	zothusn;
+int	anypend = FALSE;
+int	mode;
+unsigned char	*sentptr,*pendptr;
+unsigned char	mask;
+
+	clear_entrymsg(usrn);
+	sentptr = entrysent + (usrn * entrybytes);
+	pendptr = entrypend + (usrn * entrybytes);
+
+	for (zothusn=0; zothusn < nterms; ++zothusn)
+		{
+		if (zothusn == usrn || !ingegame(zothusn))
+			continue;
+
+		mode = warusroff(zothusn)->options[MSG_FILTER] & MSGF_ENTRY_MASK;
+		mask = (unsigned char)(1 << (zothusn & 7));
+
+		if (mode == 0x40)
+			continue;
+
+		if (mode == 0x00 || entryinrng(usrn,zothusn))
+			{
+			send_entrymsg(usrn,zothusn);
+			sentptr[zothusn >> 3] |= mask;
+			}
+		else
+			{
+			pendptr[zothusn >> 3] |= mask;
+			anypend = TRUE;
+			}
+		}
+
+	if (anypend)
+		{
+		entrytab[usrn].active = 1;
+		entrytab[usrn].ticks = 0;
+		}
+}
+
+void FUNC tick_entrymsg()
+{
+int	usrn,zothusn;
+unsigned char	*sentptr,*pendptr;
+unsigned char	mask;
+
+for (usrn=0; usrn < nterms; ++usrn)
+	{
+	if (!entrytab[usrn].active)
+		continue;
+
+	if (!ingegame(usrn))
+		{
+		clear_entrymsg(usrn);
+		continue;
+		}
+
+	++entrytab[usrn].ticks;
+	sentptr = entrysent + (usrn * entrybytes);
+	pendptr = entrypend + (usrn * entrybytes);
+
+	if (entrytab[usrn].ticks < ENTRYWAIT)
+		{
+		for (zothusn=0; zothusn < nterms; ++zothusn)
+			{
+			mask = (unsigned char)(1 << (zothusn & 7));
+			if (!(pendptr[zothusn >> 3] & mask))
+				continue;
+			if (!ingegame(zothusn))
+				{
+				pendptr[zothusn >> 3] &= ~mask;
+				continue;
+				}
+			if (entryinrng(usrn,zothusn))
+				{
+				send_entrymsg(usrn,zothusn);
+				pendptr[zothusn >> 3] &= ~mask;
+				sentptr[zothusn >> 3] |= mask;
+				}
+			}
+		}
+	else
+		{
+		for (zothusn=0; zothusn < nterms; ++zothusn)
+			{
+			mask = (unsigned char)(1 << (zothusn & 7));
+			if (!(pendptr[zothusn >> 3] & mask))
+				continue;
+			if (ingegame(zothusn))
+				{
+				send_entrymsg(usrn,zothusn);
+				sentptr[zothusn >> 3] |= mask;
+				}
+			pendptr[zothusn >> 3] &= ~mask;
+			}
+		entrytab[usrn].active = 0;
+		entrytab[usrn].ticks = 0;
+		}
+	}
+}
+
+void FUNC exit_entrymsg(usrn)
+int	usrn;
+{
+int	zothusn;
+unsigned char	*sentptr;
+unsigned char	mask;
+
+	sentptr = entrysent + (usrn * entrybytes);
+
+	for (zothusn=0; zothusn < nterms; ++zothusn)
+		{
+		mask = (unsigned char)(1 << (zothusn & 7));
+		if (sentptr[zothusn >> 3] & mask)
+			{
+			if (ingegame(zothusn))
+				send_exitmsg(usrn,zothusn);
+			}
+		}
+
+	clear_entrymsg(usrn);
+}
+
 void FUNC tossingegame()
 {
-
-if (warsptr->shipname[0] == '\0')
-	prfmsg(ANNOUNO,waruptr->userid,shipclass[warsptr->shpclass].typename);
-else
-	prfmsg(ANNOUN,shipclass[warsptr->shpclass].typename, warsptr->shipname, waruptr->userid);
-outwar(FLT_ENTRY,usrnum,0,0);
+start_entrymsg(usrnum);
 
 prfmsg(ENTSHP,waruptr->userid);
 outprfge(FLT_NONE,usrnum);
@@ -1540,6 +1717,7 @@ unsigned int r = gernd();
 /* 12/19/91 fix to prevent a player from being awarded points for killing */
 /* himself */
 
+clear_entrymsg(usrn);
 waruptr=warusroff(usrn);
 
 who = ptr->lastfired;

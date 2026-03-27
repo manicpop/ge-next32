@@ -42,11 +42,11 @@
 */
 
 #ifdef GETRAINER
-#define VERSION "ge-next 0.3-pre4 Trainer"
+#define VERSION "ge-next 0.3-pre5 Trainer"
 #define GEHELP  "MPOG2HLP.MCV"
 #define GEMSG   "MPOG2MSG.MCV"
 #else
-#define VERSION "ge-next 0.3-pre4"
+#define VERSION "ge-next 0.3-pre5"
 #define GEHELP  "MPOGEHLP.MCV"
 #define GEMSG   "MPOGEMSG.MCV"
 #endif
@@ -223,6 +223,9 @@
 #define	FLT_ENTRY 6
 #define	FLT_SHIP 7
 #define	FLT_NONE 8
+
+/* how many seconds to delay 'reduced' entry messages */
+#define	ENTRYWAIT 30
 
 /* message filter bit masks */
 
@@ -806,6 +809,13 @@ SCANTAB	{
 	SHIPTAB ship[NOSCANTAB];
 	};
 
+#define ENTRYTAB struct _entrytab
+extern
+ENTRYTAB	{
+	unsigned char	active;
+	unsigned char	ticks;
+	};
+
 
 #define S00	struct _s00
 
@@ -834,5 +844,9 @@ TEAM	{
 
 
 extern unsigned char	beacontimer;
+extern ENTRYTAB		*entrytab;
+extern unsigned char	*entrysent;
+extern unsigned char	*entrypend;
+extern int		entrybytes;
 
 #define FUNC _export
