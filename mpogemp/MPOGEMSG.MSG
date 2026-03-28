@@ -2058,12 +2058,14 @@ Damage Control reports severe structural damage in critical systems!
 
 You escape safely and are picked up by a Galactic Command freighter
 and transported back to their next stop, Zygor!
-
-[1;37m<Press ENTER>
 } T GE you got blowed up message
 
 YRDEAD2 {
 [1;36mYou lost %s points.[1;37m
+} T GE points lost for dying message
+
+YRDEAD3 {
+[1;37m<Press ENTER>
 } T GE points lost for dying message
 
 DIED {***

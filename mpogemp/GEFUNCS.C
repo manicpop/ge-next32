@@ -61,6 +61,7 @@
 
 /* LOCAL GLOBAL DEFS *****************************************************/
 
+static long	deathdeduct;
 
 
 /**************************************************************************
@@ -1516,14 +1517,28 @@ logthis(spr("GE:Chn %d checkdam %s",usrn,ptr->userid));
 if (ptr->damage >= 100.0)
 	{
 	ptr->damage = 0.0;	/* reset damage so he can get back on */
+
+	if (ptr->status == GESTAT_USER)
+		user[usrn].substt = 0;
+
+	killem(ptr,usrn);
+
 	prfmsg(YOURDEAD);
+	outprfge(FLT_NONE,usrn);
+
+	if (deathdeduct > 0)
+		{
+		sprintf(gechrbuf,"%lu",deathdeduct);
+		prfmsg(YRDEAD2,gechrbuf);
+		outprfge(FLT_NONE,usrn);
+		}
+
+	prfmsg(YRDEAD3);
 	outprfge(FLT_NONE,usrn);
 
 /* DEBUG
 	prf ("lastfired = %u\r",ptr->lastfired);
 	outprfge(FLT_NONE,usrn); */
-
-	killem(ptr,usrn);
 
 	/* only reset btupmt on "real" users */
 	if (usrn < nterms)
@@ -1724,6 +1739,7 @@ who = ptr->lastfired;
 
 comma = FALSE;
 full = FALSE;
+deathdeduct = 0;
 
 if (who >= 0 && who < nships && who != usrn)
 	{
@@ -1883,11 +1899,7 @@ if (who >= 0 && who < nships && who != usrn)
 	waruptr->score -= ded_amt;
 
 	if (ded_amt > 0)
-		{
-		sprintf(gechrbuf, "%lu", ded_amt);
-		prfmsg(YRDEAD2, gechrbuf);
-		outprfge(FLT_NONE, usrn);
-		}
+		deathdeduct = ded_amt;
 
 	(wuptr->score) += amt;
 	(wuptr->klscore) += amt;
