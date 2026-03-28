@@ -12,7 +12,6 @@ Commands: [1;32mabandon  abort  admin  attack  buy  cloak  cls  decoy  destruct
           transfer  warp  who  x  zipper
 
 [1;36mTopics:   [1;32mbattle  class  distress  flux  galaxy  moving  nebulas  planets
-Topics:   battle  class  distress  filter  flux  galaxy  moving  nebulas
           planets  scoring  starting  strategy  wormholes  Cybertrons
           Lydorians  Murdonians  Sartens  Tryklons  Vakories  Zygorians
 
