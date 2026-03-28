@@ -146,7 +146,7 @@ Class 01 loadout/upgrade code. 0 for Cybertrons.
 For user ships, set to the byte value of available
 upgrades.
 
-S01LOUT {Loadout code: 0} (S01TYPE=USER,DROID) N 0 255
+S01LOUT {Loadout code: 24} (S01TYPE=USER,DROID) N 0 255
 
 This is the in-game help that is displayed for class 01.
 Press F2 to edit.
@@ -322,7 +322,7 @@ Class 02 loadout/upgrade code. 0 for Cybertrons.
 For user ships, set to the byte value of available
 upgrades.
 
-S02LOUT {Loadout code: 0} (S02TYPE=USER,DROID) N 0 255
+S02LOUT {Loadout code: 16} (S02TYPE=USER,DROID) N 0 255
 
 This is the in-game help that is displayed for class 02.
 Press F2 to edit.
@@ -499,7 +499,7 @@ Class 03 loadout/upgrade code. 0 for Cybertrons.
 For user ships, set to the byte value of available
 upgrades.
 
-S03LOUT {Loadout code: 0} (S03TYPE=USER,DROID) N 0 255
+S03LOUT {Loadout code: 10} (S03TYPE=USER,DROID) N 0 255
 
 This is the in-game help that is displayed for class 03.
 Press F2 to edit.
@@ -674,7 +674,7 @@ Class 04 loadout/upgrade code. 0 for Cybertrons.
 For user ships, set to the byte value of available
 upgrades.
 
-S04LOUT {Loadout code: 0} (S04TYPE=USER,DROID) N 0 255
+S04LOUT {Loadout code: 89} (S04TYPE=USER,DROID) N 0 255
 
 This is the in-game help that is displayed for class 04.
 Press F2 to edit.
@@ -850,7 +850,7 @@ Class 05 loadout/upgrade code. 0 for Cybertrons.
 For user ships, set to the byte value of available
 upgrades.
 
-S05LOUT {Loadout code: 0} (S05TYPE=USER,DROID) N 0 255
+S05LOUT {Loadout code: 34} (S05TYPE=USER,DROID) N 0 255
 
 This is the in-game help that is displayed for class 05.
 Press F2 to edit.
@@ -1023,7 +1023,7 @@ Class 06 loadout/upgrade code. 0 for Cybertrons.
 For user ships, set to the byte value of available
 upgrades.
 
-S06LOUT {Loadout code: 0} (S06TYPE=USER,DROID) N 0 255
+S06LOUT {Loadout code: 177} (S06TYPE=USER,DROID) N 0 255
 
 This is the in-game help that is displayed for class 06.
 Press F2 to edit.
@@ -1195,7 +1195,7 @@ Class 07 loadout/upgrade code. 0 for Cybertrons.
 For user ships, set to the byte value of available
 upgrades.
 
-S07LOUT {Loadout code: 0} (S07TYPE=USER,DROID) N 0 255
+S07LOUT {Loadout code: 238} (S07TYPE=USER,DROID) N 0 255
 
 This is the in-game help that is displayed for class 07.
 Press F2 to edit.
@@ -1368,7 +1368,7 @@ Class 08 loadout/upgrade code. 0 for Cybertrons.
 For user ships, set to the byte value of available
 upgrades.
 
-S08LOUT {Loadout code: 0} (S08TYPE=USER,DROID) N 0 255
+S08LOUT {Loadout code: 251} (S08TYPE=USER,DROID) N 0 255
 
 This is the in-game help that is displayed for class 08.
 Press F2 to edit.
@@ -1541,7 +1541,7 @@ Class 09 loadout/upgrade code. 0 for Cybertrons.
 For user ships, set to the byte value of available
 upgrades.
 
-S09LOUT {Loadout code: 0} (S09TYPE=USER,DROID) N 0 255
+S09LOUT {Loadout code: 255} (S09TYPE=USER,DROID) N 0 255
 
 This is the in-game help that is displayed for class 09.
 Press F2 to edit.
@@ -1711,7 +1711,7 @@ Class 10 loadout/upgrade code. 0 for Cybertrons.
 For user ships, set to the byte value of available
 upgrades.
 
-S10LOUT {Loadout code: 0} (S10TYPE=USER,DROID) N 0 255
+S10LOUT {Loadout code: 255} (S10TYPE=USER,DROID) N 0 255
 
 This is the in-game help that is displayed for class 10.
 Press F2 to edit.
@@ -1883,7 +1883,7 @@ Class 11 loadout/upgrade code. 0 for Cybertrons.
 For user ships, set to the byte value of available
 upgrades.
 
-S11LOUT {Loadout code: 0} (S11TYPE=USER,DROID) N 0 255
+S11LOUT {Loadout code: 247} (S11TYPE=USER,DROID) N 0 255
 
 This is the in-game help that is displayed for class 11.
 Press F2 to edit.
@@ -2053,7 +2053,7 @@ Class 12 loadout/upgrade code. 0 for Cybertrons.
 For user ships, set to the byte value of available
 upgrades.
 
-S12LOUT {Loadout code: 0} (S12TYPE=USER,DROID) N 0 255
+S12LOUT {Loadout code: 255} (S12TYPE=USER,DROID) N 0 255
 
 This is the in-game help that is displayed for class 12.
 Press F2 to edit.
@@ -2225,7 +2225,7 @@ Class 13 loadout/upgrade code. 0 for Cybertrons.
 For user ships, set to the byte value of available
 upgrades.
 
-S13LOUT {Loadout code: 0} (S13TYPE=USER,DROID) N 0 255
+S13LOUT {Loadout code: 113} (S13TYPE=USER,DROID) N 0 255
 
 This is the in-game help that is displayed for class 13.
 Press F2 to edit.
@@ -2395,7 +2395,7 @@ Class 14 loadout/upgrade code. 0 for Cybertrons.
 For user ships, set to the byte value of available
 upgrades.
 
-S14LOUT {Loadout code: 0} (S14TYPE=USER,DROID) N 0 255
+S14LOUT {Loadout code: 57} (S14TYPE=USER,DROID) N 0 255
 
 This is the in-game help that is displayed for class 14.
 Press F2 to edit.
@@ -2752,7 +2752,7 @@ Class 16 loadout/upgrade code. 0 for Cybertrons.
 For user ships, set to the byte value of available
 upgrades.
 
-S16LOUT {Loadout code: 0} (S16TYPE=USER,DROID) N 0 255
+S16LOUT {Loadout code: 115} (S16TYPE=USER,DROID) N 0 255
 
 This is the in-game help that is displayed for class 16.
 Press F2 to edit.
