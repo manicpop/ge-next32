@@ -2860,7 +2860,7 @@ if (ptr->cloak == 2)
 		{
 		if (ptr->lock < nships && ingegame(ptr->lock))
 			{
-			prfmsg(LOCK04,shpltr(usrn,ptr->lock));
+			prfmsg(LOCK04,shpltr(ptr->lock,usrn));
 			outprfge(FLT_NONE,ptr->lock);
 			}
 		ptr->lock = -1;
@@ -2916,9 +2916,9 @@ if (!ingegame(lockee) || lptr->status == GESTAT_AVAIL)
 if (lptr->cloak >= 10)
 	{
 	ptr->lock = -1;
-	prfmsg(LOCK05,shpltr(lockee,usrn));
+	prfmsg(LOCK05,shpltr(usrn,lockee));
 	outprfge(FLT_NONE,usrn);
-	prfmsg(LOCK04,shpltr(usrn,lockee));
+	prfmsg(LOCK04,shpltr(lockee,usrn));
 	outprfge(FLT_NONE,lockee);
 	return;
 	}
@@ -2931,9 +2931,9 @@ if (locker_neb || lockee_neb)
 	if (!(locker_neb && lockee_neb && dist < (double)NEBRNG))
 		{
 		ptr->lock = -1;
-		prfmsg(LOCK05,shpltr(lockee,usrn));
+		prfmsg(LOCK05,shpltr(usrn,lockee));
 		outprfge(FLT_NONE,usrn);
-		prfmsg(LOCK04,shpltr(usrn,lockee));
+		prfmsg(LOCK04,shpltr(lockee,usrn));
 		outprfge(FLT_NONE,lockee);
 		return;
 		}
@@ -2942,9 +2942,9 @@ if (locker_neb || lockee_neb)
 if (dist > (double)shipclass[ptr->shpclass].scanrange)
 	{
 	ptr->lock = -1;
-	prfmsg(LOCK05,shpltr(lockee,usrn));
+	prfmsg(LOCK05,shpltr(usrn,lockee));
 	outprfge(FLT_NONE,usrn);
-	prfmsg(LOCK04,shpltr(usrn,lockee));
+	prfmsg(LOCK04,shpltr(lockee,usrn));
 	outprfge(FLT_NONE,lockee);
 	return;
 	}

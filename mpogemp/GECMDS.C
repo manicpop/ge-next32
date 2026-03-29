@@ -5507,7 +5507,7 @@ if (margc == 1)
 	{
 	if (warsptr->lock >= 0 && warsptr->lock < nships && ingegame(warsptr->lock))
 		{
-		prfmsg(LOCK04,shpltr(usrnum,warsptr->lock));
+		prfmsg(LOCK04,shpltr(warsptr->lock,usrnum));
 		outprfge(FLT_NONE,warsptr->lock);
 		}
 	warsptr->lock = -1;
