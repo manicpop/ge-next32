@@ -5500,6 +5500,7 @@ void FUNC cmd_lock()
 {
 
 int	shpnum;
+char	lockltr;
 byte	nebmask;
 WARSHP	*wptr;
 
@@ -5576,7 +5577,11 @@ if (shpnum >= 0)
 	else
 		prfmsg(LOCK02N, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
 	outprfge(FLT_NONE,usrnum);
-	prfmsg(LOCK03,shpltr(shpnum,usrnum));
+	lockltr = shpltr(shpnum,usrnum);
+	if (lockltr == '?')
+		prfmsg(LOCK03N);
+	else
+		prfmsg(LOCK03,lockltr);
 	outprfge(FLT_NONE,shpnum);
 	}
 else
