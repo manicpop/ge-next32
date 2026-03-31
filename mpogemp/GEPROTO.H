@@ -286,7 +286,7 @@
 /*     887 */ void FUNC cyb_died P((WARSHP *ptr ));
 /*     903 */ void FUNC cyb_cruise P((WARSHP *ptr , int usrn , int call ));
 /*     967 */ int FUNC cyb_pick_fight P((int usrn , int call ));
-/*    1023 */ void FUNC cyb_check_misl P((WARSHP *ptr ));
+/*    1023 */ void FUNC cyb_check_proj P((WARSHP *ptr , int usrn ));
 
 /* gedroids.c */
 /*      73 */ void FUNC droid_init P((WARSHP *ptr , int usrn , int class ));

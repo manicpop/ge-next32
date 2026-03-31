@@ -294,6 +294,7 @@ db_update(ptr,usrn);
 if (ptr->tactical < 0)
 	{
 	ptr->cybmine = 255;
+	ptr->freq = 255;
 	ptr->npcmsg = 255;
 	ptr->holdcourse = 0;
 	if (shipclass[ptr->shpclass].max_accel > 0)
@@ -395,7 +396,7 @@ if (shipclass[ptr->shpclass].max_accel > 0)
 	if (ptr->cybmine < nships && ingegame(ptr->cybmine))
 		cyb_check_damage(ptr,usrn);
 	if (shipclass[ptr->shpclass].tough_factor > 1)	/* tougher/faster ships use missile avoidance logic */
-		cyb_check_misl(ptr);
+		cyb_check_proj(ptr,usrn);
 	cyb_check_lockon(ptr,usrn);
 	}
 
@@ -711,6 +712,7 @@ if (ptr->damage > CYB_MINDAM && ((gernd()%10 == 0) || ptr->holdcourse > 0))
 	if (ptr->holdcourse == 1)
 		{
 		ptr->cybmine = 255;
+		ptr->freq = 255;
 		ptr->npcmsg = 255;
 		}
 	if (ptr->holdcourse == 0)
@@ -781,7 +783,7 @@ else
 			ptr->cybmine = zothusn;
 			return;
 			}
-		ptr->holdcourse=gernd()%5+5;
+		ptr->holdcourse=gernd()%2+2;
 		cyb_cruise(ptr,usrn,1); /* let them cruise */
 		ptr->cybmine = zothusn;
 
@@ -789,6 +791,7 @@ else
 		if (gernd()%10 == 0)
 			{
 			ptr->cybmine = 255;
+			ptr->freq = 255;
 			ptr->npcmsg = 255;
 			}
 
@@ -827,12 +830,16 @@ if (ptr->cybmine == (byte)255 && ptr->damage <= CYB_MINDAM) /* don't pick new pu
 if (low_ship == -1 || low_ship >= nships)
 	{
 	ptr->cybmine = 255;
+	ptr->freq = 255;
 	ptr->npcmsg = 255;
 	}
 else
 	{
 	if (ptr->cybmine != (byte)low_ship)
+		{
 		ptr->npcmsg = 255;
+		ptr->freq = 255;
+		}
 	ptr->cybmine = (byte)low_ship;
 	wptr=warshpoff(low_ship);
 	if (low_dist >= hyperdist1)
@@ -866,8 +873,12 @@ else
 		prf("***\r%s, MID, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
 			spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
 		outwar(ALWAYS,usrn,0); */
-		if (low_dist*10000 < shipclass[wptr->shpclass].scanrange)
+		if (low_dist*10000 < shipclass[wptr->shpclass].scanrange
+			&& ptr->freq != (unsigned)low_ship)
+			{
 			cyb_annoy(ptr,low_ship,APPROACH);
+			ptr->freq = low_ship;
+			}
 		}
 	else
 	if (low_dist >= 2.85+(.175*(d_topspeed/shipclass[ptr->shpclass].max_accel))) /* fast ships with low accel brake earlier */
@@ -888,8 +899,12 @@ else
 		prf("***\r%s, SHORT, Sector %d %d, Speed: %s \rhyperdist1: %s, hyperdist2: %s, low_dist: %s\r",cybname,(int)ptr->coord.xcoord,(int)ptr->coord.ycoord,spr("%ld",(long)ptr->speed2b),
 			spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
 		outwar(ALWAYS,usrn,0); */
-		if (low_dist*10000 < shipclass[wptr->shpclass].scanrange)
+		if (low_dist*10000 < shipclass[wptr->shpclass].scanrange
+			&& ptr->freq != (unsigned)low_ship)
+			{
 			cyb_annoy(ptr,low_ship,APPROACH);
+			ptr->freq = low_ship;
+			}
 		}
 	else
 	if (wptr->where == 1 && d_topspeed >= 1000)
@@ -1182,16 +1197,39 @@ if (call == 1 && gernd()%((10-cattkd)*600) == 0)
 return(FALSE);
 }
 
-void FUNC cyb_check_misl(ptr)
+void FUNC cyb_check_proj(ptr,usrn)
 WARSHP	*ptr;
+int	usrn;
 
-/* if missiles detected, decide whether to flee or stop and raise shields */
+/* if projectiles detected, decide whether to flee or stop and raise shields */
 
 {
 
 MISSILE	*mptr;
+TORPEDO		*tptr;
+WARSHP		*wptr;
 
 int	i;
+
+if (ptr->npcmsg == FLEE && ptr->holdcourse > 0)
+	return;
+
+if (ptr->where == 0 && ptr->topspeed > 0 && ptr->cybmine < nships && ingegame(ptr->cybmine))
+	{
+	wptr = warshpoff(ptr->cybmine);
+	if (wptr->where == 1)
+		{
+		for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
+			{
+			if (tptr->distance > 0 && tptr->channel == ptr->cybmine)
+				{
+				ptr->head2b = vector(&ptr->coord,&wptr->coord);
+				cyb_cruise(ptr,usrn,2);
+				return;
+				}
+			}
+		}
+	}
 
 for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 	{
