@@ -4375,7 +4375,10 @@ SELFD3AO {***
 } T GE someone self destructed message
 
 SELFD3N {[0;37mThe neutron shock wave caused [0;31m%s[0;37m damage to [0;36m%s[0;37m's ship![1;37m
-} T GE self destruct damaged message
+} T GE self destruct damaged without name message
+
+SELFD3O {[0;37mThe neutron shock wave caused [0;31m%s[0;37m damage to the [0;36m%s[0;37m![1;37m
+} T GE self destruct damaged with name message
 
 SELFD3S {[0;37mShields contained the neutron shock wave![1;37m
 } T GE self destruct with shield up message
@@ -4401,6 +4404,10 @@ SELFD6 {[0;37mThe shock wave caused [0;31m%s[0;37m damage! Shields deflected 
 
 SELFD7 {[0;37mThe shock wave caused [0;31m%s[0;37m damage![1;37m
 } T GE self destruct with no shields message
+
+SELFD8 {
+[0;37m[[1;31mERROR[0;37m] The cloaking system is offline during the self-destruct sequence.[1;37m
+} T GE no cloak during self destruct
 
 CYBNEW {***
 [0;37mA huge energy burst has been detected, bearing [1;37m%d[0;37m.[1;37m

@@ -3106,6 +3106,12 @@ if (warsptr->damage >= 100.0)
 
 if (sameas(margv[1],"on"))
 	{
+	if (warsptr->destruct > (byte)0)
+		{
+		prfmsg(SELFD8);
+		outprfge(FLT_NONE,usrnum);
+		}
+	else
 	if (warsptr->cloak > 0)
 		{
 		prfmsg(CLOKCOM);
@@ -5456,6 +5462,12 @@ if (!neutral(&warsptr->coord))
 	{
 	prfmsg(SELFD1);
 	outprfge(FLT_NONE,usrnum);
+	if (warsptr->cloak > 0 && warsptr->cloak != 3)
+		{
+		warsptr->cloak = 3;
+		prfmsg(CLOKOFF);
+		outprfge(FLT_NONE,usrnum);
+		}
 	warsptr->destruct = (byte)COUNTDOWN;
 	return;
 	}

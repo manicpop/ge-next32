@@ -3179,7 +3179,18 @@ if (ptr->destruct > (byte)0)
 			prfmsg(SELFD3AO,ptr->userid);
 		else
 			prfmsg(SELFD3A,ptr->shipname);
-		outrange(FLT_NONE,&ptr->coord);
+		for (zothusn=0 ; zothusn < nships ; zothusn++)
+			{
+			wptr=warshpoff(zothusn);
+			if (ingegame(zothusn) && usrn != zothusn && shipclass[wptr->shpclass].max_type == CLASSTYPE_USER)
+				{
+				ddist = cdistance(&ptr->coord,&wptr->coord);
+				ddist *= 10000;
+				if (ddist < (double)shipclass[wptr->shpclass].scanrange)
+					outprfge(FLT_NONE,zothusn);
+				}
+			}
+		clrprf();
 		if (ptr->shieldstat == SHIELDUP)
 			{
 			prfmsg(SELFD3S);
@@ -3220,7 +3231,10 @@ if (ptr->destruct > (byte)0)
 							}
 						wptr->damage += (double)damage;
 						wptr->lastfired = -1;
-						prfmsg(SELFD3N,gechrbuf,username(wptr));
+						if (wptr->shipname[0] == '\0')
+							prfmsg(SELFD3N,gechrbuf,username(wptr));
+						else
+							prfmsg(SELFD3O,gechrbuf,wptr->shipname);
 						outprfge(FLT_NONE,usrn);
 						}
 					}
