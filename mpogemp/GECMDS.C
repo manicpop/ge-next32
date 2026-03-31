@@ -4068,7 +4068,7 @@ void FUNC cmd_geroster()
 int	i = 0;
 int	j, showrank;
 int	rank = 0;
-long	target;
+long	target = 0;
 
 /* don't try to show rank if we haven't initialized waruptr yet or we have no score */
 showrank = (waruptr != NULL && waruptr->userid[0] != '\0' && waruptr->score != 0);
@@ -4104,7 +4104,7 @@ if (qhibtv(1))
 			sprintf(gechrbuf,"%11lu",tmpusr.score);
 			sprintf(gechrbuf2," %10.2fm",((float)tmpusr.population)/100.0);
 			prf("%-29s%s%6u%6u%4d%s\r",tmpusr.userid,gechrbuf,tmpusr.kills,tmpusr.ukills,tmpusr.planets,gechrbuf2);
-			if (showrank && absbtv() == target)
+			if (showrank && target != 0 && absbtv() == target)
 				rank = i;
 			if (i % 5 == 0)
 				outprfge(FLT_NONE,usrnum);
