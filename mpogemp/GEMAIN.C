@@ -2478,7 +2478,7 @@ for (zothusn=0 ; zothusn < nships ; zothusn++)
 		oth_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
 		if ((src_neb || oth_neb) && !(src_neb && oth_neb && ddist < (double)NEBRNG))
 			continue;
-		if (ddist > 1 && ddist < (double)shipclass[wptr->shpclass].scanrange)
+		if (ddist > 1 && ddist < (double)ship_scanrange(wptr))
 			outprfge(filter,zothusn);
 		}
 	}

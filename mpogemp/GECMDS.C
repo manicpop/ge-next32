@@ -737,7 +737,7 @@ else
 			}
 		prfmsg(ENGFIRE,deg);
 		outprfge(FLT_NONE,usrnum);
-		if (shipclass[warsptr->shpclass].max_accel >= 1000 && warsptr->speed < 1000.0 && speed != 0)
+		if (ship_accel(warsptr) >= 1000.0 && warsptr->speed < 1000.0 && speed != 0)
 			warsptr->speed = 0.0;	/* no fractional warp speeds */
 		warsptr->speed2b = 1000.0 * (float)speed;
 		if (deg != warsptr->head2b)
@@ -1314,7 +1314,7 @@ if (neutral(&(wptr->coord)))
 	}
 
 dist = cdistance(&ptr->coord,&(wptr->coord));
-if (wptr->cloak < 10 && (dist*10000.0) < (double)shipclass[warsptr->shpclass].scanrange)
+if (wptr->cloak < 10 && (dist*10000.0) < (double)ship_scanrange(warsptr))
 	{
 	speed = ptr->speed + wptr->speed;
 
@@ -1388,7 +1388,7 @@ if (ptr[0] == '@')
 			}
 		wptr=warshpoff(shpnum);
 		dist = cdistance(&warsptr->coord,&(wptr->coord));
-		if ((dist*10000) > (double)shipclass[warsptr->shpclass].scanrange)
+		if ((dist*10000) > (double)ship_scanrange(warsptr))
 			{
 			warsptr->lock = -1;
 			prfmsg(NOLOCK);
@@ -1725,7 +1725,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 		{
 		ddist = cdistance(&ptr->coord,&mptr->coord);
 		ddist *= 10000;
-		if (ddist < (double)shipclass[ptr->shpclass].scanrange)
+		if (ddist < (double)ship_scanrange(ptr))
 			{
 			mptr->timer = 1; /* set mine to explode next tick */
 			}

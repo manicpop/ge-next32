@@ -63,6 +63,30 @@
 
 static long	deathdeduct;
 
+double FUNC ship_accel(ptr)
+WARSHP	*ptr;
+{
+double	accelrate;
+
+	accelrate = (double)shipclass[ptr->shpclass].max_accel;
+	if (ptr->upgrade & ACCELBST)
+		accelrate *= 2.0;
+
+	return(accelrate);
+}
+
+long FUNC ship_scanrange(ptr)
+WARSHP	*ptr;
+{
+long	range;
+
+	range = shipclass[ptr->shpclass].scanrange;
+	if (ptr->upgrade & SCANBST)
+		range *= 2L;
+
+	return(range);
+}
+
 void FUNC firep(ptr,usrn)
 WARSHP	*ptr;
 int	usrn;
@@ -314,7 +338,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 				heading = (unsigned)vector(&ptr->coord,&wptr->coord);
 				if (smallest(heading,deg) < HPBEAMW)
 					{
-					if (ddistance < (double)shipclass[ptr->shpclass].scanrange)
+						if (ddistance < (double)ship_scanrange(ptr))
 						{
 						factor = pdamage(ptr,ddistance,0);
 						factor *= 0.5 + (double)ptr->phasrtype / 2.0;
@@ -709,7 +733,7 @@ if (!ingegame(recipient))
 eptr = warshpoff(entrant);
 rptr = warshpoff(recipient);
 dist = cdistance(&eptr->coord,&rptr->coord) * 10000.0;
-return(dist <= (double)shipclass[rptr->shpclass].scanrange);
+return(dist <= (double)ship_scanrange(rptr));
 }
 
 void FUNC send_entrymsg(entrant,recipient)
@@ -1338,7 +1362,7 @@ int	usrn;
 int	angle;
 double	rotamt;
 
-rotamt = (double)(shipclass[ptr->shpclass].max_accel/10.0);
+rotamt = ship_accel(ptr) / 10.0;
 
 if (ptr->heading != ptr->head2b)
 	{
@@ -1381,7 +1405,7 @@ double	accelrate,decelrate;
 
 if (ptr->speed < ptr->speed2b)
 	{
-	accelrate = (double)shipclass[ptr->shpclass].max_accel;
+	accelrate = ship_accel(ptr);
 	if (ptr->speed < 1000 && ptr->speed2b < 1000)
 		usage = 0;
 	else
@@ -1411,7 +1435,7 @@ if (ptr->speed < ptr->speed2b)
 			else
 				prfmsg(NOACCEL,(int)(ptr->speed/1000.0));
 			outprfge(FLT_NONE,usrn);
-			decelrate = (double)shipclass[ptr->shpclass].max_accel * 2.0;
+			decelrate = accelrate * 2.0;
 			if ((ptr->speed/1000 >=1) && ((ptr->speed-decelrate)/1000 <1))
 				hyperspace(ptr,usrn,0);
 			if (fabs(ptr->speed) <= decelrate)
@@ -1449,7 +1473,7 @@ if (ptr->speed < ptr->speed2b)
 			else
 				prfmsg(NOACCEL,(int)(ptr->speed/1000.0));
 			outprfge(FLT_NONE,usrn);
-			decelrate = (double)shipclass[ptr->shpclass].max_accel * 2.0;
+			decelrate = accelrate * 2.0;
 			if ((ptr->speed/1000 >=1) && ((ptr->speed-decelrate)/1000 <1))
 				hyperspace(ptr,usrn,0);
 			if (fabs(ptr->speed) <= decelrate)
@@ -1463,7 +1487,7 @@ if (ptr->speed < ptr->speed2b)
 else
 if (ptr->speed > ptr->speed2b)
 	{
-	decelrate = (double)shipclass[ptr->shpclass].max_accel * 2.0;
+	decelrate = ship_accel(ptr) * 2.0;
 	if ((ptr->speed2b < 1000) && (ptr->speed/1000 >=1) && ((ptr->speed-decelrate)/1000 <1))
 		hyperspace(ptr,usrn,0);
 
@@ -1620,12 +1644,12 @@ if (ptr->speed > 0)
 			else
 				prfmsg(MOVE4);
 			outprfge(FLT_NONE,usrn);
-			if ((ptr->speed/1000 >=1) && ((ptr->speed-((double)shipclass[ptr->shpclass].max_accel * 2.0))/1000 <1))
+			if ((ptr->speed/1000 >=1) && ((ptr->speed-(ship_accel(ptr) * 2.0))/1000 <1))
 				hyperspace(ptr,usrn,0);
-			if (fabs(ptr->speed) <= ((double)shipclass[ptr->shpclass].max_accel * 2.0))
+			if (fabs(ptr->speed) <= (ship_accel(ptr) * 2.0))
 				ptr->speed = 0;
 			else
-				ptr->speed -= ((double)shipclass[ptr->shpclass].max_accel * 2.0);
+				ptr->speed -= (ship_accel(ptr) * 2.0);
 			return;
 			}
 		else
@@ -3470,7 +3494,7 @@ if (locker_neb || lockee_neb)
 		}
 	}
 
-if (dist > (double)shipclass[ptr->shpclass].scanrange)
+if (dist > (double)ship_scanrange(ptr))
 	{
 	ptr->lock = -1;
 	prfmsg(LOCK05,shpltr(usrn,lockee));
@@ -4931,6 +4955,8 @@ double	damfact;
 double	temp;
 
 temp = damfact / ((double)(shipclass[ptr->shpclass].damfact)/100.0);
+if (ptr->upgrade & ARMOR)
+	temp *= 0.625;
 
 return(temp);
 }
@@ -5177,7 +5203,7 @@ for (othusn=0 ; othusn < nships ; othusn++)
 		oth_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
 		if ((ptr_neb || oth_neb) && !(ptr_neb && oth_neb && ddistance < (double)NEBRNG))
 			continue;
-		if (ddistance < shipclass[ptr->shpclass].scanrange
+			if (ddistance < ship_scanrange(ptr)
 			&& wptr->cloak < 10)
 			{
 			for (i=0;i<NOSCANTAB;++i)

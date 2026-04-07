@@ -653,7 +653,7 @@ if (shpnum >= 0)
 	wptr = warshpoff(shpnum);
 	wuptr = warusroff(shpnum);
 	scandist = cdistance(&warsptr->coord,&wptr->coord)*10000;
-	if (scandist < shipclass[warsptr->shpclass].scanrange)
+	if (scandist < ship_scanrange(warsptr))
 		{
 		bearing = cbearing(&warsptr->coord,&wptr->coord,warsptr->heading);
 		heading = cbearing(&wptr->coord,&warsptr->coord,wptr->heading);
@@ -1075,17 +1075,17 @@ if (innebula(xsect,ysect))
 	}
 
 if (genearas("h",margv[2]))
-	range = (double)((shipclass[warsptr->shpclass].scanrange) / 2);
+	range = (double)(ship_scanrange(warsptr) / 2);
 else
 if (genearas("q",margv[2]))
-	range = (double)((shipclass[warsptr->shpclass].scanrange) / 4);
+	range = (double)(ship_scanrange(warsptr) / 4);
 else
 	{
 	x = atoi(margv[2]);
 	if (x < 1 || x > 9 || margc == 2)
 		x = 9;
 
-	range = (double)((shipclass[warsptr->shpclass].scanrange) / ((10 - x) * (10 - x)));
+	range = (double)(ship_scanrange(warsptr) / ((10 - x) * (10 - x)));
 	}
 
 prfmsg(SCAN24, spr("%ld", (long)range), xsect, ysect);
@@ -1343,12 +1343,12 @@ if (innebula(xsect,ysect))
 	}
 
 if (margc == 3 && genearas("h",margv[2]))
-	range = (double)(shipclass[warsptr->shpclass].scanrange) * 5.0;
+	range = (double)ship_scanrange(warsptr) * 5.0;
 else
 if (margc == 3 && genearas("q",margv[2]))
-	range = (double)(shipclass[warsptr->shpclass].scanrange) * 2.5;
+	range = (double)ship_scanrange(warsptr) * 2.5;
 else
-	range = (double)(shipclass[warsptr->shpclass].scanrange) * 10.0;
+	range = (double)ship_scanrange(warsptr) * 10.0;
 
 x1 = warsptr->coord.xcoord * 10000.0;
 y1 = warsptr->coord.ycoord * 10000.0;
