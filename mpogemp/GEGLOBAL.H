@@ -202,6 +202,7 @@ extern	SCANTAB		*scantab;
 
 extern	long		shieldprice[TOPSHIELD];
 extern	long		phaserprice[TOPPHASOR];
+extern	long		upgrprice[8];
 extern	unsigned	baseprice[NUMITEMS];
 extern	double		maxpl[NUMITEMS];
 extern	long		weight[NUMITEMS];

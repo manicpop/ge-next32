@@ -270,6 +270,7 @@ SCANTAB				*scantab;
 
 long				shieldprice[TOPSHIELD];
 long				phaserprice[TOPPHASOR];
+long				upgrprice[8];
 unsigned			baseprice[NUMITEMS];
 
 /* Maximum items a planet can hold (adjusted later)*/
@@ -504,6 +505,15 @@ for (i=0;i<TOPPHASOR;++i)
 
 	phaserprice[i] = lngopt(PHSRPR01+i,0L,201228378L);
 	logthis(spr("Phaser #%d Price=%ld",i,phaserprice[i]));
+	}
+
+/* load the upgrade price table */
+for (i=0;i<8;++i)
+	{
+	logthis(spr("upgrade %d",i+1));
+
+	upgrprice[i] = lngopt(UPGRPR1+i,0L,201228378L);
+	logthis(spr("Upgr #%d Price=%ld",i+1,upgrprice[i]));
 	}
 
 

@@ -12,7 +12,7 @@ Commands: [1;32mabandon  abort  admin  attack  buy  cloak  cls  decoy  destruct
           transfer  warp  who  x  zipper
 
 [1;36mTopics:   [1;32mbattle  class  distress  flux  galaxy  moving  nebulas  planets
-          planets  scoring  starting  strategy  wormholes  Cybertrons
+          scoring  starting  strategy  upgrades  wormholes  Cybertrons
           Lydorians  Murdonians  Sartens  Tryklons  Vakories  Zygorians
 
 [1;36mEnter [1;37mHELP[1;36m followed by any of these commands or topics for more information.[1;37m
@@ -516,6 +516,26 @@ A high quality planet in a nebula can be very valuable, as it adds an extra
 layer of security for your colony. Just don't forget where you left it.
 [1;37m} T GE help nebula message
 
+HLPUPG {
+[1;36mTopic: Ship upgrades
+
+Various upgrades for your ship's systems are available at Zygor. Each class of
+ship has different upgrades that are applicable to that class of ship. The
+prices for these upgrades also vary from class to class, with more powerful
+ships generally requiring pricier upgrades.
+
+To see what upgrades are available for your ship class, go to Zygor and enter
+[1;37mNEW UPGRADE[1;36m. To purchase an upgrade, enter [1;37mNEW UPGRADE X[1;36m, where X is the
+number of the upgrade.
+
+Upgrades are for the ship in which they are installed only, and they can't be
+transferred or returned once installed. Be careful to not put a lot of money
+into upgrading your ship only to carelessly lose it later.
+
+Installed upgrades are shown in [1;37mREP SYS[1;36m. Upgraded ships will be shown with
+[1;37m+[1;36m symbols added to the ship's class in scans.
+[1;37m} T GE help upgrade message
+
 HLPADM {
 [1;36mThe [1;37mADMIN[1;36m command permits you to claim and administer a planet once in orbit.
 If you already own this planet, you can perform several planetary maintenance
@@ -537,8 +557,8 @@ Option 5 is for adjusting the planet's tax rate.
 Option 6 is for setting a trade password; only users that know this password
 will be able to purchase goods or request maintenance.
 
-Option 7 sets a beacon message that will be broadcast to all ships that scan
-your planet.
+Option 7 sets a beacon message that will be broadcast to all ships that are
+near your planet and not in hyperspace.
 [1;37m} T GE help admin message
 
 HLPABA {

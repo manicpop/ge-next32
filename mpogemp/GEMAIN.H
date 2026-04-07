@@ -283,6 +283,15 @@
 #define CLR_WHITE1	"\33[0;37m"
 #define CLR_WHITE2	"\33[1;37m"
 
+/* ship upgrades */
+#define ENHSCAN 1
+#define ARMOR 2
+#define ACCELBST 4
+#define SCANBST 8
+#define ENHLOCK 16
+#define DAMCTRL 32
+#define TPONDER 64
+#define NCORE 128
 
 /*****************************************************************************/
 /* End of Defines                                                            */

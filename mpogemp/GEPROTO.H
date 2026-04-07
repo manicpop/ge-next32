@@ -200,12 +200,12 @@
 /*     822 */ void FUNC cmd_flux P((void ));
 /*     831 */ void FUNC cmd_orbit P((void ));
 /*     909 */ void FUNC cmd_phas P((void ));
-/*     992 */ void FUNC firep P((WARSHP *ptr , int usrn ));
-/*    1136 */ void FUNC firehp P((WARSHP *ptr , int usrn ));
+/*         */ void FUNC firep P((WARSHP *ptr , int usrn ));
+/*         */ void FUNC firehp P((WARSHP *ptr , int usrn ));
 /*    1248 */ void FUNC cmd_torp P((void ));
-/*    1334 */ int FUNC torp P((WARSHP *ptr , int usrn , int shpnum ));
+/*         */ int FUNC torp P((WARSHP *ptr , int usrn , int shpnum ));
 /*    1382 */ void FUNC cmd_missl P((void ));
-/*    1480 */ int FUNC misl P((WARSHP *ptr , int usrn , int shpnum , unsigned energy, unsigned eng_flu ));
+/*         */ int FUNC misl P((WARSHP *ptr , int usrn , int shpnum , unsigned energy, unsigned eng_flu ));
 /*    1525 */ int FUNC lockon P((WARSHP *ptr , int type , int ship , int usrn ));
 /*    1619 */ int FUNC findshp P((char *ptr , int type ));
 /*    1712 */ void FUNC zaphim P((WARSHP *ptr , int usrn ));
@@ -219,6 +219,7 @@
 /*    2033 */ void FUNC cmd_send P((void ));
 /*    2093 */ void FUNC cmd_freq P((void ));
 /*    2154 */ void FUNC cmd_report P((void ));
+/*         */ void FUNC show_rep_sysdam P((WARSHP *ptr ));
 /*    2598 */ void FUNC cmd_scan P((void ));
 /*    2647 */ void FUNC scan_sh P((void ));
 /*         */ int FUNC build_ship_name P((int othusn ));

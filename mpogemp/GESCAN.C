@@ -709,16 +709,49 @@ if (shpnum >= 0)
 		prfmsg(SCAN03A,gechrbuf,gechrbuf2);
 		prfmsg(SCAN04,gechrbuf3);
 
-		if (warsptr->where != 1 && wptr->where != 1 && warsptr->jam_sev < (byte)3)
+		if (warsptr->jam_sev < (byte)3)
 			{
-			damage = (unsigned) (wptr->damage+.5);
-			damstr(damage);
-			prfmsg(SCAN05,gechrbuf);
+			if ((warsptr->upgrade & ENHSCAN) || (warsptr->where != 1 && wptr->where != 1))
+				{
+				damage = (unsigned) (wptr->damage+.5);
+				damstr(damage);
+				prfmsg(SCAN05,gechrbuf);
+				}
 
-			if (wptr->shieldstat == SHIELDUP)
-				prfmsg(SCAN06);
-			else
-				prfmsg(SCAN07);
+			if (wptr->where != 1)
+				{
+				if (!(warsptr->upgrade & ENHSCAN))
+					{
+					if (wptr->shieldstat == SHIELDUP)
+						prfmsg(SCAN06);
+					else
+						prfmsg(SCAN07);
+					}
+				}
+
+			if ((warsptr->upgrade & ENHSCAN) && warsptr->where != 1 && wptr->where != 1)
+				{
+				if (shipclass[wptr->shpclass].max_shlds != 0)
+					{
+					if (wptr->shieldstat == SHIELDUP)
+						prfmsg(SCAN06M,wptr->shieldtype);
+					else
+						prfmsg(SCAN07M,wptr->shieldtype);
+					}
+
+				if (shipclass[wptr->shpclass].max_phasr != 0)
+					{
+					if (wptr->phasr >= PMINFIRE)
+						prfmsg(SCAN19,wptr->phasrtype);
+					else
+					if (wptr->phasr >= 0)
+						prfmsg(SCAN21,wptr->phasrtype);
+					else
+						prfmsg(SCAN20,wptr->phasrtype);
+					}
+
+				show_rep_sysdam(wptr);
+				}
 
 			if (wptr->status == GESTAT_AUTO)
 				prfmsg(SCAN08,wptr->kills);
