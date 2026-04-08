@@ -63,6 +63,129 @@
 
 static long	deathdeduct;
 
+static void lock_hyperspace(ptr,usrn,msg)
+WARSHP	*ptr;
+int	usrn;
+int	msg;
+{
+WARSHP	*lptr;
+int	i;
+int	px,py,lx,ly;
+char	letter;
+
+	px = coord1(ptr->coord.xcoord);
+	py = coord1(ptr->coord.ycoord);
+
+	for (i=0;i<nterms;++i)
+		{
+		if (!ingegame(i) || i == usrn)
+			continue;
+
+		lptr = warshpoff(i);
+		if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
+			continue;
+
+		lx = coord1(lptr->coord.xcoord);
+		ly = coord1(lptr->coord.ycoord);
+		if (lx == px && ly == py)
+			continue;
+
+		letter = shpltr(usrn,i);
+		if (letter == '?')
+			continue;
+
+		prfmsg(msg,letter);
+		outprfge(FLT_NONE,i);
+		}
+}
+
+void FUNC lock_orbit(ptr,usrn,msg)
+WARSHP	*ptr;
+int	usrn;
+int	msg;
+{
+WARSHP	*lptr;
+int	i;
+int	sx,sy;
+char	letter;
+
+	sx = coord1(ptr->coord.xcoord);
+	sy = coord1(ptr->coord.ycoord);
+
+	for (i=0;i<nterms;++i)
+		{
+		if (!ingegame(i) || i == usrn)
+			continue;
+
+		lptr = warshpoff(i);
+		if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
+			continue;
+
+		letter = shpltr(usrn,i);
+		if (letter == '?')
+			continue;
+
+		prfmsg(msg,letter,sx,sy);
+		outprfge(FLT_NONE,i);
+		}
+}
+
+void FUNC lock_worm(ptr,usrn)
+WARSHP	*ptr;
+int	usrn;
+{
+WARSHP	*lptr;
+int	i;
+int	sx,sy;
+char	letter;
+
+	sx = coord1(ptr->coord.xcoord);
+	sy = coord1(ptr->coord.ycoord);
+
+	for (i=0;i<nterms;++i)
+		{
+		if (!ingegame(i) || i == usrn)
+			continue;
+
+		lptr = warshpoff(i);
+		if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
+			continue;
+
+		letter = shpltr(usrn,i);
+		if (letter == '?')
+			continue;
+
+		prfmsg(LOCKWORM,letter,sx,sy);
+		outprfge(FLT_NONE,i);
+		}
+}
+
+void FUNC lock_cloak(usrn,msg)
+int	usrn;
+int	msg;
+{
+WARSHP	*lptr;
+int	i;
+char	letter;
+
+	for (i=0;i<nterms;++i)
+		{
+		if (!ingegame(i) || i == usrn)
+			continue;
+
+		lptr = warshpoff(i);
+		if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
+			continue;
+
+		letter = shpltr(usrn,i);
+		if (letter == '?')
+			continue;
+
+		prfmsg(msg,letter);
+		outprfge(FLT_NONE,i);
+		}
+}
+
 double FUNC ship_accel(ptr)
 WARSHP	*ptr;
 {
@@ -1542,6 +1665,12 @@ int	usrn;
 
 int i;
 
+if (flag == 1 && ptr->where == 1)
+	return;
+
+if (flag == 0 && ptr->where == 0)
+	return;
+
 if (flag == 1)
 	{
 	if (ptr->shieldstat == SHIELDUP)
@@ -1567,6 +1696,7 @@ if (flag == 1)
 	else
 		prfmsg(HYPERIN2,ptr->shipname);
 	outsect(FLT_NONE,&(warshpoff(usrn)->coord),usrn,0);
+	lock_hyperspace(ptr,usrn,LOCKHY1);
 
 	for(i=0;i<MAXTORPS;++i)
 		{
@@ -1604,6 +1734,7 @@ else
 	else
 		prfmsg(HYPEROUN,ptr->shipname);
 	outsect(FLT_NONE,&(warshpoff(usrn)->coord),usrn,0);
+	lock_hyperspace(ptr,usrn,LOCKHY2);
 	}
 }
 
@@ -1965,17 +2096,18 @@ for (i=0; i<MAXPLANETS;++i)
 				else
 					prfmsg(GRAVWRM3,i+1);
 
-				outprfge(FLT_NONE,usrn);
-				if (ptab[usrn].planets[i].type == PLTYPE_PLNT)
-					{
-					ptr->damage = 101.0;
-					ptr->cantexit = FIRETICKS; /* no exiting after crashing */
-					}
-				else
-					{
-					setsect(ptr); /* build PKEY */
-					pkey.plnum = i+1;
-					gesdb(GEGETNOW,&pkey,(GALSECT *)&worm);
+					outprfge(FLT_NONE,usrn);
+					if (ptab[usrn].planets[i].type == PLTYPE_PLNT)
+						{
+						ptr->damage = 101.0;
+						ptr->cantexit = FIRETICKS; /* no exiting after crashing */
+						}
+					else
+						{
+						lock_worm(ptr,usrn);
+						setsect(ptr); /* build PKEY */
+						pkey.plnum = i+1;
+						gesdb(GEGETNOW,&pkey,(GALSECT *)&worm);
 					ptr->coord.xcoord = worm.destination.xcoord;
 					ptr->coord.ycoord = worm.destination.ycoord;
 					prfmsg(MOVE1,
@@ -3471,7 +3603,7 @@ if (!ingegame(lockee) || lptr->status == GESTAT_AVAIL)
 if (lptr->cloak >= 10)
 	{
 	ptr->lock = -1;
-	prfmsg(LOCK05,shpltr(usrn,lockee));
+	prfmsg(LOCK05);
 	outprfge(FLT_NONE,usrn);
 	prfmsg(LOCK04,shpltr(lockee,usrn));
 	outprfge(FLT_NONE,lockee);
@@ -3486,7 +3618,7 @@ if (locker_neb || lockee_neb)
 	if (!(locker_neb && lockee_neb && dist < (double)NEBRNG))
 		{
 		ptr->lock = -1;
-		prfmsg(LOCK05,shpltr(usrn,lockee));
+		prfmsg(LOCK05);
 		outprfge(FLT_NONE,usrn);
 		prfmsg(LOCK04,shpltr(lockee,usrn));
 		outprfge(FLT_NONE,lockee);
@@ -3497,7 +3629,7 @@ if (locker_neb || lockee_neb)
 if (dist > (double)ship_scanrange(ptr))
 	{
 	ptr->lock = -1;
-	prfmsg(LOCK05,shpltr(usrn,lockee));
+	prfmsg(LOCK05);
 	outprfge(FLT_NONE,usrn);
 	prfmsg(LOCK04,shpltr(lockee,usrn));
 	outprfge(FLT_NONE,lockee);
@@ -4859,21 +4991,21 @@ SCANTAB	*sptr;
 
 sptr = &scantab[usrn];
 
-for (i=0; i<NOSCANTAB; ++i)
-	{
-	if (sptr->ship[i].shipno == ship)
-		return(sptr->ship[i].letter);
-	}
+	for (i=0; i<NOSCANTAB; ++i)
+		{
+		if (sptr->ship[i].flag && sptr->ship[i].shipno == ship)
+			return(sptr->ship[i].letter);
+		}
 
 /* not found, update scantab */
 update_scantab(warshpoff(usrn), usrn);
 
 /* try again */
-for (i=0; i<NOSCANTAB; ++i)
-	{
-	if (sptr->ship[i].shipno == ship)
-		return(sptr->ship[i].letter);
-	}
+	for (i=0; i<NOSCANTAB; ++i)
+		{
+		if (sptr->ship[i].flag && sptr->ship[i].shipno == ship)
+			return(sptr->ship[i].letter);
+		}
 
 /* still not found, too many ships */
 return('?');

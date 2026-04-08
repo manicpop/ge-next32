@@ -589,6 +589,7 @@ if (valpcnt(margv[1],0,99))
 			refresh(warsptr,usrnum);
 			prfmsg(LEAVEORB);
 			outprfge(FLT_SHIP,usrnum);
+			lock_orbit(warsptr,usrnum,LOCKORB2);
 			warsptr->where = 0;
 			warsptr->repair = 0;
 			}
@@ -724,6 +725,7 @@ else
 			refresh(warsptr,usrnum);
 			prfmsg(LEAVEORB);
 			outprfge(FLT_SHIP,usrnum);
+			lock_orbit(warsptr,usrnum,LOCKORB2);
 			warsptr->where = 0;
 			warsptr->repair = 0;
 			}
@@ -926,9 +928,11 @@ if (plnum <= MAXPLANETS && plnum > 0)
 				{
 				prfmsg(ORBIT1,plnum,plptr->name);
 				}
+			outprfge(FLT_NONE,usrnum);
 			warsptr->where = 10 + plnum;
 			warsptr->speed = 0;
 			warsptr->speed2b = 0;
+			lock_orbit(warsptr,usrnum,LOCKORB1);
 			}
 		else
 			{
@@ -1403,9 +1407,10 @@ if (ptr[0] == '@')
 else
 	{
 	letter = toupper(*ptr);
+	update_scantab(warsptr,usrnum);
 	for(i=0;i<NOSCANTAB;++i)
 		{
-		if (scantab[usrnum].ship[i].letter == letter)
+		if (scantab[usrnum].ship[i].flag && scantab[usrnum].ship[i].letter == letter)
 			{
 			shpnum = scantab[usrnum].ship[i].shipno;
 			break;
@@ -2602,6 +2607,7 @@ if (sameas(margv[1],"on"))
 			warsptr->cloak = 1;
 			prfmsg(CLOKON);
 			outprfge(FLT_NONE,usrnum);
+			lock_cloak(usrnum,LOCKCLOK);
 			}
 		else
 			{
@@ -5156,6 +5162,7 @@ void FUNC cmd_lock()
 {
 
 int	shpnum;
+int	oldlock;
 char	lockltr;
 byte	nebmask;
 WARSHP	*wptr;
@@ -5202,6 +5209,7 @@ if (warsptr->jam_sev > (byte)7 || (warsptr->jam_sev > (byte)2 && gernd()%(9 - (i
 	}
 
 nebmask = (byte)innebula(coord1(warsptr->coord.xcoord),coord1(warsptr->coord.ycoord));
+oldlock = warsptr->lock;
 shpnum = findshp(margv[1],1);
 
 if (shpnum >= 0)
@@ -5233,12 +5241,15 @@ if (shpnum >= 0)
 	else
 		prfmsg(LOCK02N, warshpoff(shpnum)->shipname,username(warshpoff(shpnum)));
 	outprfge(FLT_NONE,usrnum);
-	lockltr = shpltr(shpnum,usrnum);
-	if (lockltr == '?')
-		prfmsg(LOCK03N);
-	else
-		prfmsg(LOCK03,lockltr);
-	outprfge(FLT_NONE,shpnum);
+	if (oldlock != shpnum)
+		{
+		lockltr = shpltr(shpnum,usrnum);
+		if (lockltr == '?')
+			prfmsg(LOCK03N);
+		else
+			prfmsg(LOCK03,lockltr);
+		outprfge(FLT_NONE,shpnum);
+		}
 	}
 else
 	{
