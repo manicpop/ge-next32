@@ -63,43 +63,52 @@
 
 static long	deathdeduct;
 
-static void lock_hyperspace(ptr,usrn,msg)
+/* enhanced lock helpers */
+
+void FUNC lock_simple(ptr,usrn,msg,skipsame)
 WARSHP	*ptr;
 int	usrn;
 int	msg;
+int	skipsame;
 {
 WARSHP	*lptr;
 int	i;
 int	px,py,lx,ly;
 char	letter;
 
+if (skipsame)
+	{
 	px = coord1(ptr->coord.xcoord);
 	py = coord1(ptr->coord.ycoord);
+	}
 
-	for (i=0;i<nterms;++i)
+for (i=0;i<nterms;++i)
+	{
+	if (!ingegame(i) || i == usrn)
+		continue;
+
+	lptr = warshpoff(i);
+	if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
+		continue;
+
+	if (skipsame)
 		{
-		if (!ingegame(i) || i == usrn)
-			continue;
-
-		lptr = warshpoff(i);
-		if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
-			continue;
-
 		lx = coord1(lptr->coord.xcoord);
 		ly = coord1(lptr->coord.ycoord);
 		if (lx == px && ly == py)
 			continue;
-
-		letter = shpltr(usrn,i);
-		if (letter == '?')
-			continue;
-
-		prfmsg(msg,letter);
-		outprfge(FLT_NONE,i);
 		}
+
+	letter = shpltr(usrn,i);
+	if (letter == '?')
+		continue;
+
+	prfmsg(msg,letter);
+	outprfge(FLT_NONE,i);
+	}
 }
 
-void FUNC lock_orbit(ptr,usrn,msg)
+void FUNC lock_sector(ptr,usrn,msg)
 WARSHP	*ptr;
 int	usrn;
 int	msg;
@@ -109,81 +118,57 @@ int	i;
 int	sx,sy;
 char	letter;
 
-	sx = coord1(ptr->coord.xcoord);
-	sy = coord1(ptr->coord.ycoord);
+sx = coord1(ptr->coord.xcoord);
+sy = coord1(ptr->coord.ycoord);
 
-	for (i=0;i<nterms;++i)
-		{
-		if (!ingegame(i) || i == usrn)
-			continue;
+for (i=0;i<nterms;++i)
+	{
+	if (!ingegame(i) || i == usrn)
+		continue;
 
-		lptr = warshpoff(i);
-		if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
-			continue;
+	lptr = warshpoff(i);
+	if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
+		continue;
 
-		letter = shpltr(usrn,i);
-		if (letter == '?')
-			continue;
+	letter = shpltr(usrn,i);
+	if (letter == '?')
+		continue;
 
-		prfmsg(msg,letter,sx,sy);
-		outprfge(FLT_NONE,i);
-		}
+	prfmsg(msg,letter,sx,sy);
+	outprfge(FLT_NONE,i);
+	}
 }
 
-void FUNC lock_worm(ptr,usrn)
-WARSHP	*ptr;
+void FUNC lock_proj(usrn,target,msg,msgn)
 int	usrn;
-{
-WARSHP	*lptr;
-int	i;
-int	sx,sy;
-char	letter;
-
-	sx = coord1(ptr->coord.xcoord);
-	sy = coord1(ptr->coord.ycoord);
-
-	for (i=0;i<nterms;++i)
-		{
-		if (!ingegame(i) || i == usrn)
-			continue;
-
-		lptr = warshpoff(i);
-		if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
-			continue;
-
-		letter = shpltr(usrn,i);
-		if (letter == '?')
-			continue;
-
-		prfmsg(LOCKWORM,letter,sx,sy);
-		outprfge(FLT_NONE,i);
-		}
-}
-
-void FUNC lock_cloak(usrn,msg)
-int	usrn;
+int	target;
 int	msg;
+int	msgn;
 {
 WARSHP	*lptr;
 int	i;
-char	letter;
+char	sletter,tletter;
 
-	for (i=0;i<nterms;++i)
-		{
-		if (!ingegame(i) || i == usrn)
-			continue;
+for (i=0;i<nterms;++i)
+	{
+	if (!ingegame(i) || i == usrn || i == target)
+		continue;
 
-		lptr = warshpoff(i);
-		if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
-			continue;
+	lptr = warshpoff(i);
+	if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
+		continue;
 
-		letter = shpltr(usrn,i);
-		if (letter == '?')
-			continue;
+	sletter = shpltr(usrn,i);
+	if (sletter == '?')
+		continue;
 
-		prfmsg(msg,letter);
-		outprfge(FLT_NONE,i);
-		}
+	tletter = shpltr(target,i);
+	if (tletter == '?')
+		prfmsg(msgn,sletter);
+	else
+		prfmsg(msg,sletter,tletter);
+	outprfge(FLT_NONE,i);
+	}
 }
 
 double FUNC ship_accel(ptr)
@@ -223,9 +208,11 @@ byte src_neb,targ_neb,nebmask,underone;
 
 int hitone;
 int fired;
+int locksent;
 
 hitone = FALSE;
 fired = FALSE;
+locksent = FALSE;
 
 if (ptr->cloak > 0 )
 	{
@@ -261,6 +248,8 @@ if (ptr->phasr >=PMINFIRE)
 		prfmsg(PFIRED,(int)ptr->phasr,ptr->percent);
 		outprfge(FLT_NONE,usrn);
 		fired = TRUE;
+		lock_simple(ptr,usrn,LOCKPHA,0);
+		locksent = TRUE;
 		}
 	src_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
 	for (othusn=0 ; othusn < nships ; othusn++)
@@ -303,6 +292,11 @@ if (ptr->phasr >=PMINFIRE)
 								prfmsg(PFIRED,(int)ptr->phasr,ptr->percent);
 								outprfge(FLT_NONE,usrn);
 								fired = TRUE;
+								if (locksent == FALSE)
+									{
+									lock_simple(ptr,usrn,LOCKPHA,0);
+									locksent = TRUE;
+									}
 								}
 							underone = (factor < 1.0);
 							if (underone == TRUE)	/* hit, but no damage */
@@ -402,7 +396,9 @@ if (ptr->phasr >=PMINFIRE)
 		}
 
 	if (hitone == TRUE || ptr->status == GESTAT_USER)	/* if NPC, don't actually fire unless doing damage */
+		{
 		ptr->phasr = 0;
+		}
 	}
 else
 	{
@@ -420,6 +416,9 @@ WARUSR	*wuptr;
 unsigned deg;
 double factor;
 byte src_neb,targ_neb,nebmask;
+int hitone;
+
+hitone = FALSE;
 
 
 if (ptr->damage >= 100.0)
@@ -518,6 +517,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 									wptr->tick = 2;		/* do it fast */
 									wptr->npcmsg = 255;	/* reset annoy msg tracking */
 									}
+								hitone = TRUE;
 								wptr->cantexit = FIRETICKS;
 								ptr->cantexit = FIRETICKS;
 								randamage(wptr,othusn,factor); /*assess any random damage */
@@ -528,6 +528,8 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 				}
 			}
 		}
+		if (ptr->status == GESTAT_USER || hitone == TRUE)
+			lock_simple(ptr,usrn,LOCKHPHA,0);
 	}
 else
 	{
@@ -625,6 +627,7 @@ if (lockon(ptr,0,shpnum,usrn) == 1)
 	++ptr->torps_fired;
 	prfmsg(TFIRE2,shpltr(shpnum,usrn));
 	outprfge(FLT_NONE,shpnum);
+	lock_proj(usrn,shpnum,LOCKTOR,LOCKTORN);
 	wptr->ltorps[slot].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
 	wptr->ltorps[slot].distance += 20;
 	wptr->ltorps[slot].channel = (unsigned char)usrn;
@@ -730,6 +733,7 @@ if (lockon(ptr,1,shpnum,usrnum) == 1)
 	ptr->energy -= eng_flu;
 	prfmsg(MFIRE2,shpltr(shpnum,usrnum));
 	outprfge(FLT_NONE,shpnum);
+	lock_proj(usrnum,shpnum,LOCKMIS,LOCKMISN);
 	wptr->lmissl[slot].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
 	wptr->lmissl[slot].distance += 20;
 	wptr->lmissl[slot].channel = (unsigned char)usrnum;
@@ -1696,7 +1700,7 @@ if (flag == 1)
 	else
 		prfmsg(HYPERIN2,ptr->shipname);
 	outsect(FLT_NONE,&(warshpoff(usrn)->coord),usrn,0);
-	lock_hyperspace(ptr,usrn,LOCKHY1);
+	lock_simple(ptr,usrn,LOCKHY1,1);
 
 	for(i=0;i<MAXTORPS;++i)
 		{
@@ -1734,7 +1738,7 @@ else
 	else
 		prfmsg(HYPEROUN,ptr->shipname);
 	outsect(FLT_NONE,&(warshpoff(usrn)->coord),usrn,0);
-	lock_hyperspace(ptr,usrn,LOCKHY2);
+	lock_simple(ptr,usrn,LOCKHY2,1);
 	}
 }
 
@@ -2104,7 +2108,7 @@ for (i=0; i<MAXPLANETS;++i)
 						}
 					else
 						{
-						lock_worm(ptr,usrn);
+						lock_sector(ptr,usrn,LOCKWORM);
 						setsect(ptr); /* build PKEY */
 						pkey.plnum = i+1;
 						gesdb(GEGETNOW,&pkey,(GALSECT *)&worm);

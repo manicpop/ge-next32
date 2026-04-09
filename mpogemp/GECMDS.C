@@ -589,7 +589,7 @@ if (valpcnt(margv[1],0,99))
 			refresh(warsptr,usrnum);
 			prfmsg(LEAVEORB);
 			outprfge(FLT_SHIP,usrnum);
-			lock_orbit(warsptr,usrnum,LOCKORB2);
+			lock_sector(warsptr,usrnum,LOCKORB2);
 			warsptr->where = 0;
 			warsptr->repair = 0;
 			}
@@ -725,7 +725,7 @@ else
 			refresh(warsptr,usrnum);
 			prfmsg(LEAVEORB);
 			outprfge(FLT_SHIP,usrnum);
-			lock_orbit(warsptr,usrnum,LOCKORB2);
+			lock_sector(warsptr,usrnum,LOCKORB2);
 			warsptr->where = 0;
 			warsptr->repair = 0;
 			}
@@ -932,7 +932,7 @@ if (plnum <= MAXPLANETS && plnum > 0)
 			warsptr->where = 10 + plnum;
 			warsptr->speed = 0;
 			warsptr->speed2b = 0;
-			lock_orbit(warsptr,usrnum,LOCKORB1);
+			lock_sector(warsptr,usrnum,LOCKORB1);
 			}
 		else
 			{
@@ -1104,6 +1104,11 @@ nebmask = (byte)innebula(coord1(warsptr->coord.xcoord),coord1(warsptr->coord.yco
 
 shpnum = findshp(margv[1],1);
 
+if (shpnum < 0 && margv[1][0] == '@')
+	{
+	outprfge(FLT_NONE,usrnum);
+	}
+else
 if (shpnum == usrnum)
 	{
 	if (margv[1][0] == '@')
@@ -1226,6 +1231,11 @@ nebmask = (byte)innebula(coord1(warsptr->coord.xcoord),coord1(warsptr->coord.yco
 
 shpnum = findshp(margv[1],1);
 
+if (shpnum < 0 && margv[1][0] == '@')
+	{
+	outprfge(FLT_NONE,usrnum);
+	}
+else
 if (shpnum == usrnum)
 	{
 	if (margv[1][0] == '@')
@@ -2607,7 +2617,7 @@ if (sameas(margv[1],"on"))
 			warsptr->cloak = 1;
 			prfmsg(CLOKON);
 			outprfge(FLT_NONE,usrnum);
-			lock_cloak(usrnum,LOCKCLOK);
+			lock_simple(warsptr,usrnum,LOCKCLOK,0);
 			}
 		else
 			{

@@ -4393,10 +4393,6 @@ RENAME1O {
 [1;36mYour ship now has no name.[1;37m
 } T GE you renamed your ship message
 
-RENAME3 {
-[1;36mType [1;37mHELP RENAME[1;36m for the correct usage.[1;37m
-} T GE rename error message
-
 SELFD1 {
 [1;36mSelf-destruct countdown begun, type [1;37mABORT[1;36m to cancel![1;37m
 } T GE self destruct started message
@@ -4603,6 +4599,30 @@ LOCKWORM {***
 LOCKCLOK {***
 [0;37m[[1;34mLOCK[0;37m] Ship [0;36m%c[0;37m is activating its cloaking system.[1;37m
 } T GE lock entering wormhole message
+
+LOCKTOR {***
+[0;37m[[1;34mLOCK[0;37m] Ship [0;36m%c[0;37m is firing a torpedo at ship [0;36m%c[0;37m.[1;37m
+} T GE lock firing torps at target message
+
+LOCKTORN {***
+[0;37m[[1;34mLOCK[0;37m] Ship [0;36m%c[0;37m is firing a torpedo.[1;37m
+} T GE lock firing torps at unviewable target message
+
+LOCKMIS {***
+[0;37m[[1;34mLOCK[0;37m] Ship [0;36m%c[0;37m is firing a missile at ship [0;36m%c[0;37m.[1;37m
+} T GE lock firing misls at target message
+
+LOCKMISN {***
+[0;37m[[1;34mLOCK[0;37m] Ship [0;36m%c[0;37m is firing a missile.[1;37m
+} T GE lock firing misls at unviewable target message
+
+LOCKPHA {***
+[0;37m[[1;34mLOCK[0;37m] Ship [0;36m%c[0;37m is firing phasers.[1;37m
+} T GE lock firing phasers
+
+LOCKHPHA {***
+[0;37m[[1;34mLOCK[0;37m] Ship [0;36m%c[0;37m is firing hyper-phasers.[1;37m
+} T GE lock firing hyperphasers
 
 NAV01 {
 [0;37mSector [1;34m%d %d[0;37m is bearing [1;37m%d[0;37m, distance [1;37m%s[0;37m.[1;37m

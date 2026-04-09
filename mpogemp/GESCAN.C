@@ -619,6 +619,12 @@ nebmask = innebula(xsect,ysect);
 
 shpnum = findshp(margv[2],1);
 
+if (shpnum < 0 && margv[2][0] == '@')
+	{
+	outprfge(FLT_NONE,usrnum);
+	return;
+	}
+
 if (shpnum >= 0)
 	{
 	wptr = warshpoff(shpnum);

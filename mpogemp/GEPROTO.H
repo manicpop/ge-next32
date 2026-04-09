@@ -202,9 +202,9 @@
 /*     909 */ void FUNC cmd_phas P((void ));
 /*         */ void FUNC firep P((WARSHP *ptr , int usrn ));
 /*         */ void FUNC firehp P((WARSHP *ptr , int usrn ));
-/*         */ void FUNC lock_cloak P((int usrn , int msg ));
-/*         */ void FUNC lock_orbit P((WARSHP *ptr , int usrn , int msg ));
-/*         */ void FUNC lock_worm P((WARSHP *ptr , int usrn ));
+/*         */ void FUNC lock_proj P((int usrn , int target , int msg , int msgn ));
+/*         */ void FUNC lock_sector P((WARSHP *ptr , int usrn , int msg ));
+/*         */ void FUNC lock_simple P((WARSHP *ptr , int usrn , int msg , int skipsame ));
 /*         */ double FUNC ship_accel P((WARSHP *ptr ));
 /*         */ long FUNC ship_scanrange P((WARSHP *ptr ));
 /*    1248 */ void FUNC cmd_torp P((void ));
