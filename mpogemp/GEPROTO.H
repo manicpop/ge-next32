@@ -167,7 +167,7 @@
 /*    2585 */ int FUNC sendgemsg P((struct message *msgptr ));
 /*    2605 */ void FUNC shieldup P((WARSHP *wptr , int usrn ));
 /*    2615 */ void FUNC shielddn P((WARSHP *wptr , int usrn ));
-/*    2626 */ void FUNC shieldhit P((WARSHP *wptr , int usrn , int dam ));
+/*    2626 */ int FUNC shieldhit P((WARSHP *wptr , int dam ));
 /*    2668 */ void FUNC shieldrep P((WARSHP *wptr , int usrn ));
 /*    2686 */ void FUNC shieldchg P((WARSHP *wptr , int usrn ));
 /*    2725 */ void FUNC charge P((WARSHP *wptr , int *max , int *pct ));

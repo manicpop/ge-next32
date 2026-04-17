@@ -62,6 +62,7 @@
 /* LOCAL GLOBAL DEFS *****************************************************/
 
 static long	deathdeduct;
+static void	shieldhitmsg();
 
 static int maint_steps(ptr)
 WARSHP	*ptr;
@@ -498,6 +499,7 @@ byte src_neb,targ_neb,nebmask,underone;
 int hitone;
 int fired;
 int locksent;
+int shmsg;
 
 hitone = FALSE;
 fired = FALSE;
@@ -651,7 +653,7 @@ if (ptr->phasr >=PMINFIRE)
 								}
 							else
 								{
-								shieldhit(wptr,othusn,(int)factor); /* modify the damage */
+								shmsg = shieldhit(wptr,(int)factor); /* modify the damage */
 								wuptr = warusroff(usrn);
 								set_dislike(wuptr,shipclass[wptr->shpclass].faction,2);
 								if (nebmask)
@@ -676,6 +678,7 @@ if (ptr->phasr >=PMINFIRE)
 								else
 									prfmsg(PHITDEF,username(ptr),(factor < 1.0) ? "<1" : spr("%d",(int)factor));
 								outprfge(FLT_NONE,othusn);
+								shieldhitmsg(shmsg,othusn);
 								}
 							}
 						}
@@ -3153,7 +3156,7 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 								damstr((int)damfact);
 								prfmsg(MINE4,bearing,udist,gechrbuf);
 								outprfge(FLT_NONE,zothusn);
-								shieldhit(wptr,zothusn,(int)damfact+20);
+								shieldhitmsg(shieldhit(wptr,(int)damfact+20),zothusn);
 								}
 							else
 								{
@@ -3220,8 +3223,8 @@ void FUNC checktm(ptr,usrn)
 WARSHP	*ptr;
 int	usrn;
 {
-int	i,j,k,power,shotdown;
-byte	track_cnt,lost_cnt,acc_used;
+int	i,j,k,power,shotdown,shres;
+byte	track_cnt,lost_cnt,acc_used,shmsg;
 byte	acc_cnt[MAXTORPS],acc_chan[MAXTORPS];
 byte	sh_cnt,un_cnt;
 double	sh_dam,un_dam;
@@ -3265,6 +3268,7 @@ ptr_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
 shotdown = 0;
 track_cnt = 0;
 acc_used = 0;
+shmsg = 0;
 sh_cnt = un_cnt = 0;
 sh_dam = un_dam = 0.0;
 for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
@@ -3328,7 +3332,9 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 					acc_cnt[acc_used] = 1;
 					++acc_used;
 					}
-				shieldhit(ptr,usrn,(gernd()%20)+10);
+				shres = shieldhit(ptr,(gernd()%20)+10);
+				if (shres == 1 || (shres == 2 && shmsg == 0))
+					shmsg = shres;
 				}
 			else
 				{
@@ -3399,6 +3405,7 @@ if (sh_cnt > 0)
 	else
 		prfmsg(THIT3,sh_cnt,gechrbuf);
 	outprfge(FLT_NONE,usrn);
+	shieldhitmsg(shmsg,usrn);
 	}
 
 if (un_cnt > 0)
@@ -3443,6 +3450,7 @@ shotdown = 0;
 track_cnt = 0;
 lost_cnt = 0;
 acc_used = 0;
+shmsg = 0;
 sh_cnt = un_cnt = 0;
 sh_dam = un_dam = 0.0;
 for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
@@ -3528,7 +3536,9 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 
 				power = mptr->energy/999;
 				power = power * (rndm(.5)+.5);
-				shieldhit(ptr,usrn,power);
+				shres = shieldhit(ptr,power);
+				if (shres == 1 || (shres == 2 && shmsg == 0))
+					shmsg = shres;
 				}
 			else
 				{
@@ -3624,6 +3634,7 @@ if (sh_cnt > 0)
 	else
 		prfmsg(MHIT3,sh_cnt,gechrbuf);
 	outprfge(FLT_NONE,usrn);
+	shieldhitmsg(shmsg,usrn);
 	}
 
 if (un_cnt > 0)
@@ -3952,6 +3963,7 @@ int	usrn;
 {
 
 double	hitdam;
+int	shmsg;
 
 if (ptr->hostile > 1)
 	{
@@ -3966,7 +3978,8 @@ if (ptr->hostile > 1)
 			ptr->damage += hitdam;
 			prfmsg(IHIT1);
 			outprfge(FLT_NONE,usrn);
-			shieldhit(ptr,usrn,(gernd()%50)+40);
+			shmsg = shieldhit(ptr,(gernd()%50)+40);
+			shieldhitmsg(shmsg,usrn);
 			}
 		else
 			{
@@ -4077,7 +4090,7 @@ if (ptr->destruct > (byte)0)
 							damstr(damage);
 							prfmsg(SELFD6,gechrbuf);
 							outprfge(FLT_NONE,zothusn);
-							shieldhit(wptr,zothusn,damage+20);
+							shieldhitmsg(shieldhit(wptr,damage+20),zothusn);
 							}
 						else
 							{
@@ -4997,6 +5010,23 @@ return(TRUE);
 ** Shield functions                                                      **
 **************************************************************************/
 
+static void shieldhitmsg(shmsg,usrn)
+int	shmsg;
+int	usrn;
+{
+if (shmsg == 1)
+	{
+	prfmsg(SHDAMAG);
+	outprfge(FLT_NONE,usrn);
+	}
+else
+if (shmsg == 2)
+	{
+	prfmsg(SHKNKDN);
+	outprfge(FLT_NONE,usrn);
+	}
+}
+
 void FUNC shieldup(wptr,usrn)
 WARSHP	*wptr;
 int	usrn;
@@ -5017,9 +5047,8 @@ wptr->shieldstat = SHIELDDN;
 }
 
 
-void FUNC shieldhit(wptr,usrn,dam)
+int FUNC shieldhit(wptr,dam)
 WARSHP	*wptr;
-int	usrn;
 int	dam;   /* 0% to 100% damage */
 {
 int	knock;
@@ -5039,17 +5068,16 @@ knock = (int)(dmax * ddam);
 wptr->shield -= knock;
 if (wptr->shield <=2 )
 	{
-	prfmsg(SHDAMAG);
-	outprfge(FLT_NONE,usrn);
 	wptr->shieldstat = SHIELDDM;
 	wptr->shield -= (knock*3);
+	return(1);
 	}
 else
 if (wptr->shield < SHMINCHG )
 	{
-	prfmsg(SHKNKDN);
-	outprfge(FLT_NONE,usrn);
+	return(2);
 	}
+return(0);
 }
 
 
