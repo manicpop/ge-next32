@@ -66,7 +66,7 @@ Cloaking capability for class 01.
 S01CLOK {Has cloaking capability? NO} (S01TYPE=USER) B
 
 Acceleration rate of class 01.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -242,7 +242,7 @@ Cloaking capability for class 02.
 S02CLOK {Has cloaking capability? NO} (S02TYPE=USER) B
 
 Acceleration rate of class 02.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -419,7 +419,7 @@ Cloaking capability for class 03.
 S03CLOK {Has cloaking capability? NO} (S03TYPE=USER) B
 
 Acceleration rate of class 03.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -594,7 +594,7 @@ Cloaking capability for class 04.
 S04CLOK {Has cloaking capability? YES} (S04TYPE=USER) B
 
 Acceleration rate of class 04.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -770,7 +770,7 @@ Cloaking capability for class 05.
 S05CLOK {Has cloaking capability? YES} (S05TYPE=USER) B
 
 Acceleration rate of class 05.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -943,7 +943,7 @@ Cloaking capability for class 06.
 S06CLOK {Has cloaking capability? NO} (S06TYPE=USER) B
 
 Acceleration rate of class 06.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -1115,7 +1115,7 @@ Cloaking capability for class 07.
 S07CLOK {Has cloaking capability? NO} (S07TYPE=USER) B
 
 Acceleration rate of class 07.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -1288,7 +1288,7 @@ Cloaking capability for class 08.
 S08CLOK {Has cloaking capability? NO} (S08TYPE=USER) B
 
 Acceleration rate of class 08.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -1461,7 +1461,7 @@ Cloaking capability for class 09.
 S09CLOK {Has cloaking capability? NO} (S09TYPE=USER) B
 
 Acceleration rate of class 09.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -1631,7 +1631,7 @@ Cloaking capability for class 10.
 S10CLOK {Has cloaking capability? YES} (S10TYPE=USER) B
 
 Acceleration rate of class 10.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -1803,7 +1803,7 @@ Cloaking capability for class 11.
 S11CLOK {Has cloaking capability? YES} (S11TYPE=USER) B
 
 Acceleration rate of class 11.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -1973,7 +1973,7 @@ Cloaking capability for class 12.
 S12CLOK {Has cloaking capability? NO} (S12TYPE=USER) B
 
 Acceleration rate of class 12.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -2145,7 +2145,7 @@ Cloaking capability for class 13.
 S13CLOK {Has cloaking capability? YES} (S13TYPE=USER) B
 
 Acceleration rate of class 13.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -2315,7 +2315,7 @@ Cloaking capability for class 14.
 S14CLOK {Has cloaking capability? NO} (S14TYPE=USER) B
 
 Acceleration rate of class 14.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -2494,7 +2494,7 @@ Cloaking capability for class 15.
 S15CLOK {Has cloaking capability? YES} (S15TYPE=USER) B
 
 Acceleration rate of class 15.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -2672,7 +2672,7 @@ Cloaking capability for class 16.
 S16CLOK {Has cloaking capability? NO} (S16TYPE=USER) B
 
 Acceleration rate of class 16.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -2847,7 +2847,7 @@ Cloaking capability for class 17.
 S17CLOK {Has cloaking capability? NO} (S17TYPE=USER) B
 
 Acceleration rate of class 17.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -3000,7 +3000,7 @@ Cloaking capability for class 18.
 S18CLOK {Has cloaking capability? NO} (S18TYPE=USER) B
 
 Acceleration rate of class 18.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -3148,7 +3148,7 @@ Cloaking capability for class 19.
 S19CLOK {Has cloaking capability? NO} (S19TYPE=USER) B
 
 Acceleration rate of class 19.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -3301,7 +3301,7 @@ Cloaking capability for class 20.
 S20CLOK {Has cloaking capability? NO} (S20TYPE=USER) B
 
 Acceleration rate of class 20.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -3454,7 +3454,7 @@ Cloaking capability for class 21.
 S21CLOK {Has cloaking capability? NO} (S21TYPE=USER) B
 
 Acceleration rate of class 21.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -3607,7 +3607,7 @@ Cloaking capability for class 22.
 S22CLOK {Has cloaking capability? NO} (S22TYPE=USER) B
 
 Acceleration rate of class 22.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -3760,7 +3760,7 @@ Cloaking capability for class 23.
 S23CLOK {Has cloaking capability? NO} (S23TYPE=USER) B
 
 Acceleration rate of class 23.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -3913,7 +3913,7 @@ Cloaking capability for class 24.
 S24CLOK {Has cloaking capability? YES} (S24TYPE=USER) B
 
 Acceleration rate of class 24.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -4066,7 +4066,7 @@ Cloaking capability for class 25.
 S25CLOK {Has cloaking capability? NO} (S25TYPE=USER) B
 
 Acceleration rate of class 25.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -4219,7 +4219,7 @@ Cloaking capability for class 26.
 S26CLOK {Has cloaking capability? NO} (S26TYPE=USER) B
 
 Acceleration rate of class 26.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -4372,7 +4372,7 @@ Cloaking capability for class 27.
 S27CLOK {Has cloaking capability? NO} (S27TYPE=USER) B
 
 Acceleration rate of class 27.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -4525,7 +4525,7 @@ Cloaking capability for class 28.
 S28CLOK {Has cloaking capability? NO} (S28TYPE=USER) B
 
 Acceleration rate of class 28.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -4678,7 +4678,7 @@ Cloaking capability for class 29.
 S29CLOK {Has cloaking capability? NO} (S29TYPE=USER) B
 
 Acceleration rate of class 29.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -4831,7 +4831,7 @@ Cloaking capability for class 30.
 S30CLOK {Has cloaking capability? NO} (S30TYPE=USER) B
 
 Acceleration rate of class 30.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -4984,7 +4984,7 @@ Cloaking capability for class 31.
 S31CLOK {Has cloaking capability? NO} (S31TYPE=USER) B
 
 Acceleration rate of class 31.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -5137,7 +5137,7 @@ Cloaking capability for class 32.
 S32CLOK {Has cloaking capability? NO} (S32TYPE=USER) B
 
 Acceleration rate of class 32.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -5290,7 +5290,7 @@ Cloaking capability for class 33.
 S33CLOK {Has cloaking capability? NO} (S33TYPE=USER) B
 
 Acceleration rate of class 33.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -5443,7 +5443,7 @@ Cloaking capability for class 34.
 S34CLOK {Has cloaking capability? NO} (S34TYPE=USER) B
 
 Acceleration rate of class 34.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -5596,7 +5596,7 @@ Cloaking capability for class 35.
 S35CLOK {Has cloaking capability? NO} (S35TYPE=USER) B
 
 Acceleration rate of class 35.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.
@@ -5749,7 +5749,7 @@ Cloaking capability for class 36.
 S36CLOK {Has cloaking capability? NO} (S36TYPE=USER) B
 
 Acceleration rate of class 36.
-1000 means one warp speed increment per centock.
+1000 means one warp speed increment per ship tick.
 Immobile NPCs (e.g. Cyber-Base) should have this set to 0,
 which will exclude them from all routines that involve
 pursuing other ships.

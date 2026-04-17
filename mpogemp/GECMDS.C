@@ -105,6 +105,31 @@ void	cmd_gehelp(), cmd_cloak(), cmd_impulse(), cmd_phas(), cmd_report(),
 	cmd_displ(), cmd_cls(), cmd_data(), cmd_team(), cmd_spy(),
 	cmd_jettison(), cmd_stop();
 
+static char *repdmg_eta(ptr,steps,active,fuzz)
+WARSHP	*ptr;
+int	steps;
+int	active;
+int	fuzz;
+{
+int	secs;
+
+if (ptr->repair > 0 || !(ptr->upgrade & DAMCTRL) || steps <= 0)
+	return("");
+
+if (!active)
+	{
+	sprintf(gechrbuf3,"(ETA: TBD)");
+	return(gechrbuf3);
+	}
+
+secs = ((steps + 1) / 2) * TICKTIME;
+secs += fuzz;
+if (secs < TICKTIME)
+	secs = TICKTIME;
+sprintf(gechrbuf3,"(ETA: %d seconds)",secs);
+return(gechrbuf3);
+}
+
 #define GECMDSIZ (sizeof(gecmds)/sizeof(struct cmd))
 
 struct	cmd	gecmds[]={
@@ -1831,7 +1856,7 @@ if (i < 1 || i > 50)
 mres = laymine(warsptr,usrnum,i);
 if (mres == 1)
 	{
-	prfmsg(MINE3,i);
+	prfmsg(MINE3,i,i*TICKTIME);
 	outprfge(FLT_NONE,usrnum);
 	return;
 	}
@@ -2197,7 +2222,7 @@ if (sameas(margv[1],"sys"))
 		}
 
 	if (warsptr->repair > 0)
-		prfmsg(REP18A,warsptr->repair);
+		prfmsg(REP18A,repair_eta(warsptr));
 
 	}
 else
@@ -2464,29 +2489,75 @@ else
 void FUNC show_rep_sysdam(ptr)
 WARSHP	*ptr;
 {
+int	need;
+int	active;
+int	fuzz;
+int	shfuzz;
+
+active = TRUE;
+fuzz = gernd();
+shfuzz = (fuzz % 5) - 2;
+fuzz = ((fuzz / 5) % 5) - 2;
+
 /* in order of how they're repaired */
 if (ptr->shieldstat == SHIELDDM)
-	prfmsg(REP15);
+	{
+	need = 1 - ptr->shield;
+	if (need <= 0)
+		need = 1;
+	need = (need + ptr->shieldtype - 1) / ptr->shieldtype;
+	prfmsg(REP15,repdmg_eta(ptr,need,TRUE,shfuzz));
+	}
 if (ptr->helm < 0)
-	prfmsg(REP16);
+	{
+	prfmsg(REP16,repdmg_eta(ptr,-ptr->helm,active,fuzz));
+	active = FALSE;
+	}
 if (ptr->tactical < 0)
-	prfmsg(REP18);
+	{
+	prfmsg(REP18,repdmg_eta(ptr,-ptr->tactical,active,fuzz));
+	active = FALSE;
+	}
 if (ptr->phasr < 0)
-	prfmsg(REP21);
+	{
+	prfmsg(REP21,repdmg_eta(ptr,(int)ceil(-ptr->phasr),active,fuzz));
+	active = FALSE;
+	}
 if (ptr->torpcntl > 0)
-	prfmsg(REP22T);
+	{
+	prfmsg(REP22T,repdmg_eta(ptr,ptr->torpcntl,active,fuzz));
+	active = FALSE;
+	}
 if (ptr->mislcntl > 0)
-	prfmsg(REP22M);
+	{
+	prfmsg(REP22M,repdmg_eta(ptr,ptr->mislcntl,active,fuzz));
+	active = FALSE;
+	}
 if (ptr->cloak < 0)
-	prfmsg(REP17);
+	{
+	prfmsg(REP17,repdmg_eta(ptr,-ptr->cloak,active,fuzz));
+	active = FALSE;
+	}
 if (ptr->jamload < 0)
-	prfmsg(REP22J);
-if (ptr->zipload < 0)
-	prfmsg(REP22Z);
+	{
+	prfmsg(REP22J,repdmg_eta(ptr,-ptr->jamload,active,fuzz));
+	active = FALSE;
+	}
 if (ptr->decload < 0)
-	prfmsg(REP22D);
+	{
+	prfmsg(REP22D,repdmg_eta(ptr,-ptr->decload,active,fuzz));
+	active = FALSE;
+	}
+if (ptr->zipload < 0)
+	{
+	prfmsg(REP22Z,repdmg_eta(ptr,-ptr->zipload,active,fuzz));
+	active = FALSE;
+	}
 if (ptr->mineload < 0)
-	prfmsg(REP22MN);
+	{
+	prfmsg(REP22MN,repdmg_eta(ptr,-ptr->mineload,active,fuzz));
+	active = FALSE;
+	}
 }
 
 /**************************************************************************
@@ -2602,8 +2673,27 @@ if (sameas(margv[1],"on"))
 		{
 		prfmsg(SELFD8);
 		outprfge(FLT_NONE,usrnum);
+		return;
 		}
-	else
+
+	if (warsptr->repair > 0)
+		{
+		if (warsptr->where < 10)
+			{
+			prfmsg(CLOKNORP);
+			outprfge(FLT_NONE,usrnum);
+			return;
+			}
+		plnum = warsptr->where - 10;
+		getplanetdat(usrnum);
+		if (!sameas(plptr->userid,warsptr->userid))
+			{
+			prfmsg(CLOKNORP);
+			outprfge(FLT_NONE,usrnum);
+			return;
+			}
+		}
+
 	if (warsptr->cloak > 0)
 		{
 		prfmsg(CLOKCOM);
@@ -4245,9 +4335,14 @@ if (neutral(&warsptr->coord))
 
 if (waruptr->cash >= price)
 	{
-	warsptr->repair = (unsigned)(warsptr->damage/3.0)+1;
-	waruptr->cash -= price;
-	prfmsg(MAINT5,warsptr->repair);
+	if (!repair_needed(warsptr))
+		prfmsg(MAINT13);
+	else
+		{
+		warsptr->repair = 1;
+		waruptr->cash -= price;
+		prfmsg(MAINT5,repair_eta(warsptr));
+		}
 	}
 else
 	{
@@ -4893,8 +4988,10 @@ if (sameas("maint",margv[1]))
 	{
 	if (sameas("now",margv[2]))
 		{
-		warsptr->damage = 0.0;
-		warsptr->repair = 255;
+		fullrepair(warsptr);
+		prfmsg(MAINT7);
+		outprfge(FLT_NONE,usrnum);
+		return;
 		}
 	else
 		{
@@ -4904,12 +5001,14 @@ if (sameas("maint",margv[1]))
 			outprfge(FLT_NONE,usrnum);
 			return;
 			}
-		warsptr->repair = (unsigned)(warsptr->damage/3.0)+1;
+		if (!repair_needed(warsptr))
+			prfmsg(MAINT13);
+		else
+			{
+			warsptr->repair = 1;
+			prfmsg(MAINT5,repair_eta(warsptr));
+			}
 		}
-	if (warsptr->repair == 255)
-		prfmsg(MAINT5,0);
-	else
-		prfmsg(MAINT5,warsptr->repair);
 	outprfge(FLT_NONE,usrnum);
 	return;
 	}

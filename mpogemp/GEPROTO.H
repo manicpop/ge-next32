@@ -205,6 +205,9 @@
 /*         */ void FUNC lock_proj P((int usrn , int target , int msg , int msgn ));
 /*         */ void FUNC lock_sector P((WARSHP *ptr , int usrn , int msg ));
 /*         */ void FUNC lock_simple P((WARSHP *ptr , int usrn , int msg , int skipsame ));
+/*         */ void FUNC fullrepair P((WARSHP *ptr ));
+/*         */ unsigned FUNC repair_eta P((WARSHP *ptr ));
+/*         */ int FUNC repair_needed P((WARSHP *ptr ));
 /*         */ double FUNC ship_accel P((WARSHP *ptr ));
 /*         */ long FUNC ship_scanrange P((WARSHP *ptr ));
 /*    1248 */ void FUNC cmd_torp P((void ));

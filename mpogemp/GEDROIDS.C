@@ -385,7 +385,7 @@ if (ptr->distress != ptr->cybmine && ptr->cybmine < nships)
 	{
 	setsect(ptr);
 	prfmsg(DRDISMSG,ptr->shipname,shipclass[ptr->shpclass].typename,username(warshpoff(ptr->cybmine)),xsect,ysect);
-	outwar(FLT_DISTRESS,usrn,0);
+	outwar(FLT_DISTRESS,usrn,0,0);
 	ptr->distress = ptr->cybmine;
 	}
 }

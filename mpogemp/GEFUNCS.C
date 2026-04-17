@@ -63,6 +63,295 @@
 
 static long	deathdeduct;
 
+static int maint_steps(ptr)
+WARSHP	*ptr;
+{
+int	steps;
+
+steps = 0;
+if (ptr->helm < 0)
+	steps += -ptr->helm;
+if (ptr->tactical < 0)
+	steps += -ptr->tactical;
+if (ptr->phasr < 0)
+	steps += -ptr->phasr;
+if (ptr->torpcntl > 0)
+	steps += ptr->torpcntl;
+if (ptr->mislcntl > 0)
+	steps += ptr->mislcntl;
+if (ptr->cloak < 0)
+	steps += -ptr->cloak;
+if (ptr->jamload < 0)
+	steps += -ptr->jamload;
+if (ptr->decload < 0)
+	steps += -ptr->decload;
+if (ptr->zipload < 0)
+	steps += -ptr->zipload;
+if (ptr->mineload < 0)
+	steps += -ptr->mineload;
+
+return(steps);
+}
+
+static int maint_only_steps(ptr)
+WARSHP	*ptr;
+{
+int	steps;
+
+steps = 0;
+if (ptr->topspeed == 0 && shipclass[ptr->shpclass].max_warp > 0)
+	++steps;
+if (ptr->overspeed > 0)
+	++steps;
+
+return(steps);
+}
+
+static int shield_steps(ptr)
+WARSHP	*ptr;
+{
+int	need;
+
+if (ptr->shieldstat != SHIELDDM || ptr->shieldtype <= 0)
+	return(0);
+
+need = 1 - ptr->shield;
+if (need <= 0)
+	need = 1;
+
+return((need + ptr->shieldtype - 1) / ptr->shieldtype);
+}
+
+int FUNC repair_needed(ptr)
+WARSHP	*ptr;
+{
+if (ptr->damage > 0.0)
+	return(TRUE);
+if (shield_steps(ptr) > 0)
+	return(TRUE);
+if (maint_steps(ptr) > 0)
+	return(TRUE);
+if (maint_only_steps(ptr) > 0)
+	return(TRUE);
+return(FALSE);
+}
+
+unsigned FUNC repair_eta(ptr)
+WARSHP	*ptr;
+{
+int	hull_ticks,sys_ticks,sh_ticks,sysrate,ticks;
+double	hullrate;
+
+if (!ptr->repair)
+	return(0);
+
+hullrate = 3.0;
+sysrate = 5;
+hull_ticks = 0;
+if (ptr->damage > 0.0)
+	hull_ticks = (int)((ptr->damage / hullrate) + 0.999999);
+sys_ticks = (maint_steps(ptr) + maint_only_steps(ptr) + sysrate - 1) / sysrate;
+sh_ticks = (shield_steps(ptr) + sysrate - 1) / sysrate;
+
+ticks = hull_ticks;
+if (sys_ticks > ticks)
+	ticks = sys_ticks;
+if (sh_ticks > ticks)
+	ticks = sh_ticks;
+
+return((unsigned)(ticks * TICKTIME));
+}
+
+void FUNC fullrepair(ptr)
+WARSHP	*ptr;
+{
+ptr->repair = 0;
+ptr->damage = 0.0;
+if (ptr->phasr < 1)
+	ptr->phasr = 0;
+ptr->tactical = 0;
+ptr->helm = 0;
+if (ptr->cloak < 1)
+	ptr->cloak = 0;
+ptr->torpcntl = 0;
+ptr->mislcntl = 0;
+ptr->zipload = 0;
+ptr->jamload = 0;
+ptr->decload = 0;
+ptr->mineload = 0;
+ptr->torps_fired = 0;
+ptr->missl_fired = 0;
+
+if (ptr->shieldstat == SHIELDDM)
+	ptr->shieldstat = SHIELDDN;
+if (ptr->shield < 1)
+	ptr->shield = 0;
+if (ptr->topspeed == 0)
+	ptr->topspeed = shipclass[ptr->shpclass].max_warp;
+ptr->overspeed = 0;
+}
+
+static void repair_systems(ptr,usrn,steps,domaint)
+WARSHP	*ptr;
+int	usrn;
+int	steps;
+int	domaint;
+{
+int	fix;
+
+while (steps > 0)
+	{
+	if (ptr->helm < 0)
+		{
+		fix = (steps < -ptr->helm) ? steps : -ptr->helm;
+		ptr->helm += fix;
+		steps -= fix;
+		if (ptr->helm == 0)
+			{
+			prfmsg(HLREPR);
+			outprfge(FLT_NONE,usrn);
+			}
+		continue;
+		}
+
+	if (ptr->tactical < 0)
+		{
+		fix = (steps < -ptr->tactical) ? steps : -ptr->tactical;
+		ptr->tactical += fix;
+		steps -= fix;
+		if (ptr->tactical == 0)
+			{
+			prfmsg(TAREPR);
+			outprfge(FLT_NONE,usrn);
+			}
+		continue;
+		}
+
+	if (ptr->phasr < 0)
+		{
+		fix = (steps < -ptr->phasr) ? steps : -ptr->phasr;
+		ptr->phasr += fix;
+		steps -= fix;
+		if (ptr->phasr == 0)
+			{
+			prfmsg(PHREPR);
+			outprfge(FLT_NONE,usrn);
+			}
+		continue;
+		}
+
+	if (ptr->torpcntl > 0)
+		{
+		fix = (steps < ptr->torpcntl) ? steps : ptr->torpcntl;
+		ptr->torpcntl -= fix;
+		steps -= fix;
+		if (ptr->torpcntl == 0)
+			{
+			prfmsg(FCREPRT);
+			outprfge(FLT_NONE,usrn);
+			}
+		continue;
+		}
+
+	if (ptr->mislcntl > 0)
+		{
+		fix = (steps < ptr->mislcntl) ? steps : ptr->mislcntl;
+		ptr->mislcntl -= fix;
+		steps -= fix;
+		if (ptr->mislcntl == 0)
+			{
+			prfmsg(FCREPRM);
+			outprfge(FLT_NONE,usrn);
+			}
+		continue;
+		}
+
+	if (ptr->cloak < 0)
+		{
+		fix = (steps < -ptr->cloak) ? steps : -ptr->cloak;
+		ptr->cloak += fix;
+		steps -= fix;
+		if (ptr->cloak == 0)
+			{
+			prfmsg(CLREPR);
+			outprfge(FLT_NONE,usrn);
+			}
+		continue;
+		}
+
+	if (ptr->jamload < 0)
+		{
+		fix = (steps < -ptr->jamload) ? steps : -ptr->jamload;
+		ptr->jamload += fix;
+		steps -= fix;
+		if (ptr->jamload == 0)
+			{
+			prfmsg(REPRJ);
+			outprfge(FLT_NONE,usrn);
+			}
+		continue;
+		}
+
+	if (ptr->decload < 0)
+		{
+		fix = (steps < -ptr->decload) ? steps : -ptr->decload;
+		ptr->decload += fix;
+		steps -= fix;
+		if (ptr->decload == 0)
+			{
+			prfmsg(REPRD);
+			outprfge(FLT_NONE,usrn);
+			}
+		continue;
+		}
+
+	if (ptr->zipload < 0)
+		{
+		fix = (steps < -ptr->zipload) ? steps : -ptr->zipload;
+		ptr->zipload += fix;
+		steps -= fix;
+		if (ptr->zipload == 0)
+			{
+			prfmsg(REPRZ);
+			outprfge(FLT_NONE,usrn);
+			}
+		continue;
+		}
+
+	if (ptr->mineload < 0)
+		{
+		fix = (steps < -ptr->mineload) ? steps : -ptr->mineload;
+		ptr->mineload += fix;
+		steps -= fix;
+		if (ptr->mineload == 0)
+			{
+			prfmsg(REPRMN);
+			outprfge(FLT_NONE,usrn);
+			}
+		continue;
+		}
+
+	if (domaint && ptr->topspeed == 0 && shipclass[ptr->shpclass].max_warp > 0)
+		{
+		ptr->topspeed = shipclass[ptr->shpclass].max_warp;
+		ptr->overspeed = 0;
+		prfmsg(REPWARP);
+		outprfge(FLT_NONE,usrn);
+		--steps;
+		continue;
+		}
+
+	if (domaint && ptr->overspeed > 0)
+		{
+		ptr->overspeed = 0;
+		--steps;
+		continue;
+		}
+
+	break;
+	}
+}
+
 /* enhanced lock helpers */
 
 void FUNC lock_simple(ptr,usrn,msg,skipsame)
@@ -99,7 +388,7 @@ for (i=0;i<nterms;++i)
 			continue;
 		}
 
-	letter = shpltr(usrn,i);
+	letter = shpltr(i,usrn);
 	if (letter == '?')
 		continue;
 
@@ -130,7 +419,7 @@ for (i=0;i<nterms;++i)
 	if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
 		continue;
 
-	letter = shpltr(usrn,i);
+	letter = shpltr(i,usrn);
 	if (letter == '?')
 		continue;
 
@@ -158,11 +447,11 @@ for (i=0;i<nterms;++i)
 	if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
 		continue;
 
-	sletter = shpltr(usrn,i);
+	sletter = shpltr(i,usrn);
 	if (sletter == '?')
 		continue;
 
-	tletter = shpltr(target,i);
+	tletter = shpltr(i,target);
 	if (tletter == '?')
 		prfmsg(msgn,sletter);
 	else
@@ -176,11 +465,11 @@ WARSHP	*ptr;
 {
 double	accelrate;
 
-	accelrate = (double)shipclass[ptr->shpclass].max_accel;
-	if (ptr->upgrade & ACCELBST)
-		accelrate *= 2.0;
+accelrate = (double)shipclass[ptr->shpclass].max_accel;
+if (ptr->upgrade & ACCELBST)
+	accelrate *= 2.0;
 
-	return(accelrate);
+return(accelrate);
 }
 
 long FUNC ship_scanrange(ptr)
@@ -188,11 +477,11 @@ WARSHP	*ptr;
 {
 long	range;
 
-	range = shipclass[ptr->shpclass].scanrange;
-	if (ptr->upgrade & SCANBST)
-		range *= 2L;
+range = shipclass[ptr->shpclass].scanrange;
+if (ptr->upgrade & SCANBST)
+	range *= 2L;
 
-	return(range);
+return(range);
 }
 
 void FUNC firep(ptr,usrn)
@@ -1431,47 +1720,12 @@ int	usrn;
 {
 if (ptr->repair > 0)
 	{
-	if (ptr->cantexit > 0 && ptr->repair != 255)	/* allow for sys maint */
+	if (ptr->cantexit > 0)
 		{
 		prfmsg(MAINT10);
 		ptr->repair = 0;
 		outprfge(FLT_NONE,usrn);
 		return;
-		}
-
-	if (ptr->damage > 3.0)
-		ptr->damage -= 3.0;
-	else
-		ptr->damage = 0.0;
-
-	ptr->repair = (int)(ptr->damage/3.0);
-	if (ptr->repair <= 1)
-		{
-		ptr->repair = 0;
-		ptr->damage = 0.0;
-		if (ptr->phasr < 1)
-			ptr->phasr = 0;
-		ptr->tactical = 0;
-		ptr->helm = 0;
-		if (ptr->cloak < 1)	/* this is for oliver */
-			ptr->cloak = 0;
-		ptr->torpcntl = 0;
-		ptr->mislcntl = 0;
-		ptr->zipload = 0;
-		ptr->jamload = 0;
-		ptr->decload = 0;
-		ptr->mineload = 0;
-		ptr->torps_fired = 0;
-		ptr->missl_fired = 0;
-
-		if (ptr->shieldstat == SHIELDDM)
-			ptr->shieldstat = SHIELDDN;
-		if (ptr->shield < 1)
-			ptr->shield = 0;
-		ptr->topspeed = shipclass[ptr->shpclass].max_warp;
-		ptr->overspeed = 0;
-		prfmsg(MAINT7);
-		outprfge(FLT_NONE,usrn);
 		}
 	}
 }
@@ -2202,6 +2456,8 @@ int	usrn;
 {
 
 double	preload;
+double	reprate;
+int	repstep,i;
 
 logthis(spr("GE:Chn %d checkdam %s",usrn,ptr->userid));
 
@@ -2249,9 +2505,25 @@ if (ptr->damage >= 100.0)
 	}
 
 /* repair ship, always */
-if (ptr->damage > 0.0)
-	ptr->damage = ptr->damage - repairrate;
+reprate = repairrate;
+repstep = 1;
+if (ptr->repair > 0)
+	{
+	reprate = 3.0;
+	repstep = 5;
+	}
 else
+if (ptr->upgrade & DAMCTRL)
+	{
+	reprate *= 2.0;
+	repstep = 2;
+	}
+
+if (ptr->damage > 0.0)
+	ptr->damage = ptr->damage - reprate;
+else
+	ptr->damage = 0.0;
+if (ptr->damage < 0.0)
 	ptr->damage = 0.0;
 
 /* charge phaser if not damaged */
@@ -2281,126 +2553,21 @@ if (ptr->phasr < 100 && ptr->phasr >= 0)
 		}
 	}
 
-/* only repair one system at a time (shields are separate), ranked by importance */
-
-/* repair helm */
-if (ptr->helm < 0)
+/* repair shields separately */
+if (ptr->shieldstat == SHIELDDM && repstep > 1)
 	{
-	++ptr->helm;
-	if (ptr->helm == 0)
-		{
-		prfmsg(HLREPR);
-		outprfge(FLT_NONE,usrn);
-		}
-	return;
+	for (i=1;i<repstep && ptr->shieldstat == SHIELDDM;++i)
+		shieldrep(ptr,usrn);
 	}
 
-/* repair tactical display */
-if (ptr->tactical < 0)
-	{
-	++ptr->tactical;
-	if (ptr->tactical == 0)
-		{
-		prfmsg(TAREPR);
-		outprfge(FLT_NONE,usrn);
-		}
-	return;
-	}
+/* repair other systems in order of importance */
+repair_systems(ptr,usrn,repstep,(ptr->repair > 0));
 
-/* repair phaser */
-if (ptr->phasr < 0)
+if (ptr->repair > 0 && !repair_needed(ptr))
 	{
-	ptr->phasr += 1;
-	if (ptr->phasr == 0)
-		{
-		prfmsg(PHREPR);
-		outprfge(FLT_NONE,usrn);
-		}
-	return;
-	}
-
-/* repair torpedo launchers */
-if (ptr->torpcntl > 0)
-	{
-	--ptr->torpcntl;
-	if (ptr->torpcntl == 0)
-		{
-		prfmsg(FCREPRT);
-		outprfge(FLT_NONE,usrn);
-		}
-	return;
-	}
-
-/* repair missile launchers */
-if (ptr->mislcntl > 0)
-	{
-	--ptr->mislcntl;
-	if (ptr->mislcntl == 0)
-		{
-		prfmsg(FCREPRM);
-		outprfge(FLT_NONE,usrn);
-		}
-	return;
-	}
-
-/* repair cloak */
-if (ptr->cloak < 0)
-	{
-	++ptr->cloak;
-	if (ptr->cloak == 0)
-		{
-		prfmsg(CLREPR);
-		outprfge(FLT_NONE,usrn);
-		}
-	return;
-	}
-
-/* repair jammer launcher */
-if (ptr->jamload < 0)
-	{
-	++ptr->jamload;
-	if (ptr->jamload == 0)
-		{
-		prfmsg(REPRJ);
-		outprfge(FLT_NONE,usrn);
-		}
-	return;
-	}
-
-/* repair decoy launcher */
-if (ptr->decload < 0)
-	{
-	++ptr->decload;
-	if (ptr->decload == 0)
-		{
-		prfmsg(REPRD);
-		outprfge(FLT_NONE,usrn);
-		}
-	return;
-	}
-
-/* repair zipper launcher */
-if (ptr->zipload < 0)
-	{
-	++ptr->zipload;
-	if (ptr->zipload == 0)
-		{
-		prfmsg(REPRZ);
-		outprfge(FLT_NONE,usrn);
-		}
-	return;
-	}
-
-/* repair mine launcher */
-if (ptr->mineload < 0)
-	{
-	++ptr->mineload;
-	if (ptr->mineload == 0)
-		{
-		prfmsg(REPRMN);
-		outprfge(FLT_NONE,usrn);
-		}
-	return;
+	ptr->repair = 0;
+	prfmsg(MAINT7);
+	outprfge(FLT_NONE,usrn);
 	}
 return;
 }

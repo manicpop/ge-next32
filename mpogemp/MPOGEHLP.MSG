@@ -761,15 +761,15 @@ the same.
 
 HLPMIN {
 [1;36mThe [1;37mMINE[1;36m command causes a neutron mine to be deposited at your current
-location. You specify how long until detonation (between 1 and 50 centocks),
-permitting you time to leave the spot for safety. Mines are useful when you are
-being tailed by another ship. Be aware that they are very powerful and you can
-also be damaged by them if you don't get far enough away. Issue the command as
-follows:
+location. You specify how long until detonation (between 1 and 50 ticks, each
+tick being about six seconds), permitting you time to leave the spot for
+safety. Mines are useful when you are being tailed by another ship. Be aware
+that they are very powerful and you can also be damaged by them if you don't
+get far enough away. Issue the command as follows:
 
   [1;37mmine [1;32m[time]
 
-  time [1;36m= the time until detonation in centocks (approx 5 seconds)
+  time [1;36m= the time until detonation in ticks (approx 6 seconds)
 [1;37m} T GE help mine message
 
 HLPMIS {

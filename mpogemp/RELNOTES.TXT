@@ -140,6 +140,12 @@ Other stuff:
   by a random seed generated the first time a new game is
   loaded, so they will be different in every ge-next instance.
   Nebula frequency can be adjusted (or turned off) by the admin.
+* SHIP UPGRADES have been added. Use HELP UPGRADE for more info.
+  Go to Zygor and use NEW UPGRADE to see what upgrades are
+  available for your class of ship (not all upgrades are
+  applicable for all ships). For 0.3, all upgrades will be
+  available at Zygor. In future versions, some upgrades will be
+  found in other places or require certain conditions to unlock.
 * The list of ships presented at the start of the game will now
   show 15 ships, and if you have more than 15, you can use 'n'
   and 'p' to scroll through the pages of ships. This fixes a
@@ -206,7 +212,9 @@ Other stuff:
   using the LOCK command on it.
 * Mines have been given an overall damage boost. Overall "blast
   range" is still one sector, but the damage falloff has been
-  lessened so the radius of actual damage is bigger.
+  lessened so the radius of actual damage is bigger. Mine time
+  is also displayed in real seconds, however they are still set
+  in six-second ticks as before.
 * Higher warp speeds now use more flux. Stock up on pods.
 * Impulse now uses 1 flux unit per tick. Ships now "background
   charge" flux twice as fast so that impluse is "free." You
@@ -267,6 +275,10 @@ Other stuff:
   the entry or exit message. This is not on by default, but if
   you're in a game where players do a lot of quick enter and exit,
   it can help filter out a lot of it.
+* Maintenance has been overhauled. Repair time is now shown in real
+  world seconds instead of "centocks." Also, ship systems are
+  repaired one by one as maintenance progresses, instead of being
+  fixed all at once during the final maintenance tick.
 
 === 0.2.6 === 2025-08-15
 

@@ -2406,6 +2406,10 @@ CLOKW {***
 [1;32mAll weapon systems are back online![1;37m
 } T GE ship cloaked near you message
 
+CLOKNORP {***
+[1;36mThe maintenance team has requested that cloaking stays off during maintenance.[1;37m
+} T GE ship cloaked near you message
+
 RNDITEM {[0;37m%d %s destroyed in the blast![1;37m
 } T GE missiles knocked out message
 
@@ -2523,6 +2527,10 @@ REPRMN {***
 
 REPRD {***
 [1;32mDamage Control reports the decoy launcher is now functional![1;37m
+} T GE decoys fixed message
+
+REPWARP {***
+[1;32mDamage Control reports the warp engines are restored to full functionality![1;37m
 } T GE decoys fixed message
 
 FCNONO {
@@ -3426,19 +3434,19 @@ REP13 {[1;37mCloak.................[0;31m OFF[1;37m
 REP14 {[1;37mDCO reports...........[0;31m %s[1;37m damage
 } T GE report 14
 
-REP15 {[0;31m   Shields out[1;37m
+REP15 {[0;31m   Shields out %s[1;37m
 } T GE report 15
 
-REP16 {[0;31m   Helm damaged[1;37m
+REP16 {[0;31m   Helm damaged %s[1;37m
 } T GE report 16
 
-REP17 {[0;31m   Cloaking system damaged[1;37m
+REP17 {[0;31m   Cloaking system damaged %s[1;37m
 } T GE report 17
 
-REP18 {[0;31m   Tactical scanners damaged[1;37m
+REP18 {[0;31m   Tactical scanners damaged %s[1;37m
 } T GE report 18
 
-REP18A {[0;31m   Maintenance status - %d centocks[1;37m
+REP18A {[0;31m   Maintenance status - %d seconds[1;37m
 } T GE report 18A
 
 REP19 {[0;31m   Warp engines inoperable[1;37m
@@ -3451,25 +3459,25 @@ REP20 {[0;31m   Warp engines damaged
 REP20A {[0;31m   Warp engines above cruising speed[1;37m
 } T GE report 20A
 
-REP21 {[0;31m   Phasers damaged[1;37m
+REP21 {[0;31m   Phasers damaged %s[1;37m
 } T GE report 21
 
-REP22T {[0;31m   Torpedo launchers damaged[1;37m
+REP22T {[0;31m   Torpedo launchers damaged %s[1;37m
 } T GE report 22
 
-REP22M {[0;31m   Missile launchers damaged[1;37m
+REP22M {[0;31m   Missile launchers damaged %s[1;37m
 } T GE report 22
 
-REP22MN {[0;31m   Mine launcher damaged[1;37m
+REP22MN {[0;31m   Mine launcher damaged %s[1;37m
 } T GE report 22
 
-REP22Z {[0;31m   Zipper launcher damaged[1;37m
+REP22Z {[0;31m   Zipper launcher damaged %s[1;37m
 } T GE report 22
 
-REP22J {[0;31m   Jammer launcher damaged[1;37m
+REP22J {[0;31m   Jammer launcher damaged %s[1;37m
 } T GE report 22
 
-REP22D {[0;31m   Decoy launcher damaged[1;37m
+REP22D {[0;31m   Decoy launcher damaged %s[1;37m
 } T GE report 22
 
 REP23 {[1;37mPhasers (Mark-%d)...... [1;32m<operative>[1;37m
@@ -3902,8 +3910,7 @@ MAINT4 {
 } T GE no maint at the enforcer planet message
 
 MAINT5 {
-[1;36mThey are commencing the maintenance and repairs and should be completed in %d
-centocks![1;37m
+[1;36mThey are commencing the maintenance and should be completed in %d seconds![1;37m
 } T GE yes maint message
 
 MAINT6 {
@@ -3937,6 +3944,10 @@ MAINT11 {
 MAINT12 {
 [1;36mThe maintenance team is requesting you deactivate your cloaking device.[1;37m
 } T GE can't maint cloaked message
+
+MAINT13 {
+[1;36mThis ship is undamaged; no maintenance is required.[1;37m
+} T GE maint is unneeded message
 
 JAMMER0 {
 [0;37m[[1;31mERROR[0;37m] This ship is not equipped with a jammer launcher.[1;37m
@@ -4512,7 +4523,7 @@ MINE2 {
 } T GE too many mines message
 
 MINE3 {
-[0;32mNeutron mine launched. Detonation in %u centocks![1;37m
+[0;32mNeutron mine set to %u ticks and launched. Detonation in %u seconds![1;37m
 } T GE you launched a mine message
 
 MINE4 {***
