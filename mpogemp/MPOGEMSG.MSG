@@ -4113,6 +4113,21 @@ fee of [0;33m%s[1;36m, [0;33m%s[1;36m has been deposited to your account.[1
 NEW29 {[1;36mYou will be credited us [0;33m%s[1;36m for the existing used phaser.[1;37m
 } T GE phaser credit message
 
+TPOND1 {[1;36mTransponder control set to HIGH.[1;37m
+} T GE transponder adjusted to high
+
+TPOND2 {[1;36mTransponder control set to NORMAL.[1;37m
+} T GE transponder adjusted to normal
+
+TPOND3 {[1;36mTransponder control set to LOW.[1;37m
+} T GE transponder adjusted to low
+
+TPOND4 {[1;36mType [1;37mNEW UPGRADE 7 [mode][1;36m to adjust your transponder.[1;37m
+} T GE transponder wrong
+
+TPOND5 {[1;36mValid transponder values are [1;37mNORMAL[1;36m, [1;37mHIGH[1;36m, and [1;37mLOW[1;36m.[1;37m
+} T GE transponder wrong
+
 SELL1 {
 [1;36mYou must go to Zygor in sector [1;34m0 0[1;36m to sell items.[1;37m
 } T GE no selling unless at Zygor message

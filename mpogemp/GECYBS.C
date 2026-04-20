@@ -424,7 +424,7 @@ WARSHP	*ptr;
 int	usrn;
 {
 WARSHP	*wptr;
-int	zothusn,nc;
+int	zothusn,nc,noclaim,tpmag;
 
 nc=0;
 for (zothusn=nterms ; zothusn < nships ;zothusn++)
@@ -436,8 +436,26 @@ for (zothusn=nterms ; zothusn < nships ;zothusn++)
 /*DEBUG
 geshocst(0,spr("nc=%d",nc));*/
 
-logthis(spr("notclaimed: nc = %d, class = %d, class.noclaim = %d",nc,ptr->shpclass,shipclass[ptr->shpclass].noclaim));
-return (nc < shipclass[ptr->shpclass].noclaim);
+noclaim = shipclass[ptr->shpclass].noclaim;
+if (ptr->upgrade & TPONDER)
+	{
+	if (noclaim <= 2)
+		tpmag = 1;
+	else
+		tpmag = 2;
+	if (ptr->tponder == TPONHIGH)
+		noclaim += tpmag;
+	else
+	if (ptr->tponder == TPONLOW)
+		noclaim -= tpmag;
+	if (noclaim < 0)
+		noclaim = 0;
+	if (noclaim > 5)
+		noclaim = 5;
+	}
+
+logthis(spr("notclaimed: nc = %d, class = %d, class.noclaim = %d",nc,ptr->shpclass,noclaim));
+return (nc < noclaim);
 }
 
 /* ptr to sender , usrn = reciever */

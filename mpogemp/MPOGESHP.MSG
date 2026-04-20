@@ -109,7 +109,7 @@ S01CATK {Cybs will fire on this ship: NO} (S01TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 01 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S01NATK {Number of Cybs to pursue this ship: 1} (S01TYPE=USER,DROID) N 0 255
+S01NATK {Number of Cybs to pursue this ship: 1} (S01TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 01 NPC will pursue?
 
@@ -285,7 +285,7 @@ S02CATK {Cybs will fire on this ship: NO} (S02TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 02 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S02NATK {Number of Cybs to pursue this ship: 0} (S02TYPE=USER,DROID) N 0 255
+S02NATK {Number of Cybs to pursue this ship: 0} (S02TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 02 Cybertron will pursue?
 
@@ -462,7 +462,7 @@ S03CATK {Cybs will fire on this ship: NO} (S03TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 03 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S03NATK {Number of Cybs to pursue this ship: 1} (S03TYPE=USER,DROID) N 0 255
+S03NATK {Number of Cybs to pursue this ship: 1} (S03TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 03 Cybertron will pursue?
 
@@ -637,7 +637,7 @@ S04CATK {Cybs will fire on this ship: YES} (S04TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 04 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S04NATK {Number of Cybs to pursue this ship: 2} (S04TYPE=USER,DROID) N 0 255
+S04NATK {Number of Cybs to pursue this ship: 2} (S04TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 04 Cybertron will pursue?
 
@@ -813,7 +813,7 @@ S05CATK {Cybs will fire on this ship: YES} (S05TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 05 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S05NATK {Number of Cybs to pursue this ship: 2} (S05TYPE=USER,DROID) N 0 255
+S05NATK {Number of Cybs to pursue this ship: 2} (S05TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 05 Cybertron will pursue?
 
@@ -986,7 +986,7 @@ S06CATK {Cybs will fire on this ship: YES} (S06TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 06 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S06NATK {Number of Cybs to pursue this ship: 2} (S06TYPE=USER,DROID) N 0 255
+S06NATK {Number of Cybs to pursue this ship: 2} (S06TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 06 Cybertron will pursue?
 
@@ -1158,7 +1158,7 @@ S07CATK {Cybs will fire on this ship: YES} (S07TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 07 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S07NATK {Number of Cybs to pursue this ship: 1} (S07TYPE=USER,DROID) N 0 255
+S07NATK {Number of Cybs to pursue this ship: 1} (S07TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 06 Cybertron will pursue?
 
@@ -1331,7 +1331,7 @@ S08CATK {Cybs will fire on this ship: YES} (S08TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 08 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S08NATK {Number of Cybs to pursue this ship: 2} (S08TYPE=USER,DROID) N 0 255
+S08NATK {Number of Cybs to pursue this ship: 2} (S08TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 08 Cybertron will pursue?
 
@@ -1504,7 +1504,7 @@ S09CATK {Cybs will fire on this ship: YES} (S09TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 09 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S09NATK {Number of Cybs to pursue this ship: 2} (S09TYPE=USER,DROID) N 0 255
+S09NATK {Number of Cybs to pursue this ship: 2} (S09TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 09 Cybertron will pursue?
 
@@ -1674,7 +1674,7 @@ S10CATK {Cybs will fire on this ship: YES} (S10TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 10 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S10NATK {Number of Cybs to pursue this ship: 3} (S10TYPE=USER,DROID) N 0 255
+S10NATK {Number of Cybs to pursue this ship: 3} (S10TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 10 Cybertron will pursue?
 
@@ -1846,7 +1846,7 @@ S11CATK {Cybs will fire on this ship: YES} (S11TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 11 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S11NATK {Number of Cybs to pursue this ship: 3} (S11TYPE=USER,DROID) N 0 255
+S11NATK {Number of Cybs to pursue this ship: 3} (S11TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 11 Cybertron will pursue?
 
@@ -2016,7 +2016,7 @@ S12CATK {Cybs will fire on this ship: YES} (S12TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 12 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S12NATK {Number of Cybs to pursue this ship: 2} (S12TYPE=USER,DROID) N 0 255
+S12NATK {Number of Cybs to pursue this ship: 2} (S12TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 12 Cybertron will pursue?
 
@@ -2188,7 +2188,7 @@ S13CATK {Cybs will fire on this ship: YES} (S13TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 13 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S13NATK {Number of Cybs to pursue this ship: 1} (S13TYPE=USER,DROID) N 0 255
+S13NATK {Number of Cybs to pursue this ship: 1} (S13TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 13 Cybertron will pursue?
 
@@ -2358,7 +2358,7 @@ S14CATK {Cybs will fire on this ship: YES} (S14TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 14 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S14NATK {Number of Cybs to pursue this ship: 2} (S14TYPE=USER,DROID) N 0 255
+S14NATK {Number of Cybs to pursue this ship: 2} (S14TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 14 Cybertron will pursue?
 
@@ -2537,7 +2537,7 @@ S15CATK {Cybs will fire on this ship: YES} (S15TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 15 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S15NATK {Number of Cybs to pursue this ship: 3} (S15TYPE=USER,DROID) N 0 255
+S15NATK {Number of Cybs to pursue this ship: 3} (S15TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 15 Cybertron will pursue?
 
@@ -2715,7 +2715,7 @@ S16CATK {Cybs will fire on this ship: YES} (S16TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 16 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S16NATK {Number of Cybs to pursue this ship: 3} (S16TYPE=USER,DROID) N 0 255
+S16NATK {Number of Cybs to pursue this ship: 3} (S16TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 16 Cybertron will pursue?
 
@@ -2890,7 +2890,7 @@ S17CATK {Cybs will fire on this ship: NO} (S17TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 17 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S17NATK {Number of Cybs to pursue this ship: 0} (S17TYPE=USER,DROID) N 0 255
+S17NATK {Number of Cybs to pursue this ship: 0} (S17TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 17 Cybertron will pursue?
 
@@ -3043,7 +3043,7 @@ S18CATK {Cybs will fire on this ship: NO} (S18TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 18 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S18NATK {Number of Cybs to pursue this ship: 0} (S18TYPE=USER,DROID) N 0 255
+S18NATK {Number of Cybs to pursue this ship: 0} (S18TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 18 Cybertron will pursue?
 
@@ -3191,7 +3191,7 @@ S19CATK {Cybs will fire on this ship: NO} (S19TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 19 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S19NATK {Number of Cybs to pursue this ship: 0} (S19TYPE=USER,DROID) N 0 255
+S19NATK {Number of Cybs to pursue this ship: 0} (S19TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 19 Cybertron will pursue?
 
@@ -3344,7 +3344,7 @@ S20CATK {Cybs will fire on this ship: NO} (S20TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 20 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S20NATK {Number of Cybs to pursue this ship: 0} (S20TYPE=USER,DROID) N 0 255
+S20NATK {Number of Cybs to pursue this ship: 0} (S20TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 20 Cybertron will pursue?
 
@@ -3497,7 +3497,7 @@ S21CATK {Cybs will fire on this ship: NO} (S21TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 21 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S21NATK {Number of Cybs to pursue this ship: 0} (S21TYPE=USER,DROID) N 0 255
+S21NATK {Number of Cybs to pursue this ship: 0} (S21TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 21 Cybertron will pursue?
 
@@ -3650,7 +3650,7 @@ S22CATK {Cybs will fire on this ship: NO} (S22TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 22 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S22NATK {Number of Cybs to pursue this ship: 0} (S22TYPE=USER,DROID) N 0 255
+S22NATK {Number of Cybs to pursue this ship: 0} (S22TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 22 Cybertron will pursue?
 
@@ -3803,7 +3803,7 @@ S23CATK {Cybs will fire on this ship: NO} (S23TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 23 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S23NATK {Number of Cybs to pursue this ship: 0} (S23TYPE=USER,DROID) N 0 255
+S23NATK {Number of Cybs to pursue this ship: 0} (S23TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 23 Cybertron will pursue?
 
@@ -3956,7 +3956,7 @@ S24CATK {Cybs will fire on this ship: NO} (S24TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 24 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S24NATK {Number of Cybs to pursue this ship: 0} (S24TYPE=USER,DROID) N 0 255
+S24NATK {Number of Cybs to pursue this ship: 0} (S24TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 24 Cybertron will pursue?
 
@@ -4109,7 +4109,7 @@ S25CATK {Cybs will fire on this ship: NO} (S25TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 25 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S25NATK {Number of Cybs to pursue this ship: 0} (S25TYPE=USER,DROID) N 0 255
+S25NATK {Number of Cybs to pursue this ship: 0} (S25TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 25 Cybertron will pursue?
 
@@ -4262,7 +4262,7 @@ S26CATK {Cybs will fire on this ship: NO} (S26TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 26 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S26NATK {Number of Cybs to pursue this ship: 0} (S26TYPE=USER,DROID) N 0 255
+S26NATK {Number of Cybs to pursue this ship: 0} (S26TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 26 Cybertron will pursue?
 
@@ -4415,7 +4415,7 @@ S27CATK {Cybs will fire on this ship: NO} (S27TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 27 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S27NATK {Number of Cybs to pursue this ship: 0} (S27TYPE=USER,DROID) N 0 255
+S27NATK {Number of Cybs to pursue this ship: 0} (S27TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 27 Cybertron will pursue?
 
@@ -4568,7 +4568,7 @@ S28CATK {Cybs will fire on this ship: NO} (S28TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 28 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S28NATK {Number of Cybs to pursue this ship: 0} (S28TYPE=USER,DROID) N 0 255
+S28NATK {Number of Cybs to pursue this ship: 0} (S28TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 28 Cybertron will pursue?
 
@@ -4721,7 +4721,7 @@ S29CATK {Cybs will fire on this ship: NO} (S29TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 29 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S29NATK {Number of Cybs to pursue this ship: 0} (S29TYPE=USER,DROID) N 0 255
+S29NATK {Number of Cybs to pursue this ship: 0} (S29TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 29 Cybertron will pursue?
 
@@ -4874,7 +4874,7 @@ S30CATK {Cybs will fire on this ship: NO} (S30TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 30 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S30NATK {Number of Cybs to pursue this ship: 0} (S30TYPE=USER,DROID) N 0 255
+S30NATK {Number of Cybs to pursue this ship: 0} (S30TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 30 Cybertron will pursue?
 
@@ -5027,7 +5027,7 @@ S31CATK {Cybs will fire on this ship: NO} (S31TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 31 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S31NATK {Number of Cybs to pursue this ship: 0} (S31TYPE=USER,DROID) N 0 255
+S31NATK {Number of Cybs to pursue this ship: 0} (S31TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 31 Cybertron will pursue?
 
@@ -5180,7 +5180,7 @@ S32CATK {Cybs will fire on this ship: YES} (S32TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 32 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S32NATK {Number of Cybs to pursue this ship: 1} (S32TYPE=USER,DROID) N 0 255
+S32NATK {Number of Cybs to pursue this ship: 1} (S32TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 32 Cybertron will pursue?
 
@@ -5333,7 +5333,7 @@ S33CATK {Cybs will fire on this ship: NO} (S33TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 33 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S33NATK {Number of Cybs to pursue this ship: 0} (S33TYPE=USER,DROID) N 0 255
+S33NATK {Number of Cybs to pursue this ship: 0} (S33TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 33 Cybertron will pursue?
 
@@ -5486,7 +5486,7 @@ S34CATK {Cybs will fire on this ship: YES} (S34TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 34 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S34NATK {Number of Cybs to pursue this ship: 1} (S34TYPE=USER,DROID) N 0 255
+S34NATK {Number of Cybs to pursue this ship: 1} (S34TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 34 Cybertron will pursue?
 
@@ -5639,7 +5639,7 @@ S35CATK {Cybs will fire on this ship: NO} (S35TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 35 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S35NATK {Number of Cybs to pursue this ship: 0} (S35TYPE=USER,DROID) N 0 255
+S35NATK {Number of Cybs to pursue this ship: 0} (S35TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 35 Cybertron will pursue?
 
@@ -5792,7 +5792,7 @@ S36CATK {Cybs will fire on this ship: YES} (S36TYPE=USER,DROID) B
 How many Cybertrons will pursue a class 36 ship?
 Cybertrons will only pursue DROID ships if SXXCATK is YES.
 
-S36NATK {Number of Cybs to pursue this ship: 1} (S36TYPE=USER,DROID) N 0 255
+S36NATK {Number of Cybs to pursue this ship: 1} (S36TYPE=USER,DROID) N 0 5
 
 Lowest class of user ship a class 36 Cybertron will pursue?
 

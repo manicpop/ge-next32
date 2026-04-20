@@ -4364,10 +4364,12 @@ void FUNC cmd_new()
 int	type,ctype;
 unsigned int	loadout;
 unsigned int	upbit;
+byte		tpmode;
 long	delta,credit,fee;
 long	price;
 
-if (margc != 3 && !(margc == 2 && sameas(margv[1],"upgrade")))
+if ((margc != 3 && !(margc == 4 && sameas(margv[1],"upgrade"))) &&
+	!(margc == 2 && sameas(margv[1],"upgrade")))
 	{
 	prfmsg(FORMAT,"NEW");
 	outprfge(FLT_NONE,usrnum);
@@ -4443,6 +4445,11 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 					prfmsg(NEW20);
 					}
 				else
+				if (upbit == TPONDER && shipclass[warsptr->shpclass].noclaim == 0)
+					{
+					prfmsg(NEW20);
+					}
+				else
 				if (warsptr->upgrade & upbit)
 					{
 					prfmsg(NEW21);
@@ -4454,7 +4461,17 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 						{
 						waruptr->cash -= price;
 						warsptr->upgrade |= upbit;
-						prfmsg(NEW22,l2as(price));
+						if (upbit == TPONDER)
+							{
+							warsptr->tponder = TPONNORM;
+							prfmsg(NEW22,l2as(price));
+							outprfge(FLT_NONE,usrnum);
+							prfmsg(TPOND4);
+							outprfge(FLT_NONE,usrnum);
+							prfmsg(TPOND5);
+							}
+						else
+							prfmsg(NEW22,l2as(price));
 						}
 					else
 						{
@@ -4462,6 +4479,65 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 						}
 					}
 				}
+			outprfge(FLT_NONE,usrnum);
+			return;
+			}
+		if (margc == 4)
+			{
+			type = atoi(margv[2]);
+			if (type != 7)
+				{
+				prfmsg(NEW12);
+				outprfge(FLT_NONE,usrnum);
+				return;
+				}
+			if (!(loadout & TPONDER) || shipclass[warsptr->shpclass].noclaim == 0)
+				{
+				prfmsg(NEW20);
+				outprfge(FLT_NONE,usrnum);
+				return;
+				}
+			if (sameas(margv[3],"high"))
+				tpmode = TPONHIGH;
+			else
+			if (sameas(margv[3],"normal"))
+				tpmode = TPONNORM;
+			else
+			if (sameas(margv[3],"low"))
+				tpmode = TPONLOW;
+			else
+				{
+				prfmsg(TPOND5);
+				outprfge(FLT_NONE,usrnum);
+				return;
+				}
+			if (!(warsptr->upgrade & TPONDER))
+				{
+				price = (long)(((double)upgrprice[6] * shipclass[warsptr->shpclass].damfact) / 100.0);
+				if (price <= waruptr->cash)
+					{
+					waruptr->cash -= price;
+					warsptr->upgrade |= TPONDER;
+					warsptr->tponder = tpmode;
+					prfmsg(NEW22,l2as(price));
+					outprfge(FLT_NONE,usrnum);
+					}
+				else
+					{
+					prfmsg(NEW23);
+					outprfge(FLT_NONE,usrnum);
+					return;
+					}
+				}
+			else
+				warsptr->tponder = tpmode;
+			if (warsptr->tponder == TPONHIGH)
+				prfmsg(TPOND1);
+			else
+			if (warsptr->tponder == TPONLOW)
+				prfmsg(TPOND3);
+			else
+				prfmsg(TPOND2);
 			outprfge(FLT_NONE,usrnum);
 			return;
 			}
@@ -4533,7 +4609,7 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 				}
 			outprfge(FLT_NONE,usrnum);
 			}
-		if (loadout & TPONDER)
+		if ((loadout & TPONDER) && shipclass[warsptr->shpclass].noclaim > 0)
 			{
 			if (warsptr->upgrade & TPONDER)
 				prfmsg(UPGR7,"purchased");

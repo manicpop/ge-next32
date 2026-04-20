@@ -1422,6 +1422,7 @@ tmpshp.where		= 0;
 tmpshp.jam_sev		= 0;
 tmpshp.jam_time		= 0;
 tmpshp.freq		= 0;
+tmpshp.tponder		= TPONNORM;
 tmpshp.titem		= 0;
 tmpshp.hostile		= 0;
 tmpshp.repair		= 0;
@@ -1445,7 +1446,7 @@ tmpshp.items[I_GOLD]	= 0;
 tmpshp.destruct		= 0;
 tmpshp.status		= 0;
 tmpshp.cybmine		= 0;
-tmpshp.upgrade		= 0;	/*UNUSED ATM*/
+tmpshp.upgrade		= 0;
 tmpshp.cybupdate	= 0;
 tmpshp.tick		= 0;
 tmpshp.distress		= 255;
@@ -5333,7 +5334,7 @@ double	ddist;
 double	low_dist = 999999999.0;
 int	low_ship;
 int	lta; /* lowest to attack */
-int	i, cybpick, claims;
+int	i, cybpick, claims, noclaim, tpmag;
 
 claims = 0;
 
@@ -5353,7 +5354,24 @@ for (zothusn=nterms; zothusn < nships; ++zothusn)
 
 wptr = warshpoff(usrnum);
 /* if we're not clearing, only claim enough to fill claims */
-cybpick = shipclass[wptr->shpclass].noclaim-claims;
+noclaim = shipclass[wptr->shpclass].noclaim;
+if (wptr->upgrade & TPONDER)
+	{
+	if (noclaim <= 2)
+		tpmag = 1;
+	else
+		tpmag = 2;
+	if (wptr->tponder == TPONHIGH)
+		noclaim += tpmag;
+	else
+	if (wptr->tponder == TPONLOW)
+		noclaim -= tpmag;
+	if (noclaim < 0)
+		noclaim = 0;
+	if (noclaim > 5)
+		noclaim = 5;
+	}
+cybpick = noclaim-claims;
 
 for (i=0; i < cybpick; ++i)
 	{

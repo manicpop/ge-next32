@@ -293,6 +293,10 @@
 #define TPONDER 64
 #define NCORE 128
 
+#define TPONNORM 0
+#define TPONLOW 1
+#define TPONHIGH 2
+
 /*****************************************************************************/
 /* End of Defines                                                            */
 /*****************************************************************************/
@@ -456,7 +460,8 @@ WARSHP	{
 /*210*/
 	unsigned	freq;			/*   encoded message freq / npc state trckr  */
 /*212*/
-	char		filler2[4];		/*   eventually i will restruct this struct  */
+	byte		tponder;		/*   transponder control state               */
+	char		filler2[3];		/*   eventually i will restruct this struct  */
 /*216*/
 	unsigned long	items[NUMITEMS];	/*   all the items                           */
 /*272*/
@@ -480,7 +485,7 @@ WARSHP	{
 /*286*/
 	byte		cybmine;		/*   I have found me a ship to seek          */
 /*287*/
-	byte		upgrade;		/*   UNUSED ATM                              */
+	byte		upgrade;		/*   installed ship upgrades                  */
 /*288*/
 	byte		cybupdate;		/*   update cyborg counter                   */
 /*289*/
