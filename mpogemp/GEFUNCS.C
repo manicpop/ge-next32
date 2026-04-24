@@ -187,7 +187,7 @@ if (ptr->shieldstat == SHIELDDM)
 	ptr->shieldstat = SHIELDDN;
 if (ptr->shield < 1)
 	ptr->shield = 0;
-if (ptr->topspeed == 0)
+if (shipclass[ptr->shpclass].max_warp > 0)
 	ptr->topspeed = shipclass[ptr->shpclass].max_warp;
 ptr->overspeed = 0;
 }
@@ -344,6 +344,8 @@ while (steps > 0)
 
 	if (domaint && ptr->overspeed > 0)
 		{
+		if (shipclass[ptr->shpclass].max_warp > 0)
+			ptr->topspeed = shipclass[ptr->shpclass].max_warp;
 		ptr->overspeed = 0;
 		--steps;
 		continue;
@@ -2015,6 +2017,7 @@ COORD	oldsect,newsect,neutsect;
 int	overamt,intspeed,zothusn,movenergy;
 double	ddist;
 float	newtop;
+unsigned long	overadd;
 byte	ptr_neb,oth_neb;
 
 neutsect.xcoord = 0.50001;
@@ -2222,10 +2225,14 @@ if (ptr->speed > 0)
 
 				/* for every 10% over cruising speed, increase potential random damage */
 				overamt = (intspeed * 100 / newtop) - 100;
-				ptr->overspeed += (r%(overamt+1));
+				if (ptr->upgrade & NCORE)
+					overadd = (unsigned long)(r%((overamt/2)+1));
+				else
+					overadd = (unsigned long)(r%(overamt+1));
+				ptr->overspeed += overadd;
 
 				/* if over twice new cruising speed, blow up the engines */
-				if ((overamt >= 110 || ptr->overspeed > 4000000000UL) && ptr->topspeed != 0)
+				if (overamt >= 110 && ptr->topspeed != 0)
 					{
 					prfmsg(WARPBRK);
 					outprfge(FLT_NONE,usrn);
