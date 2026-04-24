@@ -2089,9 +2089,9 @@ speed	= ((unsigned)warsptr->speed  +.5);
 heading	= (int)(warsptr->heading+.5);
 
 if (warsptr->shipname[0] == '\0')
-	prfmsg(REP01O,shipclass[warsptr->shpclass].typename,waruptr->userid);
+	prfmsg(REP01O,shipclass[warsptr->shpclass].typename,showupg(warsptr),waruptr->userid);
 else
-	prfmsg(REP01,shipclass[warsptr->shpclass].typename,warsptr->shipname);
+	prfmsg(REP01,shipclass[warsptr->shpclass].typename,showupg(warsptr),warsptr->shipname);
 prfmsg(DASHES);
 
 if (sameas(margv[1],"nav"))
@@ -6619,7 +6619,7 @@ SCANTAB	*sptr;
 WARSHP	*wptr;
 int	i,j;
 
-char	mask[] = {" %c %d %d %d %d %s %d %d %s %d/%s\r"};
+char	mask[] = {" %c %d %d %d %d %s %d %d %s %d/%s%s\r"};
 
 
 prf("DataScan: Range: %s\r",spr("%6ld",shipclass[warsptr->shpclass].scanrange));
@@ -6634,7 +6634,7 @@ setsect(warsptr);
 
 prf(mask,'*',xsect,ysect,xcord,ycord,"0",0,
 	(int)warsptr->heading,showarp(warsptr->speed),
-	warsptr->shpclass,shipclass[warsptr->shpclass].typename);
+	warsptr->shpclass,shipclass[warsptr->shpclass].typename,showupg(warsptr));
 
 if (warsptr->jam_sev > (byte)2)
 	{
@@ -6654,7 +6654,7 @@ for(i=0; i<NOSCANTAB;++i)
 		j = wptr->shpclass;
 		prf(mask,sptr->ship[i].letter,xsect,ysect,xcord,ycord,spr("%ld",(long)(sptr->ship[i].dist)),
 			sptr->ship[i].bearing,sptr->ship[i].heading,showarp(sptr->ship[i].speed),
-			j,shipclass[j].typename);
+			j,shipclass[j].typename,showupg(wptr));
 		}
 	}
 

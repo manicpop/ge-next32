@@ -1167,9 +1167,9 @@ eptr = warshpoff(entrant);
 euptr = warusroff(entrant);
 
 	if (eptr->shipname[0] == '\0')
-		prfmsg(ANNOUNO,euptr->userid,shipclass[eptr->shpclass].typename);
+		prfmsg(ANNOUNO,euptr->userid,shipclass[eptr->shpclass].typename,showupg(eptr));
 	else
-		prfmsg(ANNOUN,shipclass[eptr->shpclass].typename,eptr->shipname,euptr->userid);
+		prfmsg(ANNOUN,shipclass[eptr->shpclass].typename,showupg(eptr),eptr->shipname,euptr->userid);
 	outprfge(FLT_NONE,recipient);
 }
 
@@ -1576,8 +1576,8 @@ do
 	setsect(warsptr);
 	if (!quiet)
 		{
-		prf("%s%2d  %-20s %-20s %6d %6d  ", CLR_WHITE2, found+1,
-			shipclass[warsptr->shpclass].typename,
+		prf("%s%2d  %-20s%s %-20s %6d %6d  ", CLR_WHITE2, found+1,
+			shipclass[warsptr->shpclass].typename,showupg(warsptr),
 			(warsptr->shipname[0] == '\0' ? " <NO NAME> " : warsptr->shipname), xsect, ysect);
 
 		if (warsptr->energy < 5000 && warsptr->items[I_FLUXPOD] == 0)
@@ -2778,7 +2778,7 @@ if (who >= 0 && who < nships && who != usrn)
 		prfmsg(KILNOPTS);
 	else
 		{
-		prfmsg(KILLPNTS,gechrbuf,shipclass[ptr->shpclass].typename);
+		prfmsg(KILLPNTS,gechrbuf,shipclass[ptr->shpclass].typename,showupg(ptr));
 
 		if (bonus2 > 0)
 			{
@@ -5298,6 +5298,36 @@ if (ptr->upgrade & ARMOR)
 	temp *= 0.625;
 
 return(temp);
+}
+
+char * FUNC showupg(ptr)
+WARSHP	*ptr;
+{
+byte		upg;
+int		count;
+
+if (ptr->upgrade == 0)
+	return("");
+
+upg = ptr->upgrade;
+count = 0;
+while (upg != 0)
+	{
+	if (upg & 1)
+		++count;
+	upg >>= 1;
+	}
+
+if (count > 4)
+	return("+++");
+else
+if (count > 2)
+	return("++");
+else
+if (count > 0)
+	return("+");
+
+return("");
 }
 
 char * FUNC showarp(double speed)

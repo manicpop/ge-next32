@@ -683,7 +683,7 @@ if (shpnum >= 0)
 			prfmsg(SCAN01,gechrbuf);
 		prfmsg(DASHES);
 		if (warsptr->jam_sev < (byte)3)
-			prfmsg(SCAN01A,shipclass[wptr->shpclass].typename);
+			prfmsg(SCAN01A,shipclass[wptr->shpclass].typename,showupg(wptr));
 		if (wptr->status == GESTAT_USER && warsptr->jam_sev < (byte)3)
 			{
 			if (wptr->shipname[0] != '\0')

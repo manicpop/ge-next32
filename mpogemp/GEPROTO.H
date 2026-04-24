@@ -179,8 +179,9 @@
 /*    2836 */ WARUSR *FUNC warusroff P((int usrn ));
 /*    2847 */ WARSHP *FUNC warshpoff P((int usrn ));
 /*    2859 */ double FUNC ton_fact P((WARSHP *ptr , double damfact ));
-/*    2872 */ char *FUNC showarp P((double speed ));
-/*    2890 */ void FUNC assign_cybs P((int usrnum , int call ));
+/*    2872 */ char *FUNC showupg P((WARSHP *ptr ));
+/*    2890 */ char *FUNC showarp P((double speed ));
+/*    2908 */ void FUNC assign_cybs P((int usrnum , int call ));
 /*    2957 */ int FUNC cyb_fast P((WARSHP *ptr ));
 /*    2971 */ void FUNC set_dislike P((WARUSR *wuptr , int facnum , int dislike ));
 /*         */ void FUNC rospos P((WARUSR *losptr , WARUSR *winptr , int *lospos , int *winpos ));
