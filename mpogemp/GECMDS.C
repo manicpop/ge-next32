@@ -2076,7 +2076,7 @@ WARSHP	*ptr;
 int	max,pcnt,i,none,zothusn;
 double	ddist;
 
-if (margc != 2 || (!sameas(margv[1],"nav") && !sameas(margv[1],"sys") && !sameas(margv[1],"inv") && !sameas(margv[1],"acc") && !sameas(margv[1],"ord")))
+if (margc != 2 || (!sameas(margv[1],"nav") && !sameas(margv[1],"sys") && !sameas(margv[1],"inv") && !sameas(margv[1],"acc") && !sameas(margv[1],"ord") && !sameas(margv[1],"upg")))
 	{
 	prfmsg(FORMAT,"REPORT");
 	outprfge(FLT_NONE,usrnum);
@@ -2432,6 +2432,62 @@ if (sameas(margv[1],"ord"))
 		else
 			prf("%d\r",none);
 		}
+	}
+else
+if (sameas(margv[1],"upg"))
+	{
+	none = TRUE;
+	prfmsg(REP48);
+	if (warsptr->upgrade & ENHSCAN)
+		{
+		prfmsg(UPGR1);
+		prf("\r");
+		none = FALSE;
+		}
+	if (warsptr->upgrade & ARMOR)
+		{
+		prfmsg(UPGR2);
+		prf("\r");
+		none = FALSE;
+		}
+	if (warsptr->upgrade & ACCELBST)
+		{
+		prfmsg(UPGR3);
+		prf("\r");
+		none = FALSE;
+		}
+	if (warsptr->upgrade & SCANBST)
+		{
+		prfmsg(UPGR4);
+		prf("\r");
+		none = FALSE;
+		}
+	if (warsptr->upgrade & ENHLOCK)
+		{
+		prfmsg(UPGR5);
+		prf("\r");
+		none = FALSE;
+		}
+	if (warsptr->upgrade & DAMCTRL)
+		{
+		prfmsg(UPGR6);
+		prf("\r");
+		none = FALSE;
+		}
+	if (warsptr->upgrade & TPONDER)
+		{
+		prfmsg(UPGR7);
+		prf("\r");
+		none = FALSE;
+		}
+	if (warsptr->upgrade & NCORE)
+		{
+		prfmsg(UPGR8);
+		prf("\r");
+		none = FALSE;
+		}
+	if (none == TRUE)
+		prfmsg(REP49);
 	}
 prfmsg(DASHES);
 outprfge(FLT_NONE,usrnum);
@@ -4545,89 +4601,97 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 		outprfge(FLT_NONE,usrnum);
 		if (loadout & ENHSCAN)
 			{
+			prfmsg(UPGR1);
 			if (warsptr->upgrade & ENHSCAN)
-				prfmsg(UPGR1,"purchased");
+				prfmsg(UPGRD1,1,"purchased");
 			else
 				{
 				price = (long)(((double)upgrprice[0] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGR1,l2as(price));
+				prfmsg(UPGRD1,1,l2as(price));
 				}
 			outprfge(FLT_NONE,usrnum);
 			}
 		if (loadout & ARMOR)
 			{
+			prfmsg(UPGR2);
 			if (warsptr->upgrade & ARMOR)
-				prfmsg(UPGR2,"purchased");
+				prfmsg(UPGRD2,2,"purchased");
 			else
 				{
 				price = (long)(((double)upgrprice[1] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGR2,l2as(price));
+				prfmsg(UPGRD2,2,l2as(price));
 				}
 			outprfge(FLT_NONE,usrnum);
 			}
 		if (loadout & ACCELBST)
 			{
+			prfmsg(UPGR3);
 			if (warsptr->upgrade & ACCELBST)
-				prfmsg(UPGR3,"purchased");
+				prfmsg(UPGRD3,3,"purchased");
 			else
 				{
 				price = (long)(((double)upgrprice[2] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGR3,l2as(price));
+				prfmsg(UPGRD3,3,l2as(price));
 				}
 			outprfge(FLT_NONE,usrnum);
 			}
 		if (loadout & SCANBST)
 			{
+			prfmsg(UPGR4);
 			if (warsptr->upgrade & SCANBST)
-				prfmsg(UPGR4,"purchased");
+				prfmsg(UPGRD4,4,"purchased");
 			else
 				{
 				price = (long)(((double)upgrprice[3] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGR4,l2as(price));
+				prfmsg(UPGRD4,4,l2as(price));
 				}
 			outprfge(FLT_NONE,usrnum);
 			}
 		if (loadout & ENHLOCK)
 			{
+			prfmsg(UPGR5);
 			if (warsptr->upgrade & ENHLOCK)
-				prfmsg(UPGR5,"purchased");
+				prfmsg(UPGRD5,5,"purchased");
 			else
 				{
 				price = (long)(((double)upgrprice[4] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGR5,l2as(price));
+				prfmsg(UPGRD5,5,l2as(price));
 				}
 			outprfge(FLT_NONE,usrnum);
 			}
 		if (loadout & DAMCTRL)
 			{
+			prfmsg(UPGR6);
 			if (warsptr->upgrade & DAMCTRL)
-				prfmsg(UPGR6,"purchased");
+				prfmsg(UPGRD6,6,"purchased");
 			else
 				{
 				price = (long)(((double)upgrprice[5] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGR6,l2as(price));
+				prfmsg(UPGRD6,6,l2as(price));
 				}
 			outprfge(FLT_NONE,usrnum);
 			}
 		if ((loadout & TPONDER) && shipclass[warsptr->shpclass].noclaim > 0)
 			{
+			prfmsg(UPGR7);
 			if (warsptr->upgrade & TPONDER)
-				prfmsg(UPGR7,"purchased");
+				prfmsg(UPGRD7,7,"purchased");
 			else
 				{
 				price = (long)(((double)upgrprice[6] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGR7,l2as(price));
+				prfmsg(UPGRD7,7,l2as(price));
 				}
 			outprfge(FLT_NONE,usrnum);
 			}
 		if (loadout & NCORE)
 			{
+			prfmsg(UPGR8);
 			if (warsptr->upgrade & NCORE)
-				prfmsg(UPGR8,"purchased");
+				prfmsg(UPGRD8,8,"purchased");
 			else
 				{
 				price = (long)(((double)upgrprice[7] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGR8,l2as(price));
+				prfmsg(UPGRD8,8,l2as(price));
 				}
 			outprfge(FLT_NONE,usrnum);
 			}

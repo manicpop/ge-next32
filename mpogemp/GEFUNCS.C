@@ -1576,8 +1576,11 @@ do
 	setsect(warsptr);
 	if (!quiet)
 		{
-		prf("%s%2d  %-20s%s %-20s %6d %6d  ", CLR_WHITE2, found+1,
-			shipclass[warsptr->shpclass].typename,showupg(warsptr),
+		prf("%s%2d  %s%s", CLR_WHITE2, found+1,
+			shipclass[warsptr->shpclass].typename,showupg(warsptr));
+		for (j = strlen(shipclass[warsptr->shpclass].typename) + strlen(showupg(warsptr)); j < 20; ++j)
+			prf(" ");
+		prf(" %-20s %6d %6d  ",
 			(warsptr->shipname[0] == '\0' ? " <NO NAME> " : warsptr->shipname), xsect, ysect);
 
 		if (warsptr->energy < 5000 && warsptr->items[I_FLUXPOD] == 0)

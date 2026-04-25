@@ -3556,6 +3556,12 @@ REP46 {[1;37mMines deployed........ } T GE report 46
 
 REP47 {[1;37mDecoys deployed....... } T GE report 47
 
+REP48 {[1;37mUpgrades installed:
+} T GE report 48
+
+REP49 {[1;37mNo upgrades installed
+} T GE report 49
+
 SCAN01 {[0;37m
 Scanning the [1;34m%s[0;37m:
 } T GE scan 01
@@ -4655,52 +4661,69 @@ NAV01 {
 } T GE navigate message
 
 UPGRHEAD {
-[1;36mAvailable %s upgrades:
+[1;36mAvailable %s upgrades:[1;37m
+
 } T upgrade header
 
 UPGRNO {
 [1;36mSorry, no %s upgrades are available.[1;37m
 } T upgrade header
 
-UPGR1 {
-[1;36m1. [1;37mEnhanced scanners[1;36m provide more details about scanned ships and are less
+UPGR1 {Enhanced scanners} T upgrade 1
+
+UPGR2 {Armor plating} T upgrade 2
+
+UPGR3 {Acceleration boosters} T upgrade 3
+
+UPGR4 {Scan range boost} T upgrade 4
+
+UPGR5 {Enhanced lock} T upgrade 5
+
+UPGR6 {Enhanced damage control} T upgrade 6
+
+UPGR7 {Transponder control} T upgrade 7
+
+UPGR8 {Reinforced neutron core} T upgrade 8
+
+UPGRD1 { [1;36m([1;37m%d[1;36m) provide more details about scanned ships and are less
 susceptible to jamming. Price: [0;33m%s[1;37m
+
 } T upgrade 1
 
-UPGR2 {
-[1;36m2. [1;37mArmor plating[1;36m increases a ship's durability.
+UPGRD2 { [1;36m([1;37m%d[1;36m) increases a ship's durability.
 Price: [0;33m%s[1;37m
+
 } T upgrade 2
 
-UPGR3 {
-[1;36m3. [1;37mAcceleration boosters[1;36m increase a ship's acceleration rate.
+UPGRD3 { [1;36m([1;37m%d[1;36m) increase a ship's acceleration rate.
 Price: [0;33m%s[1;37m
+
 } T upgrade 3
 
-UPGR4 {
-[1;36m4. [1;37mScan range boost[1;36m increases a ship's scan range.
+UPGRD4 { [1;36m([1;37m%d[1;36m) increases a ship's scan range.
 Price: [0;33m%s[1;37m
+
 } T upgrade 4
 
-UPGR5 {
-[1;36m5. [1;37mEnhanced lock[1;36m sends additional information about what a target is doing to
+UPGRD5 { [1;36m([1;37m%d[1;36m) sends additional information about what a target is doing to
 a ship's sensors. Price: [0;33m%s[1;37m
+
 } T upgrade 5
 
-UPGR6 {
-[1;36m6. [1;37mDamage control upgrade[1;36m increases the speed at which a ship repairs itself,
-as well as adds repair ETAs to the ship's reports. Price: [0;33m%s[1;37m
+UPGRD6 { [1;36m([1;37m%d[1;36m) increases the speed at which a ship repairs
+itself, as well as adds repair ETAs to the ship's reports. Price: [0;33m%s[1;37m
+
 } T upgrade 6
 
-UPGR7 {
-[1;36m7. [1;37mTransponder control[1;36m makes a ship more or less likely to be pursued by
+UPGRD7 { [1;36m([1;37m%d[1;36m) makes a ship more or less likely to be pursued by
 Cybertrons. Purchase once, come back for free adjustments at any time.
 Price: [0;33m%s[1;37m
+
 } T upgrade 7
 
-UPGR8 {
-[1;36m8. [1;37mNeutron core upgrade[1;36m enables a ship's warp drive to run over its top
+UPGRD8 { [1;36m([1;37m%d[1;36m) enables a ship's warp drive to run over its top
 cruising speed for a longer duration. Price: [0;33m%s[1;37m
+
 } T upgrade 8
 
 TOOMANY {
