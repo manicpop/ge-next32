@@ -332,21 +332,13 @@ while (steps > 0)
 		continue;
 		}
 
-	if (domaint && ptr->topspeed == 0 && shipclass[ptr->shpclass].max_warp > 0)
+	if (domaint && shipclass[ptr->shpclass].max_warp > 0
+		&& (ptr->topspeed != shipclass[ptr->shpclass].max_warp || ptr->overspeed > 0))
 		{
 		ptr->topspeed = shipclass[ptr->shpclass].max_warp;
 		ptr->overspeed = 0;
 		prfmsg(REPWARP);
 		outprfge(FLT_NONE,usrn);
-		--steps;
-		continue;
-		}
-
-	if (domaint && ptr->overspeed > 0)
-		{
-		if (shipclass[ptr->shpclass].max_warp > 0)
-			ptr->topspeed = shipclass[ptr->shpclass].max_warp;
-		ptr->overspeed = 0;
 		--steps;
 		continue;
 		}

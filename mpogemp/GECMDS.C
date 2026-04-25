@@ -94,6 +94,47 @@ char *item_name[NUMITEMS] = {						"men",
 									"gold",
 									"spies"};
 
+#define NUMUPGRADES 8
+
+struct upgdef
+	{
+	unsigned int	bit;
+	int		namemsg;
+	int		descmsg;
+	int		priceidx;
+	};
+
+static struct upgdef upgdefs[NUMUPGRADES] =
+	{
+		{ENHSCAN, UPGR1, UPGRD1, 0},
+		{ARMOR, UPGR2, UPGRD2, 1},
+		{ACCELBST, UPGR3, UPGRD3, 2},
+		{SCANBST, UPGR4, UPGRD4, 3},
+		{ENHLOCK, UPGR5, UPGRD5, 4},
+		{DAMCTRL, UPGR6, UPGRD6, 5},
+		{TPONDER, UPGR7, UPGRD7, 6},
+		{NCORE, UPGR8, UPGRD8, 7}
+	};
+
+static int upg_allowed(ptr,loadout,idx)
+WARSHP		*ptr;
+unsigned int	loadout;
+int		idx;
+{
+if (!(loadout & upgdefs[idx].bit))
+	return(FALSE);
+if (upgdefs[idx].bit == TPONDER && shipclass[ptr->shpclass].noclaim == 0)
+	return(FALSE);
+return(TRUE);
+}
+
+static long upg_price(ptr,idx)
+WARSHP	*ptr;
+int	idx;
+{
+return((long)(((double)upgrprice[upgdefs[idx].priceidx] * shipclass[ptr->shpclass].damfact) / 100.0));
+}
+
 
 void	cmd_gehelp(), cmd_cloak(), cmd_impulse(), cmd_phas(), cmd_report(),
 	cmd_rotate(), cmd_send(), cmd_scan(), cmd_shields(), cmd_warp(),
@@ -2438,54 +2479,23 @@ if (sameas(margv[1],"upg"))
 	{
 	none = TRUE;
 	prfmsg(REP48);
-	if (warsptr->upgrade & ENHSCAN)
-		{
-		prfmsg(UPGR1);
-		prf("\r");
-		none = FALSE;
-		}
-	if (warsptr->upgrade & ARMOR)
-		{
-		prfmsg(UPGR2);
-		prf("\r");
-		none = FALSE;
-		}
-	if (warsptr->upgrade & ACCELBST)
-		{
-		prfmsg(UPGR3);
-		prf("\r");
-		none = FALSE;
-		}
-	if (warsptr->upgrade & SCANBST)
-		{
-		prfmsg(UPGR4);
-		prf("\r");
-		none = FALSE;
-		}
-	if (warsptr->upgrade & ENHLOCK)
-		{
-		prfmsg(UPGR5);
-		prf("\r");
-		none = FALSE;
-		}
-	if (warsptr->upgrade & DAMCTRL)
-		{
-		prfmsg(UPGR6);
-		prf("\r");
-		none = FALSE;
-		}
-	if (warsptr->upgrade & TPONDER)
-		{
-		prfmsg(UPGR7);
-		prf("\r");
-		none = FALSE;
-		}
-	if (warsptr->upgrade & NCORE)
-		{
-		prfmsg(UPGR8);
-		prf("\r");
-		none = FALSE;
-		}
+	for (i = 0; i < NUMUPGRADES; ++i)
+		if (warsptr->upgrade & upgdefs[i].bit)
+			{
+			prfmsg(upgdefs[i].namemsg);
+			if (upgdefs[i].bit == TPONDER)
+				{
+				if (warsptr->tponder == TPONHIGH)
+					prf(" (HIGH)");
+				else
+				if (warsptr->tponder == TPONLOW)
+					prf(" (LOW)");
+				else
+					prf(" (NORMAL)");
+				}
+			prf("\r");
+			none = FALSE;
+			}
 	if (none == TRUE)
 		prfmsg(REP49);
 	}
@@ -4417,7 +4427,7 @@ outprfge(FLT_NONE,usrnum);
 void FUNC cmd_new()
 {
 
-int	type,ctype;
+int	type,ctype,upidx,i;
 unsigned int	loadout;
 unsigned int	upbit;
 byte		tpmode;
@@ -4463,45 +4473,15 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 		if (margc == 3)
 			{
 			type = atoi(margv[2]);
-			if (type < 1 || type > 8)
+			if (type < 1 || type > NUMUPGRADES)
 				{
 				prfmsg(NEW12);
 				}
 			else
 				{
-				switch (type)
-					{
-					case 1:
-						upbit = ENHSCAN;
-						break;
-					case 2:
-						upbit = ARMOR;
-						break;
-					case 3:
-						upbit = ACCELBST;
-						break;
-					case 4:
-						upbit = SCANBST;
-						break;
-					case 5:
-						upbit = ENHLOCK;
-						break;
-					case 6:
-						upbit = DAMCTRL;
-						break;
-					case 7:
-						upbit = TPONDER;
-						break;
-					default:
-						upbit = NCORE;
-						break;
-					}
-				if (!(loadout & upbit))
-					{
-					prfmsg(NEW20);
-					}
-				else
-				if (upbit == TPONDER && shipclass[warsptr->shpclass].noclaim == 0)
+				upidx = type - 1;
+				upbit = upgdefs[upidx].bit;
+				if (!upg_allowed(warsptr,loadout,upidx))
 					{
 					prfmsg(NEW20);
 					}
@@ -4510,9 +4490,9 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 					{
 					prfmsg(NEW21);
 					}
-				else
+					else
 					{
-					price = (long)(((double)upgrprice[type-1] * shipclass[warsptr->shpclass].damfact) / 100.0);
+					price = upg_price(warsptr,upidx);
 					if (price <= waruptr->cash)
 						{
 						waruptr->cash -= price;
@@ -4547,7 +4527,7 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 				outprfge(FLT_NONE,usrnum);
 				return;
 				}
-			if (!(loadout & TPONDER) || shipclass[warsptr->shpclass].noclaim == 0)
+			if (!upg_allowed(warsptr,loadout,6))
 				{
 				prfmsg(NEW20);
 				outprfge(FLT_NONE,usrnum);
@@ -4569,7 +4549,7 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 				}
 			if (!(warsptr->upgrade & TPONDER))
 				{
-				price = (long)(((double)upgrprice[6] * shipclass[warsptr->shpclass].damfact) / 100.0);
+				price = upg_price(warsptr,6);
 				if (price <= waruptr->cash)
 					{
 					waruptr->cash -= price;
@@ -4599,104 +4579,19 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 			}
 		prfmsg(UPGRHEAD,shipclass[warsptr->shpclass].typename);
 		outprfge(FLT_NONE,usrnum);
-		if (loadout & ENHSCAN)
+		for (i = 0; i < NUMUPGRADES; ++i)
 			{
-			prfmsg(UPGR1);
-			if (warsptr->upgrade & ENHSCAN)
-				prfmsg(UPGRD1,1,"purchased");
+			if (!upg_allowed(warsptr,loadout,i))
+				continue;
+			prfmsg(upgdefs[i].namemsg);
+			if (warsptr->upgrade & upgdefs[i].bit)
+				prfmsg(upgdefs[i].descmsg,i+1,"purchased");
 			else
-				{
-				price = (long)(((double)upgrprice[0] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGRD1,1,l2as(price));
-				}
+				prfmsg(upgdefs[i].descmsg,i+1,l2as(upg_price(warsptr,i)));
 			outprfge(FLT_NONE,usrnum);
 			}
-		if (loadout & ARMOR)
-			{
-			prfmsg(UPGR2);
-			if (warsptr->upgrade & ARMOR)
-				prfmsg(UPGRD2,2,"purchased");
-			else
-				{
-				price = (long)(((double)upgrprice[1] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGRD2,2,l2as(price));
-				}
-			outprfge(FLT_NONE,usrnum);
+			return;
 			}
-		if (loadout & ACCELBST)
-			{
-			prfmsg(UPGR3);
-			if (warsptr->upgrade & ACCELBST)
-				prfmsg(UPGRD3,3,"purchased");
-			else
-				{
-				price = (long)(((double)upgrprice[2] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGRD3,3,l2as(price));
-				}
-			outprfge(FLT_NONE,usrnum);
-			}
-		if (loadout & SCANBST)
-			{
-			prfmsg(UPGR4);
-			if (warsptr->upgrade & SCANBST)
-				prfmsg(UPGRD4,4,"purchased");
-			else
-				{
-				price = (long)(((double)upgrprice[3] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGRD4,4,l2as(price));
-				}
-			outprfge(FLT_NONE,usrnum);
-			}
-		if (loadout & ENHLOCK)
-			{
-			prfmsg(UPGR5);
-			if (warsptr->upgrade & ENHLOCK)
-				prfmsg(UPGRD5,5,"purchased");
-			else
-				{
-				price = (long)(((double)upgrprice[4] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGRD5,5,l2as(price));
-				}
-			outprfge(FLT_NONE,usrnum);
-			}
-		if (loadout & DAMCTRL)
-			{
-			prfmsg(UPGR6);
-			if (warsptr->upgrade & DAMCTRL)
-				prfmsg(UPGRD6,6,"purchased");
-			else
-				{
-				price = (long)(((double)upgrprice[5] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGRD6,6,l2as(price));
-				}
-			outprfge(FLT_NONE,usrnum);
-			}
-		if ((loadout & TPONDER) && shipclass[warsptr->shpclass].noclaim > 0)
-			{
-			prfmsg(UPGR7);
-			if (warsptr->upgrade & TPONDER)
-				prfmsg(UPGRD7,7,"purchased");
-			else
-				{
-				price = (long)(((double)upgrprice[6] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGRD7,7,l2as(price));
-				}
-			outprfge(FLT_NONE,usrnum);
-			}
-		if (loadout & NCORE)
-			{
-			prfmsg(UPGR8);
-			if (warsptr->upgrade & NCORE)
-				prfmsg(UPGRD8,8,"purchased");
-			else
-				{
-				price = (long)(((double)upgrprice[7] * shipclass[warsptr->shpclass].damfact) / 100.0);
-				prfmsg(UPGRD8,8,l2as(price));
-				}
-			outprfge(FLT_NONE,usrnum);
-			}
-		return;
-		}
 	if (sameas(margv[1],"ship"))
 		{
 		type = atoi(margv[2])-1;

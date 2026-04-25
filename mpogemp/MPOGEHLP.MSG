@@ -532,7 +532,7 @@ Upgrades are for the ship in which they are installed only, and they can't be
 transferred or returned once installed. Be careful to not put a lot of money
 into upgrading your ship only to carelessly lose it later.
 
-Installed upgrades are shown in [1;37mREP SYS[1;36m. Upgraded ships will be shown with
+Installed upgrades are shown in [1;37mREP UPG[1;36m. Upgraded ships will be shown with
 [1;37m+[1;36m symbols added to the ship's class in scans.
 [1;37m} T GE help upgrade message
 
@@ -919,15 +919,17 @@ clear your ship name simply enter [1;37mRENAME[1;36m.
 
 HLPREP {
 [1;36mThe [1;37mREPORT[1;36m command gives you status information on navigation, ship systems,
-inventory, accounting, and deployed ordnance. Issue the command as follows:
+inventory, accounting, deployed ordnance, and installed upgrades. Issue the
+command as follows:
 
-  [1;37mreport [1;32m[[1;37mnav[1;32m/[1;37msys[1;32m/[1;37minv[1;32m/[1;37macc[1;32m/[1;37mord[1;32m]
+  [1;37mreport [1;32m[[1;37mnav[1;32m/[1;37msys[1;32m/[1;37minv[1;32m/[1;37macc[1;32m/[1;37mord[1;32m/[1;37mupg[1;32m]
 
 [1;36mExamples: [1;37mreport nav [1;36m produces a navigational report
           [1;37mreport sys [1;36m produces a systems report
           [1;37mreport inv [1;36m produces an inventory report
           [1;37mrep acc    [1;36m produces an accounting report
           [1;37mrep ord    [1;36m produces an ordnance report
+          [1;37mrep upg    [1;36m produces an upgrade report
 [1;37m} T GE help report message
 
 HLPROS {
