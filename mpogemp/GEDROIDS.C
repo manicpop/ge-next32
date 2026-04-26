@@ -199,7 +199,8 @@ for (zothusn=0; zothusn<nterms; zothusn++)
 		{
 		ddist = cdistance(&ptr->coord,&wptr->coord);
 		ddist *= 10000;
-		if (ddist > shipclass[wptr->shpclass].scanrange)
+		if (ddist > shipclass[wptr->shpclass].scanrange
+			|| innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord)))
 			{
 			bearing = cbearing(&wptr->coord,&ptr->coord,wptr->heading);
 			prfmsg(DROIDNEW,bearing);

@@ -279,6 +279,8 @@ Other stuff:
   world seconds instead of "centocks." Also, ship systems are
   repaired one by one as maintenance progresses, instead of being
   fixed all at once during the final maintenance tick.
+* Ship names are now optional. Ships with no names will display as
+  "username's ship" instead of " <NO NAME> ".
 
 === 0.2.6 === 2025-08-15
 

@@ -1869,13 +1869,18 @@ if (ptr->speed < ptr->speed2b)
 else
 if (ptr->speed > ptr->speed2b)
 	{
+	int was_over;
+
 	decelrate = ship_accel(ptr) * 2.0;
+	was_over = (ptr->speed/1000 > ptr->topspeed);
 	if ((ptr->speed2b < 1000) && (ptr->speed/1000 >=1) && ((ptr->speed-decelrate)/1000 <1))
 		hyperspace(ptr,usrn,0);
 
 	if (fabs(ptr->speed - ptr->speed2b) <= decelrate)
 		{
 		ptr->speed = ptr->speed2b;
+		if (was_over && ptr->speed/1000 <= ptr->topspeed && ptr->topspeed < shipclass[ptr->shpclass].max_warp)
+			prfmsg(WARPSPD,ptr->topspeed);
 		if (ptr->speed > 0)
 			{
 			prfmsg(SPEEDIS,showarp(ptr->speed));
@@ -1903,10 +1908,12 @@ if (ptr->speed > ptr->speed2b)
 				outprfge(FLT_NONE,usrn);
 				}
 			}
-		if (ptr->speed/1000 > ptr->topspeed && (ptr->speed - decelrate)/1000 <= ptr->topspeed &&
-			ptr->topspeed < shipclass[ptr->shpclass].max_warp)
-			prfmsg(WARPSPD,ptr->topspeed);
 		ptr->speed -= decelrate;
+		if (was_over && ptr->speed/1000 <= ptr->topspeed && ptr->topspeed < shipclass[ptr->shpclass].max_warp)
+			{
+			prfmsg(WARPSPD,ptr->topspeed);
+			outprfge(FLT_NONE,usrn);
+			}
 		}
 	}
 }

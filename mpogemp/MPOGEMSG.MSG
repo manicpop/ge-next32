@@ -5316,7 +5316,7 @@ DR2M11 {***
 
 DR2M12 {***
 [0;37mDistress call from [0;36m%s
-[1;36m<[1;37m The Murdonian Imperial Defense has been informed of your illegal aggression. [1;36m>[1;37m
+[1;36m<[1;37m The Murdonian Imperial Defense was informed of your illegal aggression. [1;36m>[1;37m
 } T GE Droid 2 message 12
 
 **********************************************************************

@@ -513,7 +513,8 @@ effective way to check.
 Planets and wormholes can exist in a nebula just like any other sector, but
 your scanners will not be able to locate them unless they're very close to you.
 A high quality planet in a nebula can be very valuable, as it adds an extra
-layer of security for your colony. Just don't forget where you left it.
+layer of security for your colony. If you own a planet in a nebula, your 
+ship's systems will remember its location in sector scans.
 [1;37m} T GE help nebula message
 
 HLPUPG {
@@ -525,7 +526,7 @@ prices for these upgrades also vary from class to class, with more powerful
 ships generally requiring pricier upgrades.
 
 To see what upgrades are available for your ship class, go to Zygor and enter
-[1;37mNEW UPGRADE[1;36m. To purchase an upgrade, enter [1;37mNEW UPGRADE X[1;36m, where X is the
+[1;37mNEW UPGRADE[1;36m. To purchase an upgrade, enter [1;37mNEW UPGRADE [1;32mx[1;36m, where [1;32mx[1;36m is the
 number of the upgrade.
 
 Upgrades are for the ship in which they are installed only, and they can't be
@@ -812,9 +813,9 @@ system for your current ship, at Zygor.
 
 Issue the command as follows:
 
-  [1;37mnew [1;32m[[1;37mshield[1;32m/[1;37mship[1;32m/[1;37mphaser[1;32m] [type]
+  [1;37mnew [1;32m[[1;37mshield[1;32m/[1;37mship[1;32m/[1;37mphaser[1;32m]/[1;37mupgrade[1;32m] [type]
 
-  [1;32mtype [1;36m= the class type of the shield, phaser, or ship you wish to purchase.
+  [1;32mtype [1;36m= the type of shield, phaser, ship, or upgrade you wish to purchase.
 
 You must be orbiting around Zygor in Sector 0 0 to issue this command. A
 complete list of ship classes and prices can be obtained from the [1;37mHELP CLASS[1;36m

@@ -994,7 +994,6 @@ if (plnum <= MAXPLANETS && plnum > 0)
 				{
 				prfmsg(ORBIT1,plnum,plptr->name);
 				}
-			outprfge(FLT_NONE,usrnum);
 			warsptr->where = 10 + plnum;
 			warsptr->speed = 0;
 			warsptr->speed2b = 0;
@@ -2478,10 +2477,11 @@ else
 if (sameas(margv[1],"upg"))
 	{
 	none = TRUE;
-	prfmsg(REP48);
 	for (i = 0; i < NUMUPGRADES; ++i)
 		if (warsptr->upgrade & upgdefs[i].bit)
 			{
+			if (none == TRUE)
+				prfmsg(REP48);
 			prfmsg(upgdefs[i].namemsg);
 			if (upgdefs[i].bit == TPONDER)
 				{

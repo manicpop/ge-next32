@@ -11,24 +11,51 @@ https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact with me thoughts and suggestions.
 
-This is the first test build for the 0.3 series of ge-next.
+Version 0.3 focuses on user ship improvements, clearer combat feedback,
+smarter scanning, and major quality-of-life fixes. ge-next now uses
+MPO* filenames and MPOGEMP.DLL so it can run alongside classic GE.
 
-There is new "overwarp" behavior and new jamming behavior.
-Please try them out.
+Major ship systems changes:
+- Running over the top recommended warp speed now causes gradual,
+  persistent engine wear instead of half-speed drops Top speed loss
+  is smoother and saved so it can't be avoided.
+- Damaged ship systems now repair one at a time instead of all at once.
+- Maintenance and mine timers are shown in real seconds.
+- A "negligible" damage string now covers damage between 0 and 2.
 
-Scans have been completely overhauled.
-Make sure to read HELP SET and set your desired SET SCAN.
-It defaults to FULLNAMES on a fresh game, but if you are updating a 0.2 game
-it will not be set correctly.
-Please test all the different scan mdoes.
+New ship upgrades:
+- Eight purchasable upgrades are now available at Zygor, depending on
+  ship class: enhanced scanners, armor plating, acceleration
+  boosters, scan range boost, enhanced lock, improved damage control,
+  transponder control, and reinforced neutron core.
+- Improved damage control speeds passive repair and adds repair ETAs.
+- Transponder control changes how likely Cybertrons are to pursue a ship.
+- Reinforced neutron core makes it possible to travel over top speed longer.
 
-Ship letters showing up as '?' should be fixed. Let me know if you see any
-appear.
+Scanning and jamming:
+- SCAN RA, SCAN LO, and SCAN SE were overhauled with better alignment,
+  color coding, range controls, text-only options, and map scaling.
+- Locked ships, player ships, NPCs, planets, and wormholes are easier
+  to distinguish, and lock targets take precedence in scans.
+- Jamming now distorts scan results instead of simply disabling them.
+  Severity depends on distance from the jammer.
 
-There is a new paging system for your list of ships when you start the game.
-If you have over 15 ships, the first 15 will be displayed, and you can then
-use 'N' and 'P' to navigate the pages of ships. This fixes memory overflow
-errors and also makes you list a little more manageable.
+Combat and tactical changes:
+- Phasers are centered correctly, use smoother damage falloff, and have
+  improved hit logic. Hyperphaser and neutral-zone messaging was cleaned up.
+- Missile behavior now varies with charge level, giving light missiles
+  faster travel and heavy missiles more impact.
+- Each class of ship now has between 0 and 3 torpedo and missile launchers,
+  instead of a simple yes/no, and a small reload delay after firing.
+- Projectile tracking and hit messages are batched when possible.
+- Self-destruct blast behavior, mine damage, and random system damage
+  were reworked. More ship systems and onboard items can now be affected.
 
-The game will no longer try (and fail) to create sectors when the planet
-database is full, which will keep odd "phantom planets" from appearing.
+Other additions and fixes:
+- Nebulas were added. They limit scans, hide ships, and affect locks and
+  projectile tracking while still allowing phasers and mines through.
+- Team, roster, beacon, SEND, entry filtering, and planet listing logic
+  were improved. Ship names are now optional, and many legacy bugs were
+  corrected, including ship-letter issues and overflow/memory problems.
+
+Please read RELNOTES.TXT on Github or visit the ge-next website for more.
