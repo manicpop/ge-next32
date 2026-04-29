@@ -3689,6 +3689,9 @@ SCAN33 {[0;37m%s stockpile of flux pods.
 SCAN34 {[0;37m%s stockpile of mines.
 } T GE scan 34
 
+SCAN35 {[0;37mPolarity: %s
+} T GE scan 35
+
 SCANWRM {
 [0;37mScanning wormhole [1;33m%d[0;37m: [1;33m%s[1;37m
 } T GE scan wormhole message

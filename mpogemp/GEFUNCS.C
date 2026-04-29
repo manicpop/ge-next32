@@ -1158,11 +1158,11 @@ WARUSR	*euptr;
 eptr = warshpoff(entrant);
 euptr = warusroff(entrant);
 
-	if (eptr->shipname[0] == '\0')
-		prfmsg(ANNOUNO,euptr->userid,shipclass[eptr->shpclass].typename,showupg(eptr));
-	else
-		prfmsg(ANNOUN,shipclass[eptr->shpclass].typename,showupg(eptr),eptr->shipname,euptr->userid);
-	outprfge(FLT_NONE,recipient);
+if (eptr->shipname[0] == '\0')
+	prfmsg(ANNOUNO,euptr->userid,shipclass[eptr->shpclass].typename,showupg(eptr));
+else
+	prfmsg(ANNOUN,shipclass[eptr->shpclass].typename,showupg(eptr),eptr->shipname,euptr->userid);
+outprfge(FLT_NONE,recipient);
 }
 
 void FUNC send_exitmsg(entrant,recipient)
@@ -1174,11 +1174,11 @@ WARUSR	*euptr;
 eptr = warshpoff(entrant);
 euptr = warusroff(entrant);
 
-	if (eptr->shipname[0] == '\0')
-		prfmsg(PEACEONO,euptr->userid);
-	else
-		prfmsg(PEACEOUT,euptr->userid,eptr->shipname);
-	outprfge(FLT_NONE,recipient);
+if (eptr->shipname[0] == '\0')
+	prfmsg(PEACEONO,euptr->userid);
+else
+	prfmsg(PEACEOUT,euptr->userid,eptr->shipname);
+outprfge(FLT_NONE,recipient);
 }
 
 void FUNC clear_entrymsg(usrn)
@@ -1199,38 +1199,38 @@ int	mode;
 unsigned char	*sentptr,*pendptr;
 unsigned char	mask;
 
-	clear_entrymsg(usrn);
-	sentptr = entrysent + (usrn * entrybytes);
-	pendptr = entrypend + (usrn * entrybytes);
+clear_entrymsg(usrn);
+sentptr = entrysent + (usrn * entrybytes);
+pendptr = entrypend + (usrn * entrybytes);
 
-	for (zothusn=0; zothusn < nterms; ++zothusn)
+for (zothusn=0; zothusn < nterms; ++zothusn)
+	{
+	if (zothusn == usrn || !ingegame(zothusn))
+		continue;
+
+	mode = warusroff(zothusn)->options[MSG_FILTER] & MSGF_ENTRY_MASK;
+	mask = (unsigned char)(1 << (zothusn & 7));
+
+	if (mode == 0x40)
+		continue;
+
+	if (mode == 0x00 || entryinrng(usrn,zothusn))
 		{
-		if (zothusn == usrn || !ingegame(zothusn))
-			continue;
-
-		mode = warusroff(zothusn)->options[MSG_FILTER] & MSGF_ENTRY_MASK;
-		mask = (unsigned char)(1 << (zothusn & 7));
-
-		if (mode == 0x40)
-			continue;
-
-		if (mode == 0x00 || entryinrng(usrn,zothusn))
-			{
-			send_entrymsg(usrn,zothusn);
-			sentptr[zothusn >> 3] |= mask;
-			}
-		else
-			{
-			pendptr[zothusn >> 3] |= mask;
-			anypend = TRUE;
-			}
+		send_entrymsg(usrn,zothusn);
+		sentptr[zothusn >> 3] |= mask;
 		}
-
-	if (anypend)
+	else
 		{
-		entrytab[usrn].active = 1;
-		entrytab[usrn].ticks = 0;
+		pendptr[zothusn >> 3] |= mask;
+		anypend = TRUE;
 		}
+	}
+
+if (anypend)
+	{
+	entrytab[usrn].active = 1;
+	entrytab[usrn].ticks = 0;
+	}
 }
 
 void FUNC tick_entrymsg()
@@ -1301,19 +1301,19 @@ int	zothusn;
 unsigned char	*sentptr;
 unsigned char	mask;
 
-	sentptr = entrysent + (usrn * entrybytes);
+sentptr = entrysent + (usrn * entrybytes);
 
-	for (zothusn=0; zothusn < nterms; ++zothusn)
+for (zothusn=0; zothusn < nterms; ++zothusn)
+	{
+	mask = (unsigned char)(1 << (zothusn & 7));
+	if (sentptr[zothusn >> 3] & mask)
 		{
-		mask = (unsigned char)(1 << (zothusn & 7));
-		if (sentptr[zothusn >> 3] & mask)
-			{
-			if (ingegame(zothusn))
-				send_exitmsg(usrn,zothusn);
-			}
+		if (ingegame(zothusn))
+			send_exitmsg(usrn,zothusn);
 		}
+	}
 
-	clear_entrymsg(usrn);
+clear_entrymsg(usrn);
 }
 
 void FUNC tossingegame()

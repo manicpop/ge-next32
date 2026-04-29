@@ -1053,6 +1053,25 @@ if (plnum <= MAXPLANETS && plnum > 0)
 			jam_scramble(gechrbuf3, warsptr->jam_sev, &rseed);
 			}
 		prfmsg(SCAN12,gechrbuf2,gechrbuf3);
+		if ((warsptr->upgrade & ENHSCAN) && warsptr->jam_sev < (byte)3)
+			{
+			if (coord1(worm.destination.xcoord) < 0)
+				gechrbuf[0] = '-';
+			else
+			if (coord1(worm.destination.xcoord) > 0)
+				gechrbuf[0] = '+';
+			else
+				gechrbuf[0] = '0';
+			if (coord1(worm.destination.ycoord) < 0)
+				gechrbuf[1] = '-';
+			else
+			if (coord1(worm.destination.ycoord) > 0)
+				gechrbuf[1] = '+';
+			else
+				gechrbuf[1] = '0';
+			gechrbuf[2] = '\0';
+			prfmsg(SCAN35,gechrbuf);
+			}
 		prfmsg(DASHES);
 		outprfge(FLT_NONE,usrnum);
 		}

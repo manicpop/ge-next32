@@ -808,12 +808,12 @@ used. Issue the command as follows:
 [1;37m} T GE help navigate message
 
 HLPNEW {
-[1;36mThe [1;37mNEW[1;36m command is used to purchase a new ship, or a new phaser or shield
-system for your current ship, at Zygor.
+[1;36mThe [1;37mNEW[1;36m command is used to purchase a new ship, a new phaser or shield
+system for your current ship, or a ship upgrade at Zygor.
 
 Issue the command as follows:
 
-  [1;37mnew [1;32m[[1;37mshield[1;32m/[1;37mship[1;32m/[1;37mphaser[1;32m]/[1;37mupgrade[1;32m] [type]
+  [1;37mnew [1;32m[[1;37mshield[1;32m/[1;37mship[1;32m/[1;37mphaser[1;32m/[1;37mupgrade[1;32m] [type]
 
   [1;32mtype [1;36m= the type of shield, phaser, ship, or upgrade you wish to purchase.
 
