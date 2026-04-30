@@ -1050,12 +1050,12 @@ else
 		else
 			/* otherwise drift across the target's front instead of creeping straight in */
 			ptr->head2b = normal(vector(&ptr->coord,&wptr->coord) + 30.0 + rndm(60.0));
-		ptr->holdcourse = (gernd()%3) + 2;
 		if (shipclass[wptr->shpclass].cybs_can_att == 0)
 			cyb_annoy(ptr,low_ship,IGNORE);
 		else
 		if (neutral(&wptr->coord))
 			cyb_annoy(ptr,low_ship,NEUTRAL);
+		ptr->holdcourse = (gernd()%3) + 2;
 		}
 	/* make sure speed jumps won't leave us in a weird state */
 	/* avoid fractional warp values */
