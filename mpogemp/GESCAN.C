@@ -733,18 +733,7 @@ if (shpnum >= 0)
 				prfmsg(SCAN05,gechrbuf);
 				}
 
-			if (warsptr->where != 1 && wptr->where != 1)
-				{
-				if (!(warsptr->upgrade & ENHSCAN))
-					{
-					if (wptr->shieldstat == SHIELDUP)
-						prfmsg(SCAN06);
-					else
-						prfmsg(SCAN07);
-					}
-				}
-			else
-			if ((warsptr->upgrade & ENHSCAN) && wptr->where != 1)
+			if (!(warsptr->upgrade & ENHSCAN) && warsptr->where != 1 && wptr->where != 1)
 				{
 				if (wptr->shieldstat == SHIELDUP)
 					prfmsg(SCAN06);
