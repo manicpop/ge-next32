@@ -64,6 +64,23 @@
 static long	deathdeduct;
 static void	shieldhitmsg();
 
+static int entrypend_empty(usrn)
+int	usrn;
+{
+int	i;
+unsigned char	*pendptr;
+
+pendptr = entrypend + (usrn * entrybytes);
+
+for (i=0; i<entrybytes; ++i)
+	{
+	if (pendptr[i] != 0)
+		return(FALSE);
+	}
+
+return(TRUE);
+}
+
 static int maint_steps(ptr)
 WARSHP	*ptr;
 {
@@ -1162,7 +1179,7 @@ if (eptr->shipname[0] == '\0')
 	prfmsg(ANNOUNO,euptr->userid,shipclass[eptr->shpclass].typename,showupg(eptr));
 else
 	prfmsg(ANNOUN,shipclass[eptr->shpclass].typename,showupg(eptr),eptr->shipname,euptr->userid);
-outprfge(FLT_NONE,recipient);
+outprfge(FLT_ENTRY,recipient);
 }
 
 void FUNC send_exitmsg(entrant,recipient)
@@ -1178,7 +1195,7 @@ if (eptr->shipname[0] == '\0')
 	prfmsg(PEACEONO,euptr->userid);
 else
 	prfmsg(PEACEOUT,euptr->userid,eptr->shipname);
-outprfge(FLT_NONE,recipient);
+outprfge(FLT_ENTRY,recipient);
 }
 
 void FUNC clear_entrymsg(usrn)
@@ -1303,13 +1320,24 @@ unsigned char	mask;
 
 sentptr = entrysent + (usrn * entrybytes);
 
-for (zothusn=0; zothusn < nterms; ++zothusn)
+if (entrypend_empty(usrn))
 	{
-	mask = (unsigned char)(1 << (zothusn & 7));
-	if (sentptr[zothusn >> 3] & mask)
+	for (zothusn=0; zothusn < nterms; ++zothusn)
 		{
-		if (ingegame(zothusn))
+		if (zothusn != usrn && ingegame(zothusn))
 			send_exitmsg(usrn,zothusn);
+		}
+	}
+else
+	{
+	for (zothusn=0; zothusn < nterms; ++zothusn)
+		{
+		mask = (unsigned char)(1 << (zothusn & 7));
+		if (sentptr[zothusn >> 3] & mask)
+			{
+			if (ingegame(zothusn))
+				send_exitmsg(usrn,zothusn);
+			}
 		}
 	}
 
@@ -1318,6 +1346,10 @@ clear_entrymsg(usrn);
 
 void FUNC tossingegame()
 {
+int	zothusn;
+unsigned char	*sentptr;
+unsigned char	mask;
+
 start_entrymsg(usrnum);
 
 prfmsg(ENTSHP,waruptr->userid);
@@ -1335,6 +1367,17 @@ prfmsg(WELCOM,waruptr->userid);
 outprfge(FLT_NONE,usrnum);
 usrptr->substt = FIGHTSUB;
 warsptr->status = GESTAT_USER;
+
+for (zothusn=0; zothusn < nterms; ++zothusn)
+	{
+	if (zothusn == usrnum || !ingegame(zothusn) || entrypend_empty(zothusn))
+		continue;
+
+	sentptr = entrysent + (zothusn * entrybytes);
+	mask = (unsigned char)(1 << (usrnum & 7));
+	sentptr[usrnum >> 3] |= mask;
+	}
+
 assign_cybs(usrnum,0);
 }
 

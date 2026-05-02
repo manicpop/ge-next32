@@ -690,7 +690,7 @@ if (valpcnt(margv[1],0,99))
 void FUNC cmd_warp()
 {
 unsigned deg;
-int	speed,topspeed,cap;
+int	speed,topspeed,cap,classcap,capwarn;
 
 if (shipclass[warsptr->shpclass].max_warp == 0 && atoi(margv[1]) != 0)
 	{
@@ -723,9 +723,18 @@ else
 	speed = atoi(margv[1]);
 	topspeed = warsptr->topspeed;
 	cap = topspeed+(topspeed/2);
+	classcap = shipclass[warsptr->shpclass].max_warp + (shipclass[warsptr->shpclass].max_warp/2);
+	capwarn = FALSE;
 	if (speed < 0)
 		{
 		prfmsg(FORMAT,"WARP");
+		outprfge(FLT_NONE,usrnum);
+		return;
+		}
+
+	if (speed > classcap && speed > warsptr->speed/1000)
+		{
+		prfmsg(WARP03);
 		outprfge(FLT_NONE,usrnum);
 		return;
 		}
@@ -747,6 +756,7 @@ else
 			else
 				{
 				speed = cap;
+				capwarn = TRUE;
 				prfmsg(WARPSPD4,speed);
 				outprfge(FLT_NONE,usrnum);
 				}
@@ -780,9 +790,12 @@ else
 		if (*gechrbuf2 != '@')
 			if (!valdegree(gechrbuf))
 				return;
-		if (speed > topspeed && warsptr->speed/1000 <= topspeed)
+		if (speed > topspeed && capwarn == FALSE)
 			{
-			prfmsg(WARP04,topspeed);
+			if (topspeed < shipclass[warsptr->shpclass].max_warp)
+				prfmsg(WARPSPD,topspeed);
+			else
+				prfmsg(WARP04,topspeed);
 			outprfge(FLT_NONE,usrnum);
 			}
 
