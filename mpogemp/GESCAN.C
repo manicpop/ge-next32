@@ -59,7 +59,7 @@
 
 /* out of range mask for printmap */
 const int scan_side_blocks[15] =
-	{7, 4, 3, 1, 0, 0, 0, 0, 0, 0, 0, 1, 3, 4, 7};
+	{6, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 6};
 
 static int se_nebula = FALSE;
 static byte owned_planet[MAXPLANETS];
