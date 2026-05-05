@@ -719,9 +719,6 @@ WARUSR	*wuptr;
 unsigned deg;
 double factor;
 byte src_neb,targ_neb,nebmask;
-int hitone;
-
-hitone = FALSE;
 
 
 if (ptr->damage >= 100.0)
@@ -744,6 +741,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 	deg = (unsigned)normal(ptr->heading + (double)ptr->degrees);
 	prfmsg(HPFIRED,deg);
 	outprfge(FLT_NONE,usrn);
+	lock_simple(ptr,usrn,LOCKHPHA,0);
 	src_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
 	ptr->energy -= HPFIRAMT;
 	ptr->hypha = 1;
@@ -820,7 +818,6 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 									wptr->tick = 2;		/* do it fast */
 									wptr->npcmsg = 255;	/* reset annoy msg tracking */
 									}
-								hitone = TRUE;
 								wptr->cantexit = FIRETICKS;
 								ptr->cantexit = FIRETICKS;
 								randamage(wptr,othusn,factor); /*assess any random damage */
@@ -831,8 +828,6 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 				}
 			}
 		}
-		if (ptr->status == GESTAT_USER || hitone == TRUE)
-			lock_simple(ptr,usrn,LOCKHPHA,0);
 	}
 else
 	{
@@ -928,9 +923,9 @@ if (lockon(ptr,0,shpnum,usrn) == 1)
 	outprfge(FLT_NONE,usrn);
 	--ptr->items[I_TORPEDO];
 	++ptr->torps_fired;
+	lock_proj(usrn,shpnum,LOCKTOR,LOCKTORN);
 	prfmsg(TFIRE2,shpltr(shpnum,usrn));
 	outprfge(FLT_NONE,shpnum);
-	lock_proj(usrn,shpnum,LOCKTOR,LOCKTORN);
 	wptr->ltorps[slot].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
 	wptr->ltorps[slot].distance += 20;
 	wptr->ltorps[slot].channel = (unsigned char)usrn;
@@ -1034,9 +1029,9 @@ if (lockon(ptr,1,shpnum,usrnum) == 1)
 	--(ptr->items[I_MISSILE]);
 	++ptr->missl_fired;
 	ptr->energy -= eng_flu;
+	lock_proj(usrnum,shpnum,LOCKMIS,LOCKMISN);
 	prfmsg(MFIRE2,shpltr(shpnum,usrnum));
 	outprfge(FLT_NONE,shpnum);
-	lock_proj(usrnum,shpnum,LOCKMIS,LOCKMISN);
 	wptr->lmissl[slot].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
 	wptr->lmissl[slot].distance += 20;
 	wptr->lmissl[slot].channel = (unsigned char)usrnum;
@@ -1997,6 +1992,7 @@ if (flag == 1)
 	outprfge(FLT_SHIP,usrn);
 
 	ptr->where = 1;
+	lock_simple(ptr,usrn,LOCKHY1,1);
 
 	if (ptr->status == GESTAT_AUTO)
 		prfmsg(HYPERINN,ptr->shipname);
@@ -2006,7 +2002,6 @@ if (flag == 1)
 	else
 		prfmsg(HYPERIN2,ptr->shipname);
 	outsect(FLT_NONE,&(warshpoff(usrn)->coord),usrn,0);
-	lock_simple(ptr,usrn,LOCKHY1,1);
 
 	ocount = 0;
 	for(i=0;i<MAXTORPS;++i)
@@ -2044,6 +2039,7 @@ else
 	outprfge(FLT_SHIP,usrn);
 
 	ptr->where = 0;
+	lock_simple(ptr,usrn,LOCKHY2,1);
 
 	if (ptr->status == GESTAT_AUTO)
 		{
@@ -2058,7 +2054,6 @@ else
 	else
 		prfmsg(HYPEROUN,ptr->shipname);
 	outsect(FLT_NONE,&(warshpoff(usrn)->coord),usrn,0);
-	lock_simple(ptr,usrn,LOCKHY2,1);
 	}
 }
 

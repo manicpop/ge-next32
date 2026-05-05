@@ -653,9 +653,9 @@ if (valpcnt(margv[1],0,99))
 		if (warsptr->where >= 10)
 			{
 			refresh(warsptr,usrnum);
+			lock_sector(warsptr,usrnum,LOCKORB2);
 			prfmsg(LEAVEORB);
 			outprfge(FLT_SHIP,usrnum);
-			lock_sector(warsptr,usrnum,LOCKORB2);
 			warsptr->where = 0;
 			warsptr->repair = 0;
 			}
@@ -802,9 +802,9 @@ else
 		if (warsptr->where >= 10)
 			{
 			refresh(warsptr,usrnum);
+			lock_sector(warsptr,usrnum,LOCKORB2);
 			prfmsg(LEAVEORB);
 			outprfge(FLT_SHIP,usrnum);
-			lock_sector(warsptr,usrnum,LOCKORB2);
 			warsptr->where = 0;
 			warsptr->repair = 0;
 			}
@@ -999,6 +999,7 @@ if (plnum <= MAXPLANETS && plnum > 0)
 		distance = (unsigned)(cdistance(&warsptr->coord,&plptr->coord)*10000);
 		if (distance <= 250)
 			{
+			lock_sector(warsptr,usrnum,LOCKORB1);
 			if (strlen(plptr->name) == 0)
 				{
 				prfmsg(ORBIT1N,plnum);
@@ -1010,7 +1011,6 @@ if (plnum <= MAXPLANETS && plnum > 0)
 			warsptr->where = 10 + plnum;
 			warsptr->speed = 0;
 			warsptr->speed2b = 0;
-			lock_sector(warsptr,usrnum,LOCKORB1);
 			}
 		else
 			{
