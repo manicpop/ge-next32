@@ -1972,7 +1972,8 @@ WARSHP	*ptr;
 int	usrn;
 {
 
-int i;
+int i,oi;
+byte owners[MAXTORPS],ocount,found;
 
 if (flag == 1 && ptr->where == 1)
 	return;
@@ -2007,18 +2008,32 @@ if (flag == 1)
 	outsect(FLT_NONE,&(warshpoff(usrn)->coord),usrn,0);
 	lock_simple(ptr,usrn,LOCKHY1,1);
 
+	ocount = 0;
 	for(i=0;i<MAXTORPS;++i)
 		{
 		if (ptr->ltorps[i].distance > 0)
 			{
-			if (flag == 1 && ingegame(ptr->ltorps[i].channel) && ptr->ltorps[i].channel < nterms)
+			if (ptr->ltorps[i].channel < nterms && ingegame(ptr->ltorps[i].channel))
 				{
-				prfmsg(TORMISS2,shpltr(ptr->ltorps[i].channel,usrn));
-				outprfge(FLT_NONE,ptr->ltorps[i].channel);
+				found = FALSE;
+				for (oi=0;oi<(int)ocount;++oi)
+					{
+					if (owners[oi] == ptr->ltorps[i].channel)
+						{
+						found = TRUE;
+						break;
+						}
+					}
+				if (found == FALSE && ocount < MAXTORPS)
+					owners[ocount++] = ptr->ltorps[i].channel;
 				}
-			flag = 0;
 			}
 		ptr->ltorps[i].distance = 0;
+		}
+	for (oi=0;oi<(int)ocount;++oi)
+		{
+		prfmsg(TORMISS2,shpltr(owners[oi],usrn));
+		outprfge(FLT_NONE,owners[oi]);
 		}
 	for(i=0;i<MAXDECOY;++i)
 		ptr->decout[i] = 0;
@@ -3339,7 +3354,7 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 				if (!(ptr_neb && src_neb && ndist < (double)NEBRNG))
 					{
 					tptr->distance = 0;
-					if ((int)tptr->channel < nterms)
+					if ((int)tptr->channel < nterms && ingegame((int)tptr->channel))
 						{
 						prfmsg(TORMISS,shpltr(tptr->channel,usrn));
 						outprfge(FLT_NONE,tptr->channel);
@@ -3352,8 +3367,11 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 			{
 			tptr->distance = 0;
 			++shotdown;
-			prfmsg(TORMISS,shpltr(tptr->channel,usrn));
-			outprfge(FLT_NONE,tptr->channel);
+			if ((int)tptr->channel < nterms && ingegame((int)tptr->channel))
+				{
+				prfmsg(TORMISS,shpltr(tptr->channel,usrn));
+				outprfge(FLT_NONE,tptr->channel);
+				}
 			}
 		else
 		if (tptr->distance <= torpsped)
@@ -3429,7 +3447,7 @@ for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
 						{
 						prfmsg(TORDEST);
 						outprfge(FLT_NONE,usrn);
-						if (tptr->channel < nterms)
+						if (tptr->channel < nterms && ingegame((int)tptr->channel))
 							{
 							prfmsg(TORDEST2);
 							outprfge(FLT_NONE,tptr->channel);
@@ -3525,7 +3543,7 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 					{
 					mptr->distance = 0;
 					++lost_cnt;
-					if ((int)mptr->channel < nterms)
+					if ((int)mptr->channel < nterms && ingegame((int)mptr->channel))
 						{
 						prfmsg(MISMISS,shpltr(mptr->channel,usrn));
 						outprfge(FLT_NONE,mptr->channel);
@@ -3549,8 +3567,11 @@ for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
 			{
 			mptr->distance = 0;
 			++shotdown;
-			prfmsg(MISMISS,shpltr(mptr->channel,usrn));
-			outprfge(FLT_NONE,mptr->channel);
+			if ((int)mptr->channel < nterms && ingegame((int)mptr->channel))
+				{
+				prfmsg(MISMISS,shpltr(mptr->channel,usrn));
+				outprfge(FLT_NONE,mptr->channel);
+				}
 			}
 		else
 		if (mptr->distance <= mstep)
@@ -3881,7 +3902,7 @@ int	count;
 
 {
 
-if (channel != 255)
+if (channel < nterms && ingegame(channel))
 	{
 	if (count <= 1)
 		{
@@ -3937,40 +3958,69 @@ void FUNC clearitm(usrn)
 int	usrn;
 {
 WARSHP	*ptr;
-int	i, first;
+byte	owners[MAXTORPS],ocount,found;
+int	i,oi;
 
 ptr=warshpoff(usrn);
 
-first = TRUE;
+ocount = 0;
 
 for (i=0;i<MAXTORPS;++i)
 	{
 	if (ptr->ltorps[i].distance > 0)
 		{
 		ptr->ltorps[i].distance = 0;
-		if (first == TRUE)
+		if (ptr->ltorps[i].channel < nterms && ingegame(ptr->ltorps[i].channel))
 			{
-			prfmsg(TORMISS2,shpltr(ptr->ltorps[i].channel,usrn));
-			outprfge(FLT_NONE,ptr->ltorps[i].channel);
-			first = FALSE;
+			found = FALSE;
+			for (oi=0;oi<(int)ocount;++oi)
+				{
+				if (owners[oi] == ptr->ltorps[i].channel)
+					{
+					found = TRUE;
+					break;
+					}
+				}
+			if (found == FALSE && ocount < MAXTORPS)
+				owners[ocount++] = ptr->ltorps[i].channel;
 			}
 		}
 	}
 
-first = TRUE;
+for (oi=0;oi<(int)ocount;++oi)
+	{
+	prfmsg(TORMISS2,shpltr(owners[oi],usrn));
+	outprfge(FLT_NONE,owners[oi]);
+	}
+
+ocount = 0;
 
 for (i=0;i<MAXMISSL;++i)
 	{
 	if (ptr->lmissl[i].distance > 0)
 		{
 		ptr->lmissl[i].distance = 0;
-		if (first == TRUE)
+		if (ptr->lmissl[i].channel < nterms && ingegame(ptr->lmissl[i].channel))
 			{
-			prfmsg(MISMISS2,shpltr(ptr->lmissl[i].channel,usrn));
-			outprfge(FLT_NONE,ptr->lmissl[i].channel);
-			first = FALSE;
+			found = FALSE;
+			for (oi=0;oi<(int)ocount;++oi)
+				{
+				if (owners[oi] == ptr->lmissl[i].channel)
+					{
+					found = TRUE;
+					break;
+					}
+				}
+			if (found == FALSE && ocount < MAXMISSL)
+				owners[ocount++] = ptr->lmissl[i].channel;
 			}
 		}
+	}
+
+for (oi=0;oi<(int)ocount;++oi)
+	{
+	prfmsg(MISMISS2,shpltr(owners[oi],usrn));
+	outprfge(FLT_NONE,owners[oi]);
 	}
 }
 
