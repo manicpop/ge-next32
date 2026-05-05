@@ -3876,7 +3876,7 @@ MOVE5 {***
 } T GE out of power engines stopping message
 
 ZAPHIM1 {***
-[0;37m[[0;31mWARNING![0;37m] Direct hit from the Enforcer Planet's energy beam, caused [0;31m%s[0;37m damage!
+[0;37m[[0;31mWARNING![0;37m] The Enforcer Planet fired an energy beam, caused [0;31m%s[0;37m damage!
 } T GE got hit with enforcer beam message
 
 ZAPHIM2 {***
