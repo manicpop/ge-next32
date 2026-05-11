@@ -2253,6 +2253,11 @@ if (ptr->speed > 0)
 						bearing = cbearing(&wptr->coord,&ptr->coord,wptr->heading);
 						/* slop it up +- 10 degrees on either side */
 						bearing += ((r >> 11) % 20) - 10;
+						if (bearing > 180)
+							bearing -= 360;
+						else
+						if (bearing <= -180)
+							bearing += 360;
 						prfmsg(CLOK3,bearing);
 						outprfge(FLT_NONE,zothusn);
 						}
