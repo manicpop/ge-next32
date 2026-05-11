@@ -1184,6 +1184,8 @@ shpnum = findshp(margv[1],1);
 
 if (shpnum < 0 && margv[1][0] == '@')
 	{
+	if (warsptr->lock >= 0 && warsptr->lock < nships && ingegame(warsptr->lock))
+		prfmsg(NOSHIP);
 	outprfge(FLT_NONE,usrnum);
 	}
 else
@@ -1192,6 +1194,7 @@ if (shpnum == usrnum)
 	if (margv[1][0] == '@')
 		{
 		warsptr->lock = -1;
+		warsptr->lock_grace = 0;
 		prfmsg(NOLOCK);
 		}
 	else
@@ -1202,7 +1205,7 @@ if (shpnum == usrnum)
 	outprfge(FLT_NONE,usrnum);
 	}
 else
-if ( shpnum >= 0)
+if (shpnum >= 0)
 	{
 	wptr = warshpoff(shpnum);
 	if (!isvisible(warsptr,wptr))
@@ -1311,6 +1314,8 @@ shpnum = findshp(margv[1],1);
 
 if (shpnum < 0 && margv[1][0] == '@')
 	{
+	if (warsptr->lock >= 0 && warsptr->lock < nships && ingegame(warsptr->lock))
+		prfmsg(NOSHIP);
 	outprfge(FLT_NONE,usrnum);
 	}
 else
@@ -1319,6 +1324,7 @@ if (shpnum == usrnum)
 	if (margv[1][0] == '@')
 		{
 		warsptr->lock = -1;
+		warsptr->lock_grace = 0;
 		prfmsg(NOLOCK);
 		}
 	else
@@ -1432,6 +1438,7 @@ if (wptr->cloak < 10 && (dist*10000.0) < (double)ship_scanrange(warsptr))
 		if (wptr->status == GESTAT_AUTO)	/* if npc... */
 			{
 			wptr->cybmine = usrn;	/* engage user */
+			wptr->cyb_grace = CYBGRACE;
 			wptr->tick = 2;		/* do it fast */
 			wptr->npcmsg = 255;	/* reset annoy msg tracking */
 			}
@@ -1466,6 +1473,7 @@ if (ptr[0] == '@')
 	if (warsptr->lock < 0 || warsptr->lock >= nships)
 		{
 		warsptr->lock = -1;
+		warsptr->lock_grace = 0;
 		prfmsg(NOLOCK);
 		return(-1);
 		}
@@ -1475,6 +1483,7 @@ if (ptr[0] == '@')
 		if (!ingegame(shpnum))
 			{
 			warsptr->lock = -1;
+			warsptr->lock_grace = 0;
 			prfmsg(NOLOCK);
 			return(-1);
 			}
@@ -1483,6 +1492,7 @@ if (ptr[0] == '@')
 		if ((dist*10000) > (double)ship_scanrange(warsptr))
 			{
 			warsptr->lock = -1;
+			warsptr->lock_grace = 0;
 			prfmsg(NOLOCK);
 			shpnum = -1;
 			}
@@ -5329,6 +5339,7 @@ if (margc == 1)
 		outprfge(FLT_NONE,warsptr->lock);
 		}
 	warsptr->lock = -1;
+	warsptr->lock_grace = 0;
 	prfmsg(LOCK01);
 	outprfge(FLT_NONE,usrnum);
 	return;
@@ -5379,11 +5390,13 @@ if (shpnum >= 0)
 		return;
 		}
 	warsptr->lock = shpnum;
+	warsptr->lock_grace = LOCKGRACE;
 	if (warshpoff(shpnum)->status == GESTAT_AUTO
 		&& shipclass[warshpoff(shpnum)->shpclass].max_type == CLASSTYPE_CYBORG
 		&& warshpoff(shpnum)->cybmine == 255)
 		{
 		warshpoff(shpnum)->cybmine = usrnum;	/* engage user */
+		warshpoff(shpnum)->cyb_grace = CYBGRACE;
 		warshpoff(shpnum)->tick = 2;		/* do it fast */
 		warshpoff(shpnum)->npcmsg = 255;	/* reset annoy msg tracking */
 		}

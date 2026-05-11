@@ -622,6 +622,7 @@ if (ptr->phasr >=PMINFIRE)
 							if (wptr->status == GESTAT_AUTO)	/* if npc... */
 								{
 								wptr->cybmine = usrn;	/* engage user */
+								wptr->cyb_grace = CYBGRACE;
 								wptr->tick = 2;		/* do it fast */
 								wptr->npcmsg = 255;	/* reset annoy msg tracking */
 								}
@@ -815,6 +816,7 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 								if (wptr->status == GESTAT_AUTO)	/* if npc... */
 									{
 									wptr->cybmine = usrn;	/* engage user */
+									wptr->cyb_grace = CYBGRACE;
 									wptr->tick = 2;		/* do it fast */
 									wptr->npcmsg = 255;	/* reset annoy msg tracking */
 									}
@@ -1483,6 +1485,8 @@ tmpshp.cybupdate	= 0;
 tmpshp.tick		= 0;
 tmpshp.distress		= 255;
 tmpshp.minesnear	= 0;
+tmpshp.lock_grace	= 0;
+tmpshp.cyb_grace	= 0;
 tmpshp.lock		= -1;
 tmpshp.holdcourse	= 0;
 tmpshp.overspeed	= 0L;
@@ -3802,6 +3806,7 @@ if (ptr->cloak == 2)
 			outprfge(FLT_NONE,ptr->lock);
 			}
 		ptr->lock = -1;
+		ptr->lock_grace = 0;
 		prfmsg(LOCK01);
 		outprfge(FLT_NONE,usrn);
 		}
@@ -3837,6 +3842,7 @@ if (ptr->lock < 0)
 if (ptr->lock >= nships)
 	{
 	ptr->lock = -1;
+	ptr->lock_grace = 0;
 	prfmsg(LOCK01);
 	outprfge(FLT_NONE,usrn);
 	return;
@@ -3848,12 +3854,16 @@ lptr = warshpoff(lockee);
 if (!ingegame(lockee) || lptr->status == GESTAT_AVAIL)
 	{
 	ptr->lock = -1;
+	ptr->lock_grace = 0;
 	return;
 	}
 
-if (lptr->cloak >= 10)
+dist = cdistance(&ptr->coord,&lptr->coord) * 10000.0;
+
+if (dist > (double)ship_scanrange(ptr))
 	{
 	ptr->lock = -1;
+	ptr->lock_grace = 0;
 	prfmsg(LOCK05);
 	outprfge(FLT_NONE,usrn);
 	prfmsg(LOCK04,shpltr(lockee,usrn));
@@ -3861,14 +3871,35 @@ if (lptr->cloak >= 10)
 	return;
 	}
 
-dist = cdistance(&ptr->coord,&lptr->coord) * 10000.0;
+if (lptr->cloak >= 10)
+	{
+	if (ptr->lock_grace > 0)
+		{
+		--ptr->lock_grace;
+		return;
+		}
+	ptr->lock = -1;
+	ptr->lock_grace = 0;
+	prfmsg(LOCK05);
+	outprfge(FLT_NONE,usrn);
+	prfmsg(LOCK04,shpltr(lockee,usrn));
+	outprfge(FLT_NONE,lockee);
+	return;
+	}
+
 locker_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
 lockee_neb = (byte)innebula(coord1(lptr->coord.xcoord),coord1(lptr->coord.ycoord));
 if (locker_neb || lockee_neb)
 	{
 	if (!(locker_neb && lockee_neb && dist < (double)NEBRNG))
 		{
+		if (ptr->lock_grace > 0)
+			{
+			--ptr->lock_grace;
+			return;
+			}
 		ptr->lock = -1;
+		ptr->lock_grace = 0;
 		prfmsg(LOCK05);
 		outprfge(FLT_NONE,usrn);
 		prfmsg(LOCK04,shpltr(lockee,usrn));
@@ -3877,15 +3908,7 @@ if (locker_neb || lockee_neb)
 		}
 	}
 
-if (dist > (double)ship_scanrange(ptr))
-	{
-	ptr->lock = -1;
-	prfmsg(LOCK05);
-	outprfge(FLT_NONE,usrn);
-	prfmsg(LOCK04,shpltr(lockee,usrn));
-	outprfge(FLT_NONE,lockee);
-	return;
-	}
+ptr->lock_grace = LOCKGRACE;
 }
 
 void FUNC acctm(ptr,usrn,mt,channel,count)
@@ -5525,6 +5548,7 @@ for (i=0; i < cybpick; ++i)
 
 		ptr=warshpoff(low_ship);
 		ptr->cybmine = usrnum;
+		ptr->cyb_grace = CYBGRACE;
 	}
 }
 
@@ -5643,7 +5667,7 @@ int	usrn;
 {
 int	i,j;
 char	l;
-byte	ptr_neb,oth_neb;
+byte	ptr_neb,oth_neb,flag;
 WARSHP	*wptr;
 SCANTAB	tmp;
 
@@ -5677,17 +5701,32 @@ for (othusn=0 ; othusn < nships ; othusn++)
 		wptr=warshpoff(othusn);
 		ddistance = cdistance(&ptr->coord,&wptr->coord)*10000;
 		oth_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
-		if ((ptr_neb || oth_neb) && !(ptr_neb && oth_neb && ddistance < (double)NEBRNG))
-			continue;
-			if (ddistance < ship_scanrange(ptr)
-			&& wptr->cloak < 10)
+		flag = 0;
+		if (ddistance < ship_scanrange(ptr))
+			{
+			if ((ptr_neb || oth_neb) && !(ptr_neb && oth_neb && ddistance < (double)NEBRNG))
+				{
+				if (othusn == ptr->lock && ptr->lock_grace > 0)
+					flag = 2;
+				}
+			else
+			if (wptr->cloak >= 10)
+				{
+				if (othusn == ptr->lock && ptr->lock_grace > 0)
+					flag = 2;
+				}
+			else
+				flag = 1;
+			}
+
+		if (flag != 0)
 			{
 			for (i=0;i<NOSCANTAB;++i)
 				{
 				/* entry blank - fill it with this one */
 				if (tmp.ship[i].flag == 0)
 					{
-					tmp.ship[i].flag = 1;
+					tmp.ship[i].flag = flag;
 					tmp.ship[i].shipno = othusn;
 					tmp.ship[i].dist = ddistance;
 					tmp.ship[i].letter = lettab[othusn];
@@ -5700,13 +5739,13 @@ for (othusn=0 ; othusn < nships ; othusn++)
 					/* Yes - Push down the rest */
 					for (j=NOSCANTAB-2;j>=i;j--)
 						{
-						if (tmp.ship[j].flag == 1)
+						if (tmp.ship[j].flag != 0)
 							{
 							memcpy(&tmp.ship[j+1],&tmp.ship[j],sizeof(SHIPTAB));
 							}
 						}
 					/* fill the hole with the new ship */
-					tmp.ship[i].flag = 1;
+					tmp.ship[i].flag = flag;
 					tmp.ship[i].shipno = othusn;
 					tmp.ship[i].dist = ddistance;
 					tmp.ship[i].letter = lettab[othusn];
@@ -5768,7 +5807,7 @@ for (i=0;i<NOSCANTAB;++i)
 
 for (i=0;i<NOSCANTAB;++i)
 	{
-	if (ptr->ship[i].flag == 1 && ptr->ship[i].letter != 0)
+	if (ptr->ship[i].flag != 0 && ptr->ship[i].letter != 0)
 		{
 		for (j=0;j<LETSIZE;++j)
 			{
@@ -5785,7 +5824,7 @@ for (i=0;i<NOSCANTAB;++i)
 
 for (i=0;i<NOSCANTAB;++i)
 	{
-	if (ptr->ship[i].flag == 1 && ptr->ship[i].letter == 0)
+	if (ptr->ship[i].flag != 0 && ptr->ship[i].letter == 0)
 		{
 		for (j=0;j<LETSIZE;++j)
 			{

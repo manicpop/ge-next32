@@ -781,12 +781,14 @@ if (ptr->holdcourse > 0)
 if (zothusn >= nships)
 	{
 	ptr->cybmine = (byte)255;
+	ptr->cyb_grace = 0;
 	ptr->npcmsg = 255;
 	}
 else
 	{
 	if (!ingegame(zothusn))
 		{
+		ptr->cyb_grace = 0;
 		cyb_cruise(ptr,usrn,0);
 		return;
 		}
@@ -795,27 +797,20 @@ else
 
 	if (!isvisible(ptr,wptr))
 		{
-		if (innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord)))
+		if (ptr->cyb_grace > 0)
 			{
-			ptr->head2b = vector(&ptr->coord,&(wptr->coord));
-			cyb_cruise(ptr,usrn,4);
-			ptr->cybmine = zothusn;
-			return;
+			--ptr->cyb_grace;
 			}
-		ptr->holdcourse=gernd()%2+2;
-		cyb_cruise(ptr,usrn,1); /* let them cruise */
-		ptr->cybmine = zothusn;
-
-		/* if the guy is cloaked then give up after awhile */
-		if (gernd()%10 == 0)
+		else
 			{
 			ptr->cybmine = 255;
+			ptr->cyb_grace = 0;
 			ptr->freq = 255;
 			ptr->npcmsg = 255;
 			}
-
 		return;
 		}
+	ptr->cyb_grace = CYBGRACE;
 
 	low_ship = zothusn;
 	low_dist = cdistance(&ptr->coord,&(wptr->coord));
@@ -849,6 +844,7 @@ if (ptr->cybmine == (byte)255 && ptr->damage <= CYB_MINDAM) /* don't pick new pu
 if (low_ship == -1 || low_ship >= nships)
 	{
 	ptr->cybmine = 255;
+	ptr->cyb_grace = 0;
 	ptr->freq = 255;
 	ptr->npcmsg = 255;
 	}
@@ -860,6 +856,7 @@ else
 		ptr->freq = 255;
 		}
 	ptr->cybmine = (byte)low_ship;
+	ptr->cyb_grace = CYBGRACE;
 	wptr=warshpoff(low_ship);
 	if (low_dist >= hyperdist1)
 		{

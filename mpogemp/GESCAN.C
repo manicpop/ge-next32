@@ -137,6 +137,16 @@ if (warsptr->jam_sev > (byte)2)
 prf("%s", gechrbuf);
 }
 
+void FUNC print_shiptab_data(sptr,shp)
+SCANTAB	*sptr;
+int	shp;
+{
+if (sptr->ship[shp].flag == 2)
+	prf("%6s    %4s    %4s%9s","?????","????","????","??.??");
+else
+	print_ship_data(sptr->ship[shp].dist, sptr->ship[shp].bearing, sptr->ship[shp].heading, sptr->ship[shp].speed);
+}
+
 
 int FUNC build_ship_name(int othusn)
 {
@@ -291,7 +301,7 @@ switch (maptype)
 	case RANGENOMAP:
 		/* if no ships in scantab, don't print header */
 		{
-		if (scantab[usrnum].ship[0].flag == 1)
+		if (scantab[usrnum].ship[0].flag != 0)
 			prfmsg(NOMAPRA);
 		break;
 		}
@@ -416,16 +426,15 @@ othusn = sptr->ship[left].shipno;
 prf("   ");
 print_ship_letter(othusn, sptr->ship[left].letter);
 prf("   ");
-print_ship_data(sptr->ship[left].dist, sptr->ship[left].bearing, sptr->ship[left].heading, sptr->ship[left].speed);
+print_shiptab_data(sptr,left);
 
-if (right < NOSCANTAB && sptr->ship[right].flag == 1 && (long)(sptr->ship[right].dist) < dist_filter)
+if (right < NOSCANTAB && sptr->ship[right].flag != 0 && (long)(sptr->ship[right].dist) < dist_filter)
 	{
 	othusn = sptr->ship[right].shipno;
 	prf("  ");
 	print_ship_letter(othusn, sptr->ship[right].letter);
 	prf("   ");
-	print_ship_data(sptr->ship[right].dist, sptr->ship[right].bearing,
-		sptr->ship[right].heading, sptr->ship[right].speed);
+	print_shiptab_data(sptr,right);
 	}
 prf("\r");
 
@@ -436,7 +445,7 @@ print_ship_name(othusn);
 for (i = 0; i < 36 - pad; ++i)
 	prf(" ");
 
-if (right < NOSCANTAB && sptr->ship[right].flag == 1 && (long)(sptr->ship[right].dist) < dist_filter)
+if (right < NOSCANTAB && sptr->ship[right].flag != 0 && (long)(sptr->ship[right].dist) < dist_filter)
 	{
 	othusn = sptr->ship[right].shipno;
 	print_ship_name(othusn);
@@ -448,7 +457,9 @@ prf("\r");
 /* RANGENAMES (or first eight of RANGEEXTRA) */
 int FUNC print_range_line(SCANTAB *sptr, int shp, int *ff, long dist_filter)
 {
-if (shp < NOSCANTAB && sptr->ship[shp].flag == 1 &&
+int	othusn;
+
+if (shp < NOSCANTAB && sptr->ship[shp].flag != 0 &&
 	shp < (MAXY + 1) / 2 && (long)(sptr->ship[shp].dist) < dist_filter)
 	{
 	othusn = sptr->ship[shp].shipno;
@@ -458,8 +469,7 @@ if (shp < NOSCANTAB && sptr->ship[shp].flag == 1 &&
 		{
 		print_ship_letter(othusn, sptr->ship[shp].letter);
 		prf("   ");
-		print_ship_data(sptr->ship[shp].dist, sptr->ship[shp].bearing,
-			sptr->ship[shp].heading, sptr->ship[shp].speed);
+		print_shiptab_data(sptr,shp);
 		*ff = 1;
 		}
 	else
@@ -475,14 +485,15 @@ return 0; /* first line or no ship, don't increment */
 /* RANGEFULL */
 int FUNC print_fullrange_line(SCANTAB *sptr, int shp, long dist_filter)
 {
-if (shp < NOSCANTAB && sptr->ship[shp].flag == 1 && (long)(sptr->ship[shp].dist) < dist_filter)
+int	othusn;
+
+if (shp < NOSCANTAB && sptr->ship[shp].flag != 0 && (long)(sptr->ship[shp].dist) < dist_filter)
 	{
 	othusn = sptr->ship[shp].shipno;
 	prf("     ");
 	print_ship_letter(othusn, sptr->ship[shp].letter);
 	prf("   ");
-	print_ship_data(sptr->ship[shp].dist, sptr->ship[shp].bearing,
-		sptr->ship[shp].heading, sptr->ship[shp].speed);
+	print_shiptab_data(sptr,shp);
 	return 1; /* move onto next ship */
 	}
 return 0; /* no ship, don't increment */
@@ -498,7 +509,7 @@ int i;
 /* build a list of ships to show starting from current shp */
 for (; shp < NOSCANTAB; ++shp)
 	{
-	if (sptr->ship[shp].flag != 1)
+	if (sptr->ship[shp].flag == 0)
 		continue;
 	if ((long)(sptr->ship[shp].dist) >= dist_filter)
 		continue;
@@ -630,6 +641,8 @@ shpnum = findshp(margv[2],1);
 
 if (shpnum < 0 && margv[2][0] == '@')
 	{
+	if (warsptr->lock >= 0 && warsptr->lock < nships && ingegame(warsptr->lock))
+		prfmsg(NOSHIP);
 	outprfge(FLT_NONE,usrnum);
 	return;
 	}

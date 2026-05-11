@@ -2574,7 +2574,7 @@ NOTORPS {
 } T GE no torpedoes message
 
 NOSHIP {
-[0;37m[[1;31mERROR[0;37m] Scanners do not detect a ship with that designation.[1;37m
+[0;37m[[1;31mERROR[0;37m] The scanners cannot locate that ship.[1;37m
 } T GE no such ship message
 
 TFIRE1 {
