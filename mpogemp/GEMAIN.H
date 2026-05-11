@@ -42,11 +42,11 @@
 */
 
 #ifdef GETRAINER
-#define VERSION "ge-next 0.3-beta1 Trainer"
+#define VERSION "ge-next 0.3-beta2 Trainer"
 #define GEHELP  "MPOG2HLP.MCV"
 #define GEMSG   "MPOG2MSG.MCV"
 #else
-#define VERSION "ge-next 0.3-beta1"
+#define VERSION "ge-next 0.3-beta2"
 #define GEHELP  "MPOGEHLP.MCV"
 #define GEMSG   "MPOGEMSG.MCV"
 #endif
@@ -130,6 +130,9 @@
 
 #define FIRETICKS 10		/* how many ticks to hold a player  */
 				/* when involved in battle          */
+
+#define LOCKGRACE 5		/* ticks to retain a hidden lock target */
+#define CYBGRACE 10		/* ticks to retain hidden cyb target    */
 
 #define NUMITEMS 14
 
@@ -461,7 +464,9 @@ WARSHP	{
 	unsigned	freq;			/*   encoded message freq / npc state trckr  */
 /*212*/
 	byte		tponder;		/*   transponder control state               */
-	char		filler2[3];		/*   eventually i will restruct this struct  */
+	byte		lock_grace;		/*   lock invisibility grace                 */
+	byte		cyb_grace;		/*   cyb invisibility grace                  */
+	char		filler2[1];		/*   eventually i will restruct this struct  */
 /*216*/
 	unsigned long	items[NUMITEMS];	/*   all the items                           */
 /*272*/

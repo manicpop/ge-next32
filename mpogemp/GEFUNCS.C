@@ -2241,7 +2241,7 @@ if (ptr->speed > 0)
 				wptr=warshpoff(zothusn);
 				if (ingegame(zothusn) && zothusn != usrn)
 					{
-					ddist = cdistance(&warsptr->coord,&wptr->coord);
+					ddist = cdistance(&ptr->coord,&wptr->coord);
 					ddist *= 10000;
 					oth_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
 					if ((ptr_neb || oth_neb) && !(ptr_neb && oth_neb && ddist < (double)NEBRNG))
