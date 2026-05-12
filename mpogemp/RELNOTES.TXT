@@ -121,8 +121,12 @@ The main focus of 0.3 is enhancements for user ships:
   - When a player is locked onto you, you will not see messages
     each time that player scans you. You should assume they are
     watching your every move.
-  - If someone is locked onto you, and you exit, cloak, or leave
+  - If someone is locked onto you, and you exit or leave
     that ship's scan area, that player's lock will be cleared.
+  - If you are locked onto a player and they cloak or enter
+    a nebula, the lock will be retained for a while, although
+    you still won't be able to scan or fire on the player. It
+    will eventually clear if the ship doesn't reappear.
 
 Other stuff:
 * NEBULAS have been added. Certain sectors of the galaxy will
