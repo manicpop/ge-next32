@@ -858,7 +858,7 @@ if (ptr->jam_sev <= (byte)3)
 		if (ptr->items[I_ZIPPERS] > 0 && shipclass[ptr->shpclass].has_zip && ptr->zipload == 0
 			&& wptr->minesnear == TRUE && gernd()%3 == 0)
 			{
-			zip(ptr,usrn);
+			zip(ptr);
 			wptr->minesnear = FALSE;
 			}
 		}
@@ -1026,7 +1026,7 @@ if (ptr->jam_sev <= (byte)3)
 				if (ptr->items[I_ZIPPERS] > 0 && shipclass[ptr->shpclass].has_zip && ptr->zipload == 0
 					&& wptr->minesnear == TRUE && gernd()%3 == 0)
 					{
-					zip(ptr,usrn);
+					zip(ptr);
 					wptr->minesnear = FALSE;
 					}
 				}
