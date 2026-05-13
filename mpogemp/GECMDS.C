@@ -3165,7 +3165,7 @@ else
 #ifdef PHARLAP
 if (sameas(plptr->userid,warsptr->userid) || (syscmds && !sysonly) || (sysonly && (hasmkey(SYSKEY))))
 #else
-if (sameas(plptr->userid,warsptr->userid) || (syscmds && !sysonly) || (sysonly && (usrptr->flags&ISYSOP))))
+if (sameas(plptr->userid,warsptr->userid) || (syscmds && !sysonly) || (sysonly && (usrptr->flags&ISYSOP)))
 #endif
 
 	{
