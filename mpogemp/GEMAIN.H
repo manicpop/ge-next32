@@ -37,9 +37,14 @@
 #define FALSE 0
 
 /* if this is the trainer version this define needs to be made */
-/*
-#define	GETRAINER 1
-*/
+/* #define GETRAINER 1 */
+
+/* if FASTPLANET defined updates happen every 3 seconds */
+/* #define FASTPLANET 1 */
+
+/* workarounds for mbbsemu math functions */
+/* hopefully not necessary much longer */
+/* #define MBBSEMU 1 */
 
 #ifdef GETRAINER
 #define VERSION "ge-next 0.3-beta2 Trainer"
@@ -61,11 +66,6 @@
 #include "mpogeshp.h"
 #endif
 
-/* workarounds for mbbsemu math functions */
-/* hopefully not necessary much longer */
-/* #define MBBSEMU 1 */
-
-
 /***************************************************************************/
 /* The following defines have been carefully chosen and refined to provide */
 /* a well balanced and entertaining game play. Should they be modified,    */
@@ -80,7 +80,6 @@
 #define PRELOAD 10		/* Phasor reload rate / tick                 */
 #define PMINFIRE 60		/* Minimum amount to fire phasor             */
 #define PENGUSE 57		/* Amount of energy used by phasors charging */
-#define PMINENG 500		/* minimum energy to fire                    */
 #define PHABIAS 2		/* Degrees to bias "spread" to better aim    */
 
 #define HPFIRAMT 5000
@@ -90,13 +89,9 @@
 #define ENGRECHG 2		/* Energy recharge amount / tick             */
 
 #define SHENGUSE 100		/* Energy used every tick for shields        */
-#define SHHITENG 1000		/* Energy drained when hit                   */
-#define SHMAXCHG 10		/* Max (full) charge in the shields          */
 #define SHMINCHG 5		/* Minimum charge to be effective            */
 
 #define SSMAX 10000
-
-#define SNMSIZ 25
 
 #define PI 3.1415927
 #define SLCAP 2147483647L	/* maximum value of signed long */
@@ -169,8 +164,6 @@
 
 #define NEBRNG 1200		/* SE scan visibility range inside nebulas */
 
-#define NUM_MINES 20		/* 20 mines in the game max */
-
 #define TOPSHIELD 19
 
 #define TOPPHASOR 19
@@ -182,7 +175,6 @@
 #define GESTAT_AVAIL 0
 #define GESTAT_USER 1
 #define GESTAT_AUTO 2
-#define GESTAT_IDLE 3
 
 #define CLASSTYPE_USER 1
 #define CLASSTYPE_CYBORG 2
@@ -526,13 +518,6 @@ WARSHP	{
 /*314*/
 	char		filler[514-280-UIDSIZ]; /*   WARSHP in GE classic is 514             */
 	};
-
-/*
-#define X1 ptr1->xcoord
-#define X2 ptr2->xcoord
-#define Y1 ptr1->ycoord
-#define Y2 ptr2->ycoord
-*/
 
 #define ITEM    struct item
 extern

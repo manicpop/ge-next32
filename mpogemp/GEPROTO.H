@@ -85,7 +85,7 @@
 /*    2327 */ int FUNC warrti3 P((void ));
 /*    2334 */ void FUNC warrti3a P((void ));
 /*    2364 */ void FUNC outprfge P((int class , int shpno ));
-/*    2400 */ void FUNC outsect P((int filter , COORD *coordptr , unsigned exclude , unsigned freq ));
+/*    2400 */ void FUNC outsect P((int filter , COORD *coordptr , unsigned exclude ));
 /*    2438 */ void FUNC outrange P((int filter , COORD *coordptr ));
 /*    2467 */ int FUNC ingegame P((int shpno ));
 /*    2491 */ void FUNC geshocst P((int opt , char *str ));

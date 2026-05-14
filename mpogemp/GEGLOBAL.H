@@ -56,7 +56,7 @@ extern	WARUSR		*warusr,*waruptr;
 extern	int		warusr_ecl,warshp_ecl;
 extern	WARUSR		tmpusr;
 
-extern	GALSECT		sector,*sptr1;
+extern	GALSECT		sector;
 
 extern	GALPLNT		planet;
 
@@ -94,12 +94,11 @@ extern	unsigned	energy;
 extern	unsigned	damage;
 extern	char		*gechrbuf,*gechrbuf2,*gechrbuf3;
 extern	char		*warpbuf;
-extern	int		sectnum,plnum;
+extern	int		plnum;
 extern	GALPLNT		*plptr;
 extern	ITEM		*titems;
 extern	TEAM		*teamtab;
 
-extern	int		su;
 extern	int		tmp_usrnum;
 
 extern	unsigned	plantime;
@@ -150,7 +149,6 @@ extern	int		gemaxplrs,
 			fse_state,
 			phatowrp,
 			score_bonus,
-			score_f1,
 			score_f2,
 			chgloser,
 			univwrap,
@@ -162,33 +160,26 @@ extern	int		gemaxplrs,
 			planupd,
 			passnum;
 
-extern	char		*opttxt,
-			optchr;
+extern char *opttxt,		/* option-text menu prompt */
+	    optchr;		/* option-text trigger character */
 
-extern	long		*opttbl;
+extern long *opttbl;		/* per-user option-text file offsets */
 
-extern	double		tor_fact,
-			tdammax,
-			mis_fact,
-			mdammax,
-			idammax,
-			minedammax,
-			repairrate,
-			tooclose,
-			hyperdist1,
-			hyperdist2,
-			plattrf1,
-			plattrf2,
-			plattrf3,
-			plattrt1,
-			plattrt2,
-			plattrt3;
-
-#ifdef	TESTDRIVE
-extern	int		endtd,
-			nowtd,
-			lefttd;
-#endif
+extern double tor_fact,		/* torpedo hit-distance factor */
+	      tdammax,		/* torpedo max damage factor */
+	      mdammax,		/* missile max damage factor */
+	      mis_fact,		/* missile hit-distance factor */
+	      idammax,		/* ion cannon max damage factor */
+	      minedammax,	/* mine max damage factor */
+	      repairrate,	/* per-tick repair rate */
+	      tooclose,		/* cyborg close-range threshold */
+	      hyperdist1,	/* cyborg long-range pursuit threshold */
+	      hyperdist2,	/* cyborg mid-range pursuit threshold */
+	      plattrf1,		/* planet fighter-vs-attacker damage factor 1 */
+	      plattrf2,		/* planet fighter-vs-attacker damage factor 2 */
+	      plattrf3,		/* planet fighter-vs-attacker damage factor 3 */
+	      plattrt1,		/* planet troop-vs-attacker damage factor 1 */
+	      plattrt2;		/* planet troop-vs-attacker damage factor 2 */
 
 extern	SHPKEY		shpkey;
 extern	MAILKEY		mailkey;

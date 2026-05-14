@@ -1145,7 +1145,7 @@ if (ptr->shipname[0] == '\0')
 	prfmsg(ENTWARNO,ptr->userid);
 else
 	prfmsg(ENTWAR,ptr->shipname);
-outsect(FLT_NONE,&ptr->coord,usrn,0);
+outsect(FLT_NONE,&ptr->coord,usrn);
 }
 
 int FUNC entryinrng(entrant,recipient)
@@ -2005,7 +2005,7 @@ if (flag == 1)
 		prfmsg(HYPERIN3,ptr->userid);
 	else
 		prfmsg(HYPERIN2,ptr->shipname);
-	outsect(FLT_NONE,&(warshpoff(usrn)->coord),usrn,0);
+	outsect(FLT_NONE,&(warshpoff(usrn)->coord),usrn);
 
 	ocount = 0;
 	for(i=0;i<MAXTORPS;++i)
@@ -2057,7 +2057,7 @@ else
 		prfmsg(HYPERONO,ptr->userid);
 	else
 		prfmsg(HYPEROUN,ptr->shipname);
-	outsect(FLT_NONE,&(warshpoff(usrn)->coord),usrn,0);
+	outsect(FLT_NONE,&(warshpoff(usrn)->coord),usrn);
 	}
 }
 
@@ -2206,7 +2206,7 @@ if (ptr->speed > 0)
 					prfmsg(MOVE2NO,ptr->userid);
 				else
 					prfmsg(MOVE2,ptr->shipname);
-				outsect(FLT_NONE,&oldsect,usrn,0);
+				outsect(FLT_NONE,&oldsect,usrn);
 				}
 			if (ptr->speed < 21000.0)
 				{
@@ -2217,7 +2217,7 @@ if (ptr->speed > 0)
 					prfmsg(MOVE3NO,ptr->userid);
 				else
 					prfmsg(MOVE3,ptr->shipname);
-				outsect(FLT_NONE,&newsect,usrn,0);
+				outsect(FLT_NONE,&newsect,usrn);
 				}
 			}
 		ptr->hostile = 0;
