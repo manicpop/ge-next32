@@ -2047,12 +2047,8 @@ void FUNC warrti2a(void)
 			wptr = warshpoff(zothusn);
 			setbtv(gebb1);
 			setmbk(gemb);
-			/* TODO: this freezes auto ships with broken helm instead of letting existing 2b commands play out */
-			if (!(wptr->status == GESTAT_AUTO && wptr->helm < 0)) {
-				rotateship(wptr, zothusn);
-				accel(wptr, zothusn);
-			}
-			/* movement and self-destruct still advance even when helm control is blocked */
+			rotateship(wptr, zothusn);
+			accel(wptr, zothusn);
 			moveship(wptr, zothusn);
 			destruct(wptr, zothusn);
 		}

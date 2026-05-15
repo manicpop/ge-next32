@@ -392,7 +392,7 @@ else
 		}
 	}
 
-if (shipclass[ptr->shpclass].max_accel > 0)
+if (shipclass[ptr->shpclass].max_accel > 0 && ptr->helm >= 0)
 	{
 	if (ptr->cybmine < nships && ingegame(ptr->cybmine))
 		cyb_check_damage(ptr,usrn);
@@ -1108,6 +1108,14 @@ if (call == 0)
 if (shipclass[ptr->shpclass].max_accel == 0)	/* bases don't do any of the below */
 	return;
 
+if (call == 2)
+	ptr->holdcourse = gernd()%10 + 6;
+if (call == 3)
+	ptr->holdcourse = gernd()%18 + 12;
+
+if (ptr->helm < 0)
+	return;
+
 if (call < 2)
 	ptr->head2b = rndm(359.9);
 
@@ -1146,10 +1154,6 @@ else
 		}
 	}
 
-if (call == 2)
-	ptr->holdcourse = gernd()%10 + 6;
-if (call == 3)
-	ptr->holdcourse = gernd()%18 + 12;
 }
 
 /**************************************************************************

@@ -439,8 +439,11 @@ if (ptr->jam_sev <= (byte)3)
 		if ((ddist < (double)shipclass[ptr->shpclass].scanrange && isvisible(ptr,wptr)) || ptr->cantexit > 0)
 			{
 			/* if still in range, flee */
-			ptr->speed2b = dr_topspeed;
-			ptr->head2b = normal(vector(&ptr->coord,&wptr->coord) + 180.0);
+			if (ptr->helm >= 0)
+				{
+				ptr->speed2b = dr_topspeed;
+				ptr->head2b = normal(vector(&ptr->coord,&wptr->coord) + 180.0);
+				}
 			droid_annoy(ptr,zothusn);
 			}
 		else
@@ -492,7 +495,8 @@ if (ptr->jam_sev <= (byte)3)
 					around = TRUE;	/* if user around but not hostile go to impulse */
 					if (ptr->holdcourse == 0)
 						{
-						ptr->speed2b = ((gernd()%85)+15)*10;
+						if (ptr->helm >= 0)
+							ptr->speed2b = ((gernd()%85)+15)*10;
 						ptr->holdcourse = gernd()%15 + 5;
 						}
 					ptr->tick = CYBTICKTIME + gernd()%(5-shipclass[ptr->shpclass].tough_factor);
@@ -517,14 +521,17 @@ if (ptr->jam_sev <= (byte)3)
 			if (isvisible(ptr,wptr))
 				droid_annoy(ptr,zothusn);
 			/* if still in range, flee and attack */
-			if (ptr->damage > 50)
-				cyb_cruise(ptr,usrn,4);
-			else
-				ptr->speed2b = 990.0;
-			if (!isvisible(ptr,wptr))
-				ptr->head2b = rndm(359.9);
-			else
-				ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + 180.0 + (rand() % 51 - 25));
+			if (ptr->helm >= 0)
+				{
+				if (ptr->damage > 50)
+					cyb_cruise(ptr,usrn,4);
+				else
+					ptr->speed2b = 990.0;
+				if (!isvisible(ptr,wptr))
+					ptr->head2b = rndm(359.9);
+				else
+					ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + 180.0 + (rand() % 51 - 25));
+				}
 			if (ddist < 30000)
 				droid_phaser(ptr,usrn,wptr);
 			}
@@ -592,17 +599,25 @@ if (ptr->jam_sev <= (byte)3)
 			if (ptr->holdcourse == 0)
 				{
 				if (ptr->damage < 67)
-					ptr->speed2b = ((gernd()%99)+1)*10;
+					{
+					if (ptr->helm >= 0)
+						ptr->speed2b = ((gernd()%99)+1)*10;
+					}
 				else
 					{
-					cyb_cruise(ptr,usrn,4);
-					if (ptr->items[I_MINE] > 0 && shipclass[ptr->shpclass].has_mine && ptr->mineload == 0 && !neutral(&ptr->coord) && gernd()%3 == 0)
+					if (ptr->helm >= 0)
+						cyb_cruise(ptr,usrn,4);
+					if (ptr->items[I_MINE] > 0 && shipclass[ptr->shpclass].has_mine && ptr->mineload == 0 &&
+						!neutral(&ptr->coord) && gernd()%3 == 0 && (ptr->helm >= 0 || ptr->speed >= 1000.0))
 						laymine(ptr,usrn,10);
 					}
-				if (!isvisible(ptr,wptr))
-					ptr->head2b = rndm(359.9);
-				else
-					ptr->head2b = normal(vector(&ptr->coord, &(wptr->coord)) + 180.0 + (rand() % 51 - 25));
+				if (ptr->helm >= 0)
+					{
+					if (!isvisible(ptr,wptr))
+						ptr->head2b = rndm(359.9);
+					else
+						ptr->head2b = normal(vector(&ptr->coord, &(wptr->coord)) + 180.0 + (rand() % 51 - 25));
+					}
 				ptr->holdcourse = gernd()%15 + 10;
 				}
 			if (ddist < 30000 && !neutral(&ptr->coord) && isvisible(ptr,wptr))
@@ -676,17 +691,20 @@ if (ptr->jam_sev <= (byte)3)
 				droid_annoy(ptr,zothusn);
 			if (ptr->holdcourse == 0)
 				{
-				if (!isvisible(ptr,wptr))
-					ptr->head2b = rndm(359.9);
-				else
-					ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + 180.0 + (rand() % 51 - 25));
-				if (!isvisible(ptr,wptr) && innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord)))
-					ptr->speed2b = 990;
-				else
-				if (gernd()%2 == 0)
-					cyb_cruise(ptr,usrn,4);
-				else
-					ptr->speed2b = 990;
+				if (ptr->helm >= 0)
+					{
+					if (!isvisible(ptr,wptr))
+						ptr->head2b = rndm(359.9);
+					else
+						ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + 180.0 + (rand() % 51 - 25));
+					if (!isvisible(ptr,wptr) && innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord)))
+						ptr->speed2b = 990;
+					else
+					if (gernd()%2 == 0)
+						cyb_cruise(ptr,usrn,4);
+					else
+						ptr->speed2b = 990;
+					}
 				ptr->holdcourse = gernd()%15 + 10;
 				}
 			if (ddist < 30000 && !neutral(&ptr->coord) && isvisible(ptr,wptr))
@@ -785,8 +803,11 @@ if (ptr->jam_sev <= (byte)3)
 			{
 			if (innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord)))
 				{
-				ptr->head2b = vector(&ptr->coord,&(wptr->coord));
-				cyb_cruise(ptr,usrn,4);
+				if (ptr->helm >= 0)
+					{
+					ptr->head2b = vector(&ptr->coord,&(wptr->coord));
+					cyb_cruise(ptr,usrn,4);
+					}
 				return;
 				}
 			ptr->holdcourse=gernd()%5+5;
@@ -803,37 +824,40 @@ if (ptr->jam_sev <= (byte)3)
 			droid_annoy(ptr,zothusn);
 		if (ptr->holdcourse == 0)
 			{
-			if (ddist > 50000.0)
+			if (ptr->helm >= 0)
 				{
-				ptr->head2b = vector(&ptr->coord,&(wptr->coord));
-				cyb_cruise(ptr,usrn,4);
-				}
-			else
-			if (ddist > 20000.0)
-				{
-				ptr->head2b = vector(&ptr->coord,&(wptr->coord));
-				if (dr_topspeed >= 10000)
+				if (ddist > 50000.0)
 					{
-					if (ptr->speed < 1000)
-						{
-						ptr->speed2b = 0.0;
-						ptr->speed = ptr->speed2b;
-						}
-					ptr->speed2b = 10000;
+					ptr->head2b = vector(&ptr->coord,&(wptr->coord));
+					cyb_cruise(ptr,usrn,4);
 					}
 				else
-					cyb_cruise(ptr,usrn,4);
-				}
-			else
-			if (ddist > 5000.0)
-				{
-				ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + (rand() % 51 - 25));
-				ptr->speed2b = 990.0;
-				}
-			else
-				{
-				ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + (rand() % 51 - 25) + 180.0);
-				ptr->speed2b = ((int)(rndm(350.0)+150.0)/10)*10;
+				if (ddist > 20000.0)
+					{
+					ptr->head2b = vector(&ptr->coord,&(wptr->coord));
+					if (dr_topspeed >= 10000)
+						{
+						if (ptr->speed < 1000)
+							{
+							ptr->speed2b = 0.0;
+							ptr->speed = ptr->speed2b;
+							}
+						ptr->speed2b = 10000;
+						}
+					else
+						cyb_cruise(ptr,usrn,4);
+					}
+				else
+				if (ddist > 5000.0)
+					{
+					ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + (rand() % 51 - 25));
+					ptr->speed2b = 990.0;
+					}
+				else
+					{
+					ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + (rand() % 51 - 25) + 180.0);
+					ptr->speed2b = ((int)(rndm(350.0)+150.0)/10)*10;
+					}
 				}
 			}
 		if (ddist < 30000)
@@ -845,15 +869,21 @@ if (ptr->jam_sev <= (byte)3)
 			&& ptr->mineload == 0
 			&& ptr->holdcourse == 0 && gernd()%3 == 0)
 			{
-			laymine(ptr,usrn,10);
-			ptr->holdcourse = 10;
-			ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + 180.0);
-			if (ptr->speed < 1000 && dr_topspeed >= 1000)
+			if (ptr->helm >= 0 || ptr->speed >= 1000.0)
 				{
-				ptr->speed2b = 0.0;
-				ptr->speed = ptr->speed2b;
+				laymine(ptr,usrn,10);
+				ptr->holdcourse = 10;
+				if (ptr->helm >= 0)
+					{
+					ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + 180.0);
+					if (ptr->speed < 1000 && dr_topspeed >= 1000)
+						{
+						ptr->speed2b = 0.0;
+						ptr->speed = ptr->speed2b;
+						}
+					ptr->speed2b = (double)(ptr->topspeed/2)*1000;
+					}
 				}
-			ptr->speed2b = (double)(ptr->topspeed/2)*1000;
 			}
 		if (ptr->items[I_ZIPPERS] > 0 && shipclass[ptr->shpclass].has_zip && ptr->zipload == 0
 			&& wptr->minesnear == TRUE && gernd()%3 == 0)
@@ -886,6 +916,11 @@ int	zothusn, setship;
 COORD	neutsect;
 
 double	ddist;
+
+/* GCFs are impervious to helm damage, otherwise this would throw off their
+   scripted behavior */
+if (ptr->helm < 0)
+	ptr->helm = 0;
 
 setship = TRUE;
 
