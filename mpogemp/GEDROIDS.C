@@ -105,7 +105,11 @@ logthis(spr("GE:INF:Adding %s ship - %d",ptr->userid,class));
 initshp(droidname,class);
 
 memcpy(ptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
-sprintf(ptr->shipname,"%s%u\0",shipclass[class].npcprefx,usrn*usrn+gernd()%(2*usrn+1)+1000);
+strncpy(ptr->shipname, shipclass[class].npcprefx, sizeof(ptr->shipname) - 1);
+ptr->shipname[sizeof(ptr->shipname) - 1] = '\0';
+sprintf(gechrbuf, "%u", usrn*usrn+gernd()%(2*usrn+1)+1000);
+strncat(ptr->shipname, gechrbuf,
+	sizeof(ptr->shipname) - strlen(ptr->shipname) - 1);
 
 waruptr->kills = 0;     /* new droid so clear this */
 

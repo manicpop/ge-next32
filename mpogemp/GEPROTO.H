@@ -124,6 +124,7 @@
 /*         */ void FUNC exit_entrymsg P((int usrn ));
 /*     169 */ int FUNC initshp P((char *userid , int type ));
 /*     269 */ int FUNC initusr P((char *userid ));
+/*         */ int FUNC valid_user_ship P((WARSHP *ptr ));
 /*     301 */ int FUNC findships P((int direction , int quiet ));
 /*     349 */ void FUNC selectship P((void ));
 /*     387 */ void FUNC repairship P((WARSHP *ptr , int usrn ));

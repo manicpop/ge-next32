@@ -1981,12 +1981,24 @@ void FUNC autortia(void)
 			zothusn = count;
 
 			if (wptr->status == GESTAT_AUTO) {
+				if (!VALID_AUTOCLASS(wptr->shpclass)) {
+					geshocst(0, spr("GE:ERR:BADAUTOCLS slot=%d cls=%d stat=%u uid=%s",
+						count, wptr->shpclass, wptr->status, wptr->userid));
+					wptr->status = GESTAT_AVAIL;
+					continue;
+				}
+
 				if (wptr->tick == 0) {
 					logthis(spr("Calling tick_func 4 usn %d", zothusn));
 					logthis(spr("  Class %d", wptr->shpclass));
 
 					if (shipclass[wptr->shpclass].tick_func != NULL)
 						(*(shipclass[wptr->shpclass].tick_func))(wptr, zothusn);
+					else {
+						geshocst(0, spr("GE:ERR:NULLAUTOTICK slot=%d cls=%d uid=%s",
+							count, wptr->shpclass, wptr->userid));
+						wptr->status = GESTAT_AVAIL;
+					}
 				}
 				else {
 					--wptr->tick;

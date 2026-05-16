@@ -1081,6 +1081,8 @@ if (qlobtv(0) && gepdb(GELOOKUPNAME, usaptr->userid, 0, warsptr))
 		gcrbtv(warsptr,0);
 		if (!sameas(usaptr->userid, warsptr->userid))
 			break;
+		if (!valid_user_ship(warsptr))
+			continue;
 		noships++;
 		} while (qnxbtv());
 
@@ -1114,6 +1116,15 @@ if (noships == 1)
 
 	if (gepdb(GEGET,usaptr->userid,scantab[usrnum].ship[0].shipno,warsptr))
 		{
+		if (!valid_user_ship(warsptr))
+			{
+			geshocst(0,spr("GE:DBG:Ship Load Bad %s",usaptr->userid));
+			initshp(usaptr->userid,0); /* give the dude a class 1 ship */
+			gepdb(GEADD,tmpshp.userid,tmpshp.shipno,&tmpshp);
+			memcpy(warsptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
+			prfmsg(FIRSTIME);
+			outprfge(FLT_NONE,usrnum);
+			}
 		tossingegame(); /* into the game you go bud! */
 		return;
 		}
@@ -1530,6 +1541,26 @@ tmpusr.options[0]	= FULLNAMES; /* set scan default */
 return(0);
 }
 
+int FUNC valid_user_ship(ptr)
+WARSHP *ptr;
+{
+if (!VALID_SHPCLASS(ptr->shpclass))
+	{
+	geshocst(0, spr("GE:ERR:BADUSRSHPCLS cls=%d shipno=%d uid=%s",
+		ptr->shpclass, ptr->shipno, ptr->userid));
+	return(FALSE);
+	}
+
+if (shipclass[ptr->shpclass].max_type != CLASSTYPE_USER)
+	{
+	geshocst(0, spr("GE:ERR:BADUSRSHPTYPE cls=%d type=%u shipno=%d uid=%s",
+		ptr->shpclass, shipclass[ptr->shpclass].max_type, ptr->shipno, ptr->userid));
+	return(FALSE);
+	}
+
+return(TRUE);
+}
+
 /**************************************************************************
 ** find and list all the ships a single user has                         **
 **************************************************************************/
@@ -1606,6 +1637,8 @@ do
 
 	if (!sameas(usaptr->userid, warsptr->userid))
 		break;
+	if (!valid_user_ship(warsptr))
+		continue;
 
 	setsect(warsptr);
 	if (!quiet)
@@ -1659,6 +1692,8 @@ if (!quiet && waruptr->noships > NOSCANTAB)
 			gcrbtv(warsptr,0);
 			if (!sameas(usaptr->userid, warsptr->userid))
 				break;
+			if (!valid_user_ship(warsptr))
+				continue;
 			++before;
 			}
 
@@ -1710,6 +1745,15 @@ if (selection >= 0 && selection < NOSCANTAB && scantab[usrnum].ship[selection].s
 	setbtv(gebb1);
 	if (gepdb(GEGET,usaptr->userid,shpno,warsptr))
 		{
+		if (!valid_user_ship(warsptr))
+			{
+			prfmsg(FLEET4);
+			findships(0, 0);
+			prfmsg(FLEET3);
+			usrptr->substt = CHOOSESH;
+			outprfge(FLT_NONE, usrnum);
+			return;
+			}
 		tossingegame(); /* into the game you go bud! */
 		return;
 		}

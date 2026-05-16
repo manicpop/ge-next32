@@ -180,6 +180,11 @@
 #define CLASSTYPE_DROID 3	/* droid ship class                        */
 #define CLASSTYPE_NONE 4	/* undefined/inactive class slot           */
 
+#define VALID_SHPCLASS(c) ((c) >= 0 && (c) < tot_classes)
+#define VALID_AUTOCLASS(c) (VALID_SHPCLASS(c) && \
+	(shipclass[(c)].max_type == CLASSTYPE_CYBORG || \
+	 shipclass[(c)].max_type == CLASSTYPE_DROID))
+
 #define MAIL_CLASS_DISTRESS 1	/* distress-message mail class             */
 #define MAIL_CLASS_UNUSED1 2
 #define MAIL_CLASS_PRODRPT 3	/* production-report mail class            */

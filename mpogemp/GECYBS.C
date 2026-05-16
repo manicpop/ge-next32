@@ -83,6 +83,7 @@ WARSHP *wptr;
 
 int	i, goldwin, goldspin, goldtry, zothusn;
 double	ddist;
+int	have_ship = FALSE;
 
 logthis(spr("@Cyb_init usrn=%d,class=%d",usrn,class));
 
@@ -115,24 +116,31 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		{
 		gcrbtv(ptr,0);
 		logthis(spr("GE:INF:Load %s ship",ptr->userid));
-
-		ptr->status = GESTAT_AUTO;
-		ptr->shield = 40 + (ptr->shieldtype*10);
-		ptr->phasr = 100;
-		ptr->npcmsg = (byte)255;
-		cyb_cruise(ptr,usrn,0);
-		ptr->cybupdate = 100 + gernd()%20;
-		ptr->holdcourse = 0;
-		ptr->tick = CYBTICKTIME + gernd()%(CYBTICKTIME*5);
-		ptr->lastfired = -1;
-
-		/* SANITY CHECK */
-		if (shipclass[ptr->shpclass].max_type != CLASSTYPE_CYBORG)
+		if (!VALID_SHPCLASS(ptr->shpclass) ||
+			shipclass[ptr->shpclass].max_type != CLASSTYPE_CYBORG)
 			{
-			geshocst(0,spr("GE:ERR:NOTCYBCLS %d",ptr->shpclass));
+			geshocst(0,spr("GE:ERR:BADCYBSHPCLS usn=%d cls=%d shipno=%d uid=%s",
+				usrn, ptr->shpclass, ptr->shipno, ptr->userid));
+			gepdb(GEDELETE,ptr->userid,ptr->shipno,ptr);
+			if (waruptr->noships > 0)
+				--waruptr->noships;
+			}
+		else
+			{
+			ptr->status = GESTAT_AUTO;
+			ptr->shield = 40 + (ptr->shieldtype*10);
+			ptr->phasr = 100;
+			ptr->npcmsg = (byte)255;
+			cyb_cruise(ptr,usrn,0);
+			ptr->cybupdate = 100 + gernd()%20;
+			ptr->holdcourse = 0;
+			ptr->tick = CYBTICKTIME + gernd()%(CYBTICKTIME*5);
+			ptr->lastfired = -1;
+			have_ship = TRUE;
 			}
 		}
-	else
+
+	if (!have_ship)
 		{
 		/* make me a Cybertron */
 		logthis(spr("GE:INF:Adding %s ship - %d",ptr->userid,class));
@@ -142,7 +150,11 @@ if (geudb(GELOOKUP,cybname, waruptr))
 		memcpy(ptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
 
 		logthis(spr("GE:INF:Add shp,cls=%d/%d",class,ptr->shpclass));
-		sprintf(ptr->shipname,"%s%u\0",shipclass[class].npcprefx,usrn*usrn+gernd()%(2*usrn+1)+1000);
+		strncpy(ptr->shipname, shipclass[class].npcprefx, sizeof(ptr->shipname) - 1);
+		ptr->shipname[sizeof(ptr->shipname) - 1] = '\0';
+		sprintf(gechrbuf, "%u", usrn*usrn+gernd()%(2*usrn+1)+1000);
+		strncat(ptr->shipname, gechrbuf,
+			sizeof(ptr->shipname) - strlen(ptr->shipname) - 1);
 		logthis(spr("  Named: %s",ptr->shipname));
 
 		waruptr->kills = 0;	/* new cyb so clear this */

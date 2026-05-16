@@ -5006,9 +5006,10 @@ if (sameas("goto",margv[1]) && margc == 4)
 else
 if (sameas("class",margv[1]) && margc == 3)
 	{
-	if (atoi(margv[2]) <= tot_classes && atoi(margv[2]) > 0)
+		i = atoi(margv[2]) - 1;
+		if (VALID_SHPCLASS(i) && shipclass[i].max_type != CLASSTYPE_NONE)
 		{
-		warsptr->shpclass = atoi(margv[2])-1;
+		warsptr->shpclass = i;
 		warsptr->topspeed = shipclass[warsptr->shpclass].max_warp;
 		prfmsg(SYSCLS,shipclass[warsptr->shpclass].typename);
 		outprfge(FLT_NONE,usrnum);
