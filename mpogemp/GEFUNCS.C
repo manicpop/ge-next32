@@ -2429,8 +2429,7 @@ for (i=0; i<MAXPLANETS;++i)
 			&& dist <= 1000
 			&& beacontimer == 0)
 			{
-			getplanet(&ptr->coord,i+1);
-			if (planet.type == PLTYPE_PLNT && planet.beacon[0] != 0)
+			if (getplanet(&ptr->coord,i+1) && planet.type == PLTYPE_PLNT && planet.beacon[0] != 0)
 				{
 				if (planet.name[0] != 0)
 					prfmsg(BEAC02,i+1,planet.name,planet.beacon);
@@ -4138,7 +4137,8 @@ int	shmsg;
 if (ptr->hostile > 1)
 	{
 	plnum = ptr->hostile - 10;
-	getplanetdat(usrn);
+	if (!getplanetdat(usrn))
+		return;
 	if (plptr->items[I_IONCANNON].qty > 0)
 		{
 		ptr->lastfired = -1;

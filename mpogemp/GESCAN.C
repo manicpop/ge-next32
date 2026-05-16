@@ -862,7 +862,15 @@ nebmask = innebula(xsect,ysect);
 
 if (plnum <= MAXPLANETS && plnum > 0)
 	{
-	getplanetdat(usrnum);
+	if (!getplanetdat(usrnum))
+		{
+		if (nebmask)
+			prfmsg(SCAN26);
+		else
+			prfmsg(NOPLNT);
+		outprfge(FLT_NONE,usrnum);
+		return;
+		}
 	refresh(warsptr,usrnum);
 	if (nebmask)
 		{

@@ -810,6 +810,7 @@ int FUNC getplanet(sect,plnt)
 COORD	*sect;
 int	plnt;
 {
+setmem(&planet,sizeof(GALPLNT),0);
 
 pkey.xsect = coord1(sect->xcoord);
 pkey.ysect = coord1(sect->ycoord);
@@ -817,9 +818,11 @@ pkey.plnum = plnt;
 
 if (!gesdb(GEGET,&pkey,(GALSECT *)&planet))
 	{
-	geshocst(0,spr("GE: ERROR Missing Pl %d Sect X:%d Y:%d",pkey.plnum,pkey.xsect,pkey.ysect));
+	geshocst(0,spr("GE:ERR:Missing planet record pl=%d sect=%d,%d",
+		pkey.plnum, pkey.xsect, pkey.ysect));
+	return(FALSE);
 	}
-return(0);
+return(TRUE);
 }
 
 

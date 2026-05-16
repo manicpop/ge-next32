@@ -116,6 +116,8 @@ static struct upgdef upgdefs[NUMUPGRADES] =
 		{NCORE, UPGR8, UPGRD8, 7}
 	};
 
+static int load_orbit_planet(int usrn);
+
 static int upg_allowed(ptr,loadout,idx)
 WARSHP		*ptr;
 unsigned int	loadout;
@@ -2773,8 +2775,8 @@ if (sameas(margv[1],"on"))
 			outprfge(FLT_NONE,usrnum);
 			return;
 			}
-		plnum = warsptr->where - 10;
-		getplanetdat(usrnum);
+		if (!load_orbit_planet(usrnum))
+			return;
 		if (!sameas(plptr->userid,warsptr->userid))
 			{
 			prfmsg(CLOKNORP);
@@ -2898,9 +2900,8 @@ if (neutral(&warsptr->coord))
 	return;
 	}
 
-plnum = warsptr->where - 10;
-
-getplanetdat(usrnum);
+if (!load_orbit_planet(usrnum))
+	return;
 
 if (trans_opt || sameas(plptr->userid,warsptr->userid))
 	{
@@ -2988,9 +2989,8 @@ int	item;
 {
 long	amt;
 
-plnum = warsptr->where - 10;
-
-getplanetdat(usrnum);
+if (!load_orbit_planet(usrnum))
+	return;
 
 /* you must own this planet or NOBODY must own it to xfer up */
 
@@ -3100,9 +3100,8 @@ if (warsptr->where < 10)
 	return;
 	}
 
-plnum = warsptr->where - 10;
-
-getplanetdat(usrnum);
+if (!load_orbit_planet(usrnum))
+	return;
 
 if (sameas(plptr->userid,warsptr->userid))
 	{
@@ -3145,9 +3144,8 @@ if (warsptr->where < 10)
 	return;
 	}
 
-plnum = warsptr->where - 10;
-
-getplanetdat(usrnum);
+if (!load_orbit_planet(usrnum))
+	return;
 
 if (plptr->userid[0] == 0)
 	{
@@ -3198,9 +3196,8 @@ if (warsptr->where < 10)
 	return;
 	}
 
-plnum = warsptr->where - 10;
-
-getplanetdat(usrnum);
+if (!load_orbit_planet(usrnum))
+	return;
 
 if (sameas(plptr->userid,warsptr->userid))
 	{
@@ -3901,7 +3898,8 @@ if (waruptr->factions[gcnum] > 100)	/* don't buy from jerks */
 
 plnum = warsptr->where - 10;
 
-getplanetdat(usrnum);
+if (!load_orbit_planet(usrnum))
+	return;
 
 if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 	{
@@ -4064,9 +4062,8 @@ if (warsptr->where < 10)
 	return;
 	}
 
-plnum = warsptr->where - 10;
-
-getplanetdat(usrnum);
+if (!load_orbit_planet(usrnum))
+	return;
 fixplanetteam();
 
 if (neutral(&warsptr->coord) && plnum == 1 && waruptr->factions[gcnum] > 100)	/* if Zygor, don't sell to jerks */
@@ -4140,9 +4137,8 @@ if (warsptr->where < 10)
 	return;
 	}
 
-plnum = warsptr->where - 10;
-
-getplanetdat(usrnum);
+if (!load_orbit_planet(usrnum))
+	return;
 
 if (neutral(&warsptr->coord) && plnum == 1 && waruptr->factions[gcnum] > 100)	/* if Zygor, don't price to jerks */
 	{
@@ -4308,9 +4304,9 @@ else
 
 if (item == I_GOLD)
 	{
-	plnum = warsptr->where - 10;
-	getplanetdat(usrnum);
-	if (neutral(&warsptr->coord) && plnum == 1)
+		if (!load_orbit_planet(usrnum))
+			return(forsale);
+		if (neutral(&warsptr->coord) && plnum == 1)
 		{
 		forsale = waruptr->cash;
 		}
@@ -4352,10 +4348,8 @@ if (warsptr->where < 10)
 	return;
 	}
 
-plnum = warsptr->where - 10;
-
-
-getplanetdat(usrnum);
+if (!load_orbit_planet(usrnum))
+	return;
 
 if (!sameas(plptr->password,"none") && margc < 2)
 	{
@@ -4469,9 +4463,8 @@ if (warsptr->where < 10)
 	return;
 	}
 
-plnum = warsptr->where - 10;
-
-getplanetdat(usrnum);
+if (!load_orbit_planet(usrnum))
+	return;
 
 if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 	{
@@ -5138,9 +5131,9 @@ if (sameas("multiply",margv[1]) && (margc > 1 && margc < 4))
 		outprfge(FLT_NONE,usrnum);
 		return;
 		}
-	plnum = warsptr->where - 10;
-	getplanetdat(usrnum);
-	if (plptr->items[0].qty > 0 && plptr->userid[0] != 0)
+		if (!load_orbit_planet(usrnum))
+			return;
+		if (plptr->items[0].qty > 0 && plptr->userid[0] != 0)
 		{
 		if (margc == 3)
 			j = atoi(margv[2]);
@@ -6707,9 +6700,8 @@ if (warsptr->where < 10)
 	return;
 	}
 
-plnum = warsptr->where - 10;
-
-getplanetdat(usrnum);
+if (!load_orbit_planet(usrnum))
+	return;
 
 if (sameas(plptr->userid,warsptr->userid))
 	{
@@ -6826,4 +6818,14 @@ else
 	prfmsg(FORMAT,"JETTISON");
 	outprfge(FLT_NONE,usrnum);
 	}
+}
+static int load_orbit_planet(int usrn)
+{
+	plnum = warsptr->where - 10;
+	if (!getplanetdat(usrn)) {
+		prfmsg(NOPLNT);
+		outprfge(FLT_NONE, usrn);
+		return FALSE;
+	}
+	return TRUE;
 }

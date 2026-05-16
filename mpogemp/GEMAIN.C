@@ -1456,24 +1456,34 @@ int FUNC gesdb(int func, PKEY *sect, GALSECT *geptr)
 	return rtn;
 }
 
-int FUNC getplanetdat(int usrn)		/* plnum MUST be set before this is called */
+int FUNC getplanetdat(int usrn)		/* plnum must already name the target planet slot */
 {
-	if (plnum > 0 && plnum <= MAXPLANETS) {
-		getsector(&(warshpoff(usrn)->coord));
+	if (plnum <= 0 || plnum > MAXPLANETS)
+		return FALSE;
 
-		/* DEBUG Is numplan set right or is it 9*/
-		if (plnum <= sector.numplan) {
-			logthis(spr("Getsectdat:plnum = %d, numplan = %d", plnum, sector.numplan));
-			getplanet(&(warshpoff(usrn)->coord), plnum);
-			/* If this fails what happens */
-			plptr = &planet;
-			if (plptr->type == PLTYPE_WORM) {
-				memcpy(&worm, &planet, sizeof(GALWORM)); /* make it the current user */
-			}
-		}
-		else {
-			return FALSE;
-		}
+	getsector(&(warshpoff(usrn)->coord));
+	if (plnum > sector.numplan)
+		return FALSE;
+
+	if (!getplanet(&(warshpoff(usrn)->coord), plnum))
+		return FALSE;
+
+	plptr = &planet;
+	if (plptr->type == PLTYPE_WORM)
+		memcpy(&worm, &planet, sizeof(GALWORM)); /* make it the current wormhole */
+
+	return TRUE;
+}
+
+static int load_admin_planet(void)
+{
+	plnum = warsptr->where - 10;
+	if (!getplanetdat(usrnum)) {
+		/* the player is in an orbit/admin flow but the backing record is gone */
+		prfmsg(NOPLNT);
+		outprfge(FLT_NONE, usrnum);
+		usrptr->substt = FIGHTSUB;
+		return FALSE;
 	}
 	return TRUE;
 }
@@ -2469,9 +2479,8 @@ int FUNC mnu_admenu1(void)
 
 	if (margc > 0) {
 		if (genearas("y", margv[0])) {
-			plnum = warsptr->where - 10;
-
-			getplanetdat(usrnum);
+			if (!load_admin_planet())
+				return 1;
 
 			strncpy(plptr->userid, warsptr->userid, UIDSIZ);
 			++waruptr->planets;
@@ -2516,9 +2525,8 @@ int FUNC mnu_admenu1(void)
 int mnu_admenu1a(void)
 {
 	if (margc > 0) {
-		plnum = warsptr->where - 10;
-
-		getplanetdat(usrnum);
+		if (!load_admin_planet())
+			return 1;
 		rstrin();
 
 		*margv[0] = toupper(*margv[0]);
@@ -2554,9 +2562,8 @@ int FUNC mnu_admenu2(void)
 
 	if (margc > 0) {
 		if (*margv[0] >= '1' && *margv[0] <= '7') {
-			plnum = warsptr->where - 10;
-
-			getplanetdat(usrnum);
+			if (!load_admin_planet())
+				return 1;
 			fixplanetteam();
 
 			switch (*margv[0]) {
@@ -2645,9 +2652,8 @@ int FUNC mnu_admenu2b(void)
 {
 	unsigned long amt;
 
-	plnum = warsptr->where - 10;
-
-	getplanetdat(usrnum);
+	if (!load_admin_planet())
+		return 1;
 	amt = atol(margv[0]);
 
 	if (amt <= plptr->tax) {
@@ -2683,8 +2689,8 @@ int FUNC mnu_admenu2e(void)
 {
 	int i;
 
-	plnum = warsptr->where - 10;
-	getplanetdat(usrnum);
+	if (!load_admin_planet())
+		return 1;
 
 	for (i = 0; i < NUMITEMS; ++i) { /* skip notused */
 		if (genearas(kwrd[i], margv[0])) {
@@ -2708,8 +2714,8 @@ int FUNC mnu_admenu2f1(void)
 {
 	unsigned amt;
 
-	plnum = warsptr->where - 10;
-	getplanetdat(usrnum);
+	if (!load_admin_planet())
+		return 1;
 	amt = atoi(margv[0]);
 
 	if (margc == 0) {
@@ -2737,8 +2743,8 @@ int FUNC mnu_admenu2f2(void)
 {
 	unsigned amt;
 
-	plnum = warsptr->where - 10;
-	getplanetdat(usrnum);
+	if (!load_admin_planet())
+		return 1;
 	amt = atoi(margv[0]);
 
 	if (margc == 0) {
@@ -2765,8 +2771,8 @@ int FUNC mnu_admenu2f2(void)
 
 int FUNC mnu_admenu2f3(void)
 {
-	plnum = warsptr->where - 10;
-	getplanetdat(usrnum);
+	if (!load_admin_planet())
+		return 1;
 
 	if (margc == 0) {
 		titems[usrnum].sell = plptr->items[warsptr->titem].sell;
@@ -2793,8 +2799,8 @@ int FUNC mnu_admenu2f4(void)
 {
 	unsigned amt;
 
-	plnum = warsptr->where - 10;
-	getplanetdat(usrnum);
+	if (!load_admin_planet())
+		return 1;
 	amt = atoi(margv[0]);
 
 	if (margc == 0) {
@@ -2827,8 +2833,8 @@ int FUNC mnu_admenu2h(void)
 	amt = atoi(margv[0]);
 
 	if (margc == 1 && amt <= 100) {
-		plnum = warsptr->where - 10;
-		getplanetdat(usrnum);
+		if (!load_admin_planet())
+			return 1;
 
 		plptr->taxrate = amt;
 
@@ -2853,8 +2859,8 @@ int FUNC mnu_admenu2i(void)
 	int i;
 
 	if (margc == 1) {
-		plnum = warsptr->where - 10;
-		getplanetdat(usrnum);
+		if (!load_admin_planet())
+			return 1;
 
 		strncpy(plptr->password, margv[0], sizeof(plptr->password) - 1);
 		plptr->password[sizeof(plptr->password) - 1] = 0;
@@ -2910,9 +2916,8 @@ int FUNC mnu_admenu2i(void)
 
 int FUNC mnu_admenu2j(void)
 {
-	plnum = warsptr->where - 10;
-
-	getplanetdat(usrnum);
+	if (!load_admin_planet())
+		return 1;
 
 	if (margc == 0) {
 		plptr->beacon[0] = 0;
@@ -3116,9 +3121,8 @@ void FUNC update_items(void)
 {
 	int i, pcnt = 0;
 
-	plnum = warsptr->where - 10;
-
-	getplanetdat(usrnum);
+	if (!load_admin_planet())
+		return;
 
 	for (i = 0; i < NUMITEMS; ++i)
 		if (i != warsptr->titem)
