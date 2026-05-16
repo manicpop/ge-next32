@@ -3969,6 +3969,11 @@ int	count;
 
 {
 
+if (channel < nships && ingegame(channel))
+	ptr->lastfired = channel;
+else
+	ptr->lastfired = -1;
+
 if (channel < nterms && ingegame(channel))
 	{
 	if (count <= 1)
@@ -3992,11 +3997,6 @@ if (channel < nterms && ingegame(channel))
 			prfmsg(MTACC3+mt,count,shpltr(channel,usrn),ptr->shipname);
 		}
 	outprfge(FLT_NONE,channel);
-	ptr->lastfired = channel;
-	}
-else
-	{
-	ptr->lastfired = -1;
 	}
 }
 
