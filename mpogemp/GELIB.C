@@ -58,200 +58,194 @@
 #include "geglobal.h"
 
 /**************************************************************************
-** Determine the smallest of two complementary angles                    **
+** Return the smaller angular separation between two headings            **
 **************************************************************************/
 
-unsigned smallest(a1,a2)
-unsigned a1,a2;
-
+unsigned FUNC smallest(unsigned a1, unsigned a2)
 {
-int a;
+	int a;
 
-a = abs(a1-a2);
+	a = abs(a1 - a2);
 
-if (a > 180)
-	return (360 - a);
-else
-	return (a);
-}
-
-
-/**************************************************************************
-** Generate a random number                                              **
-**************************************************************************/
-
-double rndm(mod)
-double mod;
-{
-
-static randmax = (double)RAND_MAX;
-
-return(mod*(((double)((unsigned)rand()))/randmax));
-}
-
-
-unsigned int gernd()
-
-{
-return(rand());
-}
-
-
-double clamp_acos(v)
-double v;
-{
-if (v > 1.0)
-	return 1.0;
-if (v < -1.0)
-	return -1.0;
-return v;
-}
-
-/**************************************************************************
-** Calculate ship bearing between two objects                            **
-**************************************************************************/
-
-int	cbearing(ptr1, ptr2, heading)
-COORD	*ptr1,*ptr2;
-double	heading;
-
-{
-double b;
-
-b = vector(ptr1, ptr2);
-b = normal(360.0 - heading + b);
-
-if (b > 180.0)
-	b -= 360.0;
-else
-if (b < -180.0)
-	b += 360.0;
-
-if (b > -0.75 && b < 0.75)
-	b = 0.0;
-
-/* do the rounding here so we can cast to int cleanly elsewhere */
-if (b < 0.0)
-	b -= 0.4999;
-else
-	b += 0.4999;
-
-/* never show 180 as negative */
-if (b <= -180)
-	b = 180;
-
-return (int)b;
-}
-
-/**************************************************************************
-** Calculate the distance between two ships                              **
-**************************************************************************/
-
-double	cdistance(ptr1,ptr2)
-COORD	*ptr1,*ptr2;
-{
-double dx, dy;
-
-dx = ptr1->xcoord - ptr2->xcoord;
-dy = ptr1->ycoord - ptr2->ycoord;
-
-return sqrt((dx * dx) + (dy * dy));
-}
-
-/**************************************************************************
-** Calculate the angle from one ship to another                          **
-**************************************************************************/
-
-double	vector(ptr1,ptr2)
-COORD	*ptr1, *ptr2;
-
-{
-double	da, dx, dy, raw;
-
-/* handle exact alignment on an axis */
-if (fabs(ptr1->ycoord - ptr2->ycoord) <= VEC_EPS)
-	{
-	if (ptr1->xcoord < ptr2->xcoord)
-		return 90.0;
+	if (a > 180)
+		return 360 - a;
 	else
-	if (ptr1->xcoord > ptr2->xcoord)
-		return 270.0;
+		return a;
+}
+
+
+/**************************************************************************
+** Generate a floating-point random value from 0 up to mod              **
+**************************************************************************/
+
+double FUNC rndm(double mod)
+{
+	static double randmax = (double)RAND_MAX;
+
+	return mod * (((double)((unsigned)rand())) / randmax);
+}
+
+
+/**************************************************************************
+** Generate a raw integer random value                                   **
+**************************************************************************/
+
+unsigned int FUNC gernd(void)
+{
+	return rand();
+}
+
+
+/**************************************************************************
+** Clamp a value into the valid acos() input range                       **
+**************************************************************************/
+
+static double clamp_acos(double v)
+{
+	if (v > 1.0)
+		return 1.0;
+	if (v < -1.0)
+		return -1.0;
+	return v;
+}
+
+/**************************************************************************
+** Return the signed relative bearing from ptr1 to ptr2                  **
+**************************************************************************/
+
+int FUNC cbearing(COORD *ptr1, COORD *ptr2, double heading)
+{
+	double b;
+
+	b = vector(ptr1, ptr2);
+	b = normal(360.0 - heading + b);
+
+	/* fold the absolute angle into the signed -180..180 display range */
+	if (b > 180.0)
+		b -= 360.0;
+	else if (b < -180.0)
+		b += 360.0;
+
+	if (b > -0.75 && b < 0.75)
+		b = 0.0;
+
+	/* do the rounding here so we can cast to int cleanly elsewhere */
+	if (b < 0.0)
+		b -= 0.4999;
 	else
-		return 0.0;
+		b += 0.4999;
+
+	/* never show 180 as negative */
+	if (b <= -180)
+		b = 180;
+
+	return (int)b;
+}
+
+/**************************************************************************
+** Calculate the distance between two coordinates                        **
+**************************************************************************/
+
+double FUNC cdistance(COORD *ptr1, COORD *ptr2)
+{
+	double dx, dy;
+
+	dx = ptr1->xcoord - ptr2->xcoord;
+	dy = ptr1->ycoord - ptr2->ycoord;
+
+	return sqrt((dx * dx) + (dy * dy));
+}
+
+/**************************************************************************
+** Return the absolute heading from ptr1 to ptr2                         **
+**************************************************************************/
+
+double FUNC vector(COORD *ptr1, COORD *ptr2)
+{
+	double da, dx, dy, raw;
+
+	/* handle exact alignment on an axis */
+	if (fabs(ptr1->ycoord - ptr2->ycoord) <= VEC_EPS) {
+		if (ptr1->xcoord < ptr2->xcoord)
+			return 90.0;
+		else if (ptr1->xcoord > ptr2->xcoord)
+			return 270.0;
+		else
+			return 0.0;
 	}
 
-if (fabs(ptr1->xcoord - ptr2->xcoord) <= VEC_EPS)
-	{
-	if (ptr1->ycoord < ptr2->ycoord)
-		return 180.0;
-	else
-		return 0.0;
+	if (fabs(ptr1->xcoord - ptr2->xcoord) <= VEC_EPS) {
+		if (ptr1->ycoord < ptr2->ycoord)
+			return 180.0;
+		else
+			return 0.0;
 	}
 
-dx = ptr2->xcoord - ptr1->xcoord;
-dy = ptr2->ycoord - ptr1->ycoord;
-da = sqrt((dx*dx) + (dy*dy));
+	dx = ptr2->xcoord - ptr1->xcoord;
+	dy = ptr2->ycoord - ptr1->ycoord;
+	da = sqrt((dx * dx) + (dy * dy));
 
-raw = radtodeg(acos(clamp_acos((-dy) / da)));
+	/* derive the north-based world angle, then mirror into the west half-plane */
+	raw = radtodeg(acos(clamp_acos((-dy) / da)));
 
-if (dx >= 0.0)
-	return raw;
-else
-	return 360.0 - raw;
+	if (dx >= 0.0)
+		return raw;
+	else
+		return 360.0 - raw;
 }
 
 /**************************************************************************
 ** Bring an angle back into the range 0 - 360                            **
 **************************************************************************/
 
-double	normal (angle)
-double	angle;
+double FUNC normal(double angle)
 {
-while (angle < 0.0)
-	angle += 360.0;
-while (angle >= 360.0)
-	angle -= 360.0;
-return angle;
+	while (angle < 0.0)
+		angle += 360.0;
+	while (angle >= 360.0)
+		angle -= 360.0;
+	return angle;
 }
 
 /**************************************************************************
-** convert degrees to radiuns                                            **
+** Convert degrees to radians                                            **
 **************************************************************************/
 
-double degtorad(value)
-double value;
+double FUNC degtorad(double value)
 {
-return (value*(PI/180));
+	return value * (PI / 180);
 }
 
 /**************************************************************************
-** convert radiuns to degrees                                            **
+** Convert radians to degrees                                            **
 **************************************************************************/
 
-double radtodeg(value)
-double value;
+double FUNC radtodeg(double value)
 {
-return (value*(180/PI));
+	return value * (180 / PI);
 }
 
-unsigned coord2(dcoord)
-double dcoord;
+/**************************************************************************
+** Convert a world coordinate to a subsector coordinate                  **
+**************************************************************************/
+
+unsigned FUNC coord2(double dcoord)
 {
-double d1,d2;
-int    d3;
+	double d1, d2;
+	int d3;
 
-d2 =modf(1+modf(dcoord, &d1),&d1);
-d3 = (d2 * SSMAX);
+	d2 = modf(1 + modf(dcoord, &d1), &d1);
+	d3 = (d2 * SSMAX);
 
-return ((unsigned)d3);
-
+	return (unsigned)d3;
 }
 
 
-int coord1(dcoord)
-double dcoord;
+/**************************************************************************
+** Convert a world coordinate to a sector coordinate                     **
+**************************************************************************/
+
+int FUNC coord1(double dcoord)
 {
-
-return ((int)floor(dcoord));
-
+	return (int)floor(dcoord);
 }
