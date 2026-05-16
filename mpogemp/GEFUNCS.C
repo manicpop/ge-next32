@@ -61,768 +61,716 @@
 
 /* LOCAL GLOBAL DEFS *****************************************************/
 
-static long	deathdeduct;
-static void	shieldhitmsg();
+static long	deathdeduct;		/* death penalty amount to report after kill processing */
+static void	shieldhitmsg(int shmsg, int usrn);	/* map shieldhit() result codes to output messages */
 
-static int entrypend_empty(usrn)
-int	usrn;
+/**************************************************************************
+** Check whether a user's pending-entry buffer is empty                  **
+**************************************************************************/
+
+static int entrypend_empty(int usrn)
 {
-int	i;
-unsigned char	*pendptr;
+	int i;
+	unsigned char *pendptr;
 
-pendptr = entrypend + (usrn * entrybytes);
+	/* each user owns a fixed-width slice of the shared pending-entry buffer */
+	pendptr = entrypend + (usrn * entrybytes);
 
-for (i=0; i<entrybytes; ++i)
-	{
-	if (pendptr[i] != 0)
-		return(FALSE);
+	for (i = 0; i < entrybytes; ++i) {
+		if (pendptr[i] != 0)
+			return FALSE;
 	}
 
-return(TRUE);
+	return TRUE;
 }
 
-static int maint_steps(ptr)
-WARSHP	*ptr;
+/**************************************************************************
+** Count outstanding ship repair and maintenance steps                   **
+**************************************************************************/
+
+static int maint_steps(WARSHP *ptr)
 {
-int	steps;
+	int steps;
 
-steps = 0;
-if (ptr->helm < 0)
-	steps += -ptr->helm;
-if (ptr->tactical < 0)
-	steps += -ptr->tactical;
-if (ptr->phasr < 0)
-	steps += -ptr->phasr;
-if (ptr->torpcntl > 0)
-	steps += ptr->torpcntl;
-if (ptr->mislcntl > 0)
-	steps += ptr->mislcntl;
-if (ptr->cloak < 0)
-	steps += -ptr->cloak;
-if (ptr->jamload < 0)
-	steps += -ptr->jamload;
-if (ptr->decload < 0)
-	steps += -ptr->decload;
-if (ptr->zipload < 0)
-	steps += -ptr->zipload;
-if (ptr->mineload < 0)
-	steps += -ptr->mineload;
-
-return(steps);
-}
-
-static int maint_only_steps(ptr)
-WARSHP	*ptr;
-{
-int	steps;
-
-steps = 0;
-if (ptr->topspeed == 0 && shipclass[ptr->shpclass].max_warp > 0)
-	++steps;
-if (ptr->overspeed > 0)
-	++steps;
-
-return(steps);
-}
-
-static int shield_steps(ptr)
-WARSHP	*ptr;
-{
-int	need;
-
-if (ptr->shieldstat != SHIELDDM || ptr->shieldtype <= 0)
-	return(0);
-
-need = 1 - ptr->shield;
-if (need <= 0)
-	need = 1;
-
-return((need + ptr->shieldtype - 1) / ptr->shieldtype);
-}
-
-int FUNC repair_needed(ptr)
-WARSHP	*ptr;
-{
-if (ptr->damage > 0.0)
-	return(TRUE);
-if (shield_steps(ptr) > 0)
-	return(TRUE);
-if (maint_steps(ptr) > 0)
-	return(TRUE);
-if (maint_only_steps(ptr) > 0)
-	return(TRUE);
-return(FALSE);
-}
-
-unsigned FUNC repair_eta(ptr)
-WARSHP	*ptr;
-{
-int	hull_ticks,sys_ticks,sh_ticks,sysrate,ticks;
-double	hullrate;
-
-if (!ptr->repair)
-	return(0);
-
-hullrate = 3.0;
-sysrate = 5;
-hull_ticks = 0;
-if (ptr->damage > 0.0)
-	hull_ticks = (int)((ptr->damage / hullrate) + 0.999999);
-sys_ticks = (maint_steps(ptr) + maint_only_steps(ptr) + sysrate - 1) / sysrate;
-sh_ticks = (shield_steps(ptr) + sysrate - 1) / sysrate;
-
-ticks = hull_ticks;
-if (sys_ticks > ticks)
-	ticks = sys_ticks;
-if (sh_ticks > ticks)
-	ticks = sh_ticks;
-
-return((unsigned)(ticks * TICKTIME));
-}
-
-void FUNC fullrepair(ptr)
-WARSHP	*ptr;
-{
-ptr->repair = 0;
-ptr->damage = 0.0;
-if (ptr->phasr < 1)
-	ptr->phasr = 0;
-ptr->tactical = 0;
-ptr->helm = 0;
-if (ptr->cloak < 1)
-	ptr->cloak = 0;
-ptr->torpcntl = 0;
-ptr->mislcntl = 0;
-ptr->zipload = 0;
-ptr->jamload = 0;
-ptr->decload = 0;
-ptr->mineload = 0;
-ptr->torps_fired = 0;
-ptr->missl_fired = 0;
-
-if (ptr->shieldstat == SHIELDDM)
-	ptr->shieldstat = SHIELDDN;
-if (ptr->shield < 1)
-	ptr->shield = 0;
-if (shipclass[ptr->shpclass].max_warp > 0)
-	ptr->topspeed = shipclass[ptr->shpclass].max_warp;
-ptr->overspeed = 0;
-}
-
-static void repair_systems(ptr,usrn,steps,domaint)
-WARSHP	*ptr;
-int	usrn;
-int	steps;
-int	domaint;
-{
-int	fix;
-
-while (steps > 0)
-	{
+	steps = 0;
 	if (ptr->helm < 0)
-		{
-		fix = (steps < -ptr->helm) ? steps : -ptr->helm;
-		ptr->helm += fix;
-		steps -= fix;
-		if (ptr->helm == 0)
-			{
-			prfmsg(HLREPR);
-			outprfge(FLT_NONE,usrn);
-			}
-		continue;
-		}
-
+		steps += -ptr->helm;
 	if (ptr->tactical < 0)
-		{
-		fix = (steps < -ptr->tactical) ? steps : -ptr->tactical;
-		ptr->tactical += fix;
-		steps -= fix;
-		if (ptr->tactical == 0)
-			{
-			prfmsg(TAREPR);
-			outprfge(FLT_NONE,usrn);
-			}
-		continue;
-		}
-
+		steps += -ptr->tactical;
 	if (ptr->phasr < 0)
-		{
-		fix = (steps < -ptr->phasr) ? steps : -ptr->phasr;
-		ptr->phasr += fix;
-		steps -= fix;
-		if (ptr->phasr == 0)
-			{
-			prfmsg(PHREPR);
-			outprfge(FLT_NONE,usrn);
-			}
-		continue;
-		}
-
+		steps += -ptr->phasr;
 	if (ptr->torpcntl > 0)
-		{
-		fix = (steps < ptr->torpcntl) ? steps : ptr->torpcntl;
-		ptr->torpcntl -= fix;
-		steps -= fix;
-		if (ptr->torpcntl == 0)
-			{
-			prfmsg(FCREPRT);
-			outprfge(FLT_NONE,usrn);
-			}
-		continue;
-		}
-
+		steps += ptr->torpcntl;
 	if (ptr->mislcntl > 0)
-		{
-		fix = (steps < ptr->mislcntl) ? steps : ptr->mislcntl;
-		ptr->mislcntl -= fix;
-		steps -= fix;
-		if (ptr->mislcntl == 0)
-			{
-			prfmsg(FCREPRM);
-			outprfge(FLT_NONE,usrn);
-			}
-		continue;
-		}
-
+		steps += ptr->mislcntl;
 	if (ptr->cloak < 0)
-		{
-		fix = (steps < -ptr->cloak) ? steps : -ptr->cloak;
-		ptr->cloak += fix;
-		steps -= fix;
-		if (ptr->cloak == 0)
-			{
-			prfmsg(CLREPR);
-			outprfge(FLT_NONE,usrn);
-			}
-		continue;
-		}
-
+		steps += -ptr->cloak;
 	if (ptr->jamload < 0)
-		{
-		fix = (steps < -ptr->jamload) ? steps : -ptr->jamload;
-		ptr->jamload += fix;
-		steps -= fix;
-		if (ptr->jamload == 0)
-			{
-			prfmsg(REPRJ);
-			outprfge(FLT_NONE,usrn);
-			}
-		continue;
-		}
-
+		steps += -ptr->jamload;
 	if (ptr->decload < 0)
-		{
-		fix = (steps < -ptr->decload) ? steps : -ptr->decload;
-		ptr->decload += fix;
-		steps -= fix;
-		if (ptr->decload == 0)
-			{
-			prfmsg(REPRD);
-			outprfge(FLT_NONE,usrn);
-			}
-		continue;
-		}
-
+		steps += -ptr->decload;
 	if (ptr->zipload < 0)
-		{
-		fix = (steps < -ptr->zipload) ? steps : -ptr->zipload;
-		ptr->zipload += fix;
-		steps -= fix;
-		if (ptr->zipload == 0)
-			{
-			prfmsg(REPRZ);
-			outprfge(FLT_NONE,usrn);
-			}
-		continue;
-		}
-
+		steps += -ptr->zipload;
 	if (ptr->mineload < 0)
-		{
-		fix = (steps < -ptr->mineload) ? steps : -ptr->mineload;
-		ptr->mineload += fix;
-		steps -= fix;
-		if (ptr->mineload == 0)
-			{
-			prfmsg(REPRMN);
-			outprfge(FLT_NONE,usrn);
-			}
-		continue;
-		}
+		steps += -ptr->mineload;
+	if (ptr->topspeed == 0 && shipclass[ptr->shpclass].max_warp > 0)
+		++steps;
+	if (ptr->overspeed > 0)
+		++steps;
 
-	if (domaint && shipclass[ptr->shpclass].max_warp > 0
-		&& (ptr->topspeed != shipclass[ptr->shpclass].max_warp || ptr->overspeed > 0))
-		{
-		ptr->topspeed = shipclass[ptr->shpclass].max_warp;
-		ptr->overspeed = 0;
-		prfmsg(REPWARP);
-		outprfge(FLT_NONE,usrn);
-		--steps;
-		continue;
-		}
-
-	break;
-	}
+	return steps;
 }
 
-/* enhanced lock helpers */
+/**************************************************************************
+** Count repair steps needed to restore damaged shields                  **
+**************************************************************************/
 
-void FUNC lock_simple(ptr,usrn,msg,skipsame)
-WARSHP	*ptr;
-int	usrn;
-int	msg;
-int	skipsame;
+static int shield_steps(WARSHP *ptr)
 {
-WARSHP	*lptr;
-int	i;
-int	px,py,lx,ly;
-char	letter;
+	int need;
 
-if (skipsame)
-	{
-	px = coord1(ptr->coord.xcoord);
-	py = coord1(ptr->coord.ycoord);
-	}
+	if (ptr->shieldstat != SHIELDDM || ptr->shieldtype <= 0)
+		return 0;
 
-for (i=0;i<nterms;++i)
-	{
-	if (!ingegame(i) || i == usrn)
-		continue;
+	need = 1 - ptr->shield;
+	if (need <= 0)
+		need = 1;
 
-	lptr = warshpoff(i);
-	if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
-		continue;
+	return (need + ptr->shieldtype - 1) / ptr->shieldtype;
+}
 
-	if (skipsame)
-		{
-		lx = coord1(lptr->coord.xcoord);
-		ly = coord1(lptr->coord.ycoord);
-		if (lx == px && ly == py)
+/**************************************************************************
+** Check whether a ship needs any kind of maintenance or repair          **
+**************************************************************************/
+
+int FUNC repair_needed(WARSHP *ptr)
+{
+	if (ptr->damage > 0.0)
+		return TRUE;
+	if (shield_steps(ptr) > 0)
+		return TRUE;
+	if (maint_steps(ptr) > 0)
+		return TRUE;
+	return FALSE;
+}
+
+/**************************************************************************
+** Estimate the remaining repair time for a ship already in maintenance  **
+**************************************************************************/
+
+unsigned FUNC repair_eta(WARSHP *ptr)
+{
+	int hull_ticks, sys_ticks, sh_ticks, sysrate, ticks;
+	double hullrate;
+
+	if (!ptr->repair)
+		return 0;
+
+	hullrate = 3.0;
+	sysrate = 5;
+	hull_ticks = 0;
+	if (ptr->damage > 0.0)
+		hull_ticks = (int)((ptr->damage / hullrate) + 0.999999);
+	sys_ticks = (maint_steps(ptr) + sysrate - 1) / sysrate;
+	sh_ticks = (shield_steps(ptr) + sysrate - 1) / sysrate;
+
+	ticks = hull_ticks;
+	if (sys_ticks > ticks)
+		ticks = sys_ticks;
+	if (sh_ticks > ticks)
+		ticks = sh_ticks;
+
+	return (unsigned)(ticks * TICKTIME);
+}
+
+/**************************************************************************
+** Repair ship completely, instantly (SYSOP and ge-arena only)           **
+**************************************************************************/
+
+void FUNC fullrepair(WARSHP *ptr)
+{
+	ptr->repair = 0;
+	ptr->damage = 0.0;
+	if (ptr->phasr < 1)
+		ptr->phasr = 0;
+	ptr->tactical = 0;
+	ptr->helm = 0;
+	if (ptr->cloak < 1)
+		ptr->cloak = 0;
+	ptr->torpcntl = 0;
+	ptr->mislcntl = 0;
+	ptr->zipload = 0;
+	ptr->jamload = 0;
+	ptr->decload = 0;
+	ptr->mineload = 0;
+	ptr->torps_fired = 0;
+	ptr->missl_fired = 0;
+
+	if (ptr->shieldstat == SHIELDDM)
+		ptr->shieldstat = SHIELDDN;
+	if (ptr->shield < 1)
+		ptr->shield = 0;
+	if (shipclass[ptr->shpclass].max_warp > 0)
+		ptr->topspeed = shipclass[ptr->shpclass].max_warp;
+	ptr->overspeed = 0;
+}
+
+/**************************************************************************
+** Spend maintenance steps repairing systems in priority order           **
+**************************************************************************/
+
+static void repair_systems(WARSHP *ptr, int usrn, int steps, int domaint)
+{
+	int fix;
+
+	while (steps > 0) {
+		if (ptr->helm < 0) {
+			fix = (steps < -ptr->helm) ? steps : -ptr->helm;
+			ptr->helm += fix;
+			steps -= fix;
+			if (ptr->helm == 0) {
+				prfmsg(HLREPR);
+				outprfge(FLT_NONE,usrn);
+			}
 			continue;
 		}
 
-	letter = shpltr(i,usrn);
-	if (letter == '?')
-		continue;
+		if (ptr->tactical < 0) {
+			fix = (steps < -ptr->tactical) ? steps : -ptr->tactical;
+			ptr->tactical += fix;
+			steps -= fix;
+			if (ptr->tactical == 0) {
+				prfmsg(TAREPR);
+				outprfge(FLT_NONE,usrn);
+			}
+			continue;
+		}
 
-	prfmsg(msg,letter);
-	outprfge(FLT_NONE,i);
+		if (ptr->phasr < 0) {
+			fix = (steps < -ptr->phasr) ? steps : -ptr->phasr;
+			ptr->phasr += fix;
+			steps -= fix;
+			if (ptr->phasr == 0) {
+				prfmsg(PHREPR);
+				outprfge(FLT_NONE,usrn);
+			}
+			continue;
+		}
+
+		if (ptr->torpcntl > 0) {
+			fix = (steps < ptr->torpcntl) ? steps : ptr->torpcntl;
+			ptr->torpcntl -= fix;
+			steps -= fix;
+			if (ptr->torpcntl == 0) {
+				prfmsg(FCREPRT);
+				outprfge(FLT_NONE,usrn);
+			}
+			continue;
+		}
+
+		if (ptr->mislcntl > 0) {
+			fix = (steps < ptr->mislcntl) ? steps : ptr->mislcntl;
+			ptr->mislcntl -= fix;
+			steps -= fix;
+			if (ptr->mislcntl == 0) {
+				prfmsg(FCREPRM);
+				outprfge(FLT_NONE,usrn);
+			}
+			continue;
+		}
+
+		if (ptr->cloak < 0) {
+			fix = (steps < -ptr->cloak) ? steps : -ptr->cloak;
+			ptr->cloak += fix;
+			steps -= fix;
+			if (ptr->cloak == 0) {
+				prfmsg(CLREPR);
+				outprfge(FLT_NONE,usrn);
+			}
+			continue;
+		}
+
+		if (ptr->jamload < 0) {
+			fix = (steps < -ptr->jamload) ? steps : -ptr->jamload;
+			ptr->jamload += fix;
+			steps -= fix;
+			if (ptr->jamload == 0) {
+				prfmsg(REPRJ);
+				outprfge(FLT_NONE,usrn);
+			}
+			continue;
+		}
+
+		if (ptr->decload < 0) {
+			fix = (steps < -ptr->decload) ? steps : -ptr->decload;
+			ptr->decload += fix;
+			steps -= fix;
+			if (ptr->decload == 0) {
+				prfmsg(REPRD);
+				outprfge(FLT_NONE,usrn);
+			}
+			continue;
+		}
+
+		if (ptr->zipload < 0) {
+			fix = (steps < -ptr->zipload) ? steps : -ptr->zipload;
+			ptr->zipload += fix;
+			steps -= fix;
+			if (ptr->zipload == 0) {
+				prfmsg(REPRZ);
+				outprfge(FLT_NONE,usrn);
+			}
+			continue;
+		}
+
+		if (ptr->mineload < 0) {
+			fix = (steps < -ptr->mineload) ? steps : -ptr->mineload;
+			ptr->mineload += fix;
+			steps -= fix;
+			if (ptr->mineload == 0) {
+				prfmsg(REPRMN);
+				outprfge(FLT_NONE,usrn);
+			}
+			continue;
+		}
+
+		if (domaint && shipclass[ptr->shpclass].max_warp > 0
+			&& (ptr->topspeed != shipclass[ptr->shpclass].max_warp || ptr->overspeed > 0)) {
+			ptr->topspeed = shipclass[ptr->shpclass].max_warp;
+			ptr->overspeed = 0;
+			prfmsg(REPWARP);
+			outprfge(FLT_NONE,usrn);
+			--steps;
+			continue;
+		}
+
+		break;
 	}
 }
 
-void FUNC lock_sector(ptr,usrn,msg)
-WARSHP	*ptr;
-int	usrn;
-int	msg;
+/**************************************************************************
+** Notify enhanced-lock observers about a simple ship event             **
+**************************************************************************/
+
+void FUNC lock_simple(WARSHP *ptr, int usrn, int msg, int skipsame)
 {
-WARSHP	*lptr;
-int	i;
-int	sx,sy;
-char	letter;
+	WARSHP *lptr;
+	int i;
+	int px, py, lx, ly;
+	char letter;
 
-sx = coord1(ptr->coord.xcoord);
-sy = coord1(ptr->coord.ycoord);
+	if (skipsame) {
+		px = coord1(ptr->coord.xcoord);
+		py = coord1(ptr->coord.ycoord);
+	}
 
-for (i=0;i<nterms;++i)
-	{
-	if (!ingegame(i) || i == usrn)
-		continue;
+	for (i = 0; i < nterms; ++i) {
+		if (!ingegame(i) || i == usrn)
+			continue;
 
-	lptr = warshpoff(i);
-	if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
-		continue;
+		lptr = warshpoff(i);
+		if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
+			continue;
 
-	letter = shpltr(i,usrn);
-	if (letter == '?')
-		continue;
+		if (skipsame) {
+			lx = coord1(lptr->coord.xcoord);
+			ly = coord1(lptr->coord.ycoord);
+			if (lx == px && ly == py)
+				continue;
+		}
 
-	prfmsg(msg,letter,sx,sy);
-	outprfge(FLT_NONE,i);
+		letter = shpltr(i,usrn);
+		if (letter == '?')
+			continue;
+
+		prfmsg(msg,letter);
+		outprfge(FLT_NONE,i);
 	}
 }
 
-void FUNC lock_proj(usrn,target,msg,msgn)
-int	usrn;
-int	target;
-int	msg;
-int	msgn;
+/**************************************************************************
+** Notify enhanced-lock observers about a ship event and sector         **
+**************************************************************************/
+
+void FUNC lock_sector(WARSHP *ptr, int usrn, int msg)
 {
-WARSHP	*lptr;
-int	i;
-char	sletter,tletter;
+	WARSHP *lptr;
+	int i;
+	int sx, sy;
+	char letter;
 
-for (i=0;i<nterms;++i)
-	{
-	if (!ingegame(i) || i == usrn || i == target)
-		continue;
+	sx = coord1(ptr->coord.xcoord);
+	sy = coord1(ptr->coord.ycoord);
 
-	lptr = warshpoff(i);
-	if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
-		continue;
+	for (i = 0; i < nterms; ++i) {
+		if (!ingegame(i) || i == usrn)
+			continue;
 
-	sletter = shpltr(i,usrn);
-	if (sletter == '?')
-		continue;
+		lptr = warshpoff(i);
+		if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
+			continue;
 
-	tletter = shpltr(i,target);
-	if (tletter == '?')
-		prfmsg(msgn,sletter);
-	else
-		prfmsg(msg,sletter,tletter);
-	outprfge(FLT_NONE,i);
+		letter = shpltr(i,usrn);
+		if (letter == '?')
+			continue;
+
+		prfmsg(msg,letter,sx,sy);
+		outprfge(FLT_NONE,i);
 	}
 }
 
-double FUNC ship_accel(ptr)
-WARSHP	*ptr;
+/**************************************************************************
+** Notify enhanced-lock observers about a projectile fired at a target   **
+**************************************************************************/
+
+void FUNC lock_proj(int usrn, int target, int msg, int msgn)
 {
-double	accelrate;
+	WARSHP *lptr;
+	int i;
+	char sletter, tletter;
 
-accelrate = (double)shipclass[ptr->shpclass].max_accel;
-if (ptr->upgrade & ACCELBST)
-	accelrate *= 2.0;
+	for (i = 0; i < nterms; ++i) {
+		if (!ingegame(i) || i == usrn || i == target)
+			continue;
 
-return(accelrate);
+		lptr = warshpoff(i);
+		if (!(lptr->upgrade & ENHLOCK) || lptr->lock != usrn)
+			continue;
+
+		sletter = shpltr(i,usrn);
+		if (sletter == '?')
+			continue;
+
+		tletter = shpltr(i,target);
+		if (tletter == '?')
+			prfmsg(msgn,sletter);
+		else
+			prfmsg(msg,sletter,tletter);
+		outprfge(FLT_NONE,i);
+	}
 }
 
-long FUNC ship_scanrange(ptr)
-WARSHP	*ptr;
+/**************************************************************************
+** Return a ship's effective acceleration rate                          **
+**************************************************************************/
+
+double FUNC ship_accel(WARSHP *ptr)
 {
-long	range;
+	double accelrate;
 
-range = shipclass[ptr->shpclass].scanrange;
-if (ptr->upgrade & SCANBST)
-	range *= 2L;
+	accelrate = (double)shipclass[ptr->shpclass].max_accel;
+	if (ptr->upgrade & ACCELBST)
+		accelrate *= 2.0;
 
-return(range);
+	return accelrate;
 }
 
-void FUNC firep(ptr,usrn)
-WARSHP	*ptr;
-int	usrn;
+/**************************************************************************
+** Return a ship's effective scan range                                 **
+**************************************************************************/
+
+long FUNC ship_scanrange(WARSHP *ptr)
 {
-WARSHP	*wptr;
-WARUSR	*wuptr;
+	long range;
 
-unsigned deg;
-double factor;
-byte src_neb,targ_neb,nebmask,underone;
+	range = shipclass[ptr->shpclass].scanrange;
+	if (ptr->upgrade & SCANBST)
+		range *= 2L;
 
-int hitone;
-int fired;
-int locksent;
-int shmsg;
+	return range;
+}
 
-hitone = FALSE;
-fired = FALSE;
-locksent = FALSE;
+/**************************************************************************
+** Fire standard phasers at targets inside the current firing arc        **
+**************************************************************************/
 
-if (ptr->cloak > 0 )
-	{
-	prfmsg(PCLOKUP,"The phasers are");
-	outprfge(FLT_NONE,usrn);
-	return;
+void FUNC firep(WARSHP *ptr, int usrn)
+{
+	WARSHP *wptr;
+	WARUSR *wuptr;
+	unsigned deg;
+	double factor;
+	byte src_neb, targ_neb, nebmask, underone;
+	int hitone;
+	int fired;
+	int locksent;
+	int shmsg;
+
+	hitone = FALSE;
+	fired = FALSE;
+	locksent = FALSE;
+
+	if (ptr->cloak > 0) {
+		prfmsg(PCLOKUP,"The phasers are");
+		outprfge(FLT_NONE,usrn);
+		return;
 	}
 
-if (ptr->damage >= 100.0) /* no firing in the brief period between going over 100 and blowing up */
-	{
-	prfmsg(RNDPHSR);
-	outprfge(FLT_NONE,usrn);
-	return;
+	if (ptr->damage >= 100.0) { /* no firing in the brief period between going over 100 and blowing up */
+		prfmsg(RNDPHSR);
+		outprfge(FLT_NONE,usrn);
+		return;
 	}
 
-if (ptr->shieldstat == SHIELDUP && ptr->status == GESTAT_USER)
-	{
-	shielddn(ptr,usrn);
+	if (ptr->shieldstat == SHIELDUP && ptr->status == GESTAT_USER)
+		shielddn(ptr,usrn);
+
+	if (ptr->phasr < PMINFIRE) {
+		prfmsg(PHANONE);
+		outprfge(FLT_NONE,usrn);
+		return;
 	}
 
-if (ptr->phasr >=PMINFIRE)
-	{
-	if (neutral(&ptr->coord))
-		{
+	if (neutral(&ptr->coord)) {
 		zaphim(ptr,usrn);
 		prfmsg(FRCTER);
 		outprfge(FLT_NONE,usrn);
 		return;
-		}
+	}
+
 	deg = (unsigned)(normal(ptr->heading + (double)ptr->degrees) + 0.5);
-	if (ptr->status == GESTAT_USER)
-		{
+	if (ptr->status == GESTAT_USER) {
 		prfmsg(PFIRED,(int)ptr->phasr,ptr->percent);
 		outprfge(FLT_NONE,usrn);
 		fired = TRUE;
 		lock_simple(ptr,usrn,LOCKPHA,0);
 		locksent = TRUE;
-		}
+	}
+
 	src_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
-	for (othusn=0 ; othusn < nships ; othusn++)
-		{
-		wptr=warshpoff(othusn);
+	for (othusn = 0; othusn < nships; ++othusn) {
+		wptr = warshpoff(othusn);
 		if (ptr->status == GESTAT_USER && wptr->status == GESTAT_USER)
 			wuptr = warusroff(othusn);
-		ddistance = cdistance(&ptr->coord,&wptr->coord)*10000;
-		if (ingegame(othusn) && (wptr->where != 1 || ptr->phasrtype >= phatowrp) && ddistance < 100000.0)
-			{
-			if (othusn != usrn && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
-				|| shipclass[ptr->shpclass].faction == 0) && (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn)
+		ddistance = cdistance(&ptr->coord,&wptr->coord) * 10000;
+		if (ingegame(othusn) && (wptr->where != 1 || ptr->phasrtype >= phatowrp) && ddistance < 100000.0) {
+			if (othusn != usrn
+				&& (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
+					|| shipclass[ptr->shpclass].faction == 0)
+				&& (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn)
 				&& (ptr->status != GESTAT_USER || wptr->status != GESTAT_USER || warusroff(usrn)->teamcode == 0
-				|| wuptr->teamcode != warusroff(usrn)->teamcode || ptr->lock == othusn))
-				{
+					|| wuptr->teamcode != warusroff(usrn)->teamcode || ptr->lock == othusn)) {
 				heading = (unsigned)(vector(&ptr->coord,&wptr->coord) + 0.5);
-				if (smallest(heading,deg) < ptr->percent+PHABIAS)
-					{
+				if (smallest(heading,deg) < ptr->percent + PHABIAS) {
 					factor = pdamage(ptr,ddistance,ptr->percent);
 					factor *= 0.5 + (double)ptr->phasrtype / 2.0;
 					factor = ton_fact(wptr,factor);
 
 					/* lower it for hyper */
 					if (wptr->where == 1)
-						factor = factor /2.0;
+						factor = factor / 2.0;
 
-					if (factor > 0.0)
-						{
-						if (neutral(&wptr->coord))
-							{
+					if (factor > 0.0) {
+						if (neutral(&wptr->coord)) {
 							prfmsg(PDEFNEUT,username(wptr));
 							outprfge(FLT_NONE,usrn);
-							}
-						else
-							{
+						}
+						else {
 							if (ptr->status == GESTAT_AUTO && factor < 0.5)
 								continue;
-							if (fired == FALSE)
-								{
+							if (fired == FALSE) {
 								prfmsg(PFIRED,(int)ptr->phasr,ptr->percent);
 								outprfge(FLT_NONE,usrn);
 								fired = TRUE;
-								if (locksent == FALSE)
-									{
+								if (locksent == FALSE) {
 									lock_simple(ptr,usrn,LOCKPHA,0);
 									locksent = TRUE;
-									}
 								}
+							}
 							underone = (factor < 1.0);
 							if (underone == TRUE)	/* hit, but no damage */
 								factor = 0.0;
 							hitone = TRUE;
 							/* prioritize user hits over npcs so users get credit */
-							if (wptr->damage < 100.0 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
+							if (wptr->damage < 100.0
+								|| (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO
+									&& ptr->status == GESTAT_USER))
 								wptr->lastfired = usrn;
-							if (underone || wptr->shieldstat == SHIELDUP)
-								{
-								if (wptr->cantexit < FIRETICKS/2)
-									wptr->cantexit = FIRETICKS/2;
-								if (ptr->cantexit < FIRETICKS/2)
-									ptr->cantexit = FIRETICKS/2;
-								}
-							else
-								{
+							if (underone || wptr->shieldstat == SHIELDUP) {
+								if (wptr->cantexit < FIRETICKS / 2)
+									wptr->cantexit = FIRETICKS / 2;
+								if (ptr->cantexit < FIRETICKS / 2)
+									ptr->cantexit = FIRETICKS / 2;
+							}
+							else {
 								wptr->cantexit = FIRETICKS;
 								ptr->cantexit = FIRETICKS;
-								}
-							if (wptr->status == GESTAT_AUTO)	/* if npc... */
-								{
+							}
+							if (wptr->status == GESTAT_AUTO) {	/* if npc... */
 								wptr->cybmine = usrn;	/* engage user */
 								wptr->cyb_grace = CYBGRACE;
 								wptr->tick = 2;		/* do it fast */
 								wptr->npcmsg = 255;	/* reset annoy msg tracking */
-								}
+							}
 							targ_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
 							nebmask = (byte)((src_neb || targ_neb) && !(src_neb && targ_neb && ddistance < (double)NEBRNG));
-							if (wptr->shieldstat != SHIELDUP)
-								{
+							if (wptr->shieldstat != SHIELDUP) {
 								damstr((int)factor);
 								if (nebmask)
 									prfmsg(PHITHIMN,gechrbuf,coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
-								else
-								if (wptr->cloak == 10)
+								else if (wptr->cloak == 10)
 									prfmsg(PHITHIMC,gechrbuf);
-								else
-								if (wptr->status == GESTAT_AUTO)
+								else if (wptr->status == GESTAT_AUTO)
 									prfmsg(PHITNPC,gechrbuf,username(wptr));
 								else
 									prfmsg(PHITHIM,gechrbuf,username(wptr));
 								outprfge(FLT_NONE,usrn);
-								if (nebmask)
-									{
-									bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading)+.5);
+								if (nebmask) {
+									bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading) + .5);
 									prfmsg(PHITYOUN,bearing,gechrbuf);
-									}
-								else
-								if (ptr->status == GESTAT_AUTO)
+								}
+								else if (ptr->status == GESTAT_AUTO)
 									prfmsg(PNPCHIT,username(ptr),gechrbuf);
 								else
 									prfmsg(PHITYOU,username(ptr),gechrbuf);
 								outprfge(FLT_NONE,othusn);
 								/* cap npc-on-npc phasers so big ships don't get one shot kills */
-								if (ptr->status == GESTAT_AUTO && wptr->status == GESTAT_AUTO &&
-									factor >= (double)((shipclass[ptr->shpclass].tough_factor+1)*5+5))
-									wptr->damage += (double)((shipclass[ptr->shpclass].tough_factor+1)*5+(gernd()%5)+1);
+								if (ptr->status == GESTAT_AUTO && wptr->status == GESTAT_AUTO
+									&& factor >= (double)((shipclass[ptr->shpclass].tough_factor + 1) * 5 + 5))
+									wptr->damage += (double)((shipclass[ptr->shpclass].tough_factor + 1) * 5 + (gernd() % 5) + 1);
 								else
 									wptr->damage += factor;
 								wuptr = warusroff(usrn);
 								set_dislike(wuptr,shipclass[wptr->shpclass].faction,(int)factor);
 								randamage(wptr,othusn,factor); /*assess any random damage */
-								}
-							else
-								{
+							}
+							else {
 								shmsg = shieldhit(wptr,(int)factor); /* modify the damage */
 								wuptr = warusroff(usrn);
 								set_dislike(wuptr,shipclass[wptr->shpclass].faction,2);
 								if (nebmask)
 									prfmsg(PDEFLECN,coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
-								else
-								if (wptr->cloak == 10)
+								else if (wptr->cloak == 10)
 									prfmsg(PDEFLECC);
-								else
-								if (wptr->status == GESTAT_AUTO)
+								else if (wptr->status == GESTAT_AUTO)
 									prfmsg(PDEFLNPC,username(wptr));
 								else
 									prfmsg(PDEFLECT,username(wptr));
 								outprfge(FLT_NONE,usrn);
-								if (nebmask)
-									{
-									bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading)+.5);
+								if (nebmask) {
+									bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading) + .5);
 									prfmsg(PHITDEFN,bearing,(factor < 1.0) ? "<1" : spr("%d",(int)factor));
-									}
-								else
-								if (ptr->status == GESTAT_AUTO)
+								}
+								else if (ptr->status == GESTAT_AUTO)
 									prfmsg(PNPCDEF,username(ptr),(factor < 1.0) ? "<1" : spr("%d",(int)factor));
 								else
 									prfmsg(PHITDEF,username(ptr),(factor < 1.0) ? "<1" : spr("%d",(int)factor));
 								outprfge(FLT_NONE,othusn);
 								shieldhitmsg(shmsg,othusn);
-								}
 							}
 						}
 					}
 				}
 			}
 		}
+	}
 
 	if (hitone == TRUE || ptr->status == GESTAT_USER)	/* if NPC, don't actually fire unless doing damage */
-		{
 		ptr->phasr = 0;
-		}
-	}
-else
-	{
-	prfmsg(PHANONE);
-	outprfge(FLT_NONE,usrn);
-	}
 }
 
-void FUNC firehp(ptr,usrn)
-WARSHP	*ptr;
-int	usrn;
+/**************************************************************************
+** Fire hyper-phasers at hyperspace targets within the beam width        **
+**************************************************************************/
+
+void FUNC firehp(WARSHP *ptr, int usrn)
 {
-WARSHP	*wptr;
-WARUSR	*wuptr;
-unsigned deg;
-double factor;
-byte src_neb,targ_neb,nebmask;
+	WARSHP *wptr;
+	WARUSR *wuptr;
+	unsigned deg;
+	double factor;
+	byte src_neb, targ_neb, nebmask;
 
-
-if (ptr->damage >= 100.0)
-	{
-	prfmsg(RNDPHSR);
-	outprfge(FLT_NONE,usrn);
-	return;
+	if (ptr->damage >= 100.0) {
+		prfmsg(RNDPHSR);
+		outprfge(FLT_NONE,usrn);
+		return;
 	}
 
-if (neutral(&ptr->coord))
-	{
-	zaphim(ptr,usrn);
-	prfmsg(FRCTER);
-	outprfge(FLT_NONE,usrn);
-	return;
+	if (neutral(&ptr->coord)) {
+		zaphim(ptr,usrn);
+		prfmsg(FRCTER);
+		outprfge(FLT_NONE,usrn);
+		return;
 	}
 
-if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
-	{
-	deg = (unsigned)normal(ptr->heading + (double)ptr->degrees);
-	prfmsg(HPFIRED,deg);
-	outprfge(FLT_NONE,usrn);
-	lock_simple(ptr,usrn,LOCKHPHA,0);
-	src_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
-	ptr->energy -= HPFIRAMT;
-	ptr->hypha = 1;
-	for (othusn=0 ; othusn < nships ; othusn++)
-		{
-		wptr=warshpoff(othusn);
-		if (ptr->status == GESTAT_USER && wptr->status == GESTAT_USER)
-			wuptr = warusroff(othusn);
-		ddistance = cdistance(&ptr->coord,&wptr->coord)*10000;
-		if (ingegame(othusn) && wptr->where == 1 && ddistance < 100000.0)
-			{
-			if (othusn != usrn && (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
-				|| shipclass[ptr->shpclass].faction == 0) && (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn)
-				&& (ptr->status != GESTAT_USER || wptr->status != GESTAT_USER || warusroff(usrn)->teamcode == 0
-				|| wuptr->teamcode != warusroff(usrn)->teamcode || ptr->lock == othusn))
-				{
-				heading = (unsigned)vector(&ptr->coord,&wptr->coord);
-				if (smallest(heading,deg) < HPBEAMW)
-					{
-						if (ddistance < (double)ship_scanrange(ptr))
-						{
-						factor = pdamage(ptr,ddistance,0);
-						factor *= 0.5 + (double)ptr->phasrtype / 2.0;
-						factor = ton_fact(wptr,factor);
+	if (fluxstat(ptr,usrn,HPFIRAMT) == 1) {
+		deg = (unsigned)normal(ptr->heading + (double)ptr->degrees);
+		prfmsg(HPFIRED,deg);
+		outprfge(FLT_NONE,usrn);
+		lock_simple(ptr,usrn,LOCKHPHA,0);
+		src_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
+		ptr->energy -= HPFIRAMT;
+		ptr->hypha = 1;
+		for (othusn = 0; othusn < nships; ++othusn) {
+			wptr = warshpoff(othusn);
+			if (ptr->status == GESTAT_USER && wptr->status == GESTAT_USER)
+				wuptr = warusroff(othusn);
+			ddistance = cdistance(&ptr->coord,&wptr->coord) * 10000;
+			if (ingegame(othusn) && wptr->where == 1 && ddistance < 100000.0) {
+				if (othusn != usrn
+					&& (shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction
+						|| shipclass[ptr->shpclass].faction == 0)
+					&& (wptr->distress == 255 || wptr->distress == usrn || ptr->lock == othusn)
+					&& (ptr->status != GESTAT_USER || wptr->status != GESTAT_USER || warusroff(usrn)->teamcode == 0
+						|| wuptr->teamcode != warusroff(usrn)->teamcode || ptr->lock == othusn)) {
+					heading = (unsigned)vector(&ptr->coord,&wptr->coord);
+					if (smallest(heading,deg) < HPBEAMW) {
+						if (ddistance < (double)ship_scanrange(ptr)) {
+							factor = pdamage(ptr,ddistance,0);
+							factor *= 0.5 + (double)ptr->phasrtype / 2.0;
+							factor = ton_fact(wptr,factor);
 
-						if (factor > 0.0)
-							{
-							if (neutral(&wptr->coord))
-								{
-								prfmsg(PDEFNEUT,username(wptr));
-								outprfge(FLT_NONE,usrn);
+							if (factor > 0.0) {
+								if (neutral(&wptr->coord)) {
+									prfmsg(PDEFNEUT,username(wptr));
+									outprfge(FLT_NONE,usrn);
 								}
-							else
-								{
-								if (factor < 1.0)	/* hit, but no damage */
-									factor = 0.0;
-								damstr((int)factor);
-								targ_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
-								nebmask = (byte)((src_neb || targ_neb) && !(src_neb && targ_neb && ddistance < (double)NEBRNG));
+								else {
+									if (factor < 1.0)	/* hit, but no damage */
+										factor = 0.0;
+									damstr((int)factor);
+									targ_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+									nebmask = (byte)((src_neb || targ_neb) && !(src_neb && targ_neb && ddistance < (double)NEBRNG));
 
-								if (nebmask)
-									prfmsg(HPHITNEB,gechrbuf,coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
-								else
-								if (wptr->status == GESTAT_AUTO)
-									prfmsg(HPHITN,gechrbuf,username(wptr));
-								else
-									prfmsg(HPHITM,gechrbuf,username(wptr));
-								outprfge(FLT_NONE,usrn);
-								if (nebmask)
-									{
-									bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading)+.5);
-									prfmsg(HPHITUN,bearing,gechrbuf);
+									if (nebmask)
+										prfmsg(HPHITNEB,gechrbuf,coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+									else if (wptr->status == GESTAT_AUTO)
+										prfmsg(HPHITN,gechrbuf,username(wptr));
+									else
+										prfmsg(HPHITM,gechrbuf,username(wptr));
+									outprfge(FLT_NONE,usrn);
+									if (nebmask) {
+										bearing = (int)(cbearing(&wptr->coord,&ptr->coord,wptr->heading) + .5);
+										prfmsg(HPHITUN,bearing,gechrbuf);
 									}
-								else
-								if (ptr->status == GESTAT_AUTO)
-									prfmsg(HPNHITU,username(ptr),gechrbuf);
-								else
-									prfmsg(HPHITU,username(ptr),gechrbuf);
-								outprfge(FLT_NONE,othusn);
-								/* prioritize user hits over npcs so users get credit */
-								if (wptr->damage < 100.0 || (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO && ptr->status == GESTAT_USER))
-									wptr->lastfired = usrn;
-								/* cap npc-on-npc phasers so big ships don't get one shot kills */
-								if (ptr->status == GESTAT_AUTO && wptr->status == GESTAT_AUTO &&
-									factor >= (double)((shipclass[ptr->shpclass].tough_factor+1)*5+5))
-									wptr->damage += (double)((shipclass[ptr->shpclass].tough_factor+1)*5+(gernd()%5)+1);
-								else
-									wptr->damage += factor;
-								wuptr = warusroff(usrn);
-								set_dislike(wuptr,shipclass[wptr->shpclass].faction,(int)factor);
-								if (wptr->status == GESTAT_AUTO)	/* if npc... */
-									{
-									wptr->cybmine = usrn;	/* engage user */
-									wptr->cyb_grace = CYBGRACE;
-									wptr->tick = 2;		/* do it fast */
-									wptr->npcmsg = 255;	/* reset annoy msg tracking */
+									else if (ptr->status == GESTAT_AUTO)
+										prfmsg(HPNHITU,username(ptr),gechrbuf);
+									else
+										prfmsg(HPHITU,username(ptr),gechrbuf);
+									outprfge(FLT_NONE,othusn);
+									/* prioritize user hits over npcs so users get credit */
+									if (wptr->damage < 100.0
+										|| (wptr->lastfired < nships && warshpoff(wptr->lastfired)->status == GESTAT_AUTO
+											&& ptr->status == GESTAT_USER))
+										wptr->lastfired = usrn;
+									/* cap npc-on-npc phasers so big ships don't get one shot kills */
+									if (ptr->status == GESTAT_AUTO && wptr->status == GESTAT_AUTO
+										&& factor >= (double)((shipclass[ptr->shpclass].tough_factor + 1) * 5 + 5))
+										wptr->damage += (double)((shipclass[ptr->shpclass].tough_factor + 1) * 5 + (gernd() % 5) + 1);
+									else
+										wptr->damage += factor;
+									wuptr = warusroff(usrn);
+									set_dislike(wuptr,shipclass[wptr->shpclass].faction,(int)factor);
+									if (wptr->status == GESTAT_AUTO) {	/* if npc... */
+										wptr->cybmine = usrn;	/* engage user */
+										wptr->cyb_grace = CYBGRACE;
+										wptr->tick = 2;		/* do it fast */
+										wptr->npcmsg = 255;	/* reset annoy msg tracking */
 									}
-								wptr->cantexit = FIRETICKS;
-								ptr->cantexit = FIRETICKS;
-								randamage(wptr,othusn,factor); /*assess any random damage */
+									wptr->cantexit = FIRETICKS;
+									ptr->cantexit = FIRETICKS;
+									randamage(wptr,othusn,factor); /*assess any random damage */
 								}
 							}
 						}
@@ -831,218 +779,189 @@ if (fluxstat(ptr,usrn,HPFIRAMT) == 1)
 			}
 		}
 	}
-else
-	{
-	prfmsg(HNOFIRP);
-	outprfge(FLT_NONE,usrn);
-	}
-}
-
-int FUNC torp(ptr,usrn,shpnum)
-WARSHP	*ptr;
-int	usrn;
-int	shpnum;
-
-{
-WARSHP	*wptr;
-WARSHP	*optr;
-byte	others[MAXTORPS],ocount,found;
-
-int	i,oi,slot;
-
-if (ptr->damage >= 100.0)
-	{
-	prfmsg(RNDTORP);
-	outprfge(FLT_NONE,usrn);
-	return(0);
-	}
-
-if (lockon(ptr,0,shpnum,usrn) == 1)
-	{
-	wptr = warshpoff(shpnum);
-	slot = -1;
-	for (i=0; i<MAXTORPS;++i)
-		{
-		if (wptr->ltorps[i].distance == 0)
-			{
-			slot = i;
-			break;
-			}
-		}
-	if (slot < 0)
-		{
-		prfmsg(TORMANY,MAXTORPS);
-		ocount = 0;
-		for (i=0; i<MAXTORPS; ++i)
-			{
-			if (wptr->ltorps[i].distance > 0 &&
-				wptr->ltorps[i].channel != (byte)usrn &&
-				wptr->ltorps[i].channel < nships &&
-				ingegame((int)wptr->ltorps[i].channel))
-				{
-				found = 0;
-				for (oi=0; oi<(int)ocount; ++oi)
-					{
-					if (others[oi] == wptr->ltorps[i].channel)
-						{
-						found = 1;
-						break;
-						}
-					}
-				if (!found && ocount < MAXTORPS)
-					others[ocount++] = wptr->ltorps[i].channel;
-				}
-			}
-		if (ocount > 0)
-			{
-			gechrbuf[0] = 0;
-			for (oi=0; oi<(int)ocount; ++oi)
-				{
-				optr = warshpoff((int)others[oi]);
-				if (oi > 0)
-					strcat(gechrbuf,", ");
-				strcat(gechrbuf,username(optr));
-				}
-			strcat(gechrbuf,(ocount > 1) ? " are" : " is");
-			prfmsg(TORMANY2,gechrbuf);
-			}
+	else {
+		prfmsg(HNOFIRP);
 		outprfge(FLT_NONE,usrn);
-		return(0);
-		}
-	if (ptr->torps_fired >= shipclass[ptr->shpclass].max_torps)
-		{
-		if (ptr->status != GESTAT_AUTO)
-			{
-			if (shipclass[ptr->shpclass].max_torps == 1)
-				prfmsg(TORPRELS);
-			else
-				prfmsg(TORPRELM);
-			outprfge(FLT_NONE,usrn);
-			}
-		return(0);
-		}
-	prfmsg(TFIRE1);
-	outprfge(FLT_NONE,usrn);
-	--ptr->items[I_TORPEDO];
-	++ptr->torps_fired;
-	lock_proj(usrn,shpnum,LOCKTOR,LOCKTORN);
-	prfmsg(TFIRE2,shpltr(shpnum,usrn));
-	outprfge(FLT_NONE,shpnum);
-	wptr->ltorps[slot].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
-	wptr->ltorps[slot].distance += 20;
-	wptr->ltorps[slot].channel = (unsigned char)usrn;
-	wptr->cantexit = FIRETICKS;
-	ptr->cantexit = FIRETICKS;
-	return(1);
 	}
-return(0);
 }
 
-int FUNC misl(ptr,usrnum,shpnum,energy,eng_flu)
-WARSHP	*ptr;
-int	usrnum, shpnum;
-unsigned energy, eng_flu;
+/**************************************************************************
+** Launch a torpedo at a locked target                                   **
+**************************************************************************/
 
+int FUNC torp(WARSHP *ptr, int usrn, int shpnum)
 {
-WARSHP *wptr;
-WARSHP *optr;
-byte	others[MAXMISSL],ocount,found;
-int	i,oi,slot;
+	WARSHP *wptr;
+	WARSHP *optr;
+	byte others[MAXTORPS], ocount, found;
+	int i, oi, slot;
 
-if (ptr->damage >= 100.0)
-	{
-	prfmsg(RNDMISL);
-	outprfge(FLT_NONE,usrnum);
-	return(0);
+	if (ptr->damage >= 100.0) {
+		prfmsg(RNDTORP);
+		outprfge(FLT_NONE,usrn);
+		return 0;
 	}
 
-if (lockon(ptr,1,shpnum,usrnum) == 1)
-	{
-	wptr=warshpoff(shpnum);
-	slot = -1;
-	for (i=0; i<MAXMISSL;++i)
-		{
-		if (wptr->lmissl[i].distance == 0)
-			{
-			slot = i;
-			break;
+	if (lockon(ptr,0,shpnum,usrn) == 1) {
+		wptr = warshpoff(shpnum);
+		slot = -1;
+		for (i = 0; i < MAXTORPS; ++i) {
+			if (wptr->ltorps[i].distance == 0) {
+				slot = i;
+				break;
 			}
 		}
-	if (slot < 0)
-		{
-		prfmsg(MISMANY,MAXMISSL);
-		ocount = 0;
-		for (i=0; i<MAXMISSL; ++i)
-			{
-			if (wptr->lmissl[i].distance > 0 &&
-				wptr->lmissl[i].channel != (byte)usrnum &&
-				wptr->lmissl[i].channel < nships &&
-				ingegame((int)wptr->lmissl[i].channel))
-				{
-				found = 0;
-				for (oi=0; oi<(int)ocount; ++oi)
-					{
-					if (others[oi] == wptr->lmissl[i].channel)
-						{
-						found = 1;
-						break;
+		if (slot < 0) {
+			prfmsg(TORMANY,MAXTORPS);
+			ocount = 0;
+			for (i = 0; i < MAXTORPS; ++i) {
+				if (wptr->ltorps[i].distance > 0
+					&& wptr->ltorps[i].channel != (byte)usrn
+					&& wptr->ltorps[i].channel < nships
+					&& ingegame((int)wptr->ltorps[i].channel)) {
+					found = 0;
+					for (oi = 0; oi < (int)ocount; ++oi) {
+						if (others[oi] == wptr->ltorps[i].channel) {
+							found = 1;
+							break;
 						}
 					}
-				if (!found && ocount < MAXMISSL)
-					others[ocount++] = wptr->lmissl[i].channel;
+					if (!found && ocount < MAXTORPS)
+						others[ocount++] = wptr->ltorps[i].channel;
 				}
 			}
-		if (ocount > 0)
-			{
-			gechrbuf[0] = 0;
-			for (oi=0; oi<(int)ocount; ++oi)
-				{
-				optr = warshpoff((int)others[oi]);
-				if (oi > 0)
-					strcat(gechrbuf,", ");
-				strcat(gechrbuf,username(optr));
+			if (ocount > 0) {
+				gechrbuf[0] = 0;
+				for (oi = 0; oi < (int)ocount; ++oi) {
+					optr = warshpoff((int)others[oi]);
+					if (oi > 0)
+						strcat(gechrbuf,", ");
+					strcat(gechrbuf,username(optr));
 				}
-			strcat(gechrbuf,(ocount > 1) ? " are" : " is");
-			prfmsg(MISMANY2,gechrbuf);
+				strcat(gechrbuf,(ocount > 1) ? " are" : " is");
+				prfmsg(TORMANY2,gechrbuf);
 			}
-		outprfge(FLT_NONE,usrnum);
-		return(0);
+			outprfge(FLT_NONE,usrn);
+			return 0;
 		}
-	if (ptr->missl_fired >= shipclass[ptr->shpclass].max_missl)
-		{
-		if (ptr->status != GESTAT_AUTO)
-			{
-			if (shipclass[ptr->shpclass].max_missl == 1)
-				prfmsg(MISSRELS);
-			else
-				prfmsg(MISSRELM);
-			outprfge(FLT_NONE,usrnum);
+		if (ptr->torps_fired >= shipclass[ptr->shpclass].max_torps) {
+			if (ptr->status != GESTAT_AUTO) {
+				if (shipclass[ptr->shpclass].max_torps == 1)
+					prfmsg(TORPRELS);
+				else
+					prfmsg(TORPRELM);
+				outprfge(FLT_NONE,usrn);
 			}
-		return(0);
+			return 0;
 		}
-	if (fluxstat(ptr,usrnum,eng_flu) == 0)
-		{
-		prfmsg(MISSHRT);
-		outprfge(FLT_NONE,usrnum);
-		return(0);
-		}
-	prfmsg(MFIRE1,energy);
-	outprfge(FLT_NONE,usrnum);
-	--(ptr->items[I_MISSILE]);
-	++ptr->missl_fired;
-	ptr->energy -= eng_flu;
-	lock_proj(usrnum,shpnum,LOCKMIS,LOCKMISN);
-	prfmsg(MFIRE2,shpltr(shpnum,usrnum));
-	outprfge(FLT_NONE,shpnum);
-	wptr->lmissl[slot].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
-	wptr->lmissl[slot].distance += 20;
-	wptr->lmissl[slot].channel = (unsigned char)usrnum;
-	wptr->lmissl[slot].energy = energy;
-	wptr->cantexit = FIRETICKS;
-	ptr->cantexit = FIRETICKS;
-	return(1);
+		prfmsg(TFIRE1);
+		outprfge(FLT_NONE,usrn);
+		--ptr->items[I_TORPEDO];
+		++ptr->torps_fired;
+		lock_proj(usrn,shpnum,LOCKTOR,LOCKTORN);
+		prfmsg(TFIRE2,shpltr(shpnum,usrn));
+		outprfge(FLT_NONE,shpnum);
+		wptr->ltorps[slot].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
+		wptr->ltorps[slot].distance += 20;
+		wptr->ltorps[slot].channel = (unsigned char)usrn;
+		wptr->cantexit = FIRETICKS;
+		ptr->cantexit = FIRETICKS;
+		return 1;
 	}
-return(0);
+	return 0;
+}
+
+/**************************************************************************
+** Launch a missile at a locked target                                   **
+**************************************************************************/
+
+int FUNC misl(WARSHP *ptr, int usrnum, int shpnum, unsigned energy, unsigned eng_flu)
+{
+	WARSHP *wptr;
+	WARSHP *optr;
+	byte others[MAXMISSL], ocount, found;
+	int i, oi, slot;
+
+	if (ptr->damage >= 100.0) {
+		prfmsg(RNDMISL);
+		outprfge(FLT_NONE,usrnum);
+		return 0;
+	}
+
+	if (lockon(ptr,1,shpnum,usrnum) == 1) {
+		wptr = warshpoff(shpnum);
+		slot = -1;
+		for (i = 0; i < MAXMISSL; ++i) {
+			if (wptr->lmissl[i].distance == 0) {
+				slot = i;
+				break;
+			}
+		}
+		if (slot < 0) {
+			prfmsg(MISMANY,MAXMISSL);
+			ocount = 0;
+			for (i = 0; i < MAXMISSL; ++i) {
+				if (wptr->lmissl[i].distance > 0
+					&& wptr->lmissl[i].channel != (byte)usrnum
+					&& wptr->lmissl[i].channel < nships
+					&& ingegame((int)wptr->lmissl[i].channel)) {
+					found = 0;
+					for (oi = 0; oi < (int)ocount; ++oi) {
+						if (others[oi] == wptr->lmissl[i].channel) {
+							found = 1;
+							break;
+						}
+					}
+					if (!found && ocount < MAXMISSL)
+						others[ocount++] = wptr->lmissl[i].channel;
+				}
+			}
+			if (ocount > 0) {
+				gechrbuf[0] = 0;
+				for (oi = 0; oi < (int)ocount; ++oi) {
+					optr = warshpoff((int)others[oi]);
+					if (oi > 0)
+						strcat(gechrbuf,", ");
+					strcat(gechrbuf,username(optr));
+				}
+				strcat(gechrbuf,(ocount > 1) ? " are" : " is");
+				prfmsg(MISMANY2,gechrbuf);
+			}
+			outprfge(FLT_NONE,usrnum);
+			return 0;
+		}
+		if (ptr->missl_fired >= shipclass[ptr->shpclass].max_missl) {
+			if (ptr->status != GESTAT_AUTO) {
+				if (shipclass[ptr->shpclass].max_missl == 1)
+					prfmsg(MISSRELS);
+				else
+					prfmsg(MISSRELM);
+				outprfge(FLT_NONE,usrnum);
+			}
+			return 0;
+		}
+		if (fluxstat(ptr,usrnum,eng_flu) == 0) {
+			prfmsg(MISSHRT);
+			outprfge(FLT_NONE,usrnum);
+			return 0;
+		}
+		prfmsg(MFIRE1,energy);
+		outprfge(FLT_NONE,usrnum);
+		--ptr->items[I_MISSILE];
+		++ptr->missl_fired;
+		ptr->energy -= eng_flu;
+		lock_proj(usrnum,shpnum,LOCKMIS,LOCKMISN);
+		prfmsg(MFIRE2,shpltr(shpnum,usrnum));
+		outprfge(FLT_NONE,shpnum);
+		wptr->lmissl[slot].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
+		wptr->lmissl[slot].distance += 20;
+		wptr->lmissl[slot].channel = (unsigned char)usrnum;
+		wptr->lmissl[slot].energy = energy;
+		wptr->cantexit = FIRETICKS;
+		ptr->cantexit = FIRETICKS;
+		return 1;
+	}
+	return 0;
 }
 
 
@@ -1051,342 +970,329 @@ return(0);
 **************************************************************************/
 
 void FUNC lookupshp()
-
 {
-int	noships = 0;
+	int noships = 0;
 
-/* get the user record from GEuser.dat */
-
-if (!(geudb(GELOOKUP,usaptr->userid, waruptr)))
-	{
-	/* Not found.... Better make up something */
-	initusr(usaptr->userid); /* create his account */
-	geudb(GEADD,tmpusr.userid,&tmpusr);
-	memcpy(waruptr,&tmpusr,sizeof(WARUSR));	/* make it the current user */
+	/* get the user record from GEuser.dat */
+	if (!(geudb(GELOOKUP,usaptr->userid, waruptr))) {
+		/* Not found.... Better make up something */
+		initusr(usaptr->userid); /* create his account */
+		geudb(GEADD,tmpusr.userid,&tmpusr);
+		memcpy(waruptr,&tmpusr,sizeof(WARUSR));	/* make it the current user */
 	}
-else
-	{
-	/* Got it! ... Dang are we lucky */
-	geudb(GEGET,usaptr->userid, waruptr);
+	else {
+		/* Got it! ... Dang are we lucky */
+		geudb(GEGET,usaptr->userid, waruptr);
 	}
 
-setbtv(gebb1);
+	setbtv(gebb1);
 
-/* don't count if no ships at all, or no ships for this user */
-if (qlobtv(0) && gepdb(GELOOKUPNAME, usaptr->userid, 0, warsptr))
-	{
-	/* get a total for user ship count */
-	do
-		{
-		gcrbtv(warsptr,0);
-		if (!sameas(usaptr->userid, warsptr->userid))
-			break;
-		if (!valid_user_ship(warsptr))
-			continue;
-		noships++;
+	/* don't count if no ships at all, or no ships for this user */
+	if (qlobtv(0) && gepdb(GELOOKUPNAME, usaptr->userid, 0, warsptr)) {
+		/* get a total for user ship count */
+		do {
+			gcrbtv(warsptr,0);
+			if (!sameas(usaptr->userid, warsptr->userid))
+				break;
+			if (!valid_user_ship(warsptr))
+				continue;
+			noships++;
 		} while (qnxbtv());
 
-	waruptr->noships = noships;
-	gepdb(GELOOKUPNAME, usaptr->userid, 0, warsptr);
+		waruptr->noships = noships;
+		gepdb(GELOOKUPNAME, usaptr->userid, 0, warsptr);
 	}
 
-if (noships == 0)
-	{
-	initshp(usaptr->userid,0); /* give the dude a class 1 ship */
-	gepdb(GEADD,tmpshp.userid,tmpshp.shipno,&tmpshp);
-	memcpy(warsptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
-	waruptr->noships = 1;
-	prfmsg(FIRSTIME);
-	outprfge(FLT_NONE,usrnum);
+	if (noships == 0) {
+		initshp(usaptr->userid,0); /* give the dude a class 1 ship */
+		gepdb(GEADD,tmpshp.userid,tmpshp.shipno,&tmpshp);
+		memcpy(warsptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
+		waruptr->noships = 1;
+		prfmsg(FIRSTIME);
+		outprfge(FLT_NONE,usrnum);
 	}
-else
-if (noships > 1)
-	{
-	findships(0, 0);
-	prfmsg(FLEET3);
-	usrptr->substt = CHOOSESH;
-	outprfge(FLT_NONE,usrnum);
-	return;
+	else if (noships > 1) {
+		findships(0, 0);
+		prfmsg(FLEET3);
+		usrptr->substt = CHOOSESH;
+		outprfge(FLT_NONE,usrnum);
+		return;
 	}
-else
-if (noships == 1)
-	{
-	setbtv(gebb1);
-	findships(0,1);
+	else if (noships == 1) {
+		setbtv(gebb1);
+		findships(0,1);
 
-	if (gepdb(GEGET,usaptr->userid,scantab[usrnum].ship[0].shipno,warsptr))
-		{
-		if (!valid_user_ship(warsptr))
-			{
-			geshocst(0,spr("GE:DBG:Ship Load Bad %s",usaptr->userid));
+		if (gepdb(GEGET,usaptr->userid,scantab[usrnum].ship[0].shipno,warsptr)) {
+			if (!valid_user_ship(warsptr)) {
+				geshocst(0,spr("GE:DBG:Ship Load Bad %s",usaptr->userid));
+				initshp(usaptr->userid,0); /* give the dude a class 1 ship */
+				gepdb(GEADD,tmpshp.userid,tmpshp.shipno,&tmpshp);
+				memcpy(warsptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
+				prfmsg(FIRSTIME);
+				outprfge(FLT_NONE,usrnum);
+			}
+			tossingegame(); /* into the game you go bud! */
+			return;
+		}
+		else {
+			/* somehow lost the ship... make one anyway */
+			geshocst(0,spr("GE:DBG:Ship Load Err %s",usaptr->userid));
 			initshp(usaptr->userid,0); /* give the dude a class 1 ship */
 			gepdb(GEADD,tmpshp.userid,tmpshp.shipno,&tmpshp);
 			memcpy(warsptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
 			prfmsg(FIRSTIME);
 			outprfge(FLT_NONE,usrnum);
-			}
-		tossingegame(); /* into the game you go bud! */
-		return;
-		}
-	else
-		{
-		/* somehow lost the ship... make one anyway */
-		geshocst(0,spr("GE:DBG:Ship Load Err %s",usaptr->userid));
-		initshp(usaptr->userid,0); /* give the dude a class 1 ship */
-		gepdb(GEADD,tmpshp.userid,tmpshp.shipno,&tmpshp);
-		memcpy(warsptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
-		prfmsg(FIRSTIME);
-		outprfge(FLT_NONE,usrnum);
 		}
 	}
-tossingegame();
+	tossingegame();
 }
-
 
 /**************************************************************************
-** Toss this yokel into the arena - God rest his soul                    **
+** Broadcast a ship's visible appearance in its current sector          **
 **************************************************************************/
 
-void FUNC suddenappear(ptr,usrn)
-
-WARSHP	*ptr;
-int	usrn;
+void FUNC suddenappear(WARSHP *ptr, int usrn)
 {
-if (ptr->shipname[0] == '\0')
-	prfmsg(ENTWARNO,ptr->userid);
-else
-	prfmsg(ENTWAR,ptr->shipname);
-outsect(FLT_NONE,&ptr->coord,usrn);
-}
-
-int FUNC entryinrng(entrant,recipient)
-int	entrant,recipient;
-{
-WARSHP	*eptr,*rptr;
-double	dist;
-
-if (!ingegame(recipient))
-	return(FALSE);
-
-eptr = warshpoff(entrant);
-rptr = warshpoff(recipient);
-dist = cdistance(&eptr->coord,&rptr->coord) * 10000.0;
-return(dist <= (double)ship_scanrange(rptr));
-}
-
-void FUNC send_entrymsg(entrant,recipient)
-int	entrant,recipient;
-{
-WARSHP	*eptr;
-WARUSR	*euptr;
-
-eptr = warshpoff(entrant);
-euptr = warusroff(entrant);
-
-if (eptr->shipname[0] == '\0')
-	prfmsg(ANNOUNO,euptr->userid,shipclass[eptr->shpclass].typename,showupg(eptr));
-else
-	prfmsg(ANNOUN,shipclass[eptr->shpclass].typename,showupg(eptr),eptr->shipname,euptr->userid);
-outprfge(FLT_ENTRY,recipient);
-}
-
-void FUNC send_exitmsg(entrant,recipient)
-int	entrant,recipient;
-{
-WARSHP	*eptr;
-WARUSR	*euptr;
-
-eptr = warshpoff(entrant);
-euptr = warusroff(entrant);
-
-if (eptr->shipname[0] == '\0')
-	prfmsg(PEACEONO,euptr->userid);
-else
-	prfmsg(PEACEOUT,euptr->userid,eptr->shipname);
-outprfge(FLT_ENTRY,recipient);
-}
-
-void FUNC clear_entrymsg(usrn)
-int	usrn;
-{
-entrytab[usrn].active = 0;
-entrytab[usrn].ticks = 0;
-setmem(entrysent + (usrn * entrybytes), entrybytes, 0);
-setmem(entrypend + (usrn * entrybytes), entrybytes, 0);
-}
-
-void FUNC start_entrymsg(usrn)
-int	usrn;
-{
-int	zothusn;
-int	anypend = FALSE;
-int	mode;
-unsigned char	*sentptr,*pendptr;
-unsigned char	mask;
-
-clear_entrymsg(usrn);
-sentptr = entrysent + (usrn * entrybytes);
-pendptr = entrypend + (usrn * entrybytes);
-
-for (zothusn=0; zothusn < nterms; ++zothusn)
-	{
-	if (zothusn == usrn || !ingegame(zothusn))
-		continue;
-
-	mode = warusroff(zothusn)->options[MSG_FILTER] & MSGF_ENTRY_MASK;
-	mask = (unsigned char)(1 << (zothusn & 7));
-
-	if (mode == 0x40)
-		continue;
-
-	if (mode == 0x00 || entryinrng(usrn,zothusn))
-		{
-		send_entrymsg(usrn,zothusn);
-		sentptr[zothusn >> 3] |= mask;
-		}
+	if (ptr->shipname[0] == '\0')
+		prfmsg(ENTWARNO,ptr->userid);
 	else
-		{
-		pendptr[zothusn >> 3] |= mask;
-		anypend = TRUE;
-		}
-	}
-
-if (anypend)
-	{
-	entrytab[usrn].active = 1;
-	entrytab[usrn].ticks = 0;
-	}
+		prfmsg(ENTWAR,ptr->shipname);
+	outsect(FLT_NONE,&ptr->coord,usrn);
 }
 
-void FUNC tick_entrymsg()
+/**************************************************************************
+** Check whether entrant is within the recipient's entry-message range  **
+**************************************************************************/
+
+int FUNC entryinrng(int entrant, int recipient)
 {
-int	usrn,zothusn;
-unsigned char	*sentptr,*pendptr;
-unsigned char	mask;
+	WARSHP *eptr, *rptr;
+	double dist;
 
-for (usrn=0; usrn < nterms; ++usrn)
-	{
-	if (!entrytab[usrn].active)
-		continue;
+	if (!ingegame(recipient))
+		return FALSE;
 
-	if (!ingegame(usrn))
-		{
-		clear_entrymsg(usrn);
-		continue;
-		}
+	eptr = warshpoff(entrant);
+	rptr = warshpoff(recipient);
+	dist = cdistance(&eptr->coord,&rptr->coord) * 10000.0;
+	return dist <= (double)ship_scanrange(rptr);
+}
 
-	++entrytab[usrn].ticks;
+/**************************************************************************
+** Send the formatted entry announcement for one ship to one recipient  **
+**************************************************************************/
+
+void FUNC send_entrymsg(int entrant, int recipient)
+{
+	WARSHP *eptr;
+	WARUSR *euptr;
+
+	eptr = warshpoff(entrant);
+	euptr = warusroff(entrant);
+
+	if (eptr->shipname[0] == '\0')
+		prfmsg(ANNOUNO,euptr->userid,shipclass[eptr->shpclass].typename,showupg(eptr));
+	else
+		prfmsg(ANNOUN,shipclass[eptr->shpclass].typename,showupg(eptr),eptr->shipname,euptr->userid);
+	outprfge(FLT_ENTRY,recipient);
+}
+
+/**************************************************************************
+** Send the formatted exit announcement for one ship to one recipient   **
+**************************************************************************/
+
+void FUNC send_exitmsg(int entrant, int recipient)
+{
+	WARSHP *eptr;
+	WARUSR *euptr;
+
+	eptr = warshpoff(entrant);
+	euptr = warusroff(entrant);
+
+	if (eptr->shipname[0] == '\0')
+		prfmsg(PEACEONO,euptr->userid);
+	else
+		prfmsg(PEACEOUT,euptr->userid,eptr->shipname);
+	outprfge(FLT_ENTRY,recipient);
+}
+
+/**************************************************************************
+** Clear all deferred entry/exit notification state for one user        **
+**************************************************************************/
+
+void FUNC clear_entrymsg(int usrn)
+{
+	entrytab[usrn].active = 0;
+	entrytab[usrn].ticks = 0;
+	setmem(entrysent + (usrn * entrybytes), entrybytes, 0);
+	setmem(entrypend + (usrn * entrybytes), entrybytes, 0);
+}
+
+/**************************************************************************
+** Start deferred entry notifications for a newly entering user         **
+**************************************************************************/
+
+void FUNC start_entrymsg(int usrn)
+{
+	int zothusn;
+	int anypend = FALSE;
+	int mode;
+	unsigned char *sentptr, *pendptr;
+	unsigned char mask;
+
+	clear_entrymsg(usrn);
 	sentptr = entrysent + (usrn * entrybytes);
 	pendptr = entrypend + (usrn * entrybytes);
 
-	if (entrytab[usrn].ticks < ENTRYWAIT)
-		{
-		for (zothusn=0; zothusn < nterms; ++zothusn)
-			{
-			mask = (unsigned char)(1 << (zothusn & 7));
-			if (!(pendptr[zothusn >> 3] & mask))
-				continue;
-			if (!ingegame(zothusn))
-				{
-				pendptr[zothusn >> 3] &= ~mask;
-				continue;
-				}
-			if (entryinrng(usrn,zothusn))
-				{
-				send_entrymsg(usrn,zothusn);
-				pendptr[zothusn >> 3] &= ~mask;
-				sentptr[zothusn >> 3] |= mask;
-				}
-			}
-		}
-	else
-		{
-		for (zothusn=0; zothusn < nterms; ++zothusn)
-			{
-			mask = (unsigned char)(1 << (zothusn & 7));
-			if (!(pendptr[zothusn >> 3] & mask))
-				continue;
-			if (ingegame(zothusn))
-				{
-				send_entrymsg(usrn,zothusn);
-				sentptr[zothusn >> 3] |= mask;
-				}
-			pendptr[zothusn >> 3] &= ~mask;
-			}
-		entrytab[usrn].active = 0;
-		entrytab[usrn].ticks = 0;
-		}
-	}
-}
+	for (zothusn = 0; zothusn < nterms; ++zothusn) {
+		if (zothusn == usrn || !ingegame(zothusn))
+			continue;
 
-void FUNC exit_entrymsg(usrn)
-int	usrn;
-{
-int	zothusn;
-unsigned char	*sentptr;
-unsigned char	mask;
-
-sentptr = entrysent + (usrn * entrybytes);
-
-if (entrypend_empty(usrn))
-	{
-	for (zothusn=0; zothusn < nterms; ++zothusn)
-		{
-		if (zothusn != usrn && ingegame(zothusn))
-			send_exitmsg(usrn,zothusn);
-		}
-	}
-else
-	{
-	for (zothusn=0; zothusn < nterms; ++zothusn)
-		{
+		mode = warusroff(zothusn)->options[MSG_FILTER] & MSGF_ENTRY_MASK;
 		mask = (unsigned char)(1 << (zothusn & 7));
-		if (sentptr[zothusn >> 3] & mask)
-			{
-			if (ingegame(zothusn))
+
+		if (mode == 0x40)
+			continue;
+
+		if (mode == 0x00 || entryinrng(usrn,zothusn)) {
+			send_entrymsg(usrn,zothusn);
+			sentptr[zothusn >> 3] |= mask;
+		}
+		else {
+			pendptr[zothusn >> 3] |= mask;
+			anypend = TRUE;
+		}
+	}
+
+	if (anypend) {
+		entrytab[usrn].active = 1;
+		entrytab[usrn].ticks = 0;
+	}
+}
+
+/**************************************************************************
+** Advance deferred entry notifications once per game tick              **
+**************************************************************************/
+
+void FUNC tick_entrymsg()
+{
+	int usrn, zothusn;
+	unsigned char *sentptr, *pendptr;
+	unsigned char mask;
+
+	for (usrn = 0; usrn < nterms; ++usrn) {
+		if (!entrytab[usrn].active)
+			continue;
+
+		if (!ingegame(usrn)) {
+			clear_entrymsg(usrn);
+			continue;
+		}
+
+		++entrytab[usrn].ticks;
+		sentptr = entrysent + (usrn * entrybytes);
+		pendptr = entrypend + (usrn * entrybytes);
+
+		if (entrytab[usrn].ticks < ENTRYWAIT) {
+			for (zothusn = 0; zothusn < nterms; ++zothusn) {
+				mask = (unsigned char)(1 << (zothusn & 7));
+				if (!(pendptr[zothusn >> 3] & mask))
+					continue;
+				if (!ingegame(zothusn)) {
+					pendptr[zothusn >> 3] &= ~mask;
+					continue;
+				}
+				if (entryinrng(usrn,zothusn)) {
+					send_entrymsg(usrn,zothusn);
+					pendptr[zothusn >> 3] &= ~mask;
+					sentptr[zothusn >> 3] |= mask;
+				}
+			}
+		}
+		else {
+			for (zothusn = 0; zothusn < nterms; ++zothusn) {
+				mask = (unsigned char)(1 << (zothusn & 7));
+				if (!(pendptr[zothusn >> 3] & mask))
+					continue;
+				if (ingegame(zothusn)) {
+					send_entrymsg(usrn,zothusn);
+					sentptr[zothusn >> 3] |= mask;
+				}
+				pendptr[zothusn >> 3] &= ~mask;
+			}
+			entrytab[usrn].active = 0;
+			entrytab[usrn].ticks = 0;
+		}
+	}
+}
+
+/**************************************************************************
+** Send exit notifications for a user leaving the game                  **
+**************************************************************************/
+
+void FUNC exit_entrymsg(int usrn)
+{
+	int zothusn;
+	unsigned char *sentptr;
+	unsigned char mask;
+
+	sentptr = entrysent + (usrn * entrybytes);
+
+	if (entrypend_empty(usrn)) {
+		for (zothusn = 0; zothusn < nterms; ++zothusn) {
+			if (zothusn != usrn && ingegame(zothusn))
 				send_exitmsg(usrn,zothusn);
+		}
+	}
+	else {
+		for (zothusn = 0; zothusn < nterms; ++zothusn) {
+			mask = (unsigned char)(1 << (zothusn & 7));
+			if (sentptr[zothusn >> 3] & mask) {
+				if (ingegame(zothusn))
+					send_exitmsg(usrn,zothusn);
 			}
 		}
 	}
 
-clear_entrymsg(usrn);
+	clear_entrymsg(usrn);
 }
+
+/**************************************************************************
+** Finish login/setup and place the selected ship into the game         **
+**************************************************************************/
 
 void FUNC tossingegame()
 {
-int	zothusn;
-unsigned char	*sentptr;
-unsigned char	mask;
+	int zothusn;
+	unsigned char *sentptr;
+	unsigned char mask;
 
-start_entrymsg(usrnum);
+	start_entrymsg(usrnum);
 
-prfmsg(ENTSHP,waruptr->userid);
-outprfge(FLT_NONE,usrnum);
+	prfmsg(ENTSHP,waruptr->userid);
+	outprfge(FLT_NONE,usrnum);
 
-update_scantab(warshpoff(usrnum),usrnum);
+	update_scantab(warshpoff(usrnum),usrnum);
 
-if (warsptr->cloak != 10)
-	{
-	suddenappear(warsptr,usrnum);
+	if (warsptr->cloak != 10)
+		suddenappear(warsptr,usrnum);
+
+	btupmt(usrnum,'>');
+	prfmsg(WELCOM,waruptr->userid);
+	outprfge(FLT_NONE,usrnum);
+	usrptr->substt = FIGHTSUB;
+	warsptr->status = GESTAT_USER;
+
+	for (zothusn = 0; zothusn < nterms; ++zothusn) {
+		if (zothusn == usrnum || !ingegame(zothusn) || entrypend_empty(zothusn))
+			continue;
+
+		sentptr = entrysent + (zothusn * entrybytes);
+		mask = (unsigned char)(1 << (usrnum & 7));
+		sentptr[usrnum >> 3] |= mask;
 	}
 
-btupmt(usrnum,'>');
-prfmsg(WELCOM,waruptr->userid);
-outprfge(FLT_NONE,usrnum);
-usrptr->substt = FIGHTSUB;
-warsptr->status = GESTAT_USER;
-
-for (zothusn=0; zothusn < nterms; ++zothusn)
-	{
-	if (zothusn == usrnum || !ingegame(zothusn) || entrypend_empty(zothusn))
-		continue;
-
-	sentptr = entrysent + (zothusn * entrybytes);
-	mask = (unsigned char)(1 << (usrnum & 7));
-	sentptr[usrnum >> 3] |= mask;
-	}
-
-assign_cybs(usrnum,0);
+	assign_cybs(usrnum,0);
 }
 
 /**************************************************************************
@@ -1394,171 +1300,171 @@ assign_cybs(usrnum,0);
 ** NOTE: waruptr MUST be set to this channel first                       **
 **************************************************************************/
 
-int FUNC initshp(userid,type)
+/**************************************************************************
+** Initialize the temporary ship record for a new ship                  **
+** NOTE: waruptr MUST be set to this channel first                       **
+**************************************************************************/
 
-char	*userid;
-int	type;
+int FUNC initshp(char *userid, int type)
 {
-double	ddistance;
-int	i,flag;
+	double ddistance;
+	int i, flag;
 
-logthis(spr("GE:DBG:initship %d",type));
-logthis(spr("%s",userid));
-strncpy(tmpshp.userid,userid,UIDSIZ);
-tmpshp.shpclass		= type;
+	logthis(spr("GE:DBG:initship %d",type));
+	logthis(spr("%s",userid));
+	strncpy(tmpshp.userid,userid,UIDSIZ);
+	tmpshp.shpclass		= type;
 
-if (shipclass[type].max_type == CLASSTYPE_USER)
-	{
-	tmpshp.shipname[0]	= '\0';
+	if (shipclass[type].max_type == CLASSTYPE_USER) {
+		tmpshp.shipname[0]	= '\0';
 
-	tmpshp.coord.xcoord = NEUTRAL_X + rndm(.9999);
-	tmpshp.coord.ycoord = NEUTRAL_Y + rndm(.9999);
-	getsector(&tmpshp.coord);
-	flag = 1;
-
-	while (flag == 1)
-		{
 		tmpshp.coord.xcoord = NEUTRAL_X + rndm(.9999);
 		tmpshp.coord.ycoord = NEUTRAL_Y + rndm(.9999);
-		flag = 0;
-		for (i=0;i<sector.numplan;++i)
-			{
-			if (sector.ptab[i].coord.xcoord != 0)
-				{
-				ddistance = cdistance(&tmpshp.coord,&sector.ptab[i].coord)*10000;
-				if (ddistance < 1000)
-					flag = 1;
+		getsector(&tmpshp.coord);
+		flag = 1;
+
+		while (flag == 1) {
+			tmpshp.coord.xcoord = NEUTRAL_X + rndm(.9999);
+			tmpshp.coord.ycoord = NEUTRAL_Y + rndm(.9999);
+			flag = 0;
+			for (i = 0; i < sector.numplan; ++i) {
+				if (sector.ptab[i].coord.xcoord != 0) {
+					ddistance = cdistance(&tmpshp.coord,&sector.ptab[i].coord) * 10000;
+					if (ddistance < 1000)
+						flag = 1;
 				}
 			}
 		}
 
-	tmpshp.phasrtype	= 1;
-	tmpshp.shieldtype	= 1;
-	tmpshp.items[I_FLUXPOD]	= 3;
+		tmpshp.phasrtype	= 1;
+		tmpshp.shieldtype	= 1;
+		tmpshp.items[I_FLUXPOD]	= 3;
 	}
-else
-	{
-	tmpshp.shipname[0]	= '\0';
-	tmpshp.coord.xcoord	= 0.0;
-	tmpshp.coord.ycoord	= 0.0;
-	tmpshp.phasrtype	= 0;
-	tmpshp.shieldtype	= 0;
-	tmpshp.items[I_FLUXPOD]	= 0;
+	else {
+		tmpshp.shipname[0]	= '\0';
+		tmpshp.coord.xcoord	= 0.0;
+		tmpshp.coord.ycoord	= 0.0;
+		tmpshp.phasrtype	= 0;
+		tmpshp.shieldtype	= 0;
+		tmpshp.items[I_FLUXPOD]	= 0;
 	}
 
-tmpshp.heading		= gernd()%360;
-tmpshp.head2b		= tmpshp.heading;
-tmpshp.speed		= 0;
-tmpshp.phasr		= 100;
-tmpshp.speed2b		= 0;
-tmpshp.damage		= 0.0;
-tmpshp.lastfired	= -1;
-tmpshp.energy		= 50000L;
-tmpshp.kills		= 0;
-tmpshp.tactical		= 0;
-tmpshp.helm		= 0;
-tmpshp.cloak		= 0;
-tmpshp.shieldstat	= SHIELDDN;
-tmpshp.shield		= 0;
-tmpshp.degrees		= 0;
-tmpshp.percent		= 0;
-tmpshp.train		= 0;
-tmpshp.where		= 0;
-tmpshp.jam_sev		= 0;
-tmpshp.jam_time		= 0;
-tmpshp.freq		= 0;
-tmpshp.tponder		= TPONNORM;
-tmpshp.titem		= 0;
-tmpshp.hostile		= 0;
-tmpshp.repair		= 0;
-tmpshp.hypha		= 0;
-tmpshp.torpcntl		= 0;
-tmpshp.mislcntl		= 0;
-tmpshp.cantexit		= 0;
-tmpshp.items[I_TORPEDO]	= 0;
-tmpshp.items[I_MISSILE]	= 0;
-tmpshp.items[I_FOOD]	= 0;
-tmpshp.items[I_DECOYS]	= 0;
-tmpshp.items[I_FIGHTER]	= 0;
-tmpshp.items[I_MEN]	= 0;
-tmpshp.items[I_IONCANNON]	= 0;
-tmpshp.items[I_TROOPS]	= 0;
-tmpshp.items[I_ZIPPERS]	= 0;
-tmpshp.items[I_JAMMERS]	= 0;
-tmpshp.items[I_MINE]	= 0;
-tmpshp.items[I_GOLD]	= 0;
+	tmpshp.heading		= gernd()%360;
+	tmpshp.head2b		= tmpshp.heading;
+	tmpshp.speed		= 0;
+	tmpshp.phasr		= 100;
+	tmpshp.speed2b		= 0;
+	tmpshp.damage		= 0.0;
+	tmpshp.lastfired	= -1;
+	tmpshp.energy		= 50000L;
+	tmpshp.kills		= 0;
+	tmpshp.tactical		= 0;
+	tmpshp.helm		= 0;
+	tmpshp.cloak		= 0;
+	tmpshp.shieldstat	= SHIELDDN;
+	tmpshp.shield		= 0;
+	tmpshp.degrees		= 0;
+	tmpshp.percent		= 0;
+	tmpshp.train		= 0;
+	tmpshp.where		= 0;
+	tmpshp.jam_sev		= 0;
+	tmpshp.jam_time		= 0;
+	tmpshp.freq		= 0;
+	tmpshp.tponder		= TPONNORM;
+	tmpshp.titem		= 0;
+	tmpshp.hostile		= 0;
+	tmpshp.repair		= 0;
+	tmpshp.hypha		= 0;
+	tmpshp.torpcntl		= 0;
+	tmpshp.mislcntl		= 0;
+	tmpshp.cantexit		= 0;
+	tmpshp.items[I_TORPEDO]	= 0;
+	tmpshp.items[I_MISSILE]	= 0;
+	tmpshp.items[I_FOOD]	= 0;
+	tmpshp.items[I_DECOYS]	= 0;
+	tmpshp.items[I_FIGHTER]	= 0;
+	tmpshp.items[I_MEN]	= 0;
+	tmpshp.items[I_IONCANNON]	= 0;
+	tmpshp.items[I_TROOPS]	= 0;
+	tmpshp.items[I_ZIPPERS]	= 0;
+	tmpshp.items[I_JAMMERS]	= 0;
+	tmpshp.items[I_MINE]	= 0;
+	tmpshp.items[I_GOLD]	= 0;
 
-tmpshp.destruct		= 0;
-tmpshp.status		= 0;
-tmpshp.cybmine		= 0;
-tmpshp.upgrade		= 0;
-tmpshp.cybupdate	= 0;
-tmpshp.tick		= 0;
-tmpshp.distress		= 255;
-tmpshp.minesnear	= 0;
-tmpshp.lock_grace	= 0;
-tmpshp.cyb_grace	= 0;
-tmpshp.lock		= -1;
-tmpshp.holdcourse	= 0;
-tmpshp.overspeed	= 0L;
-tmpshp.ukills		= 0;
+	tmpshp.destruct		= 0;
+	tmpshp.status		= 0;
+	tmpshp.cybmine		= 0;
+	tmpshp.upgrade		= 0;
+	tmpshp.cybupdate	= 0;
+	tmpshp.tick		= 0;
+	tmpshp.distress		= 255;
+	tmpshp.minesnear	= 0;
+	tmpshp.lock_grace	= 0;
+	tmpshp.cyb_grace	= 0;
+	tmpshp.lock		= -1;
+	tmpshp.holdcourse	= 0;
+	tmpshp.overspeed	= 0L;
+	tmpshp.ukills		= 0;
 
-tmpshp.zipload		= 0;
-tmpshp.jamload		= 0;
-tmpshp.decload		= 0;
-tmpshp.mineload		= 0;
-tmpshp.torps_fired	= 0;
-tmpshp.missl_fired	= 0;
+	tmpshp.zipload		= 0;
+	tmpshp.jamload		= 0;
+	tmpshp.decload		= 0;
+	tmpshp.mineload		= 0;
+	tmpshp.torps_fired	= 0;
+	tmpshp.missl_fired	= 0;
 
-tmpshp.shipno = waruptr->topshipno+1;
+	tmpshp.shipno = waruptr->topshipno + 1;
 
-++waruptr->topshipno;
-++waruptr->noships;
+	++waruptr->topshipno;
+	++waruptr->noships;
 
-for (i=0;i<MAXTORPS;++i)
-	tmpshp.ltorps[i].distance = 0;
+	for (i = 0; i < MAXTORPS; ++i)
+		tmpshp.ltorps[i].distance = 0;
 
-for (i=0;i<MAXMISSL;++i)
-	tmpshp.lmissl[i].distance = 0;
+	for (i = 0; i < MAXMISSL; ++i)
+		tmpshp.lmissl[i].distance = 0;
 
-for (i=0;i<MAXDECOY;++i)
-	tmpshp.decout[i] = 0;
+	for (i = 0; i < MAXDECOY; ++i)
+		tmpshp.decout[i] = 0;
 
-tmpshp.topspeed = shipclass[tmpshp.shpclass].max_warp;
-logthis(spr("Created ship - topspeed = %d",tmpshp.topspeed));
-return(0);
+	tmpshp.topspeed = shipclass[tmpshp.shpclass].max_warp;
+	logthis(spr("Created ship - topspeed = %d",tmpshp.topspeed));
+	return 0;
 }
 
-int FUNC initusr(userid)
-char	*userid;
+/**************************************************************************
+** Initialize the temporary user record for a new GE account            **
+**************************************************************************/
+
+int FUNC initusr(char *userid)
 {
+	setmem(&tmpusr,sizeof(WARUSR),0);
+	strncpy(tmpusr.userid,userid,UIDSIZ); /* BJ CHANGED TO UIDSIZ */
+	tmpusr.cash		= startcash;
+	tmpusr.options[0]	= FULLNAMES; /* set scan default */
 
-setmem(&tmpusr,sizeof(WARUSR),0);
-strncpy(tmpusr.userid,userid,UIDSIZ); /* BJ CHANGED TO UIDSIZ */
-tmpusr.cash		= startcash;
-tmpusr.options[0]	= FULLNAMES; /* set scan default */
-
-return(0);
+	return 0;
 }
 
-int FUNC valid_user_ship(ptr)
-WARSHP *ptr;
+/**************************************************************************
+** Validate that a loaded ship record is a legal user ship              **
+**************************************************************************/
+
+int FUNC valid_user_ship(WARSHP *ptr)
 {
-if (!VALID_SHPCLASS(ptr->shpclass))
-	{
-	geshocst(0, spr("GE:ERR:BADUSRSHPCLS cls=%d shipno=%d uid=%s",
-		ptr->shpclass, ptr->shipno, ptr->userid));
-	return(FALSE);
+	if (!VALID_SHPCLASS(ptr->shpclass)) {
+		geshocst(0, spr("GE:ERR:BADUSRSHPCLS cls=%d shipno=%d uid=%s",
+			ptr->shpclass, ptr->shipno, ptr->userid));
+		return FALSE;
 	}
 
-if (shipclass[ptr->shpclass].max_type != CLASSTYPE_USER)
-	{
-	geshocst(0, spr("GE:ERR:BADUSRSHPTYPE cls=%d type=%u shipno=%d uid=%s",
-		ptr->shpclass, shipclass[ptr->shpclass].max_type, ptr->shipno, ptr->userid));
-	return(FALSE);
+	if (shipclass[ptr->shpclass].max_type != CLASSTYPE_USER) {
+		geshocst(0, spr("GE:ERR:BADUSRSHPTYPE cls=%d type=%u shipno=%d uid=%s",
+			ptr->shpclass, shipclass[ptr->shpclass].max_type, ptr->shipno, ptr->userid));
+		return FALSE;
 	}
 
-return(TRUE);
+	return TRUE;
 }
 
 /**************************************************************************
@@ -1567,155 +1473,135 @@ return(TRUE);
 
 int FUNC findships(int direction, int quiet)
 {
-int	found = 0;
-int	i, j, step, thispage, lastpage;
-int	first_no = 0;
-int	last_no = 0;
-int	before = 0;
-int	first_shipno = 0;
-SCANTAB *sptr;
+	int found = 0;
+	int i, j, step, thispage, lastpage;
+	int first_no = 0;
+	int last_no = 0;
+	int before = 0;
+	int first_shipno = 0;
+	SCANTAB *sptr;
 
-setbtv(gebb1);
-sptr = &scantab[usrnum];
+	setbtv(gebb1);
+	sptr = &scantab[usrnum];
 
-/* if we're paging, grab current page’s known first/last ship numbers from scantab */
-if (direction != 0)
-	{
-	for (i = 0; i < NOSCANTAB; ++i)
-		{
-		if (sptr->ship[i].shipno != 0)
-			{
-			first_no = sptr->ship[0].shipno;
-			/* find last non-zero */
-			for (j = NOSCANTAB-1; j >= 0; --j)
-				if (sptr->ship[j].shipno != 0)
-					{
-					last_no = sptr->ship[j].shipno;
-					break;
+	/* if we're paging, grab current page’s known first/last ship numbers from scantab */
+	if (direction != 0) {
+		for (i = 0; i < NOSCANTAB; ++i) {
+			if (sptr->ship[i].shipno != 0) {
+				first_no = sptr->ship[0].shipno;
+				/* find last non-zero */
+				for (j = NOSCANTAB - 1; j >= 0; --j) {
+					if (sptr->ship[j].shipno != 0) {
+						last_no = sptr->ship[j].shipno;
+						break;
 					}
-			break;
+				}
+				break;
 			}
 		}
 	}
-else
-	/* make sure we're at beginning */
-	gepdb(GELOOKUPNAME, usaptr->userid, 0, warsptr);
+	else {
+		/* make sure we're at beginning */
+		gepdb(GELOOKUPNAME, usaptr->userid, 0, warsptr);
+	}
 
-
-/* page navigation */
-if (direction > 0 && last_no != 0)
-	{
-	/* last ship of current page, plus one */
-	if (gepdb(GEGET, usaptr->userid, last_no, warsptr))
-		{
-		if (!qnxbtv())	/* no next page */
-			return 0;
+	/* page navigation */
+	if (direction > 0 && last_no != 0) {
+		/* last ship of current page, plus one */
+		if (gepdb(GEGET, usaptr->userid, last_no, warsptr)) {
+			if (!qnxbtv())	/* no next page */
+				return 0;
 		}
 	}
-else
-if (direction < 0 && first_no != 0)
-	{
-	/* first ship of current page, then back NOSCANTAB, plus one */
-	if (gepdb(GEGET, usaptr->userid, first_no, warsptr))
-		{
-		step = 0;
-		while (step < NOSCANTAB && qprbtv())
-			step++;
+	else if (direction < 0 && first_no != 0) {
+		/* first ship of current page, then back NOSCANTAB, plus one */
+		if (gepdb(GEGET, usaptr->userid, first_no, warsptr)) {
+			step = 0;
+			while (step < NOSCANTAB && qprbtv())
+				++step;
 		}
 	}
 
-/* clear the page buffer to avoid stale shipnos */
-for (i = 0; i < NOSCANTAB; ++i)
-	sptr->ship[i].shipno = 0;
+	/* clear the page buffer to avoid stale shipnos */
+	for (i = 0; i < NOSCANTAB; ++i)
+		sptr->ship[i].shipno = 0;
 
-/* print header and one page */
-if (!quiet)
-	prf("%s    Class                Name                 Sector         Status\r",CLR_CYAN2);
-do
-	{
-	gcrbtv(warsptr,0);
-
-	if (!sameas(usaptr->userid, warsptr->userid))
-		break;
-	if (!valid_user_ship(warsptr))
-		continue;
-
-	setsect(warsptr);
+	/* print header and one page */
 	if (!quiet)
-		{
-		prf("%s%2d  %s%s", CLR_WHITE2, found+1,
-			shipclass[warsptr->shpclass].typename,showupg(warsptr));
-		for (j = strlen(shipclass[warsptr->shpclass].typename) + strlen(showupg(warsptr)); j < 20; ++j)
-			prf(" ");
-		prf(" %-20s %6d %6d  ",
-			(warsptr->shipname[0] == '\0' ? " <NO NAME> " : warsptr->shipname), xsect, ysect);
+		prf("%s    Class                Name                 Sector         Status\r", CLR_CYAN2);
+	do {
+		gcrbtv(warsptr, 0);
 
-		if (warsptr->energy < 5000 && warsptr->items[I_FLUXPOD] == 0)
-			prf("%sflux depleted%s",CLR_RED1,CLR_WHITE2);
-		else
-		if (warsptr->damage > 75.5)
-			prf("%ssevere%s damage",CLR_RED1,CLR_WHITE2);
-		else
-		if (warsptr->damage > 50.5)
-			prf("%sheavy%s damage",CLR_RED1,CLR_WHITE2);
-		else
-		if (warsptr->cloak > 0)
-			prf("cloak %sON%s",CLR_GREEN2,CLR_WHITE1);
-		else
-		if (warsptr->items[I_GOLD] >= 500)
-			{
-			sprintf(gechrbuf,"%lu",warsptr->items[I_GOLD]);
-			prf("%s gold",gechrbuf);
+		if (!sameas(usaptr->userid, warsptr->userid))
+			break;
+		if (!valid_user_ship(warsptr))
+			continue;
+
+		setsect(warsptr);
+		if (!quiet) {
+			prf("%s%2d  %s%s", CLR_WHITE2, found + 1,
+				shipclass[warsptr->shpclass].typename, showupg(warsptr));
+			for (j = strlen(shipclass[warsptr->shpclass].typename) + strlen(showupg(warsptr)); j < 20; ++j)
+				prf(" ");
+			prf(" %-20s %6d %6d  ",
+				(warsptr->shipname[0] == '\0' ? " <NO NAME> " : warsptr->shipname), xsect, ysect);
+
+			if (warsptr->energy < 5000 && warsptr->items[I_FLUXPOD] == 0)
+				prf("%sflux depleted%s", CLR_RED1, CLR_WHITE2);
+			else if (warsptr->damage > 75.5)
+				prf("%ssevere%s damage", CLR_RED1, CLR_WHITE2);
+			else if (warsptr->damage > 50.5)
+				prf("%sheavy%s damage", CLR_RED1, CLR_WHITE2);
+			else if (warsptr->cloak > 0)
+				prf("cloak %sON%s", CLR_GREEN2, CLR_WHITE1);
+			else if (warsptr->items[I_GOLD] >= 500) {
+				sprintf(gechrbuf, "%lu", warsptr->items[I_GOLD]);
+				prf("%s gold", gechrbuf);
 			}
-		else
-		if (warsptr->where > 10)
-			prf("orbiting planet %s%d%s",CLR_BLUE2,warsptr->where-10,CLR_WHITE2);
+			else if (warsptr->where > 10)
+				prf("orbiting planet %s%d%s", CLR_BLUE2, warsptr->where - 10, CLR_WHITE2);
 
-		prf("\r");
-		prf(CLR_WHITE2);
-	}
+			prf("\r");
+			prf(CLR_WHITE2);
+		}
 
-	sptr->ship[found].shipno = warsptr->shipno;
-	++found;
+		sptr->ship[found].shipno = warsptr->shipno;
+		++found;
 	} while (qnxbtv() && found < NOSCANTAB);
 
-/* display page X of Y if needed */
-if (!quiet && waruptr->noships > NOSCANTAB)
-	{
-	first_shipno = sptr->ship[0].shipno;
-	before = 0;
+	/* display page X of Y if needed */
+	if (!quiet && waruptr->noships > NOSCANTAB) {
+		first_shipno = sptr->ship[0].shipno;
+		before = 0;
 
-	if (first_shipno != 0 && gepdb(GEGET, usaptr->userid, first_shipno, warsptr))
-		{
-		while (qprbtv())
-			{
-			gcrbtv(warsptr,0);
-			if (!sameas(usaptr->userid, warsptr->userid))
-				break;
-			if (!valid_user_ship(warsptr))
-				continue;
-			++before;
+		if (first_shipno != 0 && gepdb(GEGET, usaptr->userid, first_shipno, warsptr)) {
+			while (qprbtv()) {
+				gcrbtv(warsptr, 0);
+				if (!sameas(usaptr->userid, warsptr->userid))
+					break;
+				if (!valid_user_ship(warsptr))
+					continue;
+				++before;
 			}
 
-		/* restore cursor to this page's first ship */
-		gepdb(GEGET, usaptr->userid, first_shipno, warsptr);
+			/* restore cursor to this page's first ship */
+			gepdb(GEGET, usaptr->userid, first_shipno, warsptr);
 		}
 
-	thispage = (before / NOSCANTAB) + 1;
-	lastpage = (waruptr->noships + NOSCANTAB - 1) / NOSCANTAB;
-	prf("%sPage %d of %d, ", CLR_CYAN2, thispage, lastpage);
-	if (thispage == 1)
-		prf("\"n\" for next page.\r");
-	else
-	if (thispage == lastpage)
-		prf("\"p\" for previous page.\r");
-	else
-		prf("\"p\" for previous page, \"n\" for next page.\r");
+		thispage = (before / NOSCANTAB) + 1;
+		lastpage = (waruptr->noships + NOSCANTAB - 1) / NOSCANTAB;
+		prf("%sPage %d of %d, ", CLR_CYAN2, thispage, lastpage);
+		if (thispage == 1)
+			prf("\"n\" for next page.\r");
+		else if (thispage == lastpage)
+			prf("\"p\" for previous page.\r");
+		else
+			prf("\"p\" for previous page, \"n\" for next page.\r");
 	}
-warsptr->status = 0;
-outprfge(FLT_NONE,usrnum);
+	warsptr->status = 0;
+	outprfge(FLT_NONE, usrnum);
 
-return (found);
+	return found;
 }
 
 /**************************************************************************
@@ -1724,95 +1610,82 @@ return (found);
 
 void FUNC selectship()
 {
-int	selection;
-int	shpno;
-int	page_count;
+	int selection;
+	int shpno;
+	int page_count;
 
-/* exit back */
-if ((sameas(margv[0],"x")) || (sameas(margv[0],"X")))
-	{
-	disp_main_menu();
-	outprfge(FLT_NONE,usrnum);
-	usrptr->substt = 1;
-	return;
-	}
-
-/* numeric selection on current page */
-selection = (atoi(margv[0])) - 1;
-if (selection >= 0 && selection < NOSCANTAB && scantab[usrnum].ship[selection].shipno != 0)
-	{
-	shpno = scantab[usrnum].ship[selection].shipno;
-	setbtv(gebb1);
-	if (gepdb(GEGET,usaptr->userid,shpno,warsptr))
-		{
-		if (!valid_user_ship(warsptr))
-			{
-			prfmsg(FLEET4);
-			findships(0, 0);
-			prfmsg(FLEET3);
-			usrptr->substt = CHOOSESH;
-			outprfge(FLT_NONE, usrnum);
-			return;
-			}
-		tossingegame(); /* into the game you go bud! */
+	/* exit back */
+	if (sameas(margv[0], "x") || sameas(margv[0], "X")) {
+		disp_main_menu();
+		outprfge(FLT_NONE, usrnum);
+		usrptr->substt = 1;
 		return;
+	}
+
+	/* numeric selection on current page */
+	selection = atoi(margv[0]) - 1;
+	if (selection >= 0 && selection < NOSCANTAB && scantab[usrnum].ship[selection].shipno != 0) {
+		shpno = scantab[usrnum].ship[selection].shipno;
+		setbtv(gebb1);
+		if (gepdb(GEGET, usaptr->userid, shpno, warsptr)) {
+			if (!valid_user_ship(warsptr)) {
+				prfmsg(FLEET4);
+				findships(0, 0);
+				prfmsg(FLEET3);
+				usrptr->substt = CHOOSESH;
+				outprfge(FLT_NONE, usrnum);
+				return;
+			}
+			tossingegame(); /* into the game you go bud! */
+			return;
 		}
 	}
 
-/* paging */
-if (sameas(margv[0], "N") || sameas(margv[0], "n"))
-	{
-	page_count = findships(1, 0);
-	if (page_count == 0)
-		{
-		prfmsg(FLEET4);
-		page_count = findships(0, 0);
+	/* paging */
+	if (sameas(margv[0], "N") || sameas(margv[0], "n")) {
+		page_count = findships(1, 0);
+		if (page_count == 0) {
+			prfmsg(FLEET4);
+			page_count = findships(0, 0);
 		}
+		prfmsg(FLEET3);
+		usrptr->substt = CHOOSESH;
+		outprfge(FLT_NONE, usrnum);
+		return;
+	}
+
+	if (sameas(margv[0], "P") || sameas(margv[0], "p")) {
+		page_count = findships(-1, 0);
+		if (page_count == 0) {
+			prfmsg(FLEET4);
+			page_count = findships(0, 0);
+		}
+		prfmsg(FLEET3);
+		usrptr->substt = CHOOSESH;
+		outprfge(FLT_NONE, usrnum);
+		return;
+	}
+
+	/* anything else, show error and first page again */
+	prfmsg(FLEET4);
+	page_count = findships(0, 0);
 	prfmsg(FLEET3);
 	usrptr->substt = CHOOSESH;
 	outprfge(FLT_NONE, usrnum);
-	return;
-	}
-
-if (sameas(margv[0], "P") || sameas(margv[0], "p"))
-	{
-	page_count = findships(-1, 0);
-	if (page_count == 0)
-		{
-		prfmsg(FLEET4);
-		page_count = findships(0, 0);
-		}
-	prfmsg(FLEET3);
-	usrptr->substt = CHOOSESH;
-	outprfge(FLT_NONE, usrnum);
-	return;
-	}
-
-/* anything else, show error and first page again */
-prfmsg(FLEET4);
-page_count = findships(0, 0);
-prfmsg(FLEET3);
-usrptr->substt = CHOOSESH;
-outprfge(FLT_NONE,usrnum);
 }
 
 /**************************************************************************
 ** Repair the ship                                                       **
 **************************************************************************/
 
-void FUNC repairship(ptr,usrn)
-
-WARSHP	*ptr;
-int	usrn;
+void FUNC repairship(WARSHP *ptr, int usrn)
 {
-if (ptr->repair > 0)
-	{
-	if (ptr->cantexit > 0)
-		{
-		prfmsg(MAINT10);
-		ptr->repair = 0;
-		outprfge(FLT_NONE,usrn);
-		return;
+	if (ptr->repair > 0) {
+		if (ptr->cantexit > 0) {
+			prfmsg(MAINT10);
+			ptr->repair = 0;
+			outprfge(FLT_NONE, usrn);
+			return;
 		}
 	}
 }
@@ -1822,36 +1695,30 @@ if (ptr->repair > 0)
 ** Rotate the ship                                                       **
 **************************************************************************/
 
-void FUNC rotateship(ptr,usrn)
-
-WARSHP	*ptr;
-int	usrn;
+void FUNC rotateship(WARSHP *ptr, int usrn)
 {
-int	angle;
-double	rotamt;
+	int angle;
+	double rotamt;
 
-rotamt = ship_accel(ptr) / 10.0;
+	rotamt = ship_accel(ptr) / 10.0;
 
-if (ptr->heading != ptr->head2b)
-	{
-	if (fabs(normal(ptr->heading - ptr->head2b)) >= (360.0-rotamt) ||
-		fabs(normal(ptr->heading - ptr->head2b)) <= rotamt)
-		{
-		ptr->heading = ptr->head2b;
-		angle = (int)ptr->heading;
-		prfmsg(NOWTHER,angle);
-		outprfge(FLT_NONE,usrn);
+	if (ptr->heading != ptr->head2b) {
+		if (fabs(normal(ptr->heading - ptr->head2b)) >= (360.0 - rotamt)
+			|| fabs(normal(ptr->heading - ptr->head2b)) <= rotamt) {
+			ptr->heading = ptr->head2b;
+			angle = (int)ptr->heading;
+			prfmsg(NOWTHER, angle);
+			outprfge(FLT_NONE, usrn);
 		}
-	else
-		{
-		angle = (int)normal(ptr->heading - ptr->head2b);
-		if (angle < 180)	/* rotate left */
-			ptr->heading = normal(ptr->heading - rotamt);
-		else			/* rotate right */
-			ptr->heading = normal(ptr->heading + rotamt);
-		angle = (int)ptr->heading;
-		prfmsg(NOWTRNP,angle);
-		outprfge(FLT_SHIP,usrn);
+		else {
+			angle = (int)normal(ptr->heading - ptr->head2b);
+			if (angle < 180)	/* rotate left */
+				ptr->heading = normal(ptr->heading - rotamt);
+			else			/* rotate right */
+				ptr->heading = normal(ptr->heading + rotamt);
+			angle = (int)ptr->heading;
+			prfmsg(NOWTRNP, angle);
+			outprfge(FLT_SHIP, usrn);
 		}
 	}
 }
@@ -1861,144 +1728,121 @@ if (ptr->heading != ptr->head2b)
 ** Accelerate the ship                                                   **
 **************************************************************************/
 
-void FUNC accel(ptr,usrn)
-
-WARSHP	*ptr;
-int	usrn;
+void FUNC accel(WARSHP *ptr, int usrn)
 {
-int	usage;
-int	newwarp;
-int	need;
-double	accelrate,decelrate;
+	int usage;
+	int newwarp;
+	int need;
+	double accelrate, decelrate;
 
-if (ptr->speed < ptr->speed2b)
-	{
-	accelrate = ship_accel(ptr);
-	if (ptr->speed < 1000 && ptr->speed2b < 1000)
-		usage = 0;
-	else
-		usage = ACCENGAMT;
-	if (fabs(ptr->speed - ptr->speed2b) <= accelrate)
-		{
-		need = usage;
-		if (ptr->speed/1000 < 1 && ptr->speed2b >= 1000)
-			{
-			newwarp = (int)(ptr->speed2b/1000.0);
-			need += (newwarp + 10);
-			}
-		if (fluxstat(ptr,usrn,need) == 1)
-			{
-			if ((ptr->speed2b >= 1000) && (ptr->speed/1000 < 1))
-				hyperspace(ptr,usrn,1);
-			ptr->speed = ptr->speed2b;
-			ptr->energy -= usage;
-
-			prfmsg(SPEEDIS, showarp(ptr->speed));
-			outprfge(FLT_NONE,usrn);
-			}
+	if (ptr->speed < ptr->speed2b) {
+		accelrate = ship_accel(ptr);
+		if (ptr->speed < 1000 && ptr->speed2b < 1000)
+			usage = 0;
 		else
-			{
-			if (ptr->speed2b >= 1000 && ptr->energy < (ACCENGAMT + 10 + 1))
-				prfmsg(MOVE5);
-			else
-				prfmsg(NOACCEL,(int)(ptr->speed/1000.0));
-			outprfge(FLT_NONE,usrn);
-			decelrate = accelrate * 2.0;
-			if ((ptr->speed/1000 >=1) && ((ptr->speed-decelrate)/1000 <1))
-				hyperspace(ptr,usrn,0);
-			if (fabs(ptr->speed) <= decelrate)
-				ptr->speed = 0;
-			else
-				ptr->speed -= decelrate;
-			ptr->speed2b = 0;
+			usage = ACCENGAMT;
+		if (fabs(ptr->speed - ptr->speed2b) <= accelrate) {
+			need = usage;
+			if (ptr->speed / 1000 < 1 && ptr->speed2b >= 1000) {
+				newwarp = (int)(ptr->speed2b / 1000.0);
+				need += (newwarp + 10);
+			}
+			if (fluxstat(ptr, usrn, need) == 1) {
+				if (ptr->speed2b >= 1000 && ptr->speed / 1000 < 1)
+					hyperspace(ptr, usrn, 1);
+				ptr->speed = ptr->speed2b;
+				ptr->energy -= usage;
+
+				prfmsg(SPEEDIS, showarp(ptr->speed));
+				outprfge(FLT_NONE, usrn);
+			}
+			else {
+				if (ptr->speed2b >= 1000 && ptr->energy < (ACCENGAMT + 10 + 1))
+					prfmsg(MOVE5);
+				else
+					prfmsg(NOACCEL, (int)(ptr->speed / 1000.0));
+				outprfge(FLT_NONE, usrn);
+				decelrate = accelrate * 2.0;
+				if (ptr->speed / 1000 >= 1 && (ptr->speed - decelrate) / 1000 < 1)
+					hyperspace(ptr, usrn, 0);
+				if (fabs(ptr->speed) <= decelrate)
+					ptr->speed = 0;
+				else
+					ptr->speed -= decelrate;
+				ptr->speed2b = 0;
 			}
 		}
-	else
-		{
-		need = usage;
-		if (ptr->speed/1000 < 1 && (ptr->speed+accelrate) >= 1000)
-			{
-			newwarp = (int)((ptr->speed+accelrate)/1000.0);
-			need += (newwarp + 10);
+		else {
+			need = usage;
+			if (ptr->speed / 1000 < 1 && (ptr->speed + accelrate) >= 1000) {
+				newwarp = (int)((ptr->speed + accelrate) / 1000.0);
+				need += (newwarp + 10);
 			}
-		if (fluxstat(ptr,usrn,need) == 1)
-			{
-			if ((ptr->speed2b >= 1000) && (ptr->speed/1000 < 1) && ((ptr->speed+accelrate)/1000 >=1))
-				hyperspace(ptr,usrn,1);
-			if ((int)(ptr->speed/accelrate) != (int)((ptr->speed + accelrate)/accelrate))
-				{
-				sprintf(gechrbuf,"%.2f",(ptr->speed + accelrate)/1000.0);
-				prfmsg(WARP,gechrbuf);
-				outprfge(FLT_SHIP,usrn);
+			if (fluxstat(ptr, usrn, need) == 1) {
+				if (ptr->speed2b >= 1000 && ptr->speed / 1000 < 1 && (ptr->speed + accelrate) / 1000 >= 1)
+					hyperspace(ptr, usrn, 1);
+				if ((int)(ptr->speed / accelrate) != (int)((ptr->speed + accelrate) / accelrate)) {
+					sprintf(gechrbuf, "%.2f", (ptr->speed + accelrate) / 1000.0);
+					prfmsg(WARP, gechrbuf);
+					outprfge(FLT_SHIP, usrn);
 				}
-			ptr->speed += accelrate;
-			ptr->energy -= usage;
+				ptr->speed += accelrate;
+				ptr->energy -= usage;
 			}
-		else
-			{
-			if (ptr->speed2b >= 1000 && ptr->energy < (ACCENGAMT + 10 + 1))
-				prfmsg(MOVE5);
-			else
-				prfmsg(NOACCEL,(int)(ptr->speed/1000.0));
-			outprfge(FLT_NONE,usrn);
-			decelrate = accelrate * 2.0;
-			if ((ptr->speed/1000 >=1) && ((ptr->speed-decelrate)/1000 <1))
-				hyperspace(ptr,usrn,0);
-			if (fabs(ptr->speed) <= decelrate)
-				ptr->speed = 0;
-			else
-				ptr->speed -= decelrate;
-			ptr->speed2b = 0;
+			else {
+				if (ptr->speed2b >= 1000 && ptr->energy < (ACCENGAMT + 10 + 1))
+					prfmsg(MOVE5);
+				else
+					prfmsg(NOACCEL, (int)(ptr->speed / 1000.0));
+				outprfge(FLT_NONE, usrn);
+				decelrate = accelrate * 2.0;
+				if (ptr->speed / 1000 >= 1 && (ptr->speed - decelrate) / 1000 < 1)
+					hyperspace(ptr, usrn, 0);
+				if (fabs(ptr->speed) <= decelrate)
+					ptr->speed = 0;
+				else
+					ptr->speed -= decelrate;
+				ptr->speed2b = 0;
 			}
 		}
 	}
-else
-if (ptr->speed > ptr->speed2b)
-	{
-	int was_over;
+	else if (ptr->speed > ptr->speed2b) {
+		int was_over;
 
-	decelrate = ship_accel(ptr) * 2.0;
-	was_over = (ptr->speed/1000 > ptr->topspeed);
-	if ((ptr->speed2b < 1000) && (ptr->speed/1000 >=1) && ((ptr->speed-decelrate)/1000 <1))
-		hyperspace(ptr,usrn,0);
+		decelrate = ship_accel(ptr) * 2.0;
+		was_over = (ptr->speed / 1000 > ptr->topspeed);
+		if (ptr->speed2b < 1000 && ptr->speed / 1000 >= 1 && (ptr->speed - decelrate) / 1000 < 1)
+			hyperspace(ptr, usrn, 0);
 
-	if (fabs(ptr->speed - ptr->speed2b) <= decelrate)
-		{
-		ptr->speed = ptr->speed2b;
-		if (was_over && ptr->speed/1000 <= ptr->topspeed && ptr->topspeed < shipclass[ptr->shpclass].max_warp)
-			prfmsg(WARPSPD,ptr->topspeed);
-		if (ptr->speed > 0)
-			{
-			prfmsg(SPEEDIS,showarp(ptr->speed));
-			outprfge(FLT_NONE,usrn);
+		if (fabs(ptr->speed - ptr->speed2b) <= decelrate) {
+			ptr->speed = ptr->speed2b;
+			if (was_over && ptr->speed / 1000 <= ptr->topspeed && ptr->topspeed < shipclass[ptr->shpclass].max_warp)
+				prfmsg(WARPSPD, ptr->topspeed);
+			if (ptr->speed > 0) {
+				prfmsg(SPEEDIS, showarp(ptr->speed));
+				outprfge(FLT_NONE, usrn);
 			}
-		else
-			{
-			prfmsg(DEADSTOP);
-			outprfge(FLT_NONE,usrn);
+			else {
+				prfmsg(DEADSTOP);
+				outprfge(FLT_NONE, usrn);
 			}
 		}
-	else
-		{
-		if ((int)(ptr->speed/decelrate) != (int)((ptr->speed - decelrate)/decelrate))
-			{
-			if (ptr->speed > 0 )
-				{
-				sprintf(gechrbuf,"%.2f",(ptr->speed - decelrate)/1000.0);
-				prfmsg(WARP,gechrbuf);
-				outprfge(FLT_SHIP,usrn);
+		else {
+			if ((int)(ptr->speed / decelrate) != (int)((ptr->speed - decelrate) / decelrate)) {
+				if (ptr->speed > 0) {
+					sprintf(gechrbuf, "%.2f", (ptr->speed - decelrate) / 1000.0);
+					prfmsg(WARP, gechrbuf);
+					outprfge(FLT_SHIP, usrn);
 				}
-			else
-				{
-				prfmsg(DEADSTOP);
-				outprfge(FLT_NONE,usrn);
+				else {
+					prfmsg(DEADSTOP);
+					outprfge(FLT_NONE, usrn);
 				}
 			}
-		ptr->speed -= decelrate;
-		if (was_over && ptr->speed/1000 <= ptr->topspeed && ptr->topspeed < shipclass[ptr->shpclass].max_warp)
-			{
-			prfmsg(WARPSPD,ptr->topspeed);
-			outprfge(FLT_NONE,usrn);
+			ptr->speed -= decelrate;
+			if (was_over && ptr->speed / 1000 <= ptr->topspeed && ptr->topspeed < shipclass[ptr->shpclass].max_warp) {
+				prfmsg(WARPSPD, ptr->topspeed);
+				outprfge(FLT_NONE, usrn);
 			}
 		}
 	}
@@ -2009,99 +1853,82 @@ if (ptr->speed > ptr->speed2b)
 ** Make the jump to or from hyperspace                                   **
 **************************************************************************/
 
-void FUNC hyperspace(ptr,usrn,flag)
-
-WARSHP	*ptr;
-int	usrn;
+void FUNC hyperspace(WARSHP *ptr, int usrn, int flag)
 {
+	int i, oi;
+	byte owners[MAXTORPS], ocount, found;
 
-int i,oi;
-byte owners[MAXTORPS],ocount,found;
+	if (flag == 1 && ptr->where == 1)
+		return;
 
-if (flag == 1 && ptr->where == 1)
-	return;
+	if (flag == 0 && ptr->where == 0)
+		return;
 
-if (flag == 0 && ptr->where == 0)
-	return;
-
-if (flag == 1)
-	{
-	if (ptr->shieldstat == SHIELDUP)
-		{
-		prfmsg(SHLDDN);
-		ptr->shieldstat = SHIELDDN;
+	if (flag == 1) {
+		if (ptr->shieldstat == SHIELDUP) {
+			prfmsg(SHLDDN);
+			ptr->shieldstat = SHIELDDN;
 		}
-	if (ptr->cloak > 0 && ptr->cloak != 3)
-		{
-		prfmsg(CLOKOFF);
-		ptr->cloak = 3;
+		if (ptr->cloak > 0 && ptr->cloak != 3) {
+			prfmsg(CLOKOFF);
+			ptr->cloak = 3;
 		}
-	prfmsg(HYPERIN);
-	outprfge(FLT_SHIP,usrn);
+		prfmsg(HYPERIN);
+		outprfge(FLT_SHIP, usrn);
 
-	ptr->where = 1;
-	lock_simple(ptr,usrn,LOCKHY1,1);
+		ptr->where = 1;
+		lock_simple(ptr, usrn, LOCKHY1, 1);
 
-	if (ptr->status == GESTAT_AUTO)
-		prfmsg(HYPERINN,ptr->shipname);
-	else
-	if (ptr->shipname[0] == '\0')
-		prfmsg(HYPERIN3,ptr->userid);
-	else
-		prfmsg(HYPERIN2,ptr->shipname);
-	outsect(FLT_NONE,&(warshpoff(usrn)->coord),usrn);
+		if (ptr->status == GESTAT_AUTO)
+			prfmsg(HYPERINN, ptr->shipname);
+		else if (ptr->shipname[0] == '\0')
+			prfmsg(HYPERIN3, ptr->userid);
+		else
+			prfmsg(HYPERIN2, ptr->shipname);
+		outsect(FLT_NONE, &warshpoff(usrn)->coord, usrn);
 
-	ocount = 0;
-	for(i=0;i<MAXTORPS;++i)
-		{
-		if (ptr->ltorps[i].distance > 0)
-			{
-			if (ptr->ltorps[i].channel < nterms && ingegame(ptr->ltorps[i].channel))
-				{
-				found = FALSE;
-				for (oi=0;oi<(int)ocount;++oi)
-					{
-					if (owners[oi] == ptr->ltorps[i].channel)
-						{
-						found = TRUE;
-						break;
+		ocount = 0;
+		for (i = 0; i < MAXTORPS; ++i) {
+			if (ptr->ltorps[i].distance > 0) {
+				if (ptr->ltorps[i].channel < nterms && ingegame(ptr->ltorps[i].channel)) {
+					found = FALSE;
+					for (oi = 0; oi < (int)ocount; ++oi) {
+						if (owners[oi] == ptr->ltorps[i].channel) {
+							found = TRUE;
+							break;
 						}
 					}
-				if (found == FALSE && ocount < MAXTORPS)
-					owners[ocount++] = ptr->ltorps[i].channel;
+					if (found == FALSE && ocount < MAXTORPS)
+						owners[ocount++] = ptr->ltorps[i].channel;
 				}
 			}
-		ptr->ltorps[i].distance = 0;
+			ptr->ltorps[i].distance = 0;
 		}
-	for (oi=0;oi<(int)ocount;++oi)
-		{
-		prfmsg(TORMISS2,shpltr(owners[oi],usrn));
-		outprfge(FLT_NONE,owners[oi]);
+		for (oi = 0; oi < (int)ocount; ++oi) {
+			prfmsg(TORMISS2, shpltr(owners[oi], usrn));
+			outprfge(FLT_NONE, owners[oi]);
 		}
-	for(i=0;i<MAXDECOY;++i)
-		ptr->decout[i] = 0;
+		for (i = 0; i < MAXDECOY; ++i)
+			ptr->decout[i] = 0;
 	}
-else
-	{
-	prfmsg(HYPEROUT);
-	outprfge(FLT_SHIP,usrn);
+	else {
+		prfmsg(HYPEROUT);
+		outprfge(FLT_SHIP, usrn);
 
-	ptr->where = 0;
-	lock_simple(ptr,usrn,LOCKHY2,1);
+		ptr->where = 0;
+		lock_simple(ptr, usrn, LOCKHY2, 1);
 
-	if (ptr->status == GESTAT_AUTO)
-		{
-		/* tough cybs raise shields immediately */
-		if (shipclass[ptr->shpclass].tough_factor > 1 && ptr->shieldstat == SHIELDDN)
-			shieldup(ptr,usrn);
-		prfmsg(HYPEROU2,ptr->shipname);
+		if (ptr->status == GESTAT_AUTO) {
+			/* tough cybs raise shields immediately */
+			if (shipclass[ptr->shpclass].tough_factor > 1 && ptr->shieldstat == SHIELDDN)
+				shieldup(ptr, usrn);
+			prfmsg(HYPEROU2, ptr->shipname);
 		}
-	else
-	if (ptr->shipname[0] == '\0')
-		prfmsg(HYPERONO,ptr->userid);
-	else
-		prfmsg(HYPEROUN,ptr->shipname);
-	outsect(FLT_NONE,&(warshpoff(usrn)->coord),usrn);
+		else if (ptr->shipname[0] == '\0')
+			prfmsg(HYPERONO, ptr->userid);
+		else
+			prfmsg(HYPEROUN, ptr->shipname);
+		outsect(FLT_NONE, &warshpoff(usrn)->coord, usrn);
 	}
 }
 
@@ -2109,396 +1936,333 @@ else
 ** Move the ship                                                         **
 **************************************************************************/
 
-void FUNC moveship(ptr,usrn)
-
-WARSHP	*ptr;
-int	usrn;
+void FUNC moveship(WARSHP *ptr, int usrn)
 {
+	WARSHP *wptr;
+	COORD oldsect, newsect, neutsect;
+	int overamt, intspeed, zothusn, movenergy;
+	double ddist;
+	float newtop;
+	unsigned long overadd;
+	byte ptr_neb, oth_neb;
 
-WARSHP	*wptr;
-COORD	oldsect,newsect,neutsect;
-int	overamt,intspeed,zothusn,movenergy;
-double	ddist;
-float	newtop;
-unsigned long	overadd;
-byte	ptr_neb,oth_neb;
+	neutsect.xcoord = 0.50001;
+	neutsect.ycoord = 0.50001;
 
-neutsect.xcoord = 0.50001;
-neutsect.ycoord = 0.50001;
-
-if (ptr->speed > 0)
-	{
-	if (ptr->status == GESTAT_USER && ptr->speed <= ptr->speed2b)
-		{
-		intspeed = ptr->speed/1000.0;
-		if (intspeed < 1)
-			movenergy = 1;
-		else
-			movenergy = intspeed + 10;
-		if (fluxstat(ptr,usrn,movenergy) == 0)
-			{
-			ptr->speed2b = 0;
-			if (intspeed >= 1 && ptr->energy < (ACCENGAMT + 10 + 1))
-				prfmsg(MOVE5);
+	if (ptr->speed > 0) {
+		if (ptr->status == GESTAT_USER && ptr->speed <= ptr->speed2b) {
+			intspeed = ptr->speed / 1000.0;
+			if (intspeed < 1)
+				movenergy = 1;
 			else
-				prfmsg(MOVE4);
-			outprfge(FLT_NONE,usrn);
-			if ((ptr->speed/1000 >=1) && ((ptr->speed-(ship_accel(ptr) * 2.0))/1000 <1))
-				hyperspace(ptr,usrn,0);
-			if (fabs(ptr->speed) <= (ship_accel(ptr) * 2.0))
-				ptr->speed = 0;
-			else
-				ptr->speed -= (ship_accel(ptr) * 2.0);
-			return;
+				movenergy = intspeed + 10;
+			if (fluxstat(ptr, usrn, movenergy) == 0) {
+				ptr->speed2b = 0;
+				if (intspeed >= 1 && ptr->energy < (ACCENGAMT + 10 + 1))
+					prfmsg(MOVE5);
+				else
+					prfmsg(MOVE4);
+				outprfge(FLT_NONE, usrn);
+				if ((ptr->speed / 1000 >= 1) && ((ptr->speed - (ship_accel(ptr) * 2.0)) / 1000 < 1))
+					hyperspace(ptr, usrn, 0);
+				if (fabs(ptr->speed) <= (ship_accel(ptr) * 2.0))
+					ptr->speed = 0;
+				else
+					ptr->speed -= (ship_accel(ptr) * 2.0);
+				return;
 			}
-		else
-			ptr->energy -= movenergy;
+			else
+				ptr->energy -= movenergy;
 		}
 
-	movecoord(&oldsect, &ptr->coord);
-	ptr->coord.xcoord = ptr->coord.xcoord + ((ptr->speed * sin(degtorad(ptr->heading)))/65000.0);
-	ptr->coord.ycoord = ptr->coord.ycoord - ((ptr->speed * cos(degtorad(ptr->heading)))/65000.0);
+		movecoord(&oldsect, &ptr->coord);
+		ptr->coord.xcoord = ptr->coord.xcoord + ((ptr->speed * sin(degtorad(ptr->heading))) / 65000.0);
+		ptr->coord.ycoord = ptr->coord.ycoord - ((ptr->speed * cos(degtorad(ptr->heading))) / 65000.0);
 
-	if (ptr->where <= 1)
-		{
-		if (ptr->coord.xcoord > univmax+1)
-			{
-			if (univwrap)
-				{
-				ptr->coord.xcoord -= (double)((univmax*2)+1);
+		if (ptr->where <= 1) {
+			if (ptr->coord.xcoord > univmax + 1) {
+				if (univwrap) {
+					ptr->coord.xcoord -= (double)((univmax * 2) + 1);
 				}
-			else
-				{
-				ptr->coord.xcoord = (double)(univmax-2-(int)(ptr->speed/1000));
-				if (ptr->coord.ycoord <= univmax+1 && ptr->coord.ycoord >= (univmax*-1)) /* avoid double bounce */
-					{
-					ptr->head2b = normal(vector(&(ptr->coord),&neutsect));
-					ptr->heading = ptr->head2b;
-					telezip(ptr,usrn);
+				else {
+					ptr->coord.xcoord = (double)(univmax - 2 - (int)(ptr->speed / 1000));
+					if (ptr->coord.ycoord <= univmax + 1 && ptr->coord.ycoord >= (univmax * -1)) { /* avoid double bounce */
+						ptr->head2b = normal(vector(&(ptr->coord), &neutsect));
+						ptr->heading = ptr->head2b;
+						telezip(ptr, usrn);
 					}
 				}
 			}
-		else
-		if (ptr->coord.xcoord < (univmax*-1))
-			{
-			if (univwrap)
-				{
-				ptr->coord.xcoord += (double)((univmax*2)+1);
+			else if (ptr->coord.xcoord < (univmax * -1)) {
+				if (univwrap) {
+					ptr->coord.xcoord += (double)((univmax * 2) + 1);
 				}
-			else
-				{
-				ptr->coord.xcoord = (double)((univmax-2-(int)(ptr->speed/1000))*-1);
-				if (ptr->coord.ycoord <= univmax+1 && ptr->coord.ycoord >= (univmax*-1))
-					{
-					ptr->head2b = normal(vector(&(ptr->coord),&neutsect));
-					ptr->heading = ptr->head2b;
-					telezip(ptr,usrn);
+				else {
+					ptr->coord.xcoord = (double)((univmax - 2 - (int)(ptr->speed / 1000)) * -1);
+					if (ptr->coord.ycoord <= univmax + 1 && ptr->coord.ycoord >= (univmax * -1)) {
+						ptr->head2b = normal(vector(&(ptr->coord), &neutsect));
+						ptr->heading = ptr->head2b;
+						telezip(ptr, usrn);
 					}
 				}
 			}
 
-
-		if (ptr->coord.ycoord > univmax+1)
-			{
-			if (univwrap)
-				{
-				ptr->coord.ycoord -= (double)((univmax*2)+1);
+			if (ptr->coord.ycoord > univmax + 1) {
+				if (univwrap) {
+					ptr->coord.ycoord -= (double)((univmax * 2) + 1);
 				}
-			else
-				{
-				ptr->coord.ycoord = (double)(univmax-2-(int)(ptr->speed/1000));
-				ptr->head2b = normal(vector(&(ptr->coord),&neutsect));
-				ptr->heading = ptr->head2b;
-				telezip(ptr,usrn);
+				else {
+					ptr->coord.ycoord = (double)(univmax - 2 - (int)(ptr->speed / 1000));
+					ptr->head2b = normal(vector(&(ptr->coord), &neutsect));
+					ptr->heading = ptr->head2b;
+					telezip(ptr, usrn);
 				}
 			}
-		else
-		if (ptr->coord.ycoord < (univmax*-1))
-			{
-			if (univwrap)
-				{
-				ptr->coord.ycoord += (double)((univmax*2)+1);
+			else if (ptr->coord.ycoord < (univmax * -1)) {
+				if (univwrap) {
+					ptr->coord.ycoord += (double)((univmax * 2) + 1);
 				}
-			else
-				{
-				ptr->coord.ycoord = (double)((univmax-2-(int)(ptr->speed/1000))*-1);
-				ptr->head2b = normal(vector(&(ptr->coord),&neutsect));
-				ptr->heading = ptr->head2b;
-				telezip(ptr,usrn);
+				else {
+					ptr->coord.ycoord = (double)((univmax - 2 - (int)(ptr->speed / 1000)) * -1);
+					ptr->head2b = normal(vector(&(ptr->coord), &neutsect));
+					ptr->heading = ptr->head2b;
+					telezip(ptr, usrn);
 				}
 			}
 		}
 
-	movecoord(&newsect, &ptr->coord);
+		movecoord(&newsect, &ptr->coord);
 
-	if (!samesect(&oldsect, &newsect))
-		{
-		prfmsg(MOVE1,
-			(innebula(coord1(oldsect.xcoord),coord1(oldsect.ycoord)) ? CLR_GREEN2 "nebula" : "sector"),
-			coord1(oldsect.xcoord),coord1(oldsect.ycoord),
-			(innebula(coord1(newsect.xcoord),coord1(newsect.ycoord)) ? CLR_GREEN2 "nebula" : "sector"),
-			coord1(newsect.xcoord),coord1(newsect.ycoord));
-		outprfge(FLT_SHIP,usrn);
-		if (ptr->cloak != 10)
-			{
-			if (ptr->speed < 21000.0)
-				{
-				if (ptr->status == GESTAT_AUTO)
-					prfmsg(MOVE2N,ptr->shipname);
-				else
-				if (ptr->shipname[0] == '\0')
-					prfmsg(MOVE2NO,ptr->userid);
-				else
-					prfmsg(MOVE2,ptr->shipname);
-				outsect(FLT_NONE,&oldsect,usrn);
+		if (!samesect(&oldsect, &newsect)) {
+			prfmsg(MOVE1,
+				(innebula(coord1(oldsect.xcoord), coord1(oldsect.ycoord)) ? CLR_GREEN2 "nebula" : "sector"),
+				coord1(oldsect.xcoord), coord1(oldsect.ycoord),
+				(innebula(coord1(newsect.xcoord), coord1(newsect.ycoord)) ? CLR_GREEN2 "nebula" : "sector"),
+				coord1(newsect.xcoord), coord1(newsect.ycoord));
+			outprfge(FLT_SHIP, usrn);
+			if (ptr->cloak != 10) {
+				if (ptr->speed < 21000.0) {
+					if (ptr->status == GESTAT_AUTO)
+						prfmsg(MOVE2N, ptr->shipname);
+					else if (ptr->shipname[0] == '\0')
+						prfmsg(MOVE2NO, ptr->userid);
+					else
+						prfmsg(MOVE2, ptr->shipname);
+					outsect(FLT_NONE, &oldsect, usrn);
 				}
-			if (ptr->speed < 21000.0)
-				{
-				if (ptr->status == GESTAT_AUTO)
-					prfmsg(MOVE3N,ptr->shipname);
-				else
-				if (ptr->shipname[0] == '\0')
-					prfmsg(MOVE3NO,ptr->userid);
-				else
-					prfmsg(MOVE3,ptr->shipname);
-				outsect(FLT_NONE,&newsect,usrn);
+				if (ptr->speed < 21000.0) {
+					if (ptr->status == GESTAT_AUTO)
+						prfmsg(MOVE3N, ptr->shipname);
+					else if (ptr->shipname[0] == '\0')
+						prfmsg(MOVE3NO, ptr->userid);
+					else
+						prfmsg(MOVE3, ptr->shipname);
+					outsect(FLT_NONE, &newsect, usrn);
 				}
 			}
-		ptr->hostile = 0;
-		if (ptr->destruct > 0 && neutral(&newsect))
-			{
-			prfmsg(SELFD4);
-			outprfge(FLT_NONE,usrn);
-			ptr->destruct = 0;
+			ptr->hostile = 0;
+			if (ptr->destruct > 0 && neutral(&newsect)) {
+				prfmsg(SELFD4);
+				outprfge(FLT_NONE, usrn);
+				ptr->destruct = 0;
 			}
 		}
 
-	/* if I am cloaked tell the closer ones */
-	if (ptr->cloak == 10)
-		{
-		unsigned int r = gernd();
-		if (ptr->speed2b > (double)(((r >> 5) % 200) + 10) && (((r >> 8) % 25) == 0))
-			{
-			ptr_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
-			for (zothusn=0 ; zothusn < nterms ; zothusn++)
-				{
-				wptr=warshpoff(zothusn);
-				if (ingegame(zothusn) && zothusn != usrn)
-					{
-					ddist = cdistance(&ptr->coord,&wptr->coord);
-					ddist *= 10000;
-					oth_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
-					if ((ptr_neb || oth_neb) && !(ptr_neb && oth_neb && ddist < (double)NEBRNG))
-						continue;
+		/* if I am cloaked tell the closer ones */
+		if (ptr->cloak == 10) {
+			unsigned int r = gernd();
 
-					if (ddist < (shipclass[wptr->shpclass].scanrange)
-						&& ddist < 20000 && wptr->jam_sev <= (byte)2)
-						{
-						bearing = cbearing(&wptr->coord,&ptr->coord,wptr->heading);
-						/* slop it up +- 10 degrees on either side */
-						bearing += ((r >> 11) % 20) - 10;
-						if (bearing > 180)
-							bearing -= 360;
-						else
-						if (bearing <= -180)
-							bearing += 360;
-						prfmsg(CLOK3,bearing);
-						outprfge(FLT_NONE,zothusn);
+			if (ptr->speed2b > (double)(((r >> 5) % 200) + 10) && (((r >> 8) % 25) == 0)) {
+				ptr_neb = (byte)innebula(coord1(ptr->coord.xcoord), coord1(ptr->coord.ycoord));
+				for (zothusn = 0; zothusn < nterms; zothusn++) {
+					wptr = warshpoff(zothusn);
+					if (ingegame(zothusn) && zothusn != usrn) {
+						ddist = cdistance(&ptr->coord, &wptr->coord);
+						ddist *= 10000;
+						oth_neb = (byte)innebula(coord1(wptr->coord.xcoord), coord1(wptr->coord.ycoord));
+						if ((ptr_neb || oth_neb) && !(ptr_neb && oth_neb && ddist < (double)NEBRNG))
+							continue;
+
+						if (ddist < (shipclass[wptr->shpclass].scanrange)
+							&& ddist < 20000 && wptr->jam_sev <= (byte)2) {
+							bearing = cbearing(&wptr->coord, &ptr->coord, wptr->heading);
+							/* slop it up +- 10 degrees on either side */
+							bearing += ((r >> 11) % 20) - 10;
+							if (bearing > 180)
+								bearing -= 360;
+							else if (bearing <= -180)
+								bearing += 360;
+							prfmsg(CLOK3, bearing);
+							outprfge(FLT_NONE, zothusn);
 						}
 					}
 				}
 			}
 		}
-	if (ptr->speed > 0.0 && ptr->status == GESTAT_USER)
-		{
-		unsigned int r = gernd();
-		intspeed = ptr->speed/1000.0;
+		if (ptr->speed > 0.0 && ptr->status == GESTAT_USER) {
+			unsigned int r = gernd();
 
-		/* if this ship is exceeding top cruising speed and not in the process of going under it */
-		if (intspeed > ptr->topspeed && (int)(ptr->speed2b/1000.0) > ptr->topspeed)
-			{
-			newtop = shipclass[ptr->shpclass].max_warp * (1.0f - (float)ptr->overspeed / 10000.0f);
-			if (newtop < 1.0f)
-				{
-				prfmsg(WARPBRK);
-				outprfge(FLT_NONE,usrn);
-				ptr->topspeed = 0;
-				ptr->speed2b = 0;
-				ptr->damage += r%20;
-				}
-			else
-				{
-				if (ptr->topspeed != newtop && ptr->topspeed != 0)
-					ptr->topspeed = (int)newtop;
+			intspeed = ptr->speed / 1000.0;
 
-				/* for every 10% over cruising speed, increase potential random damage */
-				overamt = (intspeed * 100 / newtop) - 100;
-				if (ptr->upgrade & NCORE)
-					overadd = (unsigned long)(r%((overamt/2)+1));
-				else
-					overadd = (unsigned long)(r%(overamt+1));
-				ptr->overspeed += overadd;
-
-				/* if over twice new cruising speed, blow up the engines */
-				if (overamt >= 110 && ptr->topspeed != 0)
-					{
+			/* if this ship is exceeding top cruising speed and not in the process of going under it */
+			if (intspeed > ptr->topspeed && (int)(ptr->speed2b / 1000.0) > ptr->topspeed) {
+				newtop = shipclass[ptr->shpclass].max_warp * (1.0f - (float)ptr->overspeed / 10000.0f);
+				if (newtop < 1.0f) {
 					prfmsg(WARPBRK);
-					outprfge(FLT_NONE,usrn);
+					outprfge(FLT_NONE, usrn);
 					ptr->topspeed = 0;
 					ptr->speed2b = 0;
-					ptr->damage += r%20;
+					ptr->damage += r % 20;
+				}
+				else {
+					if (ptr->topspeed != newtop && ptr->topspeed != 0)
+						ptr->topspeed = (int)newtop;
+
+					/* for every 10% over cruising speed, increase potential random damage */
+					overamt = (intspeed * 100 / newtop) - 100;
+					if (ptr->upgrade & NCORE)
+						overadd = (unsigned long)(r % ((overamt / 2) + 1));
+					else
+						overadd = (unsigned long)(r % (overamt + 1));
+					ptr->overspeed += overadd;
+
+					/* if over twice new cruising speed, blow up the engines */
+					if (overamt >= 110 && ptr->topspeed != 0) {
+						prfmsg(WARPBRK);
+						outprfge(FLT_NONE, usrn);
+						ptr->topspeed = 0;
+						ptr->speed2b = 0;
+						ptr->damage += r % 20;
 					}
-				else
-				if (overamt != ptr->npcmsg)
-					{
-					if (overamt >= 60 && overamt/10 != ptr->npcmsg/10)
-						{
-						prfmsg(WARPFAST+(int)((overamt/10)-6));
-						outprfge(FLT_NONE,usrn);
+					else if (overamt != ptr->npcmsg) {
+						if (overamt >= 60 && overamt / 10 != ptr->npcmsg / 10) {
+							prfmsg(WARPFAST + (int)((overamt / 10) - 6));
+							outprfge(FLT_NONE, usrn);
 						}
-					ptr->npcmsg = overamt;
+						ptr->npcmsg = overamt;
 					}
 				}
 			}
-
 		}
-	if (ptr->hostile > 0)
-		checkdist(ptr,usrn);
+		if (ptr->hostile > 0)
+			checkdist(ptr, usrn);
 	}
-else
-	{
-	if (ptr->where == 1)	/* fix stuck users */
-		ptr->where = 0;
+	else {
+		if (ptr->where == 1)	/* fix stuck users */
+			ptr->where = 0;
 	}
 
-/* users check local planet proximity */
-if (ptr->where == 0 && ptr->status == GESTAT_USER)
-	proximity(ptr,usrn);
+	/* users check local planet proximity */
+	if (ptr->where == 0 && ptr->status == GESTAT_USER)
+		proximity(ptr, usrn);
 }
 
-void FUNC telezip(ptr,usrn)
+/**************************************************************************
+** Bounce a ship away from the world boundary toward neutral space      **
+**************************************************************************/
 
-WARSHP	*ptr;
-int	usrn;
+void FUNC telezip(WARSHP *ptr, int usrn)
 {
-/*
-ptr->coord.xcoord       = (rndm((double)(univmax-2)))+1;
-ptr->coord.ycoord       = (rndm((double)(univmax-2)))+1;
-*/
-ptr->speed2b = 0.0;
-ptr->speed = ptr->speed2b;
-ptr->where = 0;
-if (ptr->status == GESTAT_USER)
-	{
-	ptr->damage += TELEDAM;
-	damstr(TELEDAM);
-	prfmsg(TELEPORT,gechrbuf);
-	prfmsg(NOWTHER,(int)ptr->heading);	/* show now pointing towards 0 0 */
-	outprfge(FLT_NONE,usrn);
+	ptr->speed2b = 0.0;
+	ptr->speed = ptr->speed2b;
+	ptr->where = 0;
+	if (ptr->status == GESTAT_USER) {
+		ptr->damage += TELEDAM;
+		damstr(TELEDAM);
+		prfmsg(TELEPORT, gechrbuf);
+		prfmsg(NOWTHER, (int)ptr->heading);	/* show now pointing towards 0 0 */
+		outprfge(FLT_NONE, usrn);
 	}
-else
-	{
-	if (ptr->topspeed == 0)
-		ptr->speed2b = 990;
-	else
-		ptr->speed2b = (double)ptr->topspeed*1000.0;	/* head toward 0 0 for the moment */
-	ptr->cybupdate = 20 + gernd()%5;	/* save and pick new heading after a while */
+	else {
+		if (ptr->topspeed == 0)
+			ptr->speed2b = 990;
+		else
+			ptr->speed2b = (double)ptr->topspeed * 1000.0;	/* head toward 0 0 for the moment */
+		ptr->cybupdate = 20 + gernd() % 5;	/* save and pick new heading after a while */
 	}
 }
 
 
-void FUNC proximity(ptr,usrn)
+/**************************************************************************
+** Check nearby planets and wormholes for user ships                    **
+**************************************************************************/
 
-WARSHP	*ptr;
-int	usrn;
+void FUNC proximity(WARSHP *ptr, int usrn)
 {
-int	i;
-unsigned dist;
+	int i;
+	unsigned dist;
 
-refresh(ptr, usrn);
+	refresh(ptr, usrn);
 
-/* check distances to plantets */
+	/* check distances to plantets */
+	for (i = 0; i < MAXPLANETS; ++i) {
+		if (ptab[usrn].planets[i].type != 0) {
+			dist = (unsigned)(cdistance(&ptr->coord,&ptab[usrn].planets[i].coord) * 10000);
 
-for (i=0; i<MAXPLANETS;++i)
-	{
-	if (ptab[usrn].planets[i].type != 0)
-		{
-		dist = (unsigned)(cdistance(&ptr->coord,&ptab[usrn].planets[i].coord)*10000);
-
-		if (ptab[usrn].planets[i].type == PLTYPE_PLNT
-			&& dist <= 1000
-			&& beacontimer == 0)
-			{
-			if (getplanet(&ptr->coord,i+1) && planet.type == PLTYPE_PLNT && planet.beacon[0] != 0)
-				{
-				if (planet.name[0] != 0)
-					prfmsg(BEAC02,i+1,planet.name,planet.beacon);
-				else
-					prfmsg(BEAC01,i+1,planet.beacon);
-				outprfge(FLT_BEACON,usrn);
-				beacontimer = 60;
+			if (ptab[usrn].planets[i].type == PLTYPE_PLNT
+				&& dist <= 1000
+				&& beacontimer == 0) {
+				if (getplanet(&ptr->coord,i + 1) && planet.type == PLTYPE_PLNT && planet.beacon[0] != 0) {
+					if (planet.name[0] != 0)
+						prfmsg(BEAC02,i + 1,planet.name,planet.beacon);
+					else
+						prfmsg(BEAC01,i + 1,planet.beacon);
+					outprfge(FLT_BEACON,usrn);
+					beacontimer = 60;
 				}
 			}
-	/*      prf("dist to planet %u is %d\r",i,dist);
-		outprfge(FLT_NONE,usrn);*/
-		if (ptr->speed <= 0)
-			continue;
-		if (dist < 250 && ptr->damage < 101.0)	/* no addl msgs after crash */
-			{
-			if (dist >= 50)
-				{
-				if (ptab[usrn].planets[i].type == PLTYPE_PLNT)
-					prfmsg(GRAVITY1,i+1);
-				else
-					prfmsg(GRAVWRM1,i+1);
-
-				outprfge(FLT_NONE,usrn);
-				}
-			else
-			if (dist >= 25)
-				{
-				if (ptab[usrn].planets[i].type == PLTYPE_PLNT)
-					prfmsg(GRAVITY2,i+1);
-				else
-					prfmsg(GRAVWRM2,i+1);
-
-				outprfge(FLT_NONE,usrn);
-				}
-			else
-			if (dist < 25 )
-				{
-				if (ptab[usrn].planets[i].type == PLTYPE_PLNT)
-					prfmsg(GRAVITY3,i+1);
-				else
-					prfmsg(GRAVWRM3,i+1);
+		/*      prf("dist to planet %u is %d\r",i,dist);
+			outprfge(FLT_NONE,usrn);*/
+			if (ptr->speed <= 0)
+				continue;
+			if (dist < 250 && ptr->damage < 101.0) {	/* no addl msgs after crash */
+				if (dist >= 50) {
+					if (ptab[usrn].planets[i].type == PLTYPE_PLNT)
+						prfmsg(GRAVITY1,i + 1);
+					else
+						prfmsg(GRAVWRM1,i + 1);
 
 					outprfge(FLT_NONE,usrn);
+				}
+				else if (dist >= 25) {
 					if (ptab[usrn].planets[i].type == PLTYPE_PLNT)
-						{
+						prfmsg(GRAVITY2,i + 1);
+					else
+						prfmsg(GRAVWRM2,i + 1);
+
+					outprfge(FLT_NONE,usrn);
+				}
+				else if (dist < 25) {
+					if (ptab[usrn].planets[i].type == PLTYPE_PLNT)
+						prfmsg(GRAVITY3,i + 1);
+					else
+						prfmsg(GRAVWRM3,i + 1);
+
+					outprfge(FLT_NONE,usrn);
+					if (ptab[usrn].planets[i].type == PLTYPE_PLNT) {
 						ptr->damage = 101.0;
 						ptr->cantexit = FIRETICKS; /* no exiting after crashing */
-						}
-					else
-						{
+					}
+					else {
 						lock_sector(ptr,usrn,LOCKWORM);
 						setsect(ptr); /* build PKEY */
-						pkey.plnum = i+1;
+						pkey.plnum = i + 1;
 						gesdb(GEGETNOW,&pkey,(GALSECT *)&worm);
-					ptr->coord.xcoord = worm.destination.xcoord;
-					ptr->coord.ycoord = worm.destination.ycoord;
-					prfmsg(MOVE1,
-						(innebula(xsect,ysect) ? CLR_GREEN2 "nebula" : "sector"),
-						xsect,ysect,
-						(innebula(coord1(worm.destination.xcoord),coord1(worm.destination.ycoord)) ? CLR_GREEN2 "nebula" : "sector"),
-						coord1(worm.destination.xcoord),coord1(worm.destination.ycoord));
-					ptr->damage+= 5.5;
-					outprfge(FLT_SHIP,usrn);
-					if (ptr->cloak != 10)
-						suddenappear(ptr,usrn);
-					clearitm(usrn);	 /* clear the tors and missiles */
-					ptr->jam_time = (byte)0;
-					ptr->jam_sev = (byte)0;
-					assign_cybs(usrn,0); /* clear current cyb pursuits and pick closest new ones */
+						ptr->coord.xcoord = worm.destination.xcoord;
+						ptr->coord.ycoord = worm.destination.ycoord;
+						prfmsg(MOVE1,
+							(innebula(xsect,ysect) ? CLR_GREEN2 "nebula" : "sector"),
+							xsect,ysect,
+							(innebula(coord1(worm.destination.xcoord),coord1(worm.destination.ycoord)) ? CLR_GREEN2 "nebula" : "sector"),
+							coord1(worm.destination.xcoord),coord1(worm.destination.ycoord));
+						ptr->damage += 5.5;
+						outprfge(FLT_SHIP,usrn);
+						if (ptr->cloak != 10)
+							suddenappear(ptr,usrn);
+						clearitm(usrn);	 /* clear the tors and missiles */
+						ptr->jam_time = (byte)0;
+						ptr->jam_sev = (byte)0;
+						assign_cybs(usrn,0); /* clear current cyb pursuits and pick closest new ones */
 					}
 				}
 			}
@@ -2509,57 +2273,48 @@ for (i=0; i<MAXPLANETS;++i)
 /* If player is far from the planet they were attacking then they are not
 	being hostile */
 
-void FUNC checkdist(ptr,usrn)
-
-WARSHP	*ptr;
-int	usrn;
+void FUNC checkdist(WARSHP *ptr, int usrn)
 {
-int	i;
-unsigned dist;
+	int i;
+	unsigned dist;
 
-refresh(ptr, usrn);
+	refresh(ptr, usrn);
 
-i = ptr->hostile - 11;
-if (ptab[usrn].planets[i].type != 0)
-	{
-	dist = (unsigned)(cdistance(&ptr->coord,&ptab[usrn].planets[i].coord)*10000);
-	if (dist > 1000)
-		{
-		ptr->hostile = 0;
-		}
+	i = ptr->hostile - 11;
+	if (ptab[usrn].planets[i].type != 0) {
+		dist = (unsigned)(cdistance(&ptr->coord, &ptab[usrn].planets[i].coord) * 10000);
+		if (dist > 1000)
+			ptr->hostile = 0;
 	}
 }
 
-void FUNC refresh(ptr, usrn)
+/**************************************************************************
+** Refresh the cached local planet table when a ship enters a new sector **
+**************************************************************************/
 
-WARSHP	*ptr;
-int	usrn;
+void FUNC refresh(WARSHP *ptr, int usrn)
 {
-int	i;
+	int i;
+	COORD ss, tmpcoord;
 
-COORD	ss,tmpcoord;
+	movecoord(&ss, &ptr->coord);
 
-movecoord(&ss,&ptr->coord);
+	/* need to refresh planet coords? */
 
-/* need to refresh planet coords? */
+	tmpcoord.xcoord = 32767.000;
+	tmpcoord.ycoord = 32767.000;
 
-tmpcoord.xcoord = 32767.000;
-tmpcoord.ycoord = 32767.000;
-
-for (i = 0; i < MAXPLANETS; ++i)
-	{
-	if (ptab[usrn].planets[i].type != 0)
-		{
-		movecoord(&tmpcoord,&ptab[usrn].planets[i].coord);
-		break;
+	for (i = 0; i < MAXPLANETS; ++i) {
+		if (ptab[usrn].planets[i].type != 0) {
+			movecoord(&tmpcoord, &ptab[usrn].planets[i].coord);
+			break;
 		}
 	}
 
-if (!samesect(&tmpcoord, &ss))
-	{
-	logthis(spr("GEFUNCS:refreshing sector for usrn %d",usrn));
-	getsector(&ss);
-	memcpy(&ptab[usrn],&sector.ptab,sizeof(PLANETAB));
+	if (!samesect(&tmpcoord, &ss)) {
+		logthis(spr("GEFUNCS:refreshing sector for usrn %d", usrn));
+		getsector(&ss);
+		memcpy(&ptab[usrn], &sector.ptab, sizeof(PLANETAB));
 	}
 }
 
@@ -2567,518 +2322,448 @@ if (!samesect(&tmpcoord, &ss))
 ** Check the damage and repair any - Also service weapons                **
 **************************************************************************/
 
-void FUNC checkdam(ptr,usrn)
-
-WARSHP	*ptr;
-int	usrn;
+void FUNC checkdam(WARSHP *ptr, int usrn)
 {
+	double preload;
+	double reprate;
+	int repstep, i;
 
-double	preload;
-double	reprate;
-int	repstep,i;
+	logthis(spr("GE:Chn %d checkdam %s", usrn, ptr->userid));
 
-logthis(spr("GE:Chn %d checkdam %s",usrn,ptr->userid));
+	if (ptr->damage >= 100.0) {
+		ptr->damage = 0.0;	/* reset damage so he can get back on */
 
-if (ptr->damage >= 100.0)
-	{
-	ptr->damage = 0.0;	/* reset damage so he can get back on */
+		if (ptr->status == GESTAT_USER)
+			user[usrn].substt = 0;
 
-	if (ptr->status == GESTAT_USER)
-		user[usrn].substt = 0;
+		killem(ptr, usrn);
 
-	killem(ptr,usrn);
+		prfmsg(YOURDEAD);
+		outprfge(FLT_NONE, usrn);
 
-	prfmsg(YOURDEAD);
-	outprfge(FLT_NONE,usrn);
-
-	if (deathdeduct > 0)
-		{
-		sprintf(gechrbuf,"%lu",deathdeduct);
-		prfmsg(YRDEAD2,gechrbuf);
-		outprfge(FLT_NONE,usrn);
+		if (deathdeduct > 0) {
+			sprintf(gechrbuf, "%lu", deathdeduct);
+			prfmsg(YRDEAD2, gechrbuf);
+			outprfge(FLT_NONE, usrn);
 		}
 
-	prfmsg(YRDEAD3);
-	outprfge(FLT_NONE,usrn);
+		prfmsg(YRDEAD3);
+		outprfge(FLT_NONE, usrn);
 
 /* DEBUG
 	prf ("lastfired = %u\r",ptr->lastfired);
 	outprfge(FLT_NONE,usrn); */
 
-	/* only reset btupmt on "real" users */
-	if (usrn < nterms)
-		btupmt(usrn,'\0');
+		/* only reset btupmt on "real" users */
+		if (usrn < nterms)
+			btupmt(usrn, '\0');
 
-	if (ptr->status == GESTAT_AUTO || ptr->userid[0] == '@')
-		ptr->status = GESTAT_AVAIL;
+		if (ptr->status == GESTAT_AUTO || ptr->userid[0] == '@')
+			ptr->status = GESTAT_AVAIL;
 
-	if (ptr->status == GESTAT_USER)
-		{
+		if (ptr->status == GESTAT_USER) {
 /*		user[usrn].state = 0;*/
-		user[usrn].substt = 0;
-		--numwar;
-		ptr->where = -1;
+			user[usrn].substt = 0;
+			--numwar;
+			ptr->where = -1;
 		}
+		return;
+	}
+
+	/* repair ship, always */
+	reprate = repairrate;
+	repstep = 1;
+	if (ptr->repair > 0) {
+		reprate = 3.0;
+		repstep = 5;
+	}
+	else if (ptr->upgrade & DAMCTRL) {
+		reprate *= 2.0;
+		repstep = 2;
+	}
+
+	if (ptr->damage > 0.0)
+		ptr->damage = ptr->damage - reprate;
+	else
+		ptr->damage = 0.0;
+	if (ptr->damage < 0.0)
+		ptr->damage = 0.0;
+
+	/* charge phaser if not damaged */
+	if (ptr->phasr < 100 && ptr->phasr >= 0) {
+		if (fluxstat(ptr, usrn, PENGUSE) == 1) {
+			ptr->energy -= PENGUSE;
+			/* If phasers get to minimum fire power tell captain */
+			preload = (double)(ptr->phasrtype * PRELOAD);
+			/* If phaser goes from under to 100 in one step, just show one msg */
+			if (ptr->phasr < PMINFIRE && ptr->phasr + preload >= PMINFIRE && ptr->phasr + preload < 100) {
+				prfmsg(PHSRUP);
+				outprfge(FLT_NONE, usrn);
+			}
+
+			ptr->phasr = ptr->phasr + preload;
+
+			/* if phasers get to 100% tell captain, and set to 100% */
+			if (ptr->phasr >= 100) {
+				prfmsg(PHSRMAX);
+				outprfge(FLT_NONE, usrn);
+				ptr->phasr = 100;
+			}
+		}
+	}
+
+	/* repair shields separately */
+	if (ptr->shieldstat == SHIELDDM && repstep > 1) {
+		for (i = 1; i < repstep && ptr->shieldstat == SHIELDDM; ++i)
+			shieldrep(ptr, usrn);
+	}
+
+	/* repair other systems in order of importance */
+	repair_systems(ptr, usrn, repstep, (ptr->repair > 0));
+
+	if (ptr->repair > 0 && !repair_needed(ptr)) {
+		ptr->repair = 0;
+		prfmsg(MAINT7);
+		outprfge(FLT_NONE, usrn);
+	}
 	return;
-	}
-
-/* repair ship, always */
-reprate = repairrate;
-repstep = 1;
-if (ptr->repair > 0)
-	{
-	reprate = 3.0;
-	repstep = 5;
-	}
-else
-if (ptr->upgrade & DAMCTRL)
-	{
-	reprate *= 2.0;
-	repstep = 2;
-	}
-
-if (ptr->damage > 0.0)
-	ptr->damage = ptr->damage - reprate;
-else
-	ptr->damage = 0.0;
-if (ptr->damage < 0.0)
-	ptr->damage = 0.0;
-
-/* charge phaser if not damaged */
-if (ptr->phasr < 100 && ptr->phasr >= 0)
-	{
-	if (fluxstat(ptr,usrn,PENGUSE) == 1)
-		{
-		ptr->energy -= PENGUSE;
-		/* If phasers get to minimum fire power tell captain */
-		preload = (double)(ptr->phasrtype * PRELOAD);
-		/* If phaser goes from under to 100 in one step, just show one msg */
-		if (ptr->phasr < PMINFIRE && ptr->phasr + preload >= PMINFIRE && ptr->phasr + preload < 100)
-			{
-			prfmsg(PHSRUP);
-			outprfge(FLT_NONE,usrn);
-			}
-
-		ptr->phasr = ptr->phasr + preload;
-
-		/* if phasers get to 100% tell captain, and set to 100% */
-		if (ptr->phasr >= 100)
-			{
-			prfmsg(PHSRMAX);
-			outprfge(FLT_NONE,usrn);
-			ptr->phasr = 100;
-			}
-		}
-	}
-
-/* repair shields separately */
-if (ptr->shieldstat == SHIELDDM && repstep > 1)
-	{
-	for (i=1;i<repstep && ptr->shieldstat == SHIELDDM;++i)
-		shieldrep(ptr,usrn);
-	}
-
-/* repair other systems in order of importance */
-repair_systems(ptr,usrn,repstep,(ptr->repair > 0));
-
-if (ptr->repair > 0 && !repair_needed(ptr))
-	{
-	ptr->repair = 0;
-	prfmsg(MAINT7);
-	outprfge(FLT_NONE,usrn);
-	}
-return;
 }
 
-void FUNC killem(ptr,usrn)
-WARSHP	*ptr;
-int	usrn;
+void FUNC killem(WARSHP *ptr, int usrn)
 {
-WARSHP	*wptr;
-WARUSR	*wuptr;
-WARSHP	*disptr;
-WARSHP	*nearptr;
+	WARSHP *wptr;
+	WARUSR *wuptr;
+	WARSHP *disptr;
+	WARSHP *nearptr;
+	unsigned i;
+	int who, comma, full, lospos, winpos, nearby;
+	long scr, amt, bonus1, bonus2, ded_amt;
+	double ddist;
+	unsigned int r = gernd();
 
-unsigned i;
-int who, comma, full, lospos, winpos, nearby;
-long scr, amt, bonus1, bonus2, ded_amt;
-double ddist;
-unsigned int r = gernd();
+	/* 12/19/91 fix to prevent a player from being awarded points for killing */
+	/* himself */
 
-/* 12/19/91 fix to prevent a player from being awarded points for killing */
-/* himself */
+	clear_entrymsg(usrn);
+	waruptr = warusroff(usrn);
 
-clear_entrymsg(usrn);
-waruptr=warusroff(usrn);
+	who = ptr->lastfired;
 
-who = ptr->lastfired;
+	comma = FALSE;
+	full = FALSE;
+	deathdeduct = 0;
 
-comma = FALSE;
-full = FALSE;
-deathdeduct = 0;
-
-if (who >= 0 && who < nships && who != usrn)
-	{
-	wptr= warshpoff(who);
-	wuptr= warusroff(who);
-	logthis(spr("Killed by %s",wptr->userid));
-	if (wptr->status == GESTAT_AUTO)
-		{
-		if (shipclass[wptr->shpclass].won_func != NULL)
-			shipclass[wptr->shpclass].won_func(wptr,who,ptr);
+	if (who >= 0 && who < nships && who != usrn) {
+		wptr = warshpoff(who);
+		wuptr = warusroff(who);
+		logthis(spr("Killed by %s",wptr->userid));
+		if (wptr->status == GESTAT_AUTO) {
+			if (shipclass[wptr->shpclass].won_func != NULL)
+				shipclass[wptr->shpclass].won_func(wptr,who,ptr);
 		}
 
-	if (ptr->status == GESTAT_AUTO)
-		prfmsg(KILLDNPC,username(ptr),username(wptr));
-	else
-		prfmsg(KILLEDBY,username(ptr),username(wptr));
-	outwar(FLT_NONE,usrn,0,0);
+		if (ptr->status == GESTAT_AUTO)
+			prfmsg(KILLDNPC,username(ptr),username(wptr));
+		else
+			prfmsg(KILLEDBY,username(ptr),username(wptr));
+		outwar(FLT_NONE,usrn,0,0);
 
-	++wuptr->kills;
-	++wptr->kills;
+		++wuptr->kills;
+		++wptr->kills;
 
-	if (ptr->status == GESTAT_USER && wptr->status == GESTAT_USER)
-		{
-		++wuptr->ukills;
-		++wptr->ukills;
+		if (ptr->status == GESTAT_USER && wptr->status == GESTAT_USER) {
+			++wuptr->ukills;
+			++wptr->ukills;
 		}
 
-	if (ptr->status == GESTAT_AUTO)
-		prfmsg(KILLGOTN,ptr->shipname);
-	else
-	if (ptr->shipname[0] == '\0')
-		prfmsg(KILLGTNO,ptr->userid);
-	else
-		prfmsg(KILLGOT1,ptr->shipname);
+		if (ptr->status == GESTAT_AUTO)
+			prfmsg(KILLGOTN,ptr->shipname);
+		else if (ptr->shipname[0] == '\0')
+			prfmsg(KILLGTNO,ptr->userid);
+		else
+			prfmsg(KILLGOT1,ptr->shipname);
 
-	if (shipclass[wptr->shpclass].max_tons <= calcweight(wptr))
-		{
-		full = TRUE;
-		comma = TRUE;
-		prf(" nothing");
+		if (shipclass[wptr->shpclass].max_tons <= calcweight(wptr)) {
+			full = TRUE;
+			comma = TRUE;
+			prf(" nothing");
 		}
-	else
-		{
-		/* get gold drop first, complete amount */
-		amt = ptr->items[I_GOLD];
-		if (amt > 0)
-			{
-			if (!chkweight(wptr,I_GOLD,amt))
-				{
-				amt = ((shipclass[wptr->shpclass].max_tons - calcweight(wptr))/((double)weight[I_GOLD]/100.0));
-				full = TRUE;
+		else {
+			/* get gold drop first, complete amount */
+			amt = ptr->items[I_GOLD];
+			if (amt > 0) {
+				if (!chkweight(wptr,I_GOLD,amt)) {
+					amt = ((shipclass[wptr->shpclass].max_tons - calcweight(wptr))/((double)weight[I_GOLD]/100.0));
+					full = TRUE;
 				}
-			if (amt > 0)
-				{
-				wptr->items[I_GOLD] += amt;
-				sprintf(gechrbuf2,"%ld",amt);
-				prf(" %s %s",gechrbuf2,item_name[I_GOLD]);
-				comma = TRUE;
+				if (amt > 0) {
+					wptr->items[I_GOLD] += amt;
+					sprintf(gechrbuf2,"%ld",amt);
+					prf(" %s %s",gechrbuf2,item_name[I_GOLD]);
+					comma = TRUE;
 				}
 			}
-		/* get the rest except casualties, random amounts */
-		for (i=1;i<NUMITEMS;++i)
-			{
-			if (full == TRUE)
-				break;
-			if (i != I_MEN && i != I_TROOPS && i != I_SPY && i != I_GOLD &&
-				!(shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG && i == I_FOOD))
-				{
-				amt = ptr->items[i] / (r%5 +1);
-				/* only collect as much as we can hold */
-				if (amt > 0)
-					{
-					if (!chkweight(wptr,i,amt))
-						{
-						amt = ((shipclass[wptr->shpclass].max_tons - calcweight(wptr))/((double)weight[i]/100.0));
-						full = TRUE;
+			/* get the rest except casualties, random amounts */
+			for (i = 1; i < NUMITEMS; ++i) {
+				if (full == TRUE)
+					break;
+				if (i != I_MEN && i != I_TROOPS && i != I_SPY && i != I_GOLD &&
+					!(shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG && i == I_FOOD)) {
+					amt = ptr->items[i] / (r % 5 + 1);
+					/* only collect as much as we can hold */
+					if (amt > 0) {
+						if (!chkweight(wptr,i,amt)) {
+							amt = ((shipclass[wptr->shpclass].max_tons - calcweight(wptr))/((double)weight[i]/100.0));
+							full = TRUE;
 						}
-					if (amt > 0)
-						{
-						wptr->items[i] += amt;
-						sprintf(gechrbuf2,"%ld",amt);
-						if (comma == TRUE)
-							prf(", %s %s",gechrbuf2,item_name[i]);
-						else
-							{
-							prf(" %s %s",gechrbuf2,item_name[i]);
-							comma = TRUE;
+						if (amt > 0) {
+							wptr->items[i] += amt;
+							sprintf(gechrbuf2,"%ld",amt);
+							if (comma == TRUE)
+								prf(", %s %s",gechrbuf2,item_name[i]);
+							else {
+								prf(" %s %s",gechrbuf2,item_name[i]);
+								comma = TRUE;
 							}
 						}
 					}
 				}
 			}
 		}
-	if (comma == FALSE)
-		prf(" nothing.\r");
-	else
-		prf(".\r");
-
-	if (full == TRUE)
-		prfmsg(KILLFULL);
-
-	outprfge(FLT_NONE,who);
-
-	/* grant points for the kill */
-	scr = (long)shipclass[ptr->shpclass].max_points;
-	bonus1 = 0;
-	bonus2 = 0;
-
-	if (ptr->status == GESTAT_USER && wptr->status == GESTAT_USER)
-		{
-		lospos = 0;
-		winpos = 0;
-
-		rospos(waruptr, wuptr, &lospos, &winpos);
-
-		/* bonus for lower ranked taking out higher ranked */
-		if (lospos != 0 && winpos > lospos && waruptr->score > wuptr->score)
-			{
-			bonus1 += ((winpos - lospos) * (long)score_bonus);
-			bonus1 += ((waruptr->score - wuptr->score) / (long)score_bonus);
-			}
-
-		/* adjust bonus for taking out more/less powerful ship */
-		if (shipclass[ptr->shpclass].damfact > (shipclass[wptr->shpclass].damfact + 50))
-			bonus2 = scr / 2;
+		if (comma == FALSE)
+			prf(" nothing.\r");
 		else
-		if (shipclass[ptr->shpclass].damfact < (shipclass[wptr->shpclass].damfact - 50))
-			bonus2 = -((scr * 1L) / 3L);
+			prf(".\r");
 
-		amt = scr + bonus1 + bonus2;
-		if (amt < 0)
-			amt = 0;
+		if (full == TRUE)
+			prfmsg(KILLFULL);
 
-		ded_amt = (amt * score_f2)/100L;
+		outprfge(FLT_NONE,who);
 
-		/* if loss exceeds total score, kill is worth nothing */
-		if (ded_amt > waruptr->score)
-			{
-			ded_amt = 0;
-			amt = 0;
-			scr = 0;
+		/* grant points for the kill */
+		scr = (long)shipclass[ptr->shpclass].max_points;
+		bonus1 = 0;
+		bonus2 = 0;
+
+		if (ptr->status == GESTAT_USER && wptr->status == GESTAT_USER) {
+			lospos = 0;
+			winpos = 0;
+
+			rospos(waruptr, wuptr, &lospos, &winpos);
+
+			/* bonus for lower ranked taking out higher ranked */
+			if (lospos != 0 && winpos > lospos && waruptr->score > wuptr->score) {
+				bonus1 += ((winpos - lospos) * (long)score_bonus);
+				bonus1 += ((waruptr->score - wuptr->score) / (long)score_bonus);
+			}
+
+			/* adjust bonus for taking out more/less powerful ship */
+			if (shipclass[ptr->shpclass].damfact > (shipclass[wptr->shpclass].damfact + 50))
+				bonus2 = scr / 2;
+			else if (shipclass[ptr->shpclass].damfact < (shipclass[wptr->shpclass].damfact - 50))
+				bonus2 = -((scr * 1L) / 3L);
+
+			amt = scr + bonus1 + bonus2;
+			if (amt < 0)
+				amt = 0;
+
+			ded_amt = (amt * score_f2) / 100L;
+
+			/* if loss exceeds total score, kill is worth nothing */
+			if (ded_amt > waruptr->score) {
+				ded_amt = 0;
+				amt = 0;
+				scr = 0;
 			}
 		}
-	else
-		{
-		amt = scr;
+		else {
+			amt = scr;
 
-		/* deduct less for losing to an NPC */
-		ded_amt = (amt * score_f2)/1000L;
+			/* deduct less for losing to an NPC */
+			ded_amt = (amt * score_f2) / 1000L;
 		}
 
-	/* cap deduction to combat-earned score */
-	if (ded_amt > waruptr->klscore)
-		ded_amt = waruptr->klscore;
+		/* cap deduction to combat-earned score */
+		if (ded_amt > waruptr->klscore)
+			ded_amt = waruptr->klscore;
 
-	waruptr->klscore -= ded_amt;
-	waruptr->score -= ded_amt;
+		waruptr->klscore -= ded_amt;
+		waruptr->score -= ded_amt;
 
-	if (ded_amt > 0)
-		deathdeduct = ded_amt;
+		if (ded_amt > 0)
+			deathdeduct = ded_amt;
 
-	(wuptr->score) += amt;
-	(wuptr->klscore) += amt;
+		(wuptr->score) += amt;
+		(wuptr->klscore) += amt;
 
-	sprintf(gechrbuf,"%ld",scr);
-	if (scr == 0)
-		prfmsg(KILNOPTS);
-	else
-		{
-		prfmsg(KILLPNTS,gechrbuf,shipclass[ptr->shpclass].typename,showupg(ptr));
+		sprintf(gechrbuf,"%ld",scr);
+		if (scr == 0)
+			prfmsg(KILNOPTS);
+		else {
+			prfmsg(KILLPNTS,gechrbuf,shipclass[ptr->shpclass].typename,showupg(ptr));
 
-		if (bonus2 > 0)
-			{
-			sprintf(gechrbuf,"%ld",bonus2);
-			prfmsg(KILLBON1,gechrbuf);
+			if (bonus2 > 0) {
+				sprintf(gechrbuf,"%ld",bonus2);
+				prfmsg(KILLBON1,gechrbuf);
 			}
-		else
-		if (bonus2 < 0)
-			{
-			sprintf(gechrbuf,"%ld",(bonus2 * -1L));
-			prfmsg(KILLBON2,gechrbuf);
+			else if (bonus2 < 0) {
+				sprintf(gechrbuf,"%ld",(bonus2 * -1L));
+				prfmsg(KILLBON2,gechrbuf);
 			}
 
-		if (bonus1 > 0)
-			{
-			sprintf(gechrbuf,"%ld",bonus1);
-			prfmsg(KILLBON3,winpos,lospos,gechrbuf);
+			if (bonus1 > 0) {
+				sprintf(gechrbuf,"%ld",bonus1);
+				prfmsg(KILLBON3,winpos,lospos,gechrbuf);
 			}
 		}
 
-	outprfge(FLT_NONE,who);
+		outprfge(FLT_NONE,who);
 
-	if (scr > 0 && chgloser > 0
-		&& ptr->status == GESTAT_USER
-		&& wptr->status == GESTAT_USER)
-		{
-		amt = (waruptr->cash/100L)*(long)chgloser;
-		if (amt > waruptr->cash)
-			amt = waruptr->cash;
+		if (scr > 0 && chgloser > 0
+			&& ptr->status == GESTAT_USER
+			&& wptr->status == GESTAT_USER) {
+			amt = (waruptr->cash / 100L) * (long)chgloser;
+			if (amt > waruptr->cash)
+				amt = waruptr->cash;
 
-
-		if (amt > 0)
-			{
-			waruptr->cash -= amt;
-			if (wuptr->cash > ULCAP - amt)
-				{
-				amt = ULCAP - wuptr->cash;
-				sprintf(gechrbuf,"%lu",ULCAP);
-				prfmsg(TOORICH,gechrbuf);
-				outprfge(FLT_NONE,who);
+			if (amt > 0) {
+				waruptr->cash -= amt;
+				if (wuptr->cash > ULCAP - amt) {
+					amt = ULCAP - wuptr->cash;
+					sprintf(gechrbuf,"%lu",ULCAP);
+					prfmsg(TOORICH,gechrbuf);
+					outprfge(FLT_NONE,who);
 				}
-			wuptr->cash += amt;
-			sprintf(gechrbuf,"%ld",amt);
-			prfmsg(CHGLSR1,gechrbuf);
-			outprfge(FLT_NONE,usrn);
-			prfmsg(CHGLSR2,gechrbuf,ptr->userid);
-			outprfge(FLT_NONE,who);
-			}
-
-		}
-
-	/* if the clown just killed was the last to fire on me clean out
-		my last fired flag so as not to award him with any points should
-		I end up getting killed */
-
-	if (wptr->lastfired == usrn)
-		wptr->lastfired = -1;
-
-	/* distress handling */
-	for (i=nterms;i<nships;++i)
-		{
-		if (ingegame(i))
-			{
-			disptr=warshpoff(i);
-			if (disptr->distress == usrn)
-				{
-				amt = (shipclass[disptr->shpclass].max_points)*4;
+				wuptr->cash += amt;
 				sprintf(gechrbuf,"%ld",amt);
-				prfmsg(KILLDIS,gechrbuf,disptr->shipname);
-				prfmsg(FACNAME0+shipclass[disptr->shpclass].faction);
-				prf("\r");
+				prfmsg(CHGLSR1,gechrbuf);
+				outprfge(FLT_NONE,usrn);
+				prfmsg(CHGLSR2,gechrbuf,ptr->userid);
 				outprfge(FLT_NONE,who);
-				wuptr->score += amt;
-				wuptr->klscore += amt;
-				wuptr->factions[shipclass[disptr->shpclass].faction] = 0;
-				disptr->distress = 255;
+			}
+		}
+
+		/* if the clown just killed was the last to fire on me clean out
+			my last fired flag so as not to award him with any points should
+			I end up getting killed */
+		if (wptr->lastfired == usrn)
+			wptr->lastfired = -1;
+
+		/* distress handling */
+		for (i = nterms; i < nships; ++i) {
+			if (ingegame(i)) {
+				disptr = warshpoff(i);
+				if (disptr->distress == usrn) {
+					amt = (shipclass[disptr->shpclass].max_points) * 4;
+					sprintf(gechrbuf,"%ld",amt);
+					prfmsg(KILLDIS,gechrbuf,disptr->shipname);
+					prfmsg(FACNAME0+shipclass[disptr->shpclass].faction);
+					prf("\r");
+					outprfge(FLT_NONE,who);
+					wuptr->score += amt;
+					wuptr->klscore += amt;
+					wuptr->factions[shipclass[disptr->shpclass].faction] = 0;
+					disptr->distress = 255;
 				}
 			}
 		}
 
-	if (ptr->status == GESTAT_USER && wptr->status == GESTAT_USER
-		&& showdoc != 0 && r%(11 - showdoc) == 0)
-		{
-		setbtv(gebb2);
+		if (ptr->status == GESTAT_USER && wptr->status == GESTAT_USER
+			&& showdoc != 0 && r % (11 - showdoc) == 0) {
+			setbtv(gebb2);
 
-		if (qlobtv(0) && qeqbtv(ptr->userid,1))
-			{
-			int bits = 1;
-			if (waruptr->planets > 100)	/* if lots of planets, increase rnd threshold */
-				bits = 4;
-			else
-			if (waruptr->planets > 50)
-				bits = 2;
-			prfmsg(CAPTDOC);
-			prfmsg(PLAMSG1);
-			i = 0;
-			do
-				{
-				gcrbtv(&planet,1);
-				if (sameas(planet.userid,ptr->userid))
-					{
-					if ((bits == 1 && (r & 1) == 1) ||	/* different random list each time */
-						(bits == 2 && (r & 3) == 3) ||	/* over 50 planets, 1 in 4 chance to be included */
-						(bits == 4 && (r & 7) == 7))	/* read 3 bits (1 in 8 chance) even though we shift 4 */
-						{
-						prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
-						++i;
-						if (i % 5 == 0)		/* cat five lines then print */
-							outprfge(FLT_NONE,who);
+			if (qlobtv(0) && qeqbtv(ptr->userid,1)) {
+				int bits = 1;
+				if (waruptr->planets > 100)	/* if lots of planets, increase rnd threshold */
+					bits = 4;
+				else if (waruptr->planets > 50)
+					bits = 2;
+				prfmsg(CAPTDOC);
+				prfmsg(PLAMSG1);
+				i = 0;
+				do {
+					gcrbtv(&planet,1);
+					if (sameas(planet.userid,ptr->userid)) {
+						if ((bits == 1 && (r & 1) == 1) ||	/* different random list each time */
+							(bits == 2 && (r & 3) == 3) ||	/* over 50 planets, 1 in 4 chance to be included */
+							(bits == 4 && (r & 7) == 7)) {	/* read 3 bits (1 in 8 chance) even though we shift 4 */
+							prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
+							++i;
+							if (i % 5 == 0)		/* cat five lines then print */
+								outprfge(FLT_NONE,who);
 						}
 					}
-				else
-					break;
-				r >>= bits;
-				if (r == 0)
-					r = gernd();
+					else
+						break;
+					r >>= bits;
+					if (r == 0)
+						r = gernd();
 				} while (qnxbtv() && (i < 20));
-			if (i == 0)	/* oops, we didn't pick any planets, so print final planet */
-				{
-				qprbtv();
-				gcrbtv(&planet,1);
-				prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
+				if (i == 0) {	/* oops, we didn't pick any planets, so print final planet */
+					qprbtv();
+					gcrbtv(&planet,1);
+					prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
 				}
-			if (i % 5 != 0)	/* if we're not on a multiple of 5, we still have to print the remainder */
-				outprfge(FLT_NONE,who);
+				if (i % 5 != 0)	/* if we're not on a multiple of 5, we still have to print the remainder */
+					outprfge(FLT_NONE,who);
 			}
 		}
 
-	nearby = FALSE;
-	for (i=0;i<nships;++i)
-		{
-		if (i != who && i != usrn && ingegame((int)i))
-			{
-			nearptr = warshpoff((int)i);
-			if (nearptr->damage < 100.0)
-				{
-				ddist = cdistance(&wptr->coord,&nearptr->coord);
-				ddist *= 10000.0;
-				if (ddist < 30000.0)
-					{
-					nearby = TRUE;
-					break;
+		nearby = FALSE;
+		for (i = 0; i < nships; ++i) {
+			if (i != who && i != usrn && ingegame((int)i)) {
+				nearptr = warshpoff((int)i);
+				if (nearptr->damage < 100.0) {
+					ddist = cdistance(&wptr->coord,&nearptr->coord);
+					ddist *= 10000.0;
+					if (ddist < 30000.0) {
+						nearby = TRUE;
+						break;
 					}
 				}
 			}
 		}
-	if (!nearby && wptr->cantexit > (FIRETICKS/4))
-		wptr->cantexit = FIRETICKS/4;
+		if (!nearby && wptr->cantexit > (FIRETICKS/4))
+			wptr->cantexit = FIRETICKS/4;
 
-	if (shipclass[wptr->shpclass].max_type != CLASSTYPE_DROID)
-		geudb(GEUPDATE,wuptr->userid,wuptr);
+		if (shipclass[wptr->shpclass].max_type != CLASSTYPE_DROID)
+			geudb(GEUPDATE,wuptr->userid,wuptr);
 
-	if (shipclass[ptr->shpclass].kill_func != NULL)
-		shipclass[ptr->shpclass].kill_func(ptr,usrn,wptr);
+		if (shipclass[ptr->shpclass].kill_func != NULL)
+			shipclass[ptr->shpclass].kill_func(ptr,usrn,wptr);
 	}
-else
-	{
-	if (shipclass[ptr->shpclass].max_type != CLASSTYPE_USER)
-		prfmsg(DIEDNPC,ptr->shipname);
-	else
-	if (ptr->shipname[0] == '\0')
-		prfmsg(DIEDNO,username(ptr));
-	else
-		prfmsg(DIED,ptr->shipname,username(ptr));
-	outwar(FLT_NONE,usrn,0,0);
-	if (shipclass[ptr->shpclass].kill_func != NULL)
-		shipclass[ptr->shpclass].kill_func(ptr,usrn,NULL);
+	else {
+		if (shipclass[ptr->shpclass].max_type != CLASSTYPE_USER)
+			prfmsg(DIEDNPC,ptr->shipname);
+		else if (ptr->shipname[0] == '\0')
+			prfmsg(DIEDNO,username(ptr));
+		else
+			prfmsg(DIED,ptr->shipname,username(ptr));
+		outwar(FLT_NONE,usrn,0,0);
+		if (shipclass[ptr->shpclass].kill_func != NULL)
+			shipclass[ptr->shpclass].kill_func(ptr,usrn,NULL);
 	}
 
+	cleartm(usrn);	/* change destroyed user's torps and mis to 'no user' */
 
-cleartm(usrn);	/* change destroyed user's torps and mis to 'no user' */
+	--(waruptr->noships);
+	/* fix any wrap problem */
+	if (waruptr->noships == 65535U)
+		waruptr->noships = 0;
 
---(waruptr->noships);
-/* fix any wrap problem */
-if (waruptr->noships == 65535U)
-	waruptr->noships = 0;
-
-if (shipclass[ptr->shpclass].max_type != CLASSTYPE_DROID)
-	{
-	gepdb(GEDELETE,ptr->userid,ptr->shipno,ptr);
-	geudb(GEUPDATE,waruptr->userid,waruptr);
+	if (shipclass[ptr->shpclass].max_type != CLASSTYPE_DROID) {
+		gepdb(GEDELETE,ptr->userid,ptr->shipno,ptr);
+		geudb(GEUPDATE,waruptr->userid,waruptr);
 	}
 
-logthis(spr("GE:INF:%s died!",waruptr->userid));
+	logthis(spr("GE:INF:%s died!",waruptr->userid));
 }
 
 /**************************************************************************
 ** Recharge energy pool                                                  **
 **************************************************************************/
 
-void FUNC recharge(ptr)
-
-WARSHP	*ptr;
+void FUNC recharge(WARSHP *ptr)
 {
 	if (ptr->energy < ENGYMAX)
 		ptr->energy = ptr->energy + ENGRECHG;
@@ -3091,37 +2776,28 @@ WARSHP	*ptr;
 ** Check flux status                                                     **
 **************************************************************************/
 
-int FUNC fluxstat(ptr,usrn,energy)
-
-WARSHP	*ptr;
-int	usrn;
-unsigned energy;
+int FUNC fluxstat(WARSHP *ptr, int usrn, unsigned energy)
 {
-
-if (ptr->energy < energy)
-	{
-	if (ptr->items[I_FLUXPOD] > 0)
-		{
-		ptr->energy = ENGYMAX;
-		--ptr->items[I_FLUXPOD];
-		prfmsg(FLUXLOAD);
-		outprfge(FLT_SHIP,usrn);
-		if (ptr->items[I_FLUXPOD] == 0)
-			{
-			prfmsg(LASTFLUX);
-			outprfge(FLT_NONE,usrn);
+	if (ptr->energy < energy) {
+		if (ptr->items[I_FLUXPOD] > 0) {
+			ptr->energy = ENGYMAX;
+			--ptr->items[I_FLUXPOD];
+			prfmsg(FLUXLOAD);
+			outprfge(FLT_SHIP, usrn);
+			if (ptr->items[I_FLUXPOD] == 0) {
+				prfmsg(LASTFLUX);
+				outprfge(FLT_NONE, usrn);
 			}
-		return(1);
+			return(1);
 		}
-	else
-		{
-		prfmsg(NOFLUX);
-		outprfge(FLT_NONE,usrn);
-		return(0);
+		else {
+			prfmsg(NOFLUX);
+			outprfge(FLT_NONE, usrn);
+			return(0);
 		}
 	}
-else
-return(1);
+	else
+		return(1);
 }
 
 
@@ -3129,31 +2805,21 @@ return(1);
 ** Check shield status                                                   **
 **************************************************************************/
 
-void FUNC shieldstat(ptr,usrn)
-
-WARSHP	*ptr;
-int	usrn;
+void FUNC shieldstat(WARSHP *ptr, int usrn)
 {
-
-if (ptr->shieldstat == SHIELDUP)
-	{
-	if (fluxstat(ptr,usrn,SHENGUSE * ptr->shieldtype) == 0)
-		{
-		ptr->shieldstat = SHIELDDN;
-		ptr->shield = 0;
-		prfmsg(SHDNNOP);
-		outprfge(FLT_NONE,usrn);
+	if (ptr->shieldstat == SHIELDUP) {
+		if (fluxstat(ptr, usrn, SHENGUSE * ptr->shieldtype) == 0) {
+			ptr->shieldstat = SHIELDDN;
+			ptr->shield = 0;
+			prfmsg(SHDNNOP);
+			outprfge(FLT_NONE, usrn);
 		}
-	else
-		{
-		shieldchg(ptr,usrn);
+		else {
+			shieldchg(ptr, usrn);
 		}
 	}
-else
-if (ptr->shieldstat == SHIELDDM)
-	{
-	shieldrep(ptr,usrn);
-	}
+	else if (ptr->shieldstat == SHIELDDM)
+		shieldrep(ptr, usrn);
 }
 
 
@@ -3161,56 +2827,50 @@ if (ptr->shieldstat == SHIELDDM)
 ** Check cloak status                                                    **
 **************************************************************************/
 
-void FUNC cloakstat(ptr,usrn)
-
-WARSHP	*ptr;
-int	usrn;
+void FUNC cloakstat(WARSHP *ptr, int usrn)
 {
-int	oldcloak;
+	int oldcloak;
 
-if (ptr->cloak > 0 && ptr->cloak != 3)
-	{
-	if (fluxstat(ptr,usrn,clenguse) == 0)
-		{
-		oldcloak = ptr->cloak;
-		ptr->cloak = 3;
-		prfmsg(CLOKNOP);
-		outprfge(FLT_NONE,usrn);
-		if (oldcloak == 10)
-			{
-			prfmsg(CLOK2);
-			outrange(FLT_NONE,&ptr->coord);
-			suddenappear(ptr,usrn);
+	if (ptr->cloak > 0 && ptr->cloak != 3) {
+		if (fluxstat(ptr, usrn, clenguse) == 0) {
+			oldcloak = ptr->cloak;
+			ptr->cloak = 3;
+			prfmsg(CLOKNOP);
+			outprfge(FLT_NONE, usrn);
+			if (oldcloak == 10) {
+				prfmsg(CLOK2);
+				outrange(FLT_NONE, &ptr->coord);
+				suddenappear(ptr, usrn);
 			}
 		}
-	else
-		ptr->energy -= clenguse;
+		else
+			ptr->energy -= clenguse;
 	}
 }
 
-int FUNC isvisible(ptr,wptr)
+/**************************************************************************
+** Check whether one ship can see another through cloak and nebula rules **
+**************************************************************************/
 
-WARSHP	*ptr;
-WARSHP	*wptr;
-
+int FUNC isvisible(WARSHP *ptr, WARSHP *wptr)
 {
-double	ddist;
-byte	ptr_neb,oth_neb;
+	double ddist;
+	byte ptr_neb, oth_neb;
 
-if (wptr->cloak == 10)
+	if (wptr->cloak == 10)
+		return(FALSE);
+
+	ptr_neb = (byte)innebula(coord1(ptr->coord.xcoord), coord1(ptr->coord.ycoord));
+	oth_neb = (byte)innebula(coord1(wptr->coord.xcoord), coord1(wptr->coord.ycoord));
+
+	if (!(ptr_neb || oth_neb))
+		return(TRUE);
+
+	ddist = cdistance(&ptr->coord, &wptr->coord) * 10000.0;
+	if (ptr_neb && oth_neb && ddist < (double)NEBRNG)
+		return(TRUE);
+
 	return(FALSE);
-
-ptr_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
-oth_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
-
-if (!(ptr_neb || oth_neb))
-	return(TRUE);
-
-ddist = cdistance(&ptr->coord,&wptr->coord) * 10000.0;
-if (ptr_neb && oth_neb && ddist < (double)NEBRNG)
-	return(TRUE);
-
-return(FALSE);
 }
 
 /**************************************************************************
@@ -3219,113 +2879,98 @@ return(FALSE);
 
 void FUNC checkmines()
 {
-int	i;
-int	zothusn;	/* general purpose other-user channel number */
-WARSHP	*wptr;
-WARUSR	*wuptr;
-double	ddist, damfact;
-unsigned udist;
-byte	mine_neb,ship_neb;
-MINE	*mptr;
-setmbk(gemb);
+	int i;
+	int zothusn;	/* general purpose other-user channel number */
+	WARSHP *wptr;
+	WARUSR *wuptr;
+	double ddist, damfact;
+	unsigned udist;
+	byte mine_neb, ship_neb;
+	MINE *mptr;
 
-/* reset per-ship mine proximity status each tick */
-for (zothusn=0 ; zothusn < nships ; zothusn++)
-	{
-	wptr = warshpoff(zothusn);
-	if (ingegame(zothusn))
-		wptr->minesnear = FALSE;
+	setmbk(gemb);
+
+	/* reset per-ship mine proximity status each tick */
+	for (zothusn = 0; zothusn < nships; zothusn++) {
+		wptr = warshpoff(zothusn);
+		if (ingegame(zothusn))
+			wptr->minesnear = FALSE;
 	}
 
-for (i=0,mptr = mines; i<nummines;++mptr,++i)
-	{
-	if (mptr->channel != 255)	/* if a live mine */
-		{
-		--mptr->timer;
-		if (mptr->timer%5 == 0)
-			{
-			mine_neb = (byte)innebula(coord1(mptr->coord.xcoord),coord1(mptr->coord.ycoord));
-			for (zothusn=0 ; zothusn < nships ; zothusn++)
-				{
-				wptr=warshpoff(zothusn);
-				if (ingegame(zothusn))
-					{
-					ddist = cdistance(&mptr->coord,&wptr->coord);
-					ddist *= 10000;
-					bearing = cbearing(&wptr->coord,&mptr->coord,wptr->heading);
-					setsect(wptr);
-					if (ddist < ((double)MINERANGE) && !neutral(&wptr->coord))
-						{
-						udist = (unsigned)ddist;
-						if (mptr->timer == 0)
-							{
-							ddist = 1.0-(ddist/((double)MINERANGE));
-							if (ddist < 0)
-								ddist = 0;
-							ddist = ddist*ddist;
-							if (wptr->shieldstat == SHIELDUP)
-								{
-								damfact = (double)(ddist*minedammax);
-								damfact = ton_fact(wptr,damfact); /* adjust for weight */
-								damfact = damfact/(gernd()%5+wptr->shieldtype);
-								damstr((int)damfact);
-								prfmsg(MINE4,bearing,udist,gechrbuf);
-								outprfge(FLT_NONE,zothusn);
-								shieldhitmsg(shieldhit(wptr,(int)damfact+20),zothusn);
-								}
-							else
-								{
-								damfact = (double)(ddist*minedammax);
-								damfact = ton_fact(wptr,damfact); /* adjust for weight */
-
-								damstr((int)damfact);
-								prfmsg(MINE4,bearing,udist,gechrbuf);
-								outprfge(FLT_NONE,zothusn);
-								}
-							wptr->damage += damfact;
-							randamage(wptr,zothusn,damfact);
-							/* don't set lastfired if NPC blows up its own kind or user blows up self */
-							if ((shipclass[wptr->shpclass].faction != shipclass[warshpoff((int)mptr->channel)->shpclass].faction ||
-								shipclass[wptr->shpclass].faction == 0 || shipclass[warshpoff((int)mptr->channel)->shpclass].faction == 0) &&
-								zothusn != (int)mptr->channel)
-								wptr->lastfired = (int)mptr->channel;
-							wuptr = warusroff((int)mptr->channel);
-							set_dislike(wuptr,shipclass[wptr->shpclass].faction,(int)damfact);
-							wptr->minesnear = FALSE;
-							/*DEBUG
-							prf("MINE: chn # %d gets credit\r",wptr->lastfired);
-							outprfge(FLT_NONE,zothusn);*/
-							}
-						else
-							{
-							if (wptr->jam_sev <= (byte)2)
-								{
-								ship_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
-								if (!(mine_neb || ship_neb) || (mine_neb && ship_neb && ddist < (double)NEBRNG))
-									{
-									prfmsg(MINE6,bearing,udist);
+	for (i = 0, mptr = mines; i < nummines; ++mptr, ++i) {
+		if (mptr->channel != 255) {	/* if a live mine */
+			--mptr->timer;
+			if (mptr->timer % 5 == 0) {
+				mine_neb = (byte)innebula(coord1(mptr->coord.xcoord),coord1(mptr->coord.ycoord));
+				for (zothusn = 0; zothusn < nships; zothusn++) {
+					wptr = warshpoff(zothusn);
+					if (ingegame(zothusn)) {
+						ddist = cdistance(&mptr->coord,&wptr->coord);
+						ddist *= 10000;
+						bearing = cbearing(&wptr->coord,&mptr->coord,wptr->heading);
+						setsect(wptr);
+						if (ddist < ((double)MINERANGE) && !neutral(&wptr->coord)) {
+							udist = (unsigned)ddist;
+							if (mptr->timer == 0) {
+								ddist = 1.0 - (ddist / ((double)MINERANGE));
+								if (ddist < 0)
+									ddist = 0;
+								ddist = ddist * ddist;
+								if (wptr->shieldstat == SHIELDUP) {
+									damfact = (double)(ddist * minedammax);
+									damfact = ton_fact(wptr,damfact); /* adjust for weight */
+									damfact = damfact / (gernd() % 5 + wptr->shieldtype);
+									damstr((int)damfact);
+									prfmsg(MINE4,bearing,udist,gechrbuf);
 									outprfge(FLT_NONE,zothusn);
+									shieldhitmsg(shieldhit(wptr,(int)damfact + 20),zothusn);
+								}
+								else {
+									damfact = (double)(ddist * minedammax);
+									damfact = ton_fact(wptr,damfact); /* adjust for weight */
+
+									damstr((int)damfact);
+									prfmsg(MINE4,bearing,udist,gechrbuf);
+									outprfge(FLT_NONE,zothusn);
+								}
+								wptr->damage += damfact;
+								randamage(wptr,zothusn,damfact);
+								/* don't set lastfired if NPC blows up its own kind or user blows up self */
+								if ((shipclass[wptr->shpclass].faction != shipclass[warshpoff((int)mptr->channel)->shpclass].faction ||
+									shipclass[wptr->shpclass].faction == 0 || shipclass[warshpoff((int)mptr->channel)->shpclass].faction == 0) &&
+									zothusn != (int)mptr->channel)
+									wptr->lastfired = (int)mptr->channel;
+								wuptr = warusroff((int)mptr->channel);
+								set_dislike(wuptr,shipclass[wptr->shpclass].faction,(int)damfact);
+								wptr->minesnear = FALSE;
+								/*DEBUG
+								prf("MINE: chn # %d gets credit\r",wptr->lastfired);
+								outprfge(FLT_NONE,zothusn);*/
+							}
+							else {
+								if (wptr->jam_sev <= (byte)2) {
+									ship_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+									if (!(mine_neb || ship_neb) || (mine_neb && ship_neb && ddist < (double)NEBRNG)) {
+										prfmsg(MINE6,bearing,udist);
+										outprfge(FLT_NONE,zothusn);
 									}
 								}
-							wptr->minesnear = TRUE;
+								wptr->minesnear = TRUE;
 							}
 						}
-					else
-					if (mptr->timer == 0 && wptr->jam_sev <= (byte)2)
-						{
-						ship_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
-						if (!(mine_neb || ship_neb) || (mine_neb && ship_neb && ddist < (double)NEBRNG))
-							{
-							prfmsg(MINE5,bearing);
-							outprfge(FLT_NONE,zothusn);
+						else if (mptr->timer == 0 && wptr->jam_sev <= (byte)2) {
+							ship_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+							if (!(mine_neb || ship_neb) || (mine_neb && ship_neb && ddist < (double)NEBRNG)) {
+								prfmsg(MINE5,bearing);
+								outprfge(FLT_NONE,zothusn);
 							}
 						}
 					}
 				}
 			}
 		}
-	if (mptr->timer == 0)
-		mptr->channel = 255; /* stomp on it - HARD */
+		if (mptr->timer == 0)
+			mptr->channel = 255; /* stomp on it - HARD */
 	}
 }
 
@@ -3333,788 +2978,681 @@ for (i=0,mptr = mines; i<nummines;++mptr,++i)
 ** Check for incoming torpedoes or missiles & track decoys               **
 **************************************************************************/
 
-void FUNC checktm(ptr,usrn)
-
-WARSHP	*ptr;
-int	usrn;
+void FUNC checktm(WARSHP *ptr, int usrn)
 {
-int	i,j,k,power,shotdown,shres;
-byte	track_cnt,lost_cnt,acc_used,shmsg;
-byte	acc_cnt[MAXTORPS],acc_chan[MAXTORPS];
-byte	sh_cnt,un_cnt;
-double	sh_dam,un_dam;
+	int i, j, k, power, shotdown, shres;
+	byte track_cnt, lost_cnt, acc_used, shmsg;
+	byte acc_cnt[MAXTORPS], acc_chan[MAXTORPS];
+	byte sh_cnt, un_cnt;
+	double sh_dam, un_dam;
+	WARUSR *wuptr;
+	MISSILE *mptr;
+	TORPEDO *tptr;
+	unsigned *dptr;
+	double damfact;
+	WARSHP *sptr;
+	byte ptr_neb, src_neb;
+	double ndist;
 
-WARUSR				*wuptr;
-MISSILE				*mptr;
-TORPEDO				*tptr;
-unsigned			*dptr;
-double				damfact;
-WARSHP				*sptr;
-byte				ptr_neb,src_neb;
-double				ndist;
+	/* flag hyper-phasers ready again */
+	if (ptr->hypha > 0)
+		--(ptr->hypha);
 
-/* flag hyper-phasers ready again */
-if (ptr->hypha > 0)
-	--(ptr->hypha);
+	if (ptr->jamload > 0)
+		--(ptr->jamload);
 
-if (ptr->jamload > 0)
-	--(ptr->jamload);
+	if (ptr->zipload > 0)
+		--(ptr->zipload);
 
-if (ptr->zipload > 0)
-	--(ptr->zipload);
+	if (ptr->mineload > 0)
+		--(ptr->mineload);
 
-if (ptr->mineload > 0)
-	--(ptr->mineload);
+	if (ptr->decload > 0)
+		--(ptr->decload);
 
-if (ptr->decload > 0)
-	--(ptr->decload);
+	ptr->torps_fired = 0;
+	ptr->missl_fired = 0;
 
-ptr->torps_fired = 0;
-ptr->missl_fired = 0;
+	/* knock down battle lock ticks */
+	if (ptr->cantexit > 0)
+		--(ptr->cantexit);
 
-/* knock down battle lock ticks */
-if (ptr->cantexit > 0)
-	--(ptr->cantexit);
+	ptr_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
 
-ptr_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
-
-/* torpedoes first */
-
-shotdown = 0;
-track_cnt = 0;
-acc_used = 0;
-shmsg = 0;
-sh_cnt = un_cnt = 0;
-sh_dam = un_dam = 0.0;
-for (i=0,tptr=ptr->ltorps;i<MAXTORPS;++i,++tptr)
-	{
-	if (tptr->distance > 0)
-		{
-		ptr->cantexit = FIRETICKS;
-		if (tptr->distance >= 5000 && (int)tptr->channel < nships && ingegame((int)tptr->channel))
-			{
-			sptr = warshpoff((int)tptr->channel);
-			src_neb = (byte)innebula(coord1(sptr->coord.xcoord),coord1(sptr->coord.ycoord));
-			if (ptr_neb || src_neb)
-				{
-				ndist = cdistance(&ptr->coord,&sptr->coord) * 10000.0;
-				if (!(ptr_neb && src_neb && ndist < (double)NEBRNG))
-					{
-					tptr->distance = 0;
-					if ((int)tptr->channel < nterms && ingegame((int)tptr->channel))
-						{
-						prfmsg(TORMISS,shpltr(tptr->channel,usrn));
-						outprfge(FLT_NONE,tptr->channel);
-						}
-					continue;
-					}
-				}
-			}
-		if (neutral(&ptr->coord) && tptr->distance < 5000)
-			{
-			tptr->distance = 0;
-			++shotdown;
-			if ((int)tptr->channel < nterms && ingegame((int)tptr->channel))
-				{
-				prfmsg(TORMISS,shpltr(tptr->channel,usrn));
-				outprfge(FLT_NONE,tptr->channel);
-				}
-			}
-		else
-		if (tptr->distance <= torpsped)
-			{
-			tptr->distance = 0;
-			if (ptr->shieldstat == SHIELDUP)
-				{
-				damfact = tdammax * rndm(.5);
-				damfact = ton_fact(ptr,damfact); /* adjust for weight */
-
-				ptr->damage += damfact;
-				if ((int)tptr->channel < nships)
-					{
-					wuptr = warusroff((int)tptr->channel);
-					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
-					}
-				if (++sh_cnt == 1)
-					sh_dam = damfact;
-				else
-					sh_dam += damfact;
-				for (k=0;k<acc_used;++k)
-					if (acc_chan[k] == tptr->channel)
-						break;
-				if (k < acc_used)
-					++acc_cnt[k];
-				else
-					{
-					acc_chan[acc_used] = tptr->channel;
-					acc_cnt[acc_used] = 1;
-					++acc_used;
-					}
-				shres = shieldhit(ptr,(gernd()%20)+10);
-				if (shres == 1 || (shres == 2 && shmsg == 0))
-					shmsg = shres;
-				}
-			else
-				{
-				damfact = rndm(.5)+.5;
-				damfact = tdammax * damfact;
-
-				damfact = ton_fact(ptr,damfact); /* adjust for weight */
-
-				ptr->damage += damfact;
-				if ((int)tptr->channel < nships)
-					{
-					wuptr = warusroff((int)tptr->channel);
-					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
-					}
-				if (++un_cnt == 1)
-					un_dam = damfact;
-				else
-					un_dam += damfact;
-				for (k=0;k<acc_used;++k)
-					if (acc_chan[k] == tptr->channel)
-						break;
-				if (k < acc_used)
-					++acc_cnt[k];
-				else
-					{
-					acc_chan[acc_used] = tptr->channel;
-					acc_cnt[acc_used] = 1;
-					++acc_used;
-					}
-				}
-			}
-		else	/* still flying */
-			{
-			for (j=0,dptr=ptr->decout; j<MAXDECOY; ++j)
-				{
-				if (dptr[j] > 0)
-					{
-					if (tptr->distance < 5000 && (gernd()%decodds == 0))
-						{
-						prfmsg(TORDEST);
-						outprfge(FLT_NONE,usrn);
-						if (tptr->channel < nterms && ingegame((int)tptr->channel))
-							{
-							prfmsg(TORDEST2);
-							outprfge(FLT_NONE,tptr->channel);
-							}
-						dptr[j] = 0;
+	/* torpedoes first */
+	shotdown = 0;
+	track_cnt = 0;
+	acc_used = 0;
+	shmsg = 0;
+	sh_cnt = un_cnt = 0;
+	sh_dam = un_dam = 0.0;
+	for (i = 0, tptr = ptr->ltorps; i < MAXTORPS; ++i, ++tptr) {
+		if (tptr->distance > 0) {
+			ptr->cantexit = FIRETICKS;
+			if (tptr->distance >= 5000 && (int)tptr->channel < nships && ingegame((int)tptr->channel)) {
+				sptr = warshpoff((int)tptr->channel);
+				src_neb = (byte)innebula(coord1(sptr->coord.xcoord),coord1(sptr->coord.ycoord));
+				if (ptr_neb || src_neb) {
+					ndist = cdistance(&ptr->coord,&sptr->coord) * 10000.0;
+					if (!(ptr_neb && src_neb && ndist < (double)NEBRNG)) {
 						tptr->distance = 0;
-						break;
+						if ((int)tptr->channel < nterms && ingegame((int)tptr->channel)) {
+							prfmsg(TORMISS,shpltr(tptr->channel,usrn));
+							outprfge(FLT_NONE,tptr->channel);
+						}
+						continue;
+					}
+				}
+			}
+			if (neutral(&ptr->coord) && tptr->distance < 5000) {
+				tptr->distance = 0;
+				++shotdown;
+				if ((int)tptr->channel < nterms && ingegame((int)tptr->channel)) {
+					prfmsg(TORMISS,shpltr(tptr->channel,usrn));
+					outprfge(FLT_NONE,tptr->channel);
+				}
+			}
+			else if (tptr->distance <= torpsped) {
+				tptr->distance = 0;
+				if (ptr->shieldstat == SHIELDUP) {
+					damfact = tdammax * rndm(.5);
+					damfact = ton_fact(ptr,damfact); /* adjust for weight */
+
+					ptr->damage += damfact;
+					if ((int)tptr->channel < nships) {
+						wuptr = warusroff((int)tptr->channel);
+						set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
+					}
+					if (++sh_cnt == 1)
+						sh_dam = damfact;
+					else
+						sh_dam += damfact;
+					for (k = 0; k < acc_used; ++k) {
+						if (acc_chan[k] == tptr->channel)
+							break;
+					}
+					if (k < acc_used)
+						++acc_cnt[k];
+					else {
+						acc_chan[acc_used] = tptr->channel;
+						acc_cnt[acc_used] = 1;
+						++acc_used;
+					}
+					shres = shieldhit(ptr,(gernd() % 20) + 10);
+					if (shres == 1 || (shres == 2 && shmsg == 0))
+						shmsg = shres;
+				}
+				else {
+					damfact = rndm(.5) + .5;
+					damfact = tdammax * damfact;
+
+					damfact = ton_fact(ptr,damfact); /* adjust for weight */
+
+					ptr->damage += damfact;
+					if ((int)tptr->channel < nships) {
+						wuptr = warusroff((int)tptr->channel);
+						set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
+					}
+					if (++un_cnt == 1)
+						un_dam = damfact;
+					else
+						un_dam += damfact;
+					for (k = 0; k < acc_used; ++k) {
+						if (acc_chan[k] == tptr->channel)
+							break;
+					}
+					if (k < acc_used)
+						++acc_cnt[k];
+					else {
+						acc_chan[acc_used] = tptr->channel;
+						acc_cnt[acc_used] = 1;
+						++acc_used;
+					}
+				}
+			}
+			else {	/* still flying */
+				for (j = 0, dptr = ptr->decout; j < MAXDECOY; ++j) {
+					if (dptr[j] > 0) {
+						if (tptr->distance < 5000 && (gernd() % decodds == 0)) {
+							prfmsg(TORDEST);
+							outprfge(FLT_NONE,usrn);
+							if (tptr->channel < nterms && ingegame((int)tptr->channel)) {
+								prfmsg(TORDEST2);
+								outprfge(FLT_NONE,tptr->channel);
+							}
+							dptr[j] = 0;
+							tptr->distance = 0;
+							break;
 						}
 					}
 				}
-			if (tptr->distance > 0)	/* torp still here? */
-				{
-				tptr->distance -= torpsped;
-				if (tptr->distance > 0)
-					++track_cnt;
+				if (tptr->distance > 0) {	/* torp still here? */
+					tptr->distance -= torpsped;
+					if (tptr->distance > 0)
+						++track_cnt;
 				}
 			}
 		}
 	}
 
-if (sh_cnt > 0)
-	{
-	damstr((int)sh_dam);
-	if (sh_cnt == 1)
-		prfmsg(THIT1,gechrbuf);
-	else
-		prfmsg(THIT3,sh_cnt,gechrbuf);
-	outprfge(FLT_NONE,usrn);
-	shieldhitmsg(shmsg,usrn);
+	if (sh_cnt > 0) {
+		damstr((int)sh_dam);
+		if (sh_cnt == 1)
+			prfmsg(THIT1,gechrbuf);
+		else
+			prfmsg(THIT3,sh_cnt,gechrbuf);
+		outprfge(FLT_NONE,usrn);
+		shieldhitmsg(shmsg,usrn);
 	}
 
-if (un_cnt > 0)
-	{
-	damstr((int)un_dam);
-	if (un_cnt == 1)
-		prfmsg(THIT2,gechrbuf);
-	else
-		prfmsg(THIT4,un_cnt,gechrbuf);
-	outprfge(FLT_NONE,usrn);
+	if (un_cnt > 0) {
+		damstr((int)un_dam);
+		if (un_cnt == 1)
+			prfmsg(THIT2,gechrbuf);
+		else
+			prfmsg(THIT4,un_cnt,gechrbuf);
+		outprfge(FLT_NONE,usrn);
 	}
 
-if ((sh_dam + un_dam) > 0.0)
-	randamage(ptr,usrn,sh_dam + un_dam); /* combined torpedo random damage check */
+	if ((sh_dam + un_dam) > 0.0)
+		randamage(ptr,usrn,sh_dam + un_dam); /* combined torpedo random damage check */
 
-if (shotdown > 0)
-	{
-	if (shotdown == 1)
-		prfmsg(TORENF1);
-	else
-		prfmsg(TORENF,shotdown);
-	outprfge(FLT_NONE,usrn);
+	if (shotdown > 0) {
+		if (shotdown == 1)
+			prfmsg(TORENF1);
+		else
+			prfmsg(TORENF,shotdown);
+		outprfge(FLT_NONE,usrn);
 	}
 
-if (track_cnt == 1)
-	{
-	prfmsg(TORP1);
-	outprfge(FLT_NONE,usrn);
+	if (track_cnt == 1) {
+		prfmsg(TORP1);
+		outprfge(FLT_NONE,usrn);
 	}
-else
-if (track_cnt > 1)
-	{
-	prfmsg(TORP4,track_cnt);
-	outprfge(FLT_NONE,usrn);
+	else if (track_cnt > 1) {
+		prfmsg(TORP4,track_cnt);
+		outprfge(FLT_NONE,usrn);
 	}
 
-for (k=0;k<acc_used;++k)
-	acctm(ptr,usrn,0,acc_chan[k],acc_cnt[k]);
+	for (k = 0; k < acc_used; ++k)
+		acctm(ptr,usrn,0,acc_chan[k],acc_cnt[k]);
 
-/* missiles second */
-shotdown = 0;
-track_cnt = 0;
-lost_cnt = 0;
-acc_used = 0;
-shmsg = 0;
-sh_cnt = un_cnt = 0;
-sh_dam = un_dam = 0.0;
-for (i=0,mptr=ptr->lmissl;i<MAXMISSL;++i,++mptr)
-	{
-	if (mptr->distance > 0)
-		{
+	/* missiles second */
+	shotdown = 0;
+	track_cnt = 0;
+	lost_cnt = 0;
+	acc_used = 0;
+	shmsg = 0;
+	sh_cnt = un_cnt = 0;
+	sh_dam = un_dam = 0.0;
+	for (i = 0, mptr = ptr->lmissl; i < MAXMISSL; ++i, ++mptr) {
+		if (mptr->distance > 0) {
 		unsigned mstep;
 		float menergy, mscale;
 
-		ptr->cantexit = FIRETICKS;
-		if (mptr->distance >= 5000 && (int)mptr->channel < nships && ingegame((int)mptr->channel))
-			{
-			sptr = warshpoff((int)mptr->channel);
-			src_neb = (byte)innebula(coord1(sptr->coord.xcoord),coord1(sptr->coord.ycoord));
-			if (ptr_neb || src_neb)
-				{
-				ndist = cdistance(&ptr->coord,&sptr->coord) * 10000.0;
-				if (!(ptr_neb && src_neb && ndist < (double)NEBRNG))
-					{
-					mptr->distance = 0;
-					++lost_cnt;
-					if ((int)mptr->channel < nterms && ingegame((int)mptr->channel))
-						{
-						prfmsg(MISMISS,shpltr(mptr->channel,usrn));
-						outprfge(FLT_NONE,mptr->channel);
+			ptr->cantexit = FIRETICKS;
+			if (mptr->distance >= 5000 && (int)mptr->channel < nships && ingegame((int)mptr->channel)) {
+				sptr = warshpoff((int)mptr->channel);
+				src_neb = (byte)innebula(coord1(sptr->coord.xcoord),coord1(sptr->coord.ycoord));
+				if (ptr_neb || src_neb) {
+					ndist = cdistance(&ptr->coord,&sptr->coord) * 10000.0;
+					if (!(ptr_neb && src_neb && ndist < (double)NEBRNG)) {
+						mptr->distance = 0;
+						++lost_cnt;
+						if ((int)mptr->channel < nterms && ingegame((int)mptr->channel)) {
+							prfmsg(MISMISS,shpltr(mptr->channel,usrn));
+							outprfge(FLT_NONE,mptr->channel);
 						}
-					continue;
+						continue;
 					}
 				}
 			}
 		/* heavy missiles up to half speed, light missiles up to 2x speed */
-		menergy = (float)mptr->energy + 300.0f;
-		mscale = sqrt(5000.0f / menergy);
-		if (mscale > 2.0f)
-			mscale = 2.0f;
-		if (mscale < 0.5f)
-			mscale = 0.5f;
-		mstep = (unsigned int)(mislsped * mscale);
-		if (mstep == 0)
-			mstep = 1;
+			menergy = (float)mptr->energy + 300.0f;
+			mscale = sqrt(5000.0f / menergy);
+			if (mscale > 2.0f)
+				mscale = 2.0f;
+			if (mscale < 0.5f)
+				mscale = 0.5f;
+			mstep = (unsigned int)(mislsped * mscale);
+			if (mstep == 0)
+				mstep = 1;
 
-		if (neutral(&ptr->coord) && mptr->distance < 5000)
-			{
-			mptr->distance = 0;
-			++shotdown;
-			if ((int)mptr->channel < nterms && ingegame((int)mptr->channel))
-				{
-				prfmsg(MISMISS,shpltr(mptr->channel,usrn));
-				outprfge(FLT_NONE,mptr->channel);
+			if (neutral(&ptr->coord) && mptr->distance < 5000) {
+				mptr->distance = 0;
+				++shotdown;
+				if ((int)mptr->channel < nterms && ingegame((int)mptr->channel)) {
+					prfmsg(MISMISS,shpltr(mptr->channel,usrn));
+					outprfge(FLT_NONE,mptr->channel);
 				}
 			}
-		else
-		if (mptr->distance <= mstep)
-			{
-			mptr->distance = 0;
+			else if (mptr->distance <= mstep) {
+				mptr->distance = 0;
 			/* reduce the energy by the damage factor of this ship */
-			damfact = mptr->energy;
-			damfact = ton_fact(ptr,damfact);
-			mptr->energy = damfact;
+				damfact = mptr->energy;
+				damfact = ton_fact(ptr,damfact);
+				mptr->energy = damfact;
 
-			if (ptr->shieldstat == SHIELDUP)
-				{
-				damfact = damfact/20000.0;
-				damfact = mdammax*(damfact * rndm(.1));
-				ptr->damage += damfact;
-				if (++sh_cnt == 1)
-					sh_dam = damfact;
-				else
-					sh_dam += damfact;
-				if ((int)mptr->channel < nships)
-					{
-					wuptr = warusroff((int)mptr->channel);
-					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
+				if (ptr->shieldstat == SHIELDUP) {
+					damfact = damfact / 20000.0;
+					damfact = mdammax * (damfact * rndm(.1));
+					ptr->damage += damfact;
+					if (++sh_cnt == 1)
+						sh_dam = damfact;
+					else
+						sh_dam += damfact;
+					if ((int)mptr->channel < nships) {
+						wuptr = warusroff((int)mptr->channel);
+						set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
 					}
-				for (k=0;k<acc_used;++k)
-					if (acc_chan[k] == mptr->channel)
-						break;
-				if (k < acc_used)
-					++acc_cnt[k];
-				else
-					{
-					acc_chan[acc_used] = mptr->channel;
-					acc_cnt[acc_used] = 1;
-					++acc_used;
+					for (k = 0; k < acc_used; ++k) {
+						if (acc_chan[k] == mptr->channel)
+							break;
+					}
+					if (k < acc_used)
+						++acc_cnt[k];
+					else {
+						acc_chan[acc_used] = mptr->channel;
+						acc_cnt[acc_used] = 1;
+						++acc_used;
 					}
 
-				power = mptr->energy/999;
-				power = power * (rndm(.5)+.5);
-				shres = shieldhit(ptr,power);
-				if (shres == 1 || (shres == 2 && shmsg == 0))
-					shmsg = shres;
+					power = mptr->energy / 999;
+					power = power * (rndm(.5) + .5);
+					shres = shieldhit(ptr,power);
+					if (shres == 1 || (shres == 2 && shmsg == 0))
+						shmsg = shres;
 				}
-			else
-				{
-				damfact = damfact/20000.0;
-				damfact = mdammax*(damfact * (rndm(.5)+.5));
-				ptr->damage += damfact;
-				if (++un_cnt == 1)
-					un_dam = damfact;
-				else
-					un_dam += damfact;
-				if ((int)mptr->channel < nships)
-					{
-					wuptr = warusroff((int)mptr->channel);
-					set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
+				else {
+					damfact = damfact / 20000.0;
+					damfact = mdammax * (damfact * (rndm(.5) + .5));
+					ptr->damage += damfact;
+					if (++un_cnt == 1)
+						un_dam = damfact;
+					else
+						un_dam += damfact;
+					if ((int)mptr->channel < nships) {
+						wuptr = warusroff((int)mptr->channel);
+						set_dislike(wuptr,shipclass[ptr->shpclass].faction,(int)damfact);
 					}
-				for (k=0;k<acc_used;++k)
-					if (acc_chan[k] == mptr->channel)
-						break;
-				if (k < acc_used)
-					++acc_cnt[k];
-				else
-					{
-					acc_chan[acc_used] = mptr->channel;
-					acc_cnt[acc_used] = 1;
-					++acc_used;
+					for (k = 0; k < acc_used; ++k) {
+						if (acc_chan[k] == mptr->channel)
+							break;
+					}
+					if (k < acc_used)
+						++acc_cnt[k];
+					else {
+						acc_chan[acc_used] = mptr->channel;
+						acc_cnt[acc_used] = 1;
+						++acc_used;
 					}
 				}
 			}
-		else
-			{
-			for (j=0,dptr=ptr->decout; j<MAXDECOY; ++j)
-				{
-				if (dptr[j] > 0)
-					{
-					if (mptr->distance < 3000 && (gernd()%decodds == 0))
-						{
-						prfmsg(MISDEST);
-						outprfge(FLT_NONE,usrn);
-						if (ingegame(mptr->channel) && mptr->channel < nterms)
-							{
-							prfmsg(MISDEST2);
-							outprfge(FLT_NONE,mptr->channel);
+			else {
+				for (j = 0, dptr = ptr->decout; j < MAXDECOY; ++j) {
+					if (dptr[j] > 0) {
+						if (mptr->distance < 3000 && (gernd() % decodds == 0)) {
+							prfmsg(MISDEST);
+							outprfge(FLT_NONE,usrn);
+							if (ingegame(mptr->channel) && mptr->channel < nterms) {
+								prfmsg(MISDEST2);
+								outprfge(FLT_NONE,mptr->channel);
 							}
-						dptr[j] = 0;
+							dptr[j] = 0;
+							mptr->distance = 0;
+							break;
+						}
+					}
+				}
+				if (mptr->distance > 0) {	/* missl still here? */
+					mptr->distance -= mstep;
+					if (ptr->speed > 100000.0 || mptr->distance > 50000U - (int)(ptr->speed / 6.5) ||
+						mptr->energy <= 500) {
 						mptr->distance = 0;
-						break;
+						++lost_cnt;
+						if (ingegame(mptr->channel) && mptr->channel < nterms) {
+							prfmsg(MISMISS,shpltr(mptr->channel,usrn));
+							outprfge(FLT_NONE,mptr->channel);
 						}
 					}
-				}
-			if (mptr->distance > 0)	/* missl still here? */
-				{
-				mptr->distance -= mstep;
-				if (ptr->speed > 100000.0 || mptr->distance > 50000U - (int)(ptr->speed/6.5) ||
-					mptr->energy <= 500)
-					{
-					mptr->distance = 0;
-					++lost_cnt;
-					if (ingegame(mptr->channel) && mptr->channel < nterms)
-						{
-						prfmsg(MISMISS,shpltr(mptr->channel,usrn));
-						outprfge(FLT_NONE,mptr->channel);
-						}
+					else {
+						mptr->distance += (int)(ptr->speed / 6.5);
+						mptr->energy -= 500;	/* decrease energy over time */
 					}
-				else
-					{
-					mptr->distance += (int)(ptr->speed/6.5);
-					mptr->energy -= 500;	/* decrease energy over time */
-					}
-				if (mptr->distance > 0)
-					++track_cnt;
+					if (mptr->distance > 0)
+						++track_cnt;
 				}
 			}
 		}
 	}
 
-if (lost_cnt == 1)
-	{
-	prfmsg(MISSL2);
-	outprfge(FLT_NONE,usrn);
-	}
-else
-if (lost_cnt > 1)
-	{
-	prfmsg(MISSL4,lost_cnt);
-	outprfge(FLT_NONE,usrn);
-	}
-
-if (sh_cnt > 0)
-	{
-	damstr((int)sh_dam);
-	if (sh_cnt == 1)
-		prfmsg(MHIT1,gechrbuf);
-	else
-		prfmsg(MHIT3,sh_cnt,gechrbuf);
-	outprfge(FLT_NONE,usrn);
-	shieldhitmsg(shmsg,usrn);
-	}
-
-if (un_cnt > 0)
-	{
-	damstr((int)un_dam);
-	if (un_cnt == 1)
-		prfmsg(MHIT2,gechrbuf);
-	else
-		prfmsg(MHIT4,un_cnt,gechrbuf);
-	outprfge(FLT_NONE,usrn);
-	}
-
-if ((sh_dam + un_dam) > 0.0)
-	randamage(ptr,usrn,sh_dam + un_dam); /* combined missile random damage check */
-
-for (k=0;k<acc_used;++k)
-	acctm(ptr,usrn,1,acc_chan[k],acc_cnt[k]);
-
-if (shotdown > 0)
-	{
-	if (shotdown == 1)
-		prfmsg(MISENF1);
-	else
-		prfmsg(MISENF,shotdown);
-	outprfge(FLT_NONE,usrn);
-	}
-
-if (track_cnt == 1)
-	{
-	prfmsg(MISSL1);
-	outprfge(FLT_NONE,usrn);
-	}
-else
-if (track_cnt > 1)
-	{
-	prfmsg(MISSL3,track_cnt);
-	outprfge(FLT_NONE,usrn);
-	}
-
-shotdown = 0;
-
-/* finally decoys */
-
-for (i=0,dptr=ptr->decout;i<MAXDECOY;++i)
-	{
-	if (dptr[i] > 0)
-		{
-		if (dptr[i] > 1)
-			--dptr[i];
-		else
-		if (decpass == 0)
-			{
-			dptr[i] = 0;
-			++shotdown;
-			}
-		}
-	}
-if (shotdown == 1)
-	{
-	prfmsg(DECGONE);
-	outprfge(FLT_NONE,usrn);
-	}
-else
-if (shotdown > 1)
-	{
-	prfmsg(DECGONE2,shotdown);
-	outprfge(FLT_NONE,usrn);
-	}
-/* and Jammers too */
-if (ptr->jam_time > (byte)0)
-	{
-	--ptr->jam_time;
-	if (ptr->jam_time == (byte)0)
-		{
-		ptr->jam_sev = (byte)0;
-		prfmsg(JAMMER5);
+	if (lost_cnt == 1) {
+		prfmsg(MISSL2);
 		outprfge(FLT_NONE,usrn);
+	}
+	else if (lost_cnt > 1) {
+		prfmsg(MISSL4,lost_cnt);
+		outprfge(FLT_NONE,usrn);
+	}
+
+	if (sh_cnt > 0) {
+		damstr((int)sh_dam);
+		if (sh_cnt == 1)
+			prfmsg(MHIT1,gechrbuf);
+		else
+			prfmsg(MHIT3,sh_cnt,gechrbuf);
+		outprfge(FLT_NONE,usrn);
+		shieldhitmsg(shmsg,usrn);
+	}
+
+	if (un_cnt > 0) {
+		damstr((int)un_dam);
+		if (un_cnt == 1)
+			prfmsg(MHIT2,gechrbuf);
+		else
+			prfmsg(MHIT4,un_cnt,gechrbuf);
+		outprfge(FLT_NONE,usrn);
+	}
+
+	if ((sh_dam + un_dam) > 0.0)
+		randamage(ptr,usrn,sh_dam + un_dam); /* combined missile random damage check */
+
+	for (k = 0; k < acc_used; ++k)
+		acctm(ptr,usrn,1,acc_chan[k],acc_cnt[k]);
+
+	if (shotdown > 0) {
+		if (shotdown == 1)
+			prfmsg(MISENF1);
+		else
+			prfmsg(MISENF,shotdown);
+		outprfge(FLT_NONE,usrn);
+	}
+
+	if (track_cnt == 1) {
+		prfmsg(MISSL1);
+		outprfge(FLT_NONE,usrn);
+	}
+	else if (track_cnt > 1) {
+		prfmsg(MISSL3,track_cnt);
+		outprfge(FLT_NONE,usrn);
+	}
+
+	shotdown = 0;
+
+	/* finally decoys */
+	for (i = 0, dptr = ptr->decout; i < MAXDECOY; ++i) {
+		if (dptr[i] > 0) {
+			if (dptr[i] > 1)
+				--dptr[i];
+			else if (decpass == 0) {
+				dptr[i] = 0;
+				++shotdown;
+			}
 		}
 	}
-/* and cloak too */
-if (ptr->cloak == 1)
-	{
-	ptr->cloak = 2;
+	if (shotdown == 1) {
+		prfmsg(DECGONE);
+		outprfge(FLT_NONE,usrn);
 	}
-else
-if (ptr->cloak == 2)
-	{
-	ptr->cloak = 10;
-	prfmsg(CLOKUP);
-	outprfge(FLT_NONE,usrn);
-	if (ptr->lock >= 0)
-		{
-		if (ptr->lock < nships && ingegame(ptr->lock))
-			{
-			prfmsg(LOCK04,shpltr(ptr->lock,usrn));
-			outprfge(FLT_NONE,ptr->lock);
+	else if (shotdown > 1) {
+		prfmsg(DECGONE2,shotdown);
+		outprfge(FLT_NONE,usrn);
+	}
+	/* and Jammers too */
+	if (ptr->jam_time > (byte)0) {
+		--ptr->jam_time;
+		if (ptr->jam_time == (byte)0) {
+			ptr->jam_sev = (byte)0;
+			prfmsg(JAMMER5);
+			outprfge(FLT_NONE,usrn);
+		}
+	}
+	/* and cloak too */
+	if (ptr->cloak == 1) {
+		ptr->cloak = 2;
+	}
+	else if (ptr->cloak == 2) {
+		ptr->cloak = 10;
+		prfmsg(CLOKUP);
+		outprfge(FLT_NONE,usrn);
+		if (ptr->lock >= 0) {
+			if (ptr->lock < nships && ingegame(ptr->lock)) {
+				prfmsg(LOCK04,shpltr(ptr->lock,usrn));
+				outprfge(FLT_NONE,ptr->lock);
 			}
+			ptr->lock = -1;
+			ptr->lock_grace = 0;
+			prfmsg(LOCK01);
+			outprfge(FLT_NONE,usrn);
+		}
+	}
+	/* small weapon delay */
+	if (ptr->cloak == 3) {
+		ptr->cloak = 0;
+		prfmsg(CLOKW);
+		outprfge(FLT_NONE,usrn);
+	}
+
+	/* clear lastfired if npc no longer exists */
+	if (ptr->lastfired >= 0 && ptr->lastfired < nships && warshpoff(ptr->lastfired)->status == GESTAT_AVAIL)
+		ptr->lastfired = -1;
+
+}
+
+/**************************************************************************
+** Verify that a maintained battle lock is still valid                  **
+**************************************************************************/
+
+void FUNC validate_lock(WARSHP *ptr, int usrn)
+{
+	WARSHP *lptr;
+	double dist;
+	int lockee;
+	byte locker_neb;
+	byte lockee_neb;
+
+	if (ptr->lock < 0)
+		return;
+
+	if (ptr->lock >= nships) {
 		ptr->lock = -1;
 		ptr->lock_grace = 0;
 		prfmsg(LOCK01);
-		outprfge(FLT_NONE,usrn);
-		}
-	}
-/* small weapon delay */
-if (ptr->cloak == 3)
-	{
-	ptr->cloak = 0;
-	prfmsg(CLOKW);
-	outprfge(FLT_NONE,usrn);
-	}
-
-
-/* clear lastfired if npc no longer exists */
-if (ptr->lastfired >= 0 && ptr->lastfired < nships && warshpoff(ptr->lastfired)->status == GESTAT_AVAIL)
-	ptr->lastfired = -1;
-
-}
-
-void FUNC validate_lock(ptr,usrn)
-WARSHP	*ptr;
-int	usrn;
-{
-WARSHP	*lptr;
-double	dist;
-int	lockee;
-byte	locker_neb;
-byte	lockee_neb;
-
-if (ptr->lock < 0)
-	return;
-
-if (ptr->lock >= nships)
-	{
-	ptr->lock = -1;
-	ptr->lock_grace = 0;
-	prfmsg(LOCK01);
-	outprfge(FLT_NONE,usrn);
-	return;
-	}
-
-lockee = ptr->lock;
-lptr = warshpoff(lockee);
-
-if (!ingegame(lockee) || lptr->status == GESTAT_AVAIL)
-	{
-	ptr->lock = -1;
-	ptr->lock_grace = 0;
-	return;
-	}
-
-dist = cdistance(&ptr->coord,&lptr->coord) * 10000.0;
-
-if (dist > (double)ship_scanrange(ptr))
-	{
-	ptr->lock = -1;
-	ptr->lock_grace = 0;
-	prfmsg(LOCK05);
-	outprfge(FLT_NONE,usrn);
-	prfmsg(LOCK04,shpltr(lockee,usrn));
-	outprfge(FLT_NONE,lockee);
-	return;
-	}
-
-if (lptr->cloak >= 10)
-	{
-	if (ptr->lock_grace > 0)
-		{
-		--ptr->lock_grace;
+		outprfge(FLT_NONE, usrn);
 		return;
-		}
-	ptr->lock = -1;
-	ptr->lock_grace = 0;
-	prfmsg(LOCK05);
-	outprfge(FLT_NONE,usrn);
-	prfmsg(LOCK04,shpltr(lockee,usrn));
-	outprfge(FLT_NONE,lockee);
-	return;
 	}
 
-locker_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
-lockee_neb = (byte)innebula(coord1(lptr->coord.xcoord),coord1(lptr->coord.ycoord));
-if (locker_neb || lockee_neb)
-	{
-	if (!(locker_neb && lockee_neb && dist < (double)NEBRNG))
-		{
-		if (ptr->lock_grace > 0)
-			{
-			--ptr->lock_grace;
-			return;
-			}
+	lockee = ptr->lock;
+	lptr = warshpoff(lockee);
+
+	if (!ingegame(lockee) || lptr->status == GESTAT_AVAIL) {
+		ptr->lock = -1;
+		ptr->lock_grace = 0;
+		return;
+	}
+
+	dist = cdistance(&ptr->coord, &lptr->coord) * 10000.0;
+
+	if (dist > (double)ship_scanrange(ptr)) {
 		ptr->lock = -1;
 		ptr->lock_grace = 0;
 		prfmsg(LOCK05);
-		outprfge(FLT_NONE,usrn);
-		prfmsg(LOCK04,shpltr(lockee,usrn));
-		outprfge(FLT_NONE,lockee);
+		outprfge(FLT_NONE, usrn);
+		prfmsg(LOCK04, shpltr(lockee, usrn));
+		outprfge(FLT_NONE, lockee);
 		return;
+	}
+
+	if (lptr->cloak >= 10) {
+		if (ptr->lock_grace > 0) {
+			--ptr->lock_grace;
+			return;
+		}
+		ptr->lock = -1;
+		ptr->lock_grace = 0;
+		prfmsg(LOCK05);
+		outprfge(FLT_NONE, usrn);
+		prfmsg(LOCK04, shpltr(lockee, usrn));
+		outprfge(FLT_NONE, lockee);
+		return;
+	}
+
+	locker_neb = (byte)innebula(coord1(ptr->coord.xcoord), coord1(ptr->coord.ycoord));
+	lockee_neb = (byte)innebula(coord1(lptr->coord.xcoord), coord1(lptr->coord.ycoord));
+	if (locker_neb || lockee_neb) {
+		if (!(locker_neb && lockee_neb && dist < (double)NEBRNG)) {
+			if (ptr->lock_grace > 0) {
+				--ptr->lock_grace;
+				return;
+			}
+			ptr->lock = -1;
+			ptr->lock_grace = 0;
+			prfmsg(LOCK05);
+			outprfge(FLT_NONE, usrn);
+			prfmsg(LOCK04, shpltr(lockee, usrn));
+			outprfge(FLT_NONE, lockee);
+			return;
 		}
 	}
 
-ptr->lock_grace = LOCKGRACE;
+	ptr->lock_grace = LOCKGRACE;
 }
 
-void FUNC acctm(ptr,usrn,mt,channel,count)
-WARSHP	*ptr;
-int	usrn;
-int	mt;
-unsigned char channel;
-int	count;
+/**************************************************************************
+** Credit projectile attackers and notify live user owners of impacts   **
+**************************************************************************/
 
+void FUNC acctm(WARSHP *ptr, int usrn, int mt, unsigned char channel, int count)
 {
-
-if (channel < nships && ingegame(channel))
-	ptr->lastfired = channel;
-else
-	ptr->lastfired = -1;
-
-if (channel < nterms && ingegame(channel))
-	{
-	if (count <= 1)
-		{
-		if (ptr->status == GESTAT_AUTO)
-			prfmsg(MTACC1N+mt,shpltr(channel,usrn),ptr->shipname);
-		else
-		if (ptr->shipname[0] == '\0')
-			prfmsg(MTACC1NO+mt,shpltr(channel,usrn),ptr->userid);
-		else
-			prfmsg(MTACC1+mt,shpltr(channel,usrn),ptr->shipname);
-		}
+	if (channel < nships && ingegame(channel))
+		ptr->lastfired = channel;
 	else
-		{
-		if (ptr->status == GESTAT_AUTO)
-			prfmsg(MTACC3N+mt,count,shpltr(channel,usrn),ptr->shipname);
-		else
-		if (ptr->shipname[0] == '\0')
-			prfmsg(MTACC3NO+mt,count,shpltr(channel,usrn),ptr->userid);
-		else
-			prfmsg(MTACC3+mt,count,shpltr(channel,usrn),ptr->shipname);
+		ptr->lastfired = -1;
+
+	if (channel < nterms && ingegame(channel)) {
+		if (count <= 1) {
+			if (ptr->status == GESTAT_AUTO)
+				prfmsg(MTACC1N + mt, shpltr(channel, usrn), ptr->shipname);
+			else if (ptr->shipname[0] == '\0')
+				prfmsg(MTACC1NO + mt, shpltr(channel, usrn), ptr->userid);
+			else
+				prfmsg(MTACC1 + mt, shpltr(channel, usrn), ptr->shipname);
 		}
-	outprfge(FLT_NONE,channel);
+		else {
+			if (ptr->status == GESTAT_AUTO)
+				prfmsg(MTACC3N + mt, count, shpltr(channel, usrn), ptr->shipname);
+			else if (ptr->shipname[0] == '\0')
+				prfmsg(MTACC3NO + mt, count, shpltr(channel, usrn), ptr->userid);
+			else
+				prfmsg(MTACC3 + mt, count, shpltr(channel, usrn), ptr->shipname);
+		}
+		outprfge(FLT_NONE, channel);
 	}
 }
 
-int FUNC chkitm(usrn)
-int	usrn;
+/**************************************************************************
+** Check whether a ship has any inbound torpedoes or missiles           **
+**************************************************************************/
+
+int FUNC chkitm(int usrn)
 {
-WARSHP	*ptr;
-int	i;
+	WARSHP *ptr;
+	int i;
 
-ptr=warshpoff(usrn);
+	ptr = warshpoff(usrn);
 
-for (i=0;i<MAXTORPS;++i)
-	{
-	if (ptr->ltorps[i].distance > 0)
-		return(FALSE);
+	for (i = 0; i < MAXTORPS; ++i) {
+		if (ptr->ltorps[i].distance > 0)
+			return(FALSE);
 	}
-for (i=0;i<MAXMISSL;++i)
-	{
-	if (ptr->lmissl[i].distance > 0)
-		return(FALSE);
+	for (i = 0; i < MAXMISSL; ++i) {
+		if (ptr->lmissl[i].distance > 0)
+			return(FALSE);
 	}
-return(TRUE);
+	return(TRUE);
 }
 
-void FUNC clearitm(usrn)
-int	usrn;
+/**************************************************************************
+** Clear all inbound torpedoes and missiles for one ship                **
+**************************************************************************/
+
+void FUNC clearitm(int usrn)
 {
-WARSHP	*ptr;
-byte	owners[MAXTORPS],ocount,found;
-int	i,oi;
+	WARSHP *ptr;
+	byte owners[MAXTORPS], ocount, found;
+	int i, oi;
 
-ptr=warshpoff(usrn);
+	ptr = warshpoff(usrn);
 
-ocount = 0;
+	ocount = 0;
 
-for (i=0;i<MAXTORPS;++i)
-	{
-	if (ptr->ltorps[i].distance > 0)
-		{
-		ptr->ltorps[i].distance = 0;
-		if (ptr->ltorps[i].channel < nterms && ingegame(ptr->ltorps[i].channel))
-			{
-			found = FALSE;
-			for (oi=0;oi<(int)ocount;++oi)
-				{
-				if (owners[oi] == ptr->ltorps[i].channel)
-					{
-					found = TRUE;
-					break;
+	for (i = 0; i < MAXTORPS; ++i) {
+		if (ptr->ltorps[i].distance > 0) {
+			ptr->ltorps[i].distance = 0;
+			if (ptr->ltorps[i].channel < nterms && ingegame(ptr->ltorps[i].channel)) {
+				found = FALSE;
+				for (oi = 0; oi < (int)ocount; ++oi) {
+					if (owners[oi] == ptr->ltorps[i].channel) {
+						found = TRUE;
+						break;
 					}
 				}
-			if (found == FALSE && ocount < MAXTORPS)
-				owners[ocount++] = ptr->ltorps[i].channel;
+				if (found == FALSE && ocount < MAXTORPS)
+					owners[ocount++] = ptr->ltorps[i].channel;
 			}
 		}
 	}
 
-for (oi=0;oi<(int)ocount;++oi)
-	{
-	prfmsg(TORMISS2,shpltr(owners[oi],usrn));
-	outprfge(FLT_NONE,owners[oi]);
+	for (oi = 0; oi < (int)ocount; ++oi) {
+		prfmsg(TORMISS2,shpltr(owners[oi],usrn));
+		outprfge(FLT_NONE,owners[oi]);
 	}
 
-ocount = 0;
+	ocount = 0;
 
-for (i=0;i<MAXMISSL;++i)
-	{
-	if (ptr->lmissl[i].distance > 0)
-		{
-		ptr->lmissl[i].distance = 0;
-		if (ptr->lmissl[i].channel < nterms && ingegame(ptr->lmissl[i].channel))
-			{
-			found = FALSE;
-			for (oi=0;oi<(int)ocount;++oi)
-				{
-				if (owners[oi] == ptr->lmissl[i].channel)
-					{
-					found = TRUE;
-					break;
+	for (i = 0; i < MAXMISSL; ++i) {
+		if (ptr->lmissl[i].distance > 0) {
+			ptr->lmissl[i].distance = 0;
+			if (ptr->lmissl[i].channel < nterms && ingegame(ptr->lmissl[i].channel)) {
+				found = FALSE;
+				for (oi = 0; oi < (int)ocount; ++oi) {
+					if (owners[oi] == ptr->lmissl[i].channel) {
+						found = TRUE;
+						break;
 					}
 				}
-			if (found == FALSE && ocount < MAXMISSL)
-				owners[ocount++] = ptr->lmissl[i].channel;
+				if (found == FALSE && ocount < MAXMISSL)
+					owners[ocount++] = ptr->lmissl[i].channel;
 			}
 		}
 	}
 
-for (oi=0;oi<(int)ocount;++oi)
-	{
-	prfmsg(MISMISS2,shpltr(owners[oi],usrn));
-	outprfge(FLT_NONE,owners[oi]);
+	for (oi = 0; oi < (int)ocount; ++oi) {
+		prfmsg(MISMISS2,shpltr(owners[oi],usrn));
+		outprfge(FLT_NONE,owners[oi]);
 	}
 }
 
-void FUNC cleartm(channel)
-int	channel;
-{
-WARSHP	*wptr;
-int	j;
-int	zothusn;
+/**************************************************************************
+** Clear one attacker's ownership from every inbound projectile slot    **
+**************************************************************************/
 
-for (zothusn=0; zothusn < nships ; zothusn++)
-	{
-	if (zothusn != usrnum && ingegame(zothusn))
-		{
-		wptr=warshpoff(zothusn);
-		for (j=0;j<MAXTORPS;++j)
-			{
-			if (wptr->ltorps[j].channel == (unsigned char)channel)
-				{
-				wptr->ltorps[j].channel = 255;
-				}
+void FUNC cleartm(int channel)
+{
+	WARSHP *wptr;
+	int j;
+	int zothusn;
+
+	for (zothusn = 0; zothusn < nships; zothusn++) {
+		if (zothusn != usrnum && ingegame(zothusn)) {
+			wptr = warshpoff(zothusn);
+			for (j = 0; j < MAXTORPS; ++j) {
+				if (wptr->ltorps[j].channel == (unsigned char)channel)
+					wptr->ltorps[j].channel = 255;
 			}
-		for (j=0;j<MAXMISSL;++j)
-			{
-			if (wptr->lmissl[j].channel == (unsigned char)channel)
-				{
-				wptr->lmissl[j].channel = 255;
-				}
+			for (j = 0; j < MAXMISSL; ++j) {
+				if (wptr->lmissl[j].channel == (unsigned char)channel)
+					wptr->lmissl[j].channel = 255;
 			}
 		}
 	}
@@ -4125,40 +3663,32 @@ for (zothusn=0; zothusn < nships ; zothusn++)
 ** Check if the ION cannons need to be fired                             **
 **************************************************************************/
 
-void FUNC fireion(ptr,usrn)
-
-WARSHP	*ptr;
-int	usrn;
+void FUNC fireion(WARSHP *ptr, int usrn)
 {
+	double hitdam;
+	int shmsg;
 
-double	hitdam;
-int	shmsg;
-
-if (ptr->hostile > 1)
-	{
-	plnum = ptr->hostile - 10;
-	if (!getplanetdat(usrn))
-		return;
-	if (plptr->items[I_IONCANNON].qty > 0)
-		{
-		ptr->lastfired = -1;
-		if (ptr->shieldstat == SHIELDUP)
-			{
-			hitdam = (idammax * rndm(.15));
-			ptr->damage += hitdam;
-			prfmsg(IHIT1);
-			outprfge(FLT_NONE,usrn);
-			shmsg = shieldhit(ptr,(gernd()%50)+40);
-			shieldhitmsg(shmsg,usrn);
+	if (ptr->hostile > 1) {
+		plnum = ptr->hostile - 10;
+		if (!getplanetdat(usrn))
+			return;
+		if (plptr->items[I_IONCANNON].qty > 0) {
+			ptr->lastfired = -1;
+			if (ptr->shieldstat == SHIELDUP) {
+				hitdam = (idammax * rndm(.15));
+				ptr->damage += hitdam;
+				prfmsg(IHIT1);
+				outprfge(FLT_NONE, usrn);
+				shmsg = shieldhit(ptr, (gernd() % 50) + 40);
+				shieldhitmsg(shmsg, usrn);
 			}
-		else
-			{
-			hitdam = (idammax * (rndm(.50) + .50));
-			ptr->damage += hitdam;
-			prfmsg(IHIT2);
-			outprfge(FLT_NONE,usrn);
+			else {
+				hitdam = (idammax * (rndm(.50) + .50));
+				ptr->damage += hitdam;
+				prfmsg(IHIT2);
+				outprfge(FLT_NONE, usrn);
 			}
-		randamage(ptr,usrn,hitdam);
+			randamage(ptr, usrn, hitdam);
 		}
 	}
 }
@@ -4168,118 +3698,102 @@ if (ptr->hostile > 1)
 ** Self Destruct countdown                                               **
 **************************************************************************/
 
-void FUNC destruct(ptr,usrn)
-
-WARSHP	*ptr;
-int	usrn;
+void FUNC destruct(WARSHP *ptr, int usrn)
 {
-WARSHP	*wptr;
-int	zothusn;
-double	ddist;
+	WARSHP *wptr;
+	int zothusn;
+	double ddist;
 
-if (ptr->destruct > (byte)0)
-	{
-	if (--ptr->destruct > (byte)0)
-		{
-		if (ptr->destruct==10)
-			{
-			if (ptr->shipname[0] == '\0')
-				prfmsg(SELFD2AO,ptr->userid);
-			else
-				prfmsg(SELFD2A,ptr->shipname);
-			outrange(FLT_NONE,&ptr->coord);
+	if (ptr->destruct > (byte)0) {
+		if (--ptr->destruct > (byte)0) {
+			if (ptr->destruct == 10) {
+				if (ptr->shipname[0] == '\0')
+					prfmsg(SELFD2AO,ptr->userid);
+				else
+					prfmsg(SELFD2A,ptr->shipname);
+				outrange(FLT_NONE,&ptr->coord);
 			}
 
-		if (ptr->destruct==5)
-			{
-			if (ptr->shipname[0] == '\0')
-				prfmsg(SELFD2BO,ptr->userid);
-			else
-				prfmsg(SELFD2B,ptr->shipname);
-			outrange(FLT_NONE,&ptr->coord);
+			if (ptr->destruct == 5) {
+				if (ptr->shipname[0] == '\0')
+					prfmsg(SELFD2BO,ptr->userid);
+				else
+					prfmsg(SELFD2B,ptr->shipname);
+				outrange(FLT_NONE,&ptr->coord);
 			}
 
-		if (ptr->destruct==2)
-			{
-			if (ptr->shipname[0] == '\0')
-				prfmsg(SELFD2CO,ptr->userid);
-			else
-				prfmsg(SELFD2C,ptr->shipname);
-			outrange(FLT_NONE,&ptr->coord);
+			if (ptr->destruct == 2) {
+				if (ptr->shipname[0] == '\0')
+					prfmsg(SELFD2CO,ptr->userid);
+				else
+					prfmsg(SELFD2C,ptr->shipname);
+				outrange(FLT_NONE,&ptr->coord);
 			}
 
-		prfmsg(SELFD2,ptr->destruct);
-		outprfge(FLT_NONE,usrn);
-		}
-	else
-		{
-		prfmsg(SELFD3);
-		ptr->damage = 101;
-		outprfge(FLT_NONE,usrn);
-		if (ptr->shipname[0] == '\0')
-			prfmsg(SELFD3AO,ptr->userid);
-		else
-			prfmsg(SELFD3A,ptr->shipname);
-		for (zothusn=0 ; zothusn < nships ; zothusn++)
-			{
-			wptr=warshpoff(zothusn);
-			if (ingegame(zothusn) && usrn != zothusn && shipclass[wptr->shpclass].max_type == CLASSTYPE_USER)
-				{
-				ddist = cdistance(&ptr->coord,&wptr->coord);
-				ddist *= 10000;
-				if (ddist < (double)shipclass[wptr->shpclass].scanrange)
-					outprfge(FLT_NONE,zothusn);
-				}
-			}
-		clrprf();
-		if (ptr->shieldstat == SHIELDUP)
-			{
-			prfmsg(SELFD3S);
+			prfmsg(SELFD2,ptr->destruct);
 			outprfge(FLT_NONE,usrn);
-			}
-		else
-			for (zothusn=0 ; zothusn < nships ; zothusn++)
-				{
-				wptr=warshpoff(zothusn);
-				if (ingegame(zothusn) && usrn != zothusn)
-					{
+		}
+		else {
+			prfmsg(SELFD3);
+			ptr->damage = 101;
+			outprfge(FLT_NONE,usrn);
+			if (ptr->shipname[0] == '\0')
+				prfmsg(SELFD3AO,ptr->userid);
+			else
+				prfmsg(SELFD3A,ptr->shipname);
+			for (zothusn = 0; zothusn < nships; zothusn++) {
+				wptr = warshpoff(zothusn);
+				if (ingegame(zothusn) && usrn != zothusn && shipclass[wptr->shpclass].max_type == CLASSTYPE_USER) {
 					ddist = cdistance(&ptr->coord,&wptr->coord);
 					ddist *= 10000;
-					setsect(wptr);
-					if (ddist < ((double)DESTRUCTRANGE) && !neutral(&wptr->coord))
-						{
-						ddist = 1.0-(ddist/((double)DESTRUCTRANGE));
-						if (ddist < 0)
-							ddist = 0;
-						ddist = ddist*ddist*ddist;
-						if (wptr->shieldstat == SHIELDUP)
-							{
-							damage = (unsigned)(ddist*minedammax);
-							damage = damage*(shipclass[ptr->shpclass].damfact / 100);
-							damage = damage/(gernd()%5+wptr->shieldtype);
-							damstr(damage);
-							prfmsg(SELFD6,gechrbuf);
-							outprfge(FLT_NONE,zothusn);
-							shieldhitmsg(shieldhit(wptr,damage+20),zothusn);
+					if (ddist < (double)shipclass[wptr->shpclass].scanrange)
+						outprfge(FLT_NONE,zothusn);
+				}
+			}
+			clrprf();
+			if (ptr->shieldstat == SHIELDUP) {
+				prfmsg(SELFD3S);
+				outprfge(FLT_NONE,usrn);
+			}
+			else {
+				for (zothusn = 0; zothusn < nships; zothusn++) {
+					wptr = warshpoff(zothusn);
+					if (ingegame(zothusn) && usrn != zothusn) {
+						ddist = cdistance(&ptr->coord,&wptr->coord);
+						ddist *= 10000;
+						setsect(wptr);
+						if (ddist < ((double)DESTRUCTRANGE) && !neutral(&wptr->coord)) {
+							ddist = 1.0 - (ddist / ((double)DESTRUCTRANGE));
+							if (ddist < 0)
+								ddist = 0;
+							ddist = ddist * ddist * ddist;
+							if (wptr->shieldstat == SHIELDUP) {
+								damage = (unsigned)(ddist * minedammax);
+								damage = damage * (shipclass[ptr->shpclass].damfact / 100);
+								damage = damage / (gernd() % 5 + wptr->shieldtype);
+								damstr(damage);
+								prfmsg(SELFD6,gechrbuf);
+								outprfge(FLT_NONE,zothusn);
+								shieldhitmsg(shieldhit(wptr,damage + 20),zothusn);
 							}
-						else
-							{
-							damage = (unsigned)(ddist*minedammax);
-							damage = damage*(shipclass[ptr->shpclass].damfact / 100);
-							damstr(damage);
-							prfmsg(SELFD7,gechrbuf);
-							outprfge(FLT_NONE,zothusn);
+							else {
+								damage = (unsigned)(ddist * minedammax);
+								damage = damage * (shipclass[ptr->shpclass].damfact / 100);
+								damstr(damage);
+								prfmsg(SELFD7,gechrbuf);
+								outprfge(FLT_NONE,zothusn);
 							}
-						wptr->damage += (double)damage;
-						wptr->lastfired = -1;
-						if (wptr->shipname[0] == '\0')
-							prfmsg(SELFD3N,gechrbuf,username(wptr));
-						else
-							prfmsg(SELFD3O,gechrbuf,wptr->shipname);
-						outprfge(FLT_NONE,usrn);
+							wptr->damage += (double)damage;
+							wptr->lastfired = -1;
+							if (wptr->shipname[0] == '\0')
+								prfmsg(SELFD3N,gechrbuf,username(wptr));
+							else
+								prfmsg(SELFD3O,gechrbuf,wptr->shipname);
+							outprfge(FLT_NONE,usrn);
 						}
 					}
 				}
+			}
 		}
 	}
 }
@@ -4288,54 +3802,45 @@ if (ptr->destruct > (byte)0)
 ** Verify percent for validaty                                           **
 **************************************************************************/
 
-int FUNC valpcnt(ptr,minnum,maxnum)
-char	*ptr;
-unsigned minnum,maxnum;
+int FUNC valpcnt(char *ptr, unsigned minnum, unsigned maxnum)
 {
-int	val;
-char	*inpptr;
+	int val;
+	char *inpptr;
 
-stripb(ptr);	/* BJ Changed */
-if (inplen != 0)
-	{
-	for (inpptr = ptr; isdigit(*inpptr) ; inpptr++)
-		{
+	stripb(ptr);	/* BJ Changed */
+	if (inplen != 0) {
+		for (inpptr = ptr; isdigit(*inpptr); inpptr++) {
 		}
-	if (*inpptr == '\0' || *inpptr == ' ')
-		{
-		if ((val=atoi(ptr)) >= minnum && val <= maxnum)
-			{
-			warsptr->percent = val;
-			return(1);
+		if (*inpptr == '\0' || *inpptr == ' ') {
+			if ((val = atoi(ptr)) >= minnum && val <= maxnum) {
+				warsptr->percent = val;
+				return(1);
 			}
 		}
 	}
-prfmsg(NUMOOR,minnum,maxnum);
-outprfge(FLT_NONE,usrnum);
-return(0);
+	prfmsg(NUMOOR, minnum, maxnum);
+	outprfge(FLT_NONE, usrnum);
+	return(0);
 }
 
 /**************************************************************************
 ** Verify degree for validity                                            **
 **************************************************************************/
 
-int FUNC valdegree(ptr)
-char	*ptr;
+int FUNC valdegree(char *ptr)
 {
-int	val;
+	int val;
 
-if (strlen(ptr) != 0)
-	{
-	val=atoi(ptr);
-	if (val >= -180 && val <= 180)
-		{
-		warsptr->degrees = val;
-		return(1);
+	if (strlen(ptr) != 0) {
+		val = atoi(ptr);
+		if (val >= -180 && val <= 180) {
+			warsptr->degrees = val;
+			return(1);
 		}
 	}
-prfmsg(NUMOOR,-180,180);
-outprfge(FLT_NONE,usrnum);
-return(0);
+	prfmsg(NUMOOR, -180, 180);
+	outprfge(FLT_NONE, usrnum);
+	return(0);
 }
 
 /**************************************************************************
@@ -4344,137 +3849,128 @@ return(0);
 
 static int rd_item(WARSHP *ptr, unsigned int r, int itemnum, int damcomb)
 {
-unsigned int roll;
-unsigned long qty, maxloss, have;
-double frac;
+	unsigned int roll;
+	unsigned long qty, maxloss, have;
+	double frac;
 
-have = ptr->items[itemnum];
-if (!have)
-	return 0;
+	have = ptr->items[itemnum];
+	if (!have)
+		return 0;
 
-frac = (double)damcomb;
-frac = frac / (frac + (double)have / 100.0);
-maxloss = (unsigned long)(have * frac);
+	frac = (double)damcomb;
+	frac = frac / (frac + (double)have / 100.0);
+	maxloss = (unsigned long)(have * frac);
 
-if (maxloss > have)
-	maxloss = have;
+	if (maxloss > have)
+		maxloss = have;
 
-if (!maxloss)
-	maxloss = 1;
+	if (!maxloss)
+		maxloss = 1;
 
-roll = r % 100;
-if (roll < 50)
-	qty = 1 + (r % ((maxloss / 2) + 1));
-else
-if (roll < 80)
-	qty = 1 + (r % (((3 * maxloss) / 4) + 1));
-else
-	qty = 1 + (r % maxloss);
-
-if (have < 10 && qty >= have)
-	qty = 1 + r % (2 + (have >> 1));
-
-if (qty >= have)
-	{
-	if (have == 1)
-		qty = 1;
+	roll = r % 100;
+	if (roll < 50)
+		qty = 1 + (r % ((maxloss / 2) + 1));
+	else if (roll < 80)
+		qty = 1 + (r % (((3 * maxloss) / 4) + 1));
 	else
-		qty = (have >> 1) + 1;
+		qty = 1 + (r % maxloss);
+
+	if (have < 10 && qty >= have)
+		qty = 1 + r % (2 + (have >> 1));
+
+	if (qty >= have) {
+		if (have == 1)
+			qty = 1;
+		else
+			qty = (have >> 1) + 1;
 	}
 
-if (qty > maxloss)
-	qty = maxloss;
+	if (qty > maxloss)
+		qty = maxloss;
 
-if (!qty)
-	qty = 1;
+	if (!qty)
+		qty = 1;
 
-ptr->items[itemnum] = have - qty;
-return (qty > 32767UL) ? 32767 : (int)qty;
+	ptr->items[itemnum] = have - qty;
+	return (qty > 32767UL) ? 32767 : (int)qty;
 }
 
 static void rd_append(char *buf, byte *comma, int qty, const char *sing, const char *plur)
 {
-if (qty <= 0)
-	return;
+	if (qty <= 0)
+		return;
 
-if (*comma)
-	sprintf(buf + strlen(buf), ", ");
+	if (*comma)
+		sprintf(buf + strlen(buf), ", ");
 
-sprintf(buf + strlen(buf), "%d %s", qty, qty == 1 ? sing : plur);
-(*comma)++;
+	sprintf(buf + strlen(buf), "%d %s", qty, qty == 1 ? sing : plur);
+	(*comma)++;
 }
 
 static int rd_add(WARSHP *ptr, unsigned int r, int itemnum, int damcomb,
 	char *buf, byte *comma, const char *sing, const char *plur)
 {
-int qty = rd_item(ptr, r, itemnum, damcomb);
+	int qty = rd_item(ptr, r, itemnum, damcomb);
 
-if (qty <= 0)
-	return 0;
+	if (qty <= 0)
+		return 0;
 
-if (*comma)
-	sprintf(buf + strlen(buf), ", ");
+	if (*comma)
+		sprintf(buf + strlen(buf), ", ");
 
-sprintf(buf + strlen(buf), "%d %s", qty, qty == 1 ? sing : plur);
+	sprintf(buf + strlen(buf), "%d %s", qty, qty == 1 ? sing : plur);
 
-(*comma)++;
-return qty;
+	(*comma)++;
+	return qty;
 }
 
-void FUNC randamage(ptr,usrn,hitdam)
-
-WARSHP	*ptr;
-int	usrn;
-double	hitdam;
+void FUNC randamage(WARSHP *ptr, int usrn, double hitdam)
 {
-int	a, i, damcomb, qty, types, idx, item;
-byte	comma = 0, doitems = 0, dosys = 0;
-unsigned int r, r2;
+	int	a, i, damcomb, qty, types, idx, item;
+	byte	comma = 0, doitems = 0, dosys = 0;
+	unsigned int r, r2;
 
-gechrbuf[0] = '\0';
+	gechrbuf[0] = '\0';
 
-/* already dead */
-if (ptr->damage >= 100.0)
-	return;
+	/* already dead */
+	if (ptr->damage >= 100.0)
+		return;
 
-damcomb = (int)(ptr->damage - hitdam);
+	damcomb = (int)(ptr->damage - hitdam);
 
-/* hit must be over 5 and damage before hit must be over 20 */
-if (hitdam < 5.0 || damcomb < 20)
-	return;
+	/* hit must be over 5 and damage before hit must be over 20 */
+	if (hitdam < 5.0 || damcomb < 20)
+		return;
 
-/* weight toward big single hits */
-damcomb = (int)((damcomb * 0.7) + (hitdam * (1.1 + hitdam * 0.025)));
+	/* weight toward big single hits */
+	damcomb = (int)((damcomb * 0.7) + (hitdam * (1.1 + hitdam * 0.025)));
 
-/* cap to ensure that all 11 options are possible */
-if (damcomb > 74)
-	damcomb = 74;
+	/* cap to ensure that all 11 options are possible */
+	if (damcomb > 74)
+		damcomb = 74;
 
-r = gernd();
-r2 = gernd();
+	r = gernd();
+	r2 = gernd();
 
-doitems = r & 1;
-dosys = (r >> 1) & 1;
-if (!doitems && !dosys)
-	{
-	doitems = 1;
-	dosys = 1;
-	}
-
-if (ptr->status == GESTAT_AUTO)
-	{
-	doitems = 0;
-	if (!dosys)
+	doitems = r & 1;
+	dosys = (r >> 1) & 1;
+	if (!doitems && !dosys) {
+		doitems = 1;
 		dosys = 1;
 	}
 
-a = r % (85 - damcomb);
+	if (ptr->status == GESTAT_AUTO) {
+		doitems = 0;
+		if (!dosys)
+			dosys = 1;
+	}
 
-if (a > 10)	/* no effect */
-	return;
+	a = r % (85 - damcomb);
 
-switch (a)
-	{
+	if (a > 10)	/* no effect */
+		return;
+
+	switch (a) {
 	case 0: /* missiles */
 		if (shipclass[ptr->shpclass].max_missl > 0)
 			{
@@ -4633,17 +4129,15 @@ switch (a)
 		break;
 	}
 
-/* if we didn't blow up a system or that system's items, and still need to do items */
-if (doitems == 1 && dosys != 2)
-	{
-	a = r2 % 10;	/* 8 or 9 no effect */
-	if (a == 4 || a == 5)	/* mess hall and head should happen less than the others */
-		a = 0;
-	if (a == 6 || a == 7)
-		a = 1;
+	/* if we didn't blow up a system or that system's items, and still need to do items */
+	if (doitems == 1 && dosys != 2) {
+		a = r2 % 10;	/* 8 or 9 no effect */
+		if (a == 4 || a == 5)	/* mess hall and head should happen less than the others */
+			a = 0;
+		if (a == 6 || a == 7)
+			a = 1;
 
-	switch (a)
-		{
+		switch (a) {
 		case 0:	/* cargo bay */
 			{
 			byte allowed[NUMITEMS-4];
@@ -4804,87 +4298,77 @@ if (doitems == 1 && dosys != 2)
 			}
 			break;
 
-		default:
-			break;
+			default:
+				break;
 		}
 	}
-outprfge(FLT_NONE,usrn);
+	outprfge(FLT_NONE,usrn);
 }
 
 /**************************************************************************
 ** Determine the damage amount                                           **
 **************************************************************************/
 
-double FUNC pdamage(wptr,dist,foc)
-WARSHP	*wptr;
-double	dist;
-int	foc;
-
+double FUNC pdamage(WARSHP *wptr, double dist, int foc)
 {
-double dd,fd,dp,factor,disfact,dam;
+	double dd, fd, dp, factor, disfact, dam;
 
 #ifdef MBBSEMU
-int i;
-double fractional;
+	int i;
+	double fractional;
 #endif
 
-if (wptr->where == 1)
-	{
-	factor = hpfirdst;
-	dd = 1.0 - (dist / 40000.0);
-	if (dd < 0.0)
-		dd = 0.0;
+	if (wptr->where == 1) {
+		factor = hpfirdst;
+		dd = 1.0 - (dist / 40000.0);
+		if (dd < 0.0)
+			dd = 0.0;
 
 #ifdef MBBSEMU
-	dp = 1.0;
-	if (factor > 0.0)
-		{
-		for (i = 0; i < (int)factor; ++i)
-			dp *= dd;
-		fractional = factor - (int)factor;
-		if (fractional > 0.0 && dd > 0.0)
-			dp *= 1.0 + fractional * (dd - 1.0);
+		dp = 1.0;
+		if (factor > 0.0) {
+			for (i = 0; i < (int)factor; ++i)
+				dp *= dd;
+			fractional = factor - (int)factor;
+			if (fractional > 0.0 && dd > 0.0)
+				dp *= 1.0 + fractional * (dd - 1.0);
 		}
-	else
-		dp = 0.0;
+		else
+			dp = 0.0;
 #else
-	dp = pow(dd,factor);
+		dp = pow(dd,factor);
 #endif
-	dam = hpdammax * dp;
+		dam = hpdammax * dp;
 	}
-else
-	{
-	factor = pfirdist;
-	disfact = 20000.0 + ((double)wptr->phasrtype * 4000.0);
-	dd = 1.0 - (dist/disfact);
-	if (dd < 0.0)
-		dd = 0.0;
-	fd = 1.0 - ((double)foc / 11.0);
+	else {
+		factor = pfirdist;
+		disfact = 20000.0 + ((double)wptr->phasrtype * 4000.0);
+		dd = 1.0 - (dist / disfact);
+		if (dd < 0.0)
+			dd = 0.0;
+		fd = 1.0 - ((double)foc / 11.0);
 
 #ifdef MBBSEMU
-	dp = 1.0;
-	if (factor > 0.0)
-		{
-		for (i = 0; i < (int)factor; ++i)
-			dp *= dd;
-		fractional = factor - (int)factor;
-		if (fractional > 0.0 && dd > 0.0)
-			dp *= 1.0 + fractional * (dd - 1.0);
+		dp = 1.0;
+		if (factor > 0.0) {
+			for (i = 0; i < (int)factor; ++i)
+				dp *= dd;
+			fractional = factor - (int)factor;
+			if (fractional > 0.0 && dd > 0.0)
+				dp *= 1.0 + fractional * (dd - 1.0);
 		}
-	else
-		{
-		dp = 0.0;
+		else {
+			dp = 0.0;
 		}
-	dp *= (fd * fd) * (wptr->phasr / 100.0);
+		dp *= (fd * fd) * (wptr->phasr / 100.0);
 #else
-	dp = (pow(dd,factor)) * (fd*fd) * (wptr->phasr/100.0);
+		dp = (pow(dd,factor)) * (fd * fd) * (wptr->phasr / 100.0);
 #endif
-	dam = pdammax * dp;
+		dam = pdammax * dp;
 	}
 
-logthis(spr("Pdamage %s %ld %d",wptr->userid,(long)dist,(int)dam));
-return (dam);
-
+	logthis(spr("Pdamage %s %ld %d",wptr->userid,(long)dist,(int)dam));
+	return(dam);
 }
 
 
@@ -4892,8 +4376,7 @@ return (dam);
 ** set the xsect and ysect coordinates given a ship pntr                 **
 **************************************************************************/
 
-void FUNC setsect(ptr)
-WARSHP	*ptr;
+void FUNC setsect(WARSHP *ptr)
 {
 	xsect = coord1(ptr->coord.xcoord);
 	ysect = coord1(ptr->coord.ycoord);
@@ -4908,29 +4391,26 @@ WARSHP	*ptr;
 ** move one coord to another (direction is <-- )                         **
 **************************************************************************/
 
-void FUNC movecoord(pointb, pointa)
-COORD	*pointb, *pointa;
+void FUNC movecoord(COORD *pointb, COORD *pointa)
 {
-
-pointb->xcoord = pointa->xcoord;
-pointb->ycoord = pointa->ycoord;
-
+	pointb->xcoord = pointa->xcoord;
+	pointb->ycoord = pointa->ycoord;
 }
 
 /**************************************************************************
 ** Compare two coords to determine if they are equal                     **
 **************************************************************************/
 
-int FUNC samesect(pointb, pointa)
-COORD	*pointb, *pointa;
+int FUNC samesect(COORD *pointb, COORD *pointa)
 {
-int	ax,ay,bx,by;
-ax = coord1(pointa->xcoord);
-ay = coord1(pointa->ycoord);
-bx = coord1(pointb->xcoord);
-by = coord1(pointb->ycoord);
+	int ax, ay, bx, by;
 
-return ((ax == bx) && (ay == by));
+	ax = coord1(pointa->xcoord);
+	ay = coord1(pointa->ycoord);
+	bx = coord1(pointb->xcoord);
+	by = coord1(pointb->ycoord);
+
+	return((ax == bx) && (ay == by));
 }
 
 
@@ -4938,14 +4418,12 @@ return ((ax == bx) && (ay == by));
 ** genearas function. Compare for length of element 1 only               **
 **************************************************************************/
 
-int FUNC genearas(str1,str2)
-char	*str1,*str2;
-
+int FUNC genearas(char *str1, char *str2)
 {
-return(sameto(str1,str2));
-/*
-return(!strnicmp(str1,str2,strlen(str1)));
- BJ CHANGED */
+	return(sameto(str1,str2));
+	/*
+	return(!strnicmp(str1,str2,strlen(str1)));
+	 BJ CHANGED */
 }
 
 
@@ -4953,412 +4431,346 @@ return(!strnicmp(str1,str2,strlen(str1)));
 ** MAIL functions                                                        **
 **************************************************************************/
 
-int FUNC mailscan(userid,class)
-char	*userid;
-int	class;
+int FUNC mailscan(char *userid, int class)
 {
+	strncpy(mailkey.userid,userid,UIDSIZ);
+	mailkey.class = class;
 
-strncpy(mailkey.userid,userid,UIDSIZ);
-mailkey.class = class;
+	setbtv(gebb4);
 
-setbtv(gebb4);
-
-/* if class = 0 scan if user has ANY mail */
-if (class == 0)
-	{
-	if (qeqbtv(userid,0))
-		{
-		/* DEBUG
-		prf("mail.userid=%s\rmail.class=%d\rmail.type=%d\r",mail.userid,mail.class,mail.type);*/
+	/* if class = 0 scan if user has ANY mail */
+	if (class == 0) {
+		if (qeqbtv(userid,0)) {
+			/* DEBUG
+			prf("mail.userid=%s\rmail.class=%d\rmail.type=%d\r",mail.userid,mail.class,mail.type);*/
+			return(TRUE);
+		}
+	}
+	else
+	/* otherwize see if he has this class of mail */
+	if (qeqbtv(&mailkey,1)) {
 		return(TRUE);
-		}
 	}
-else
-/* otherwize see if he has this class of mail */
-if (qeqbtv(&mailkey,1))
-	{
-	return(TRUE);
-	}
-return(FALSE);
-}
-
-int mailread(userid,class)
-char	*userid;
-int	class;
-{
-
-strncpy(mailkey.userid,userid,UIDSIZ);
-mailkey.class = class;
-mailkey.msgno = 0;
-
-setbtv(gebb4);
-
-setmem(gemsg,FIXEDMSGSIZ,0);
-
-if (qeqbtv(&mailkey,1))
-	{
-	gcrbtv(gemsg,1);
-	prf("%s------------------------------------------------------------------------------%s\r",CLR_BLUE2,CLR_CYAN2);
-	prf(gemsg->text);
-	prf("%s------------------------------------------------------------------------------%s",CLR_BLUE2,CLR_WHITE2);
-	outprfge(FLT_NONE,usrnum);
-
-	delbtv();
-
-	return(TRUE);
-	}
-
-
-prfmsg(MAIL1);
-outprfge(FLT_NONE,usrnum);
-return(FALSE);
-}
-
-
-void FUNC mailit(flag)
-int	flag;
-{
-int	i;
-
-setmbk(gemb);
-clrprf();
-
-if (flag == 1)
-	{
-	if (instat(mail.userid,gestt))
-		{
-		if (othusp->substt >= FIGHTSUB)
-			{
-			return;
-			}
-		}
-	}
-
-mail.stamp = cofdat(today());
-sprintf(mail.dtime,"%s - %.5s",ncedat(today()),nctime(now()));
-
-prfmsg(MAIL2,mail.dtime,mail.userid);
-
-switch (mail.type)
-	{
-	case MESG02:
-	case MESG03:
-	case MESG04:
-	case MESG05:
-		strcpy(mail.topic,"Distress Message");
-		sprintf(gechrbuf,"%ld",mail.long1);
-		prfmsg(mail.type,mail.name1,mail.int1,mail.int2,mail.string1,mail.name2,gechrbuf);
-		sendit();
-		break;
-
-	case MESG06:
-	case MESG07:
-		strcpy(mail.topic,"Distress Message");
-		sprintf(gechrbuf,"%ld",mail.long1);
-		prfmsg(mail.type,mail.name1,mail.int1,mail.int2,gechrbuf);
-		sendit();
-		break;
-
-	case MESG08:
-	case MESG09:
-	case MESG10:
-	case MESG11:
-	case MESG12:
-	case MESG13:
-	case MESG14:
-	case MESG15:
-	case MESG16:
-	case MESG17:
-	case MESG18:
-	case MESG19:
-	case MESG19A:
-	case MESG19B:
-	case MESG30:
-		strcpy(mail.topic,"Status Message");
-		sprintf(gechrbuf,"%ld",mail.long1);
-		prfmsg(mail.type,mail.name1,mail.int1,mail.int2,gechrbuf);
-		sendit();
-		break;
-
-	case MESG20:
-
-		strcpy(mail.topic,"Production Report");
-		memcpy(&tmpstat,&mail,sizeof(MAILSTAT));
-		prfmsg(tmpstat.type,tmpstat.name1,tmpstat.int1,tmpstat.int2);
-		sprintf(gechrbuf2,"%lu",tmpstat.cash);
-		prf("Cash %s  ",gechrbuf2);
-		sprintf(gechrbuf2,"%lu",tmpstat.tax);
-		prf("Tax %s  \r",gechrbuf2);
-		for(i=0;i<NUMITEMS;++i)
-			{
-			setmem(gechrbuf,20,'.');
-			gechrbuf[20-strlen(item_name[i])]=0;
-			sprintf(gechrbuf2,"%ld",tmpstat.itemqty[i]);
-			prf("%s%s%14s\r",item_name[i],gechrbuf,gechrbuf2);
-			}
-		sendit();
-		break;
-
-	default:
-		prfmsg(MAIL3,mail.type);
-		sendit();
-		break;
-
-	}
-
-rstmbk();
-}
-
-int FUNC sendit()
-{
-
-/* don't send mail to non-live players */
-
-if (mail.userid[0] == '*')
 	return(FALSE);
+}
 
-setmem(gemsg,FIXEDMSGSIZ,0);
+int mailread(char *userid, int class)
+{
+	strncpy(mailkey.userid,userid,UIDSIZ);
+	mailkey.class = class;
+	mailkey.msgno = 0;
 
-gemsg->msgno = 0;
+	setbtv(gebb4);
 
-strcpy(gemsg->userto,mail.userid);
-strcpy(gemsg->from,"** Galactic Empire **");
-strcpy(gemsg->to,mail.userid);
-strcpy(gemsg->topic,mail.topic);
-gemsg->auxtpc[0] = 0;
+	setmem(gemsg,FIXEDMSGSIZ,0);
 
-gemsg->flags = mail.class;
+	if (qeqbtv(&mailkey,1)) {
+		gcrbtv(gemsg,1);
+		prf("%s------------------------------------------------------------------------------%s\r",CLR_BLUE2,CLR_CYAN2);
+		prf(gemsg->text);
+		prf("%s------------------------------------------------------------------------------%s",CLR_BLUE2,CLR_WHITE2);
+		outprfge(FLT_NONE,usrnum);
 
-gemsg->crdate=today();
-gemsg->crtime=now();
+		delbtv();
 
-gemsg->nreply = cofdat(today());
+		return(TRUE);
+	}
 
-prf2tx();
 
-return(sendgemsg(gemsg));
+	prfmsg(MAIL1);
+	outprfge(FLT_NONE,usrnum);
+	return(FALSE);
+}
+
+
+void FUNC mailit(int flag)
+{
+	int i;
+
+	setmbk(gemb);
+	clrprf();
+
+	if (flag == 1) {
+		if (instat(mail.userid,gestt)) {
+			if (othusp->substt >= FIGHTSUB) {
+				return;
+			}
+		}
+	}
+
+	mail.stamp = cofdat(today());
+	sprintf(mail.dtime,"%s - %.5s",ncedat(today()),nctime(now()));
+
+	prfmsg(MAIL2,mail.dtime,mail.userid);
+
+	switch (mail.type) {
+		case MESG02:
+		case MESG03:
+		case MESG04:
+		case MESG05:
+			strcpy(mail.topic,"Distress Message");
+			sprintf(gechrbuf,"%ld",mail.long1);
+			prfmsg(mail.type,mail.name1,mail.int1,mail.int2,mail.string1,mail.name2,gechrbuf);
+			sendit();
+			break;
+
+		case MESG06:
+		case MESG07:
+			strcpy(mail.topic,"Distress Message");
+			sprintf(gechrbuf,"%ld",mail.long1);
+			prfmsg(mail.type,mail.name1,mail.int1,mail.int2,gechrbuf);
+			sendit();
+			break;
+
+		case MESG08:
+		case MESG09:
+		case MESG10:
+		case MESG11:
+		case MESG12:
+		case MESG13:
+		case MESG14:
+		case MESG15:
+		case MESG16:
+		case MESG17:
+		case MESG18:
+		case MESG19:
+		case MESG19A:
+		case MESG19B:
+		case MESG30:
+			strcpy(mail.topic,"Status Message");
+			sprintf(gechrbuf,"%ld",mail.long1);
+			prfmsg(mail.type,mail.name1,mail.int1,mail.int2,gechrbuf);
+			sendit();
+			break;
+
+		case MESG20:
+			strcpy(mail.topic,"Production Report");
+			memcpy(&tmpstat,&mail,sizeof(MAILSTAT));
+			prfmsg(tmpstat.type,tmpstat.name1,tmpstat.int1,tmpstat.int2);
+			sprintf(gechrbuf2,"%lu",tmpstat.cash);
+			prf("Cash %s  ",gechrbuf2);
+			sprintf(gechrbuf2,"%lu",tmpstat.tax);
+			prf("Tax %s  \r",gechrbuf2);
+			for (i = 0; i < NUMITEMS; ++i) {
+				setmem(gechrbuf,20,'.');
+				gechrbuf[20-strlen(item_name[i])] = 0;
+				sprintf(gechrbuf2,"%ld",tmpstat.itemqty[i]);
+				prf("%s%s%14s\r",item_name[i],gechrbuf,gechrbuf2);
+			}
+			sendit();
+			break;
+
+		default:
+			prfmsg(MAIL3,mail.type);
+			sendit();
+			break;
+	}
+
+	rstmbk();
+}
+
+int FUNC sendit(void)
+{
+	/* don't send mail to non-live players */
+
+	if (mail.userid[0] == '*')
+		return(FALSE);
+
+	setmem(gemsg,FIXEDMSGSIZ,0);
+
+	gemsg->msgno = 0;
+
+	strcpy(gemsg->userto,mail.userid);
+	strcpy(gemsg->from,"** Galactic Empire **");
+	strcpy(gemsg->to,mail.userid);
+	strcpy(gemsg->topic,mail.topic);
+	gemsg->auxtpc[0] = 0;
+
+	gemsg->flags = mail.class;
+
+	gemsg->crdate=today();
+	gemsg->crtime=now();
+
+	gemsg->nreply = cofdat(today());
+
+	prf2tx();
+
+	return(sendgemsg(gemsg));
 
 }
 
 void FUNC prf2tx(void)		/* xfer prfbuf contents to message text area */
 {
-char *cp;
+	char *cp;
 
-stpans(prfbuf);
-if (strlen(prfbuf) >= GEMSGSIZ)
-	{
-	prfbuf[GEMSGSIZ-1]='\0';
+	stpans(prfbuf);
+	if (strlen(prfbuf) >= GEMSGSIZ) {
+		prfbuf[GEMSGSIZ-1]='\0';
 	}
-for (cp=prfbuf ; *cp != '\0' ; cp++)
-	{
-	if (*cp == '\n')
-		{
-		*cp='\r';
+	for (cp = prfbuf; *cp != '\0'; cp++) {
+		if (*cp == '\n') {
+			*cp='\r';
 		}
 	}
-strcpy(gemsg->text,prfbuf);
-clrprf();
+	strcpy(gemsg->text,prfbuf);
+	clrprf();
 }
 
 
-int FUNC sendgemsg(msgptr)
-struct message *msgptr;
-
+int FUNC sendgemsg(struct message *msgptr)
 {
-
-setbtv(gebb4);
-
-dinsbtv(msgptr);
-
-rstbtv();
-
-return(TRUE);
-
+	setbtv(gebb4);
+	dinsbtv(msgptr);
+	rstbtv();
+	return(TRUE);
 }
 
 /**************************************************************************
 ** Shield functions                                                      **
 **************************************************************************/
 
-static void shieldhitmsg(shmsg,usrn)
-int	shmsg;
-int	usrn;
+static void shieldhitmsg(int shmsg, int usrn)
 {
-if (shmsg == 1)
-	{
-	prfmsg(SHDAMAG);
-	outprfge(FLT_NONE,usrn);
-	}
-else
-if (shmsg == 2)
-	{
-	prfmsg(SHKNKDN);
-	outprfge(FLT_NONE,usrn);
-	}
-}
-
-void FUNC shieldup(wptr,usrn)
-WARSHP	*wptr;
-int	usrn;
-{
-prfmsg(SHLDCHP);
-outprfge(FLT_NONE,usrn);
-wptr->shieldstat = SHIELDUP;
-}
-
-
-void FUNC shielddn(wptr,usrn)
-WARSHP	*wptr;
-int	usrn;
-{
-prfmsg(SHLDDN);
-outprfge(FLT_NONE,usrn);
-wptr->shieldstat = SHIELDDN;
-}
-
-
-int FUNC shieldhit(wptr,dam)
-WARSHP	*wptr;
-int	dam;   /* 0% to 100% damage */
-{
-int	knock;
-
-double	dmax, ddam;
-
-dmax = (double)( 80 - ((int)wptr->shieldtype * SHIELD_FACTOR));
-
-if (dmax < 0)
-	dmax = 0;
-
-ddam = dam;
-ddam /=100;	/* make it a percentile */
-
-knock = (int)(dmax * ddam);
-
-wptr->shield -= knock;
-if (wptr->shield <=2 )
-	{
-	wptr->shieldstat = SHIELDDM;
-	wptr->shield -= (knock*3);
-	return(1);
-	}
-else
-if (wptr->shield < SHMINCHG )
-	{
-	return(2);
-	}
-return(0);
-}
-
-
-void FUNC shieldrep(wptr,usrn)
-WARSHP	*wptr;
-int	usrn;
-{
-wptr->shield += (int)(wptr->shieldtype);
-
-if (wptr->shield > 0)
-	{
-	wptr->shieldstat = SHIELDDN;
-	wptr->shield = 0;
-	prfmsg(SHREPR);
-	outprfge(FLT_NONE,usrn);
-	}
-}
-
-void FUNC shieldchg(wptr,usrn)
-WARSHP	*wptr;
-int	usrn;
-{
-/*STATIC*/
-static int 	maxcharge;
-static int 	pcnt;
-int		type;
-
-type = wptr->shieldtype;
-
-wptr->energy -=  (type*SHENGUSE);
-
-charge(wptr,&maxcharge,&pcnt); /* go figure maxcharge and percent */
-
-if (wptr->shield < maxcharge)
-	{
-	wptr->shield += (type*3);
-	if (wptr->shield >= maxcharge)
-		{
-		wptr->shield = maxcharge;
-		prfmsg(SHLDUP);
+	if (shmsg == 1) {
+		prfmsg(SHDAMAG);
 		outprfge(FLT_NONE,usrn);
+	}
+	else if (shmsg == 2) {
+		prfmsg(SHKNKDN);
+		outprfge(FLT_NONE,usrn);
+	}
+}
+
+void FUNC shieldup(WARSHP *wptr, int usrn)
+{
+	prfmsg(SHLDCHP);
+	outprfge(FLT_NONE,usrn);
+	wptr->shieldstat = SHIELDUP;
+}
+
+
+void FUNC shielddn(WARSHP *wptr, int usrn)
+{
+	prfmsg(SHLDDN);
+	outprfge(FLT_NONE,usrn);
+	wptr->shieldstat = SHIELDDN;
+}
+
+
+int FUNC shieldhit(WARSHP *wptr, int dam)   /* 0% to 100% damage */
+{
+	int knock;
+	double dmax, ddam;
+
+	dmax = (double)( 80 - ((int)wptr->shieldtype * SHIELD_FACTOR));
+
+	if (dmax < 0)
+		dmax = 0;
+
+	ddam = dam;
+	ddam /=100;	/* make it a percentile */
+
+	knock = (int)(dmax * ddam);
+
+	wptr->shield -= knock;
+	if (wptr->shield <=2 ) {
+		wptr->shieldstat = SHIELDDM;
+		wptr->shield -= (knock*3);
+		return(1);
+	}
+	else if (wptr->shield < SHMINCHG )
+		return(2);
+	return(0);
+}
+
+
+void FUNC shieldrep(WARSHP *wptr, int usrn)
+{
+	wptr->shield += (int)(wptr->shieldtype);
+
+	if (wptr->shield > 0) {
+		wptr->shieldstat = SHIELDDN;
+		wptr->shield = 0;
+		prfmsg(SHREPR);
+		outprfge(FLT_NONE,usrn);
+	}
+}
+
+void FUNC shieldchg(WARSHP *wptr, int usrn)
+{
+	/*STATIC*/
+	static int maxcharge;
+	static int pcnt;
+	int		type;
+
+	type = wptr->shieldtype;
+
+	wptr->energy -= (type * SHENGUSE);
+
+	charge(wptr,&maxcharge,&pcnt); /* go figure maxcharge and percent */
+
+	if (wptr->shield < maxcharge) {
+		wptr->shield += (type * 3);
+		if (wptr->shield >= maxcharge) {
+			wptr->shield = maxcharge;
+			prfmsg(SHLDUP);
+			outprfge(FLT_NONE,usrn);
 		}
-	else
-		{
-		charge(wptr,&maxcharge,&pcnt); /* go figure maxcharge and percent */
-		prfmsg(SHLDAT,pcnt);
-		outprfge(FLT_SHIP,usrn);
+		else {
+			charge(wptr,&maxcharge,&pcnt); /* go figure maxcharge and percent */
+			prfmsg(SHLDAT,pcnt);
+			outprfge(FLT_SHIP,usrn);
 		}
 	}
 }
 
 /* calculate the relative charge the shields are at */
 
-void FUNC charge(wptr,max,pct)
-WARSHP	*wptr;
-int	*max;
-int	*pct;
+void FUNC charge(WARSHP *wptr, int *max, int *pct)
 {
-*max = 40 + (wptr->shieldtype*10);
-*pct = (wptr->shield*100)/(*max);
+	*max = 40 + (wptr->shieldtype*10);
+	*pct = (wptr->shield*100)/(*max);
 }
 
 /* check if the goods to be added will cause wieght to be exceeded */
 
-int FUNC chkweight(wptr,itm,amt)
-WARSHP	*wptr;
-int	itm;
-long	amt;
-
+int FUNC chkweight(WARSHP *wptr, int itm, long amt)
 {
-int	i;
-double	total = 0.0;
+	int i;
+	double total = 0.0;
 
-for (i=0; i<NUMITEMS; ++i)
-	{
-	total += ((double)wptr->items[i]*((double)weight[i]/100.0));
-	}
-total += ((double)amt*(double)weight[itm]/100);
+	for (i=0; i<NUMITEMS; ++i)
+		total += ((double)wptr->items[i]*((double)weight[i]/100.0));
+	total += ((double)amt*(double)weight[itm]/100);
 
-return ((total <= (double)shipclass[wptr->shpclass].max_tons)
+	return ((total <= (double)shipclass[wptr->shpclass].max_tons)
 		&& (wptr->items[itm] <= ULCAP - amt));
 }
 
 /* tell the total weight on board */
 
-unsigned long FUNC calcweight(wptr)
-WARSHP	*wptr;
+unsigned long FUNC calcweight(WARSHP *wptr)
 {
-int	i;
-double	totald = 0.0;
-unsigned long total = 0;
+	int i;
+	double totald = 0.0;
+	unsigned long total = 0;
 
-for (i=0; i<NUMITEMS; ++i)
-	{
-	totald += (wptr->items[i]*((double)weight[i]/100L));
-	}
+	for (i=0; i<NUMITEMS; ++i)
+		totald += (wptr->items[i]*((double)weight[i]/100L));
 
-total = (unsigned long)ceil(totald);
-return (total);
+	total = (unsigned long)ceil(totald);
+	return (total);
 }
 
 
 /* Figure the ship letter for this user */
 
-char FUNC shpltr(usrn,ship)
-int	usrn,ship;
+char FUNC shpltr(int usrn, int ship)
 {
-int	i;
-SCANTAB	*sptr;
+	int i;
+	SCANTAB *sptr;
 
-sptr = &scantab[usrn];
+	sptr = &scantab[usrn];
 
 	for (i=0; i<NOSCANTAB; ++i)
 		{
@@ -5366,145 +4778,128 @@ sptr = &scantab[usrn];
 			return(sptr->ship[i].letter);
 		}
 
-/* not found, update scantab */
-update_scantab(warshpoff(usrn), usrn);
+	/* not found, update scantab */
+	update_scantab(warshpoff(usrn), usrn);
 
-/* try again */
+	/* try again */
 	for (i=0; i<NOSCANTAB; ++i)
 		{
 		if (sptr->ship[i].flag && sptr->ship[i].shipno == ship)
 			return(sptr->ship[i].letter);
 		}
 
-/* still not found, too many ships */
-return('?');
+	/* still not found, too many ships */
+	return('?');
 }
 
 /* return the proper name for this user given a pointer to the ship */
 
-char * FUNC username(ptr)
-WARSHP	*ptr;
+char * FUNC username(WARSHP *ptr)
 {
-if (shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG)  /* CYBORG */
-	return(ptr->shipname);
-if (shipclass[ptr->shpclass].max_type == CLASSTYPE_DROID)  /* DROID */
-	return(ptr->shipname);
-return(ptr->userid);
+	if (shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG)  /* CYBORG */
+		return(ptr->shipname);
+	if (shipclass[ptr->shpclass].max_type == CLASSTYPE_DROID)  /* DROID */
+		return(ptr->shipname);
+	return(ptr->userid);
 }
 
 /* data logger */
 
-void FUNC logthis(str)
-char	*str;
-
+void FUNC logthis(char *str)
 {
+	FILE *hdl;
+	int idate, itime;
+	char *c_date, *c_time;
 
-FILE	*hdl;
-int	idate,itime;
-char	*c_date,*c_time;
+	if (!logflag)
+		return;
 
+	hdl = fopen("mpogeout.log","at+");
 
+	if (hdl != (FILE *)0) {
+		idate = today();
+		itime = now();
+		c_date = ncdate(idate);
+		c_time = nctime(itime);
 
-if (!logflag)
+		fprintf(hdl,"[%s %s] %s\r",c_date,c_time,str);
+		fclose(hdl);
+	}
+
 	return;
-
-hdl = fopen("mpogeout.log","at+");
-
-if(hdl != (FILE *)0)
-	{
-	idate = today();
-	itime = now();
-	c_date = ncdate(idate);
-	c_time = nctime(itime);
-
-	fprintf(hdl,"[%s %s] %s\r",c_date,c_time,str);
-	fclose(hdl);
-	}
-
-return;
 }
 
-WARUSR	* FUNC warusroff(int	usrn)
+WARUSR * FUNC warusroff(int usrn)
 {
-if(usrn >= 0 && usrn < nships)
-	return((WARUSR *)((long)(warusr_ecl+(usrn<<3))<<16));
-else
-	{
-	geshocst(0,spr("GE:WARUSROFF:bad usrn [%d]",usrn));
-	return((WARUSR *)((long)0));
+	if (usrn >= 0 && usrn < nships)
+		return((WARUSR *)((long)(warusr_ecl + (usrn << 3)) << 16));
+	else {
+		geshocst(0,spr("GE:WARUSROFF:bad usrn [%d]",usrn));
+		return((WARUSR *)((long)0));
 	}
 }
 
-WARSHP	* FUNC warshpoff(int usrn)
+WARSHP * FUNC warshpoff(int usrn)
 {
-if(usrn >= 0 && usrn < nships)
-	return((WARSHP *)((long)(warshp_ecl+(usrn<<3))<<16));
-else
-	{
-	geshocst(0,"GE:BAD WARSHPOFF CALL");
-	logthis(spr("WARSHPOFF:bad usrn [%d]",usrn));
-	return((WARSHP *)((long)0));
+	if (usrn >= 0 && usrn < nships)
+		return((WARSHP *)((long)(warshp_ecl + (usrn << 3)) << 16));
+	else {
+		geshocst(0,"GE:BAD WARSHPOFF CALL");
+		logthis(spr("WARSHPOFF:bad usrn [%d]",usrn));
+		return((WARSHP *)((long)0));
 	}
 }
 
-double FUNC ton_fact(ptr,damfact)
-WARSHP	*ptr;
-double	damfact;
-
+double FUNC ton_fact(WARSHP *ptr, double damfact)
 {
+	double temp;
 
-double	temp;
+	temp = damfact / ((double)(shipclass[ptr->shpclass].damfact) / 100.0);
+	if (ptr->upgrade & ARMOR)
+		temp *= 0.625;
 
-temp = damfact / ((double)(shipclass[ptr->shpclass].damfact)/100.0);
-if (ptr->upgrade & ARMOR)
-	temp *= 0.625;
-
-return(temp);
+	return(temp);
 }
 
-char * FUNC showupg(ptr)
-WARSHP	*ptr;
+char * FUNC showupg(WARSHP *ptr)
 {
-byte		upg;
-int		count;
+	byte upg;
+	int count;
 
-if (ptr->upgrade == 0)
+	if (ptr->upgrade == 0)
+		return("");
+
+	upg = ptr->upgrade;
+	count = 0;
+	while (upg != 0) {
+		if (upg & 1)
+			++count;
+		upg >>= 1;
+	}
+
+	if (count > 4)
+		return("+++");
+	else if (count > 2)
+		return("++");
+	else if (count > 0)
+		return("+");
+
 	return("");
-
-upg = ptr->upgrade;
-count = 0;
-while (upg != 0)
-	{
-	if (upg & 1)
-		++count;
-	upg >>= 1;
-	}
-
-if (count > 4)
-	return("+++");
-else
-if (count > 2)
-	return("++");
-else
-if (count > 0)
-	return("+");
-
-return("");
 }
 
 char * FUNC showarp(double speed)
 {
-if (speed == 0.0)
-	sprintf(warpbuf,"0.00");
-else
+	if (speed == 0.0)
+		sprintf(warpbuf,"0.00");
+	else
 #ifdef MBBSEMU
-if (fabs(speed - (long)(speed / FARSPEED) * FARSPEED) < 1e-6)
+	if (fabs(speed - (long)(speed / FARSPEED) * FARSPEED) < 1e-6)
 #else
-if (fmod(speed, FARSPEED) == 0.0)
+	if (fmod(speed, FARSPEED) == 0.0)
 #endif
-	sprintf(warpbuf,"??.??");
-else
-	sprintf(warpbuf,"%.2f",speed/1000.0);
+		sprintf(warpbuf,"??.??");
+	else
+		sprintf(warpbuf,"%.2f",speed/1000.0);
 #ifdef MBBSEMU
 	/* MBBSemu doesn't currently honor %.2f */
 	if (warpbuf[strlen(warpbuf) - 2] == '.')
@@ -5513,89 +4908,75 @@ else
 	if (warpbuf[strlen(warpbuf) - 3] != '.')
 		strcat(warpbuf, ".00");
 #endif
-return(warpbuf);
+	return(warpbuf);
 }
 
 /* assign closest cybs to ship entering game or going through wormhole */
 
-void FUNC assign_cybs(usrnum,call)
-int usrnum, call;
-
+void FUNC assign_cybs(int usrnum, int call)
 {
+	WARSHP *wptr;
+	WARSHP *ptr;
+	int zothusn;
+	double ddist;
+	double low_dist = 999999999.0;
+	int low_ship;
+	int lta; /* lowest to attack */
+	int i, cybpick, claims, noclaim, tpmag;
 
-WARSHP *wptr;
+	claims = 0;
 
-WARSHP *ptr;
-int zothusn;
-
-double	ddist;
-
-double	low_dist = 999999999.0;
-int	low_ship;
-int	lta; /* lowest to attack */
-int	i, cybpick, claims, noclaim, tpmag;
-
-claims = 0;
-
-/* call 0 = clear all current cyb pursuits */
-/* call 1 = count all current cyb pursuits */
-for (zothusn=nterms; zothusn < nships; ++zothusn)
-	{
-	ptr = warshpoff(zothusn);
-	if (ptr->status == GESTAT_AUTO && shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG && ptr->cybmine == usrnum)
-		{
-		if (call == 0)
-			ptr->cybmine = 255;
-		else
-			++claims;
+	/* call 0 = clear all current cyb pursuits */
+	/* call 1 = count all current cyb pursuits */
+	for (zothusn = nterms; zothusn < nships; ++zothusn) {
+		ptr = warshpoff(zothusn);
+		if (ptr->status == GESTAT_AUTO && shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG && ptr->cybmine == usrnum) {
+			if (call == 0)
+				ptr->cybmine = 255;
+			else
+				++claims;
 		}
 	}
 
-wptr = warshpoff(usrnum);
-/* if we're not clearing, only claim enough to fill claims */
-noclaim = shipclass[wptr->shpclass].noclaim;
-if (wptr->upgrade & TPONDER)
-	{
-	if (noclaim <= 2)
-		tpmag = 1;
-	else
-		tpmag = 2;
-	if (wptr->tponder == TPONHIGH)
-		noclaim += tpmag;
-	else
-	if (wptr->tponder == TPONLOW)
-		noclaim -= tpmag;
-	if (noclaim < 0)
-		noclaim = 0;
-	if (noclaim > 5)
-		noclaim = 5;
+	wptr = warshpoff(usrnum);
+	/* if we're not clearing, only claim enough to fill claims */
+	noclaim = shipclass[wptr->shpclass].noclaim;
+	if (wptr->upgrade & TPONDER) {
+		if (noclaim <= 2)
+			tpmag = 1;
+		else
+			tpmag = 2;
+		if (wptr->tponder == TPONHIGH)
+			noclaim += tpmag;
+		else if (wptr->tponder == TPONLOW)
+			noclaim -= tpmag;
+		if (noclaim < 0)
+			noclaim = 0;
+		if (noclaim > 5)
+			noclaim = 5;
 	}
-cybpick = noclaim-claims;
+	cybpick = noclaim - claims;
 
-for (i=0; i < cybpick; ++i)
-	{
-	low_dist = 999999999.0;
-	low_ship = -1;
+	for (i = 0; i < cybpick; ++i) {
+		low_dist = 999999999.0;
+		low_ship = -1;
 
-	for (zothusn=nterms; zothusn < nships; ++zothusn)
-		{
-		ptr=warshpoff(zothusn);
-		lta = shipclass[ptr->shpclass].lowest_to_attk-1;
-		if (ingegame(zothusn) && ptr->status == GESTAT_AUTO && shipclass[ptr->shpclass].max_accel > 0 &&
-			shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG && lta <= wptr->shpclass && ptr->cybmine == 255)
-			{
-			ddist = cdistance(&ptr->coord,&wptr->coord);
-			if (ddist < low_dist)
-				{
-				low_dist = ddist;
-				low_ship = zothusn;
+		for (zothusn = nterms; zothusn < nships; ++zothusn) {
+			ptr = warshpoff(zothusn);
+			lta = shipclass[ptr->shpclass].lowest_to_attk - 1;
+			if (ingegame(zothusn) && ptr->status == GESTAT_AUTO && shipclass[ptr->shpclass].max_accel > 0 &&
+				shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG && lta <= wptr->shpclass && ptr->cybmine == 255) {
+				ddist = cdistance(&ptr->coord,&wptr->coord);
+				if (ddist < low_dist) {
+					low_dist = ddist;
+					low_ship = zothusn;
 				}
 			}
 		}
 		if (low_ship == -1)
 			return;
 
-		ptr=warshpoff(low_ship);
+		ptr = warshpoff(low_ship);
 		ptr->cybmine = usrnum;
 		ptr->cyb_grace = CYBGRACE;
 	}
@@ -5603,11 +4984,9 @@ for (i=0; i < cybpick; ++i)
 
 /* is cyb in fast pursuit? */
 
-int FUNC cyb_fast(ptr)
-WARSHP *ptr;
-
+int FUNC cyb_fast(WARSHP *ptr)
 {
-return (ptr->speed != 0.0) &&
+	return (ptr->speed != 0.0) &&
 #ifdef MBBSEMU
 	(fabs(ptr->speed - (long)(ptr->speed / FARSPEED) * FARSPEED) < 1e-6);
 #else
@@ -5617,278 +4996,231 @@ return (ptr->speed != 0.0) &&
 
 /* set faction dislike status */
 
-void FUNC set_dislike(wuptr,facnum,dislike)
-WARUSR *wuptr;
-int facnum, dislike;
-
+void FUNC set_dislike(WARUSR *wuptr, int facnum, int dislike)
 {
-if (facnum < 0 || facnum > 7)
-	{
-	geshocst(0,spr("GE:set_dislike:bad facnum [%d]",facnum));
-	return;
+	if (facnum < 0 || facnum > 7) {
+		geshocst(0,spr("GE:set_dislike:bad facnum [%d]",facnum));
+		return;
 	}
 
-if ((unsigned int)(wuptr->factions[facnum]) + dislike > 255)
-	wuptr->factions[facnum] = 255;
-else
-	wuptr->factions[facnum] += dislike;
+	if ((unsigned int)(wuptr->factions[facnum]) + dislike > 255)
+		wuptr->factions[facnum] = 255;
+	else
+		wuptr->factions[facnum] += dislike;
 }
 
 void FUNC rospos(WARUSR *losptr, WARUSR *winptr, int *lospos, int *winpos)
 {
-long ltarget = 0, wtarget = 0;
-int i = 0;
-int ranked;
+	long ltarget = 0, wtarget = 0;
+	int i = 0;
+	int ranked;
 
-*lospos = 0;
-*winpos = 0;
+	*lospos = 0;
+	*winpos = 0;
 
-setbtv(gebb5);
+	setbtv(gebb5);
 
-/* find user record for loser */
-if (qeqbtv(losptr->userid, 0))
-	ltarget = absbtv();
+	/* find user record for loser */
+	if (qeqbtv(losptr->userid, 0))
+		ltarget = absbtv();
 
-/* find user record for winner */
-if (qeqbtv(winptr->userid, 0))
-	wtarget = absbtv();
+	/* find user record for winner */
+	if (qeqbtv(winptr->userid, 0))
+		wtarget = absbtv();
 
-if (ltarget == 0 && wtarget == 0)
-	return;	/* return both 0 */
+	if (ltarget == 0 && wtarget == 0)
+		return;	/* return both 0 */
 
-/* start at top of roster (key 1 = score order) */
-if (!qhibtv(1))
-	return;
+	/* start at top of roster (key 1 = score order) */
+	if (!qhibtv(1))
+		return;
 
-do
-	{
-	gcrbtv(&tmpusr, 1);
+	do {
+		gcrbtv(&tmpusr, 1);
 
-	ranked = (tmpusr.score > 0 && tmpusr.userid[0] != '@');
+		ranked = (tmpusr.score > 0 && tmpusr.userid[0] != '@');
 
-	if (ranked)
-		++i;
+		if (ranked)
+			++i;
 
-	if (ranked && ltarget !=0 && absbtv() == ltarget)
-		*lospos = i;
-	else
-	if (ranked && wtarget !=0 && absbtv() == wtarget)
-		*winpos = i;
+		if (ranked && ltarget != 0 && absbtv() == ltarget)
+			*lospos = i;
+		else if (ranked && wtarget != 0 && absbtv() == wtarget)
+			*winpos = i;
 
-	if (*lospos && *winpos)
-		break;	/* we're done here */
+		if (*lospos && *winpos)
+			break;	/* we're done here */
 
 	} while (qprbtv());
 
-if (*winpos == 0)	/* unranked winner */
-	*winpos = i+1;
+	if (*winpos == 0)	/* unranked winner */
+		*winpos = i + 1;
 
 }
 
-void FUNC damstr(damage)
-int damage;
-
+void FUNC damstr(int damage)
 {
-if (damage == 0)
-	strcpy(gechrbuf,"no");
-else
-if (damage < 2)
-	strcpy(gechrbuf,"negligible");
-else
-if (damage < 12)
-	strcpy(gechrbuf,"very light");
-else
-if (damage < 25)
-	strcpy(gechrbuf,"light");
-else
-if (damage < 50)
-	strcpy(gechrbuf,"moderate");
-else
-if (damage < 75)
-	strcpy(gechrbuf,"heavy");
-else
-	strcpy(gechrbuf,"severe");
-}
-
-void FUNC update_scantab(ptr, usrn)
-WARSHP	*ptr;
-int	usrn;
-{
-int	i,j;
-char	l;
-byte	ptr_neb,oth_neb,flag;
-WARSHP	*wptr;
-SCANTAB	tmp;
-
-char	lettab[300];
-
-setmem(&lettab[0],sizeof(char)*300,0);
-
-ptr_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
-
-/* save off the old letters */
-for (i=0;i<NOSCANTAB;++i)
-	{
-	j = scantab[usrn].ship[i].shipno;
-	if (j>= 0 && j < 300)
-		{
-		/* only keep A through Z */
-		l = scantab[usrn].ship[i].letter;
-		lettab[j] = (l >= 'A' && l <= 'Z') ? l : 0;
-		}
-	}
-
-/* clear the table */
-for (i=0;i<NOSCANTAB;++i)
-	tmp.ship[i].flag = 0;
-
-for (othusn=0 ; othusn < nships ; othusn++)
-	{
-	if (othusn != usrn && ingegame(othusn))
-		{
-
-		wptr=warshpoff(othusn);
-		ddistance = cdistance(&ptr->coord,&wptr->coord)*10000;
-		oth_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
-		flag = 0;
-		if (ddistance < ship_scanrange(ptr))
-			{
-			if ((ptr_neb || oth_neb) && !(ptr_neb && oth_neb && ddistance < (double)NEBRNG))
-				{
-				if (othusn == ptr->lock && ptr->lock_grace > 0)
-					flag = 2;
-				}
-			else
-			if (wptr->cloak >= 10)
-				{
-				if (othusn == ptr->lock && ptr->lock_grace > 0)
-					flag = 2;
-				}
-			else
-				flag = 1;
-			}
-
-		if (flag != 0)
-			{
-			for (i=0;i<NOSCANTAB;++i)
-				{
-				/* entry blank - fill it with this one */
-				if (tmp.ship[i].flag == 0)
-					{
-					tmp.ship[i].flag = flag;
-					tmp.ship[i].shipno = othusn;
-					tmp.ship[i].dist = ddistance;
-					tmp.ship[i].letter = lettab[othusn];
-
-					break;
-					}
-				/* is this ship closer */
-				if (ddistance < tmp.ship[i].dist)
-					{
-					/* Yes - Push down the rest */
-					for (j=NOSCANTAB-2;j>=i;j--)
-						{
-						if (tmp.ship[j].flag != 0)
-							{
-							memcpy(&tmp.ship[j+1],&tmp.ship[j],sizeof(SHIPTAB));
-							}
-						}
-					/* fill the hole with the new ship */
-					tmp.ship[i].flag = flag;
-					tmp.ship[i].shipno = othusn;
-					tmp.ship[i].dist = ddistance;
-					tmp.ship[i].letter = lettab[othusn];
-					break;
-					}
-				}
-			}
-		}
-	}
-
-/* go fill in the new ships without letters */
-
-pick_letter(&tmp);
-
-/* Now go fill in the rest of the table */
-
-for (i=0;i<NOSCANTAB;++i)
-	{
-	/* clear out the empty entries */
-	if (tmp.ship[i].flag == 0)
-		{
-		tmp.ship[i].letter = '?';
-		tmp.ship[i].shipno = -1;
-		}
+	if (damage == 0)
+		strcpy(gechrbuf,"no");
+	else if (damage < 2)
+		strcpy(gechrbuf,"negligible");
+	else if (damage < 12)
+		strcpy(gechrbuf,"very light");
+	else if (damage < 25)
+		strcpy(gechrbuf,"light");
+	else if (damage < 50)
+		strcpy(gechrbuf,"moderate");
+	else if (damage < 75)
+		strcpy(gechrbuf,"heavy");
 	else
-		{
-		j = tmp.ship[i].shipno;
-		wptr=warshpoff(j);
-		tmp.ship[i].bearing = cbearing(&ptr->coord,&(wptr->coord),ptr->heading);
-		tmp.ship[i].heading = cbearing(&(wptr->coord),&ptr->coord,wptr->heading);
-		tmp.ship[i].speed = wptr->speed;
+		strcpy(gechrbuf,"severe");
+}
+
+void FUNC update_scantab(WARSHP *ptr, int usrn)
+{
+	int i, j;
+	char l;
+	byte ptr_neb, oth_neb, flag;
+	WARSHP *wptr;
+	SCANTAB tmp;
+	char lettab[300];
+
+	setmem(&lettab[0],sizeof(char)*300,0);
+
+	ptr_neb = (byte)innebula(coord1(ptr->coord.xcoord),coord1(ptr->coord.ycoord));
+
+	/* save off the old letters */
+	for (i = 0; i < NOSCANTAB; ++i) {
+		j = scantab[usrn].ship[i].shipno;
+		if (j >= 0 && j < 300) {
+			/* only keep A through Z */
+			l = scantab[usrn].ship[i].letter;
+			lettab[j] = (l >= 'A' && l <= 'Z') ? l : 0;
 		}
 	}
 
-/* update the current users master record */
-memcpy(&scantab[usrn],&tmp,sizeof(SCANTAB));
+	/* clear the table */
+	for (i = 0; i < NOSCANTAB; ++i)
+		tmp.ship[i].flag = 0;
+
+	for (othusn = 0; othusn < nships; othusn++) {
+		if (othusn != usrn && ingegame(othusn)) {
+
+			wptr = warshpoff(othusn);
+			ddistance = cdistance(&ptr->coord,&wptr->coord) * 10000;
+			oth_neb = (byte)innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
+			flag = 0;
+			if (ddistance < ship_scanrange(ptr)) {
+				if ((ptr_neb || oth_neb) && !(ptr_neb && oth_neb && ddistance < (double)NEBRNG)) {
+					if (othusn == ptr->lock && ptr->lock_grace > 0)
+						flag = 2;
+				}
+				else if (wptr->cloak >= 10) {
+					if (othusn == ptr->lock && ptr->lock_grace > 0)
+						flag = 2;
+				}
+				else
+					flag = 1;
+			}
+
+			if (flag != 0) {
+				for (i = 0; i < NOSCANTAB; ++i) {
+					/* entry blank - fill it with this one */
+					if (tmp.ship[i].flag == 0) {
+						tmp.ship[i].flag = flag;
+						tmp.ship[i].shipno = othusn;
+						tmp.ship[i].dist = ddistance;
+						tmp.ship[i].letter = lettab[othusn];
+
+						break;
+					}
+					/* is this ship closer */
+					if (ddistance < tmp.ship[i].dist) {
+						/* Yes - Push down the rest */
+						for (j = NOSCANTAB - 2; j >= i; j--) {
+							if (tmp.ship[j].flag != 0)
+								memcpy(&tmp.ship[j+1],&tmp.ship[j],sizeof(SHIPTAB));
+						}
+						/* fill the hole with the new ship */
+						tmp.ship[i].flag = flag;
+						tmp.ship[i].shipno = othusn;
+						tmp.ship[i].dist = ddistance;
+						tmp.ship[i].letter = lettab[othusn];
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	/* go fill in the new ships without letters */
+	pick_letter(&tmp);
+
+	/* Now go fill in the rest of the table */
+	for (i = 0; i < NOSCANTAB; ++i) {
+		/* clear out the empty entries */
+		if (tmp.ship[i].flag == 0) {
+			tmp.ship[i].letter = '?';
+			tmp.ship[i].shipno = -1;
+		}
+		else {
+			j = tmp.ship[i].shipno;
+			wptr = warshpoff(j);
+			tmp.ship[i].bearing = cbearing(&ptr->coord,&(wptr->coord),ptr->heading);
+			tmp.ship[i].heading = cbearing(&(wptr->coord),&ptr->coord,wptr->heading);
+			tmp.ship[i].speed = wptr->speed;
+		}
+	}
+
+	/* update the current users master record */
+	memcpy(&scantab[usrn],&tmp,sizeof(SCANTAB));
 
 }
 
-void FUNC pick_letter(ptr)
-SCANTAB *ptr;
+void FUNC pick_letter(SCANTAB *ptr)
 {
 #define LETSIZE 26
-char letters[LETSIZE] = {'A','B','C','D','E','F','G','H','I','J','K','L','M',
-                         'N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
-char lettmp[LETSIZE];
-int i,j;
+	char letters[LETSIZE] = {'A','B','C','D','E','F','G','H','I','J','K','L','M',
+							 'N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
+	char lettmp[LETSIZE];
+	int i, j;
 
+	/* init the temp tab */
+	memcpy(lettmp,letters,LETSIZE);
 
-/* init the temp tab */
-memcpy(lettmp,letters,LETSIZE);
+	/* look at each ship in the table and punch out the letter from the
+	   list... when all done the letters remaining are available */
 
-/* look at each ship in the table and punch out the letter from the
-   list... when all done the letters remaining are available */
+	/* DEBUG - REMOVE THIS WHEN DONE
+	for (i=0;i<NOSCANTAB;++i)
+		logthis(spr("PLTR-A:%d flg=%d shipno=%d letter=%d/%c",i,ptr->ship[i].flag,ptr->ship[i].shipno,ptr->ship[i].letter,ptr->ship[i].letter));*/
 
-/* DEBUG - REMOVE THIS WHEN DONE
-for (i=0;i<NOSCANTAB;++i)
-	logthis(spr("PLTR-A:%d flg=%d shipno=%d letter=%d/%c",i,ptr->ship[i].flag,ptr->ship[i].shipno,ptr->ship[i].letter,ptr->ship[i].letter));*/
-
-for (i=0;i<NOSCANTAB;++i)
-	{
-	if (ptr->ship[i].flag != 0 && ptr->ship[i].letter != 0)
-		{
-		for (j=0;j<LETSIZE;++j)
-			{
-			if (ptr->ship[i].letter == lettmp[j])
-				{
-				lettmp[j] = '@';
-				break;
+	for (i = 0; i < NOSCANTAB; ++i) {
+		if (ptr->ship[i].flag != 0 && ptr->ship[i].letter != 0) {
+			for (j = 0; j < LETSIZE; ++j) {
+				if (ptr->ship[i].letter == lettmp[j]) {
+					lettmp[j] = '@';
+					break;
 				}
 			}
 		}
 	}
 
-/* now go through and fix up the ? */
-
-for (i=0;i<NOSCANTAB;++i)
-	{
-	if (ptr->ship[i].flag != 0 && ptr->ship[i].letter == 0)
-		{
-		for (j=0;j<LETSIZE;++j)
-			{
-			if (lettmp[j] != '@')
-				{
-				ptr->ship[i].letter = lettmp[j];
-				lettmp[j] = '@';
-				break;
+	/* now go through and fix up the ? */
+	for (i = 0; i < NOSCANTAB; ++i) {
+		if (ptr->ship[i].flag != 0 && ptr->ship[i].letter == 0) {
+			for (j = 0; j < LETSIZE; ++j) {
+				if (lettmp[j] != '@') {
+					ptr->ship[i].letter = lettmp[j];
+					lettmp[j] = '@';
+					break;
 				}
 			}
 		}
 	}
-/* DEBUG - REMOVE THIS WHEN DONE
-for (i=0;i<NOSCANTAB;++i)
-	logthis(spr("PLTR-Z:%d flg=%d shipno=%d letter=%d/%c",i,ptr->ship[i].flag,ptr->ship[i].shipno,ptr->ship[i].letter,ptr->ship[i].letter));*/
+	/* DEBUG - REMOVE THIS WHEN DONE
+	for (i=0;i<NOSCANTAB;++i)
+		logthis(spr("PLTR-Z:%d flg=%d shipno=%d letter=%d/%c",i,ptr->ship[i].flag,ptr->ship[i].shipno,ptr->ship[i].letter,ptr->ship[i].letter));*/
 
-return;
+	return;
 }
