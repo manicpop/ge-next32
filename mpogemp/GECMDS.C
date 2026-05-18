@@ -459,7 +459,7 @@ if (margc < 2 || margc > 3)
 	return;
 	}
 
-if (genearas(margv[1],"version"))
+if (sameto(margv[1],"version"))
 	{
 	prf(VERSION);
 	prf("\r\r");
@@ -467,14 +467,14 @@ if (genearas(margv[1],"version"))
 	return;
 	}
 
-if (genearas(margv[1],"sys") && syshelp == FALSE)
+if (sameto(margv[1],"sys") && syshelp == FALSE)
 	{
 	prfmsg(HLPINDEX);
 	outprfge(FLT_NONE,usrnum);
 	return;
 	}
 
-if (genearas(margv[1],"class"))
+if (sameto(margv[1],"class"))
 	{
 	if (margc == 2)
 		{
@@ -586,7 +586,7 @@ if (genearas(margv[1],"class"))
 ndx = 0;
 while (gehlp[ndx].command != NULL)
 	{
-	if (genearas(margv[1], gehlp[ndx].command))
+	if (sameto(margv[1], gehlp[ndx].command))
 		{
 		prfmsg(gehlp[ndx].helptxt);
 		outprfge(FLT_NONE,usrnum);
@@ -2002,7 +2002,7 @@ if (sameas(margv[0],">") && margc < 2)
 	return;
 	}
 
-if (!sameas(margv[0],">") && margc >= 2 && genearas(margv[1],"freq"))
+if (!sameas(margv[0],">") && margc >= 2 && sameto(margv[1],"freq"))
 	{
 	if (margc == 2)
 		{
@@ -2034,7 +2034,7 @@ if (!sameas(margv[0],">") && margc >= 2 && genearas(margv[1],"freq"))
 
 if ((sameas(margv[0],">") && margc > 1) || margc > 2)
 	{
-	if (sameas(margv[0],">") || genearas(margv[1],"all"))
+	if (sameas(margv[0],">") || sameto(margv[1],"all"))
 		{
 		/* CHGD:MBM22e */
 		if (pfnlvl >= 2 && profon)
@@ -2057,7 +2057,7 @@ if ((sameas(margv[0],">") && margc > 1) || margc > 2)
 			}
 		}
 	else
-	if (genearas(margv[1],"team"))
+	if (sameto(margv[1],"team"))
 		{
 		if (pfnlvl >= 2 && profon)
 			{
@@ -2098,7 +2098,7 @@ if ((sameas(margv[0],">") && margc > 1) || margc > 2)
 			}
 		}
 	else
-	if (genearas(margv[1],"encoded"))
+	if (sameto(margv[1],"encoded"))
 		{
 		if (pfnlvl >= 2 && profon)
 			{
@@ -2550,19 +2550,19 @@ if (warsptr->damage >= 100.0)
 
 if (margc > 1)
 	{
-	if (genearas("sh",margv[1]))
+	if (sameto("sh",margv[1]))
 		scan_sh();
 	else
-	if (genearas("pl",margv[1]))
+	if (sameto("pl",margv[1]))
 		scan_pl();
 	else
-	if (genearas("ra",margv[1]))
+	if (sameto("ra",margv[1]))
 		scan_ra();
 	else
-	if (genearas("se",margv[1]))
+	if (sameto("se",margv[1]))
 		scan_se();
 	else
-	if (genearas("lo",margv[1]))
+	if (sameto("lo",margv[1]))
 		scan_lo();
 	else
 		{
@@ -2869,12 +2869,12 @@ if (margc == 4)
 	{
 	for (i=0; i < NUMITEMS; ++i)
 		{
-		if (genearas(kwrd[i],margv[3]))
+		if (sameto(kwrd[i],margv[3]))
 			{
-			if (genearas("u",margv[1]))
+			if (sameto("u",margv[1]))
 				trans_up(i);
 			else
-			if (genearas("d",margv[1]))
+			if (sameto("d",margv[1]))
 				trans_down(i);
 			else
 				prfmsg(FORMAT,"TRANSFER");
@@ -3218,7 +3218,7 @@ if (neutral(&warsptr->coord))
 
 if (margc == 3)
 	{
-	if (genearas("tro",margv[2]))
+	if (sameto("tro",margv[2]))
 		{
 		if (sameas("ALL",margv[1]))
 			num = warsptr->items[I_TROOPS];
@@ -3248,7 +3248,7 @@ if (margc == 3)
 		return;
 		}
 	else
-	if (genearas("fig",margv[2]))
+	if (sameto("fig",margv[2]))
 		{
 		if (shipclass[warsptr->shpclass].max_attk > 0)
 			{
@@ -3909,7 +3909,7 @@ if (neutral(&warsptr->coord) && plnum == 1) /*must be Zygor-3*/
 		{
 		for (i=0; i < NUMITEMS; ++i)
 			{
-			if (genearas(kwrd[i],margv[2]))
+			if (sameto(kwrd[i],margv[2]))
 				{
 				sell(i);
 				outprfge(FLT_NONE,usrnum);
@@ -4111,7 +4111,7 @@ if (margc > 2)
 	{
 	for (i=0; i < NUMITEMS; ++i)
 		{
-		if (genearas(kwrd[i],margv[2]))
+		if (sameto(kwrd[i],margv[2]))
 			{
 			buy(i);
 			outprfge(FLT_NONE,usrnum);
@@ -4153,7 +4153,7 @@ if (margc == 3)
 	{
 	for (i=0; i < NUMITEMS; ++i)
 		{
-		if (genearas(kwrd[i],margv[2]))
+		if (sameto(kwrd[i],margv[2]))
 			{
 			buy(i);
 			outprfge(FLT_NONE,usrnum);
@@ -4903,7 +4903,7 @@ if (sameas("get",margv[1]) && margc == 4)
 		{
 		for (i=0; i < NUMITEMS; ++i)
 			{
-			if (genearas(kwrd[i],margv[3]))
+			if (sameto(kwrd[i],margv[3]))
 				{
 				if ((amt = atol(margv[2])) > 0)
 					{
@@ -4924,7 +4924,7 @@ if (sameas("kill",margv[1]) && margc == 3)
 	gotone = FALSE;
 	for (othusn=0; othusn < nships ; othusn++)
 		{
-		if (genearas(margv[2],warshpoff(othusn)->userid))
+		if (sameto(margv[2],warshpoff(othusn)->userid))
 			{
 			warshpoff(othusn)->damage = 101;
 			prfmsg(SYSKILL,warshpoff(othusn)->userid);
@@ -6756,7 +6756,7 @@ if (margc == 3)
 	{
 	for (i=0; i < NUMITEMS; ++i)
 		{
-		if (genearas(kwrd[i],margv[2]))
+		if (sameto(kwrd[i],margv[2]))
 			{
 			jettison(i);
 			return;

@@ -1129,10 +1129,10 @@ if (innebula(xsect,ysect))
 	return;
 	}
 
-if (genearas("h",margv[2]))
+if (sameto("h",margv[2]))
 	range = (double)(ship_scanrange(warsptr) / 2);
 else
-if (genearas("q",margv[2]))
+if (sameto("q",margv[2]))
 	range = (double)(ship_scanrange(warsptr) / 4);
 else
 	{
@@ -1409,10 +1409,10 @@ if (innebula(xsect,ysect))
 	return;
 	}
 
-if (margc == 3 && genearas("h",margv[2]))
+if (margc == 3 && sameto("h",margv[2]))
 	range = (double)ship_scanrange(warsptr) * 5.0;
 else
-if (margc == 3 && genearas("q",margv[2]))
+if (margc == 3 && sameto("q",margv[2]))
 	range = (double)ship_scanrange(warsptr) * 2.5;
 else
 	range = (double)ship_scanrange(warsptr) * 10.0;

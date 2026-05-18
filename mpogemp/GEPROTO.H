@@ -158,7 +158,6 @@
 /*    2317 */ void FUNC setsect P((WARSHP *ptr ));
 /*    2333 */ void FUNC movecoord P((COORD *pointb , COORD *pointa ));
 /*    2346 */ int FUNC samesect P((COORD *pointb , COORD *pointa ));
-/*    2363 */ int FUNC genearas P((char *str1 , char *str2 ));
 /*    2378 */ int FUNC mailscan P((char *userid , int class ));
 /*    2407 */ int mailread P((char *userid , int class ));
 /*    2439 */ void FUNC mailit P((int flag ));

@@ -2484,7 +2484,7 @@ int FUNC mnu_admenu1(void)
 	int i;
 
 	if (margc > 0) {
-		if (genearas("y", margv[0])) {
+		if (sameto("y", margv[0])) {
 			if (!load_admin_planet())
 				return 1;
 
@@ -2512,7 +2512,7 @@ int FUNC mnu_admenu1(void)
 			outprfge(FLT_NONE, usrnum);
 			usrptr->substt = ADMENU1A;
 		}
-		else if (genearas("n", margv[0])) {
+		else if (sameto("n", margv[0])) {
 			prfmsg(ADMIN3);
 			outprfge(FLT_NONE, usrnum);
 			usrptr->substt = FIGHTSUB;
@@ -2699,7 +2699,7 @@ int FUNC mnu_admenu2e(void)
 		return 1;
 
 	for (i = 0; i < NUMITEMS; ++i) { /* skip notused */
-		if (genearas(kwrd[i], margv[0])) {
+		if (sameto(kwrd[i], margv[0])) {
 			warsptr->titem = i;
 			prfmsg(ADMEN2F1, item_name[warsptr->titem], plptr->items[warsptr->titem].rate);
 			outprfge(FLT_NONE, usrnum);
@@ -2787,7 +2787,7 @@ int FUNC mnu_admenu2f3(void)
 		usrptr->substt = ADMEN2F4;
 		return 1;
 	}
-	if (margc == 1 && (genearas("y", margv[0]) || genearas("n", margv[0]))) {
+	if (margc == 1 && (sameto("y", margv[0]) || sameto("n", margv[0]))) {
 		titems[usrnum].sell = toupper(*margv[0]);
 		prfmsg(ADMEN2F4, item_name[warsptr->titem], plptr->items[warsptr->titem].reserve);
 		outprfge(FLT_NONE, usrnum);
