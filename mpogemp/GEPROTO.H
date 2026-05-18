@@ -118,7 +118,6 @@
 /*      71 */ void FUNC lookupshp P((void ));
 /*     141 */ void FUNC tossingegame P((void ));
 /*     156 */ void FUNC suddenappear P((WARSHP *ptr , int usrn ));
-/*         */ void FUNC clear_entrymsg P((int usrn ));
 /*         */ void FUNC start_entrymsg P((int usrn ));
 /*         */ void FUNC tick_entrymsg P((void ));
 /*         */ void FUNC exit_entrymsg P((int usrn ));
@@ -172,6 +171,7 @@
 /*    2668 */ void FUNC shieldrep P((WARSHP *wptr , int usrn ));
 /*    2686 */ void FUNC shieldchg P((WARSHP *wptr , int usrn ));
 /*    2725 */ void FUNC charge P((WARSHP *wptr , int *max , int *pct ));
+/*         */ unsigned long FUNC cargo_weight100 P((WARSHP *wptr ));
 /*    2736 */ int FUNC chkweight P((WARSHP *wptr , int itm , long amt ));
 /*    2757 */ unsigned long FUNC calcweight P((WARSHP *wptr ));
 /*    2776 */ char FUNC shpltr P((int usrn , int ship ));

@@ -2988,6 +2988,7 @@ int	item;
 
 {
 long	amt;
+unsigned long room100;
 
 if (!load_orbit_planet(usrnum))
 	return;
@@ -2998,7 +2999,8 @@ if (sameas(plptr->userid,warsptr->userid) || plptr->userid[0] == 0)
 	{
 	if (sameas("MAX",margv[2]))
 		{
-		amt = (shipclass[warsptr->shpclass].max_tons - calcweight(warsptr))/((double)weight[item]/100.0);
+		room100 = ((unsigned long)shipclass[warsptr->shpclass].max_tons * 100UL) - cargo_weight100(warsptr);
+		amt = (long)(room100 / (unsigned long)weight[item]);
 		if (amt <= 0L)
 			{
 			/* user wants max but not even one will fit */
@@ -4167,6 +4169,7 @@ void FUNC buy(item)
 int	item;
 {
 unsigned long amt, avail, tot, ptot;
+unsigned long room100;
 
 if (plptr->userid[0] != 0)
 	{
@@ -4175,7 +4178,10 @@ if (plptr->userid[0] != 0)
 		if (sameas(plptr->userid,warsptr->userid) || plptr->items[item].sell == 'Y')
 			{
 			if (sameas("MAX",margv[1]))
-				amt = (shipclass[warsptr->shpclass].max_tons - calcweight(warsptr))/((double)weight[item]/100.0);
+				{
+				room100 = ((unsigned long)shipclass[warsptr->shpclass].max_tons * 100UL) - cargo_weight100(warsptr);
+				amt = room100 / (unsigned long)weight[item];
+				}
 			if (sameas("ALL",margv[1]))
 				amt = amt4sale(item);
 			if ((sameas(plptr->userid,warsptr->userid) && amt > SLCAP / baseprice[item])

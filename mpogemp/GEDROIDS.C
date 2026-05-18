@@ -181,7 +181,6 @@ else
 	}
 
 cyb_cruise(ptr,usrn,0);
-ptr->holdcourse = 0;
 ptr->status = GESTAT_AUTO;
 ptr->tick = (CYBTICKTIME + gernd()%CYBTICKTIME)*5;
 

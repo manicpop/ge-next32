@@ -1274,6 +1274,8 @@ int FUNC gepdb(int func, char *usrname, int shipnum, WARSHP *geptr)
 		if (!insbtv(geptr))
 #endif
 			geshocst(0, spr("GE:ERR:Ship ins Fail %s", usrname));
+		else
+			rtn = 1;
 
 		break;
 
@@ -1345,6 +1347,8 @@ int FUNC geudb(int func, char *usrname, WARUSR *geptr)
 		if (!insbtv(geptr))
 #endif
 			geshocst(0, spr("GE:ERR:User ins Fail %s", usrname));
+		else
+			rtn = 1;
 
 		break;
 
@@ -1426,8 +1430,10 @@ int FUNC gesdb(int func, PKEY *sect, GALSECT *geptr)
 		if (!insbtv(geptr))
 #endif
 			geshocst(0, "GE:ERR:Sect/plt ins Fail");
-		else
+		else {
 			logthis("GE:DBG:Ins Sect suceeded");
+			rtn = 1;
+		}
 		break;
 
 	case GEGET:

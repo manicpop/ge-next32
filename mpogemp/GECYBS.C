@@ -72,6 +72,93 @@ double	d_topspeed;
 ** Cyborg functions                                                      **
 **************************************************************************/
 
+/**************************************************************************
+** Assign closest cybs to ship entering game or going through wormhole   **
+**************************************************************************/
+
+void FUNC assign_cybs(int usrnum, int call)
+{
+	WARSHP *wptr;
+	WARSHP *ptr;
+	int zothusn;
+	double ddist;
+	double low_dist = 999999999.0;
+	int low_ship;
+	int lta; /* lowest to attack */
+	int i, cybpick, claims, noclaim, tpmag;
+
+	claims = 0;
+
+	/* call 0 = clear all current cyb pursuits */
+	/* call 1 = count all current cyb pursuits */
+	for (zothusn = nterms; zothusn < nships; ++zothusn) {
+		ptr = warshpoff(zothusn);
+		if (ptr->status == GESTAT_AUTO && shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG && ptr->cybmine == usrnum) {
+			if (call == 0)
+				ptr->cybmine = 255;
+			else
+				++claims;
+		}
+	}
+
+	wptr = warshpoff(usrnum);
+	/* if we're not clearing, only claim enough to fill claims */
+	noclaim = shipclass[wptr->shpclass].noclaim;
+	if (wptr->upgrade & TPONDER) {
+		if (noclaim <= 2)
+			tpmag = 1;
+		else
+			tpmag = 2;
+		if (wptr->tponder == TPONHIGH)
+			noclaim += tpmag;
+		else if (wptr->tponder == TPONLOW)
+			noclaim -= tpmag;
+		if (noclaim < 0)
+			noclaim = 0;
+		if (noclaim > 5)
+			noclaim = 5;
+	}
+	cybpick = noclaim - claims;
+
+	for (i = 0; i < cybpick; ++i) {
+		low_dist = 999999999.0;
+		low_ship = -1;
+
+		for (zothusn = nterms; zothusn < nships; ++zothusn) {
+			ptr = warshpoff(zothusn);
+			lta = shipclass[ptr->shpclass].lowest_to_attk - 1;
+			if (ingegame(zothusn) && ptr->status == GESTAT_AUTO && shipclass[ptr->shpclass].max_accel > 0 &&
+				shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG && lta <= wptr->shpclass && ptr->cybmine == 255) {
+				ddist = cdistance(&ptr->coord,&wptr->coord);
+				if (ddist < low_dist) {
+					low_dist = ddist;
+					low_ship = zothusn;
+				}
+			}
+		}
+		if (low_ship == -1)
+			return;
+
+		ptr = warshpoff(low_ship);
+		ptr->cybmine = usrnum;
+		ptr->cyb_grace = CYBGRACE;
+	}
+}
+
+/**************************************************************************
+** Check whether a cyb is in fast pursuit                                **
+**************************************************************************/
+
+int FUNC cyb_fast(WARSHP *ptr)
+{
+	return (ptr->speed != 0.0) &&
+#ifdef MBBSEMU
+	(fabs(ptr->speed - (long)(ptr->speed / FARSPEED) * FARSPEED) < 1e-6);
+#else
+	(fmod(ptr->speed, FARSPEED) == 0.0);
+#endif
+}
+
 void FUNC cyb_init(ptr, usrn, class)
 WARSHP	*ptr;
 int	usrn;
@@ -122,8 +209,6 @@ if (geudb(GELOOKUP,cybname, waruptr))
 			geshocst(0,spr("GE:ERR:BADCYBSHPCLS usn=%d cls=%d shipno=%d uid=%s",
 				usrn, ptr->shpclass, ptr->shipno, ptr->userid));
 			gepdb(GEDELETE,ptr->userid,ptr->shipno,ptr);
-			if (waruptr->noships > 0)
-				--waruptr->noships;
 			}
 		else
 			{
@@ -133,9 +218,7 @@ if (geudb(GELOOKUP,cybname, waruptr))
 			ptr->npcmsg = (byte)255;
 			cyb_cruise(ptr,usrn,0);
 			ptr->cybupdate = 100 + gernd()%20;
-			ptr->holdcourse = 0;
 			ptr->tick = CYBTICKTIME + gernd()%(CYBTICKTIME*5);
-			ptr->lastfired = -1;
 			have_ship = TRUE;
 			}
 		}
@@ -186,7 +269,6 @@ if (geudb(GELOOKUP,cybname, waruptr))
 			ptr->shieldtype = 0;
 
 		ptr->cybmine = (byte)255;
-		ptr->distress = (byte)255;
 		ptr->npcmsg = (byte)255;
 		ptr->shield = 40 + (ptr->shieldtype*10);
 		ptr->phasr = 100;
@@ -224,8 +306,6 @@ if (geudb(GELOOKUP,cybname, waruptr))
 				}
 			ptr->items[I_GOLD] = goldwin;
 			}
-
-		ptr->holdcourse = 0;
 
 		ptr->status = GESTAT_AUTO;
 		ptr->tick = CYBTICKTIME + gernd()%(CYBTICKTIME*5);
