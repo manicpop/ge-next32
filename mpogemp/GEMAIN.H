@@ -287,6 +287,8 @@
 #define TPONDER 64
 #define NCORE 128
 
+#define NUMUPGRADES 8
+
 /* transponder upgrade settings */
 #define TPONNORM 0
 #define TPONLOW 1
