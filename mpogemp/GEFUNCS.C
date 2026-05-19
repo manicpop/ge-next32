@@ -482,6 +482,89 @@ long FUNC ship_scanrange(WARSHP *ptr)
 }
 
 /**************************************************************************
+** Shared NPC cruise-state helper                                        **
+**************************************************************************/
+
+void FUNC npc_cruise(WARSHP *ptr, int usrn, int call)
+{
+	/* 0 = drop pursuits and random, 1 = random, 2 = top speed short hold,
+	3 = top speed long hold, 4 top speed no hold */
+
+	if (call == 0) {
+		ptr->cybmine = (byte)255;
+		ptr->npcmsg = 255;
+		ptr->distress = (byte)255;
+	}
+
+	if (shipclass[ptr->shpclass].max_accel == 0)	/* bases don't do any of the below */
+		return;
+
+	if (call == 2)
+		ptr->holdcourse = gernd() % 10 + 6;
+	if (call == 3)
+		ptr->holdcourse = gernd() % 18 + 12;
+
+	if (ptr->helm < 0)
+		return;
+
+	if (call < 2)
+		ptr->head2b = rndm(359.9);
+
+	if (ptr->topspeed == 0) {
+		if (call > 1)
+			ptr->speed2b = 990;
+		else
+			ptr->speed2b = ((gernd() % 99) + 1) * 10;
+	} else {
+		if (ptr->speed < 1000) {	/* quick jump to warp, no fractional warp speeds */
+			hyperspace(ptr, usrn, 1);
+			if (shipclass[ptr->shpclass].max_accel <= ptr->topspeed * 1000)
+				ptr->speed = shipclass[ptr->shpclass].max_accel;
+			else
+				ptr->speed = ptr->topspeed * 1000;
+		}
+		if (cyb_fast(ptr)) {
+			ptr->speed2b = (double)ptr->topspeed * 1000;
+			ptr->speed = ptr->speed2b;
+		}
+		if (call > 1)
+			ptr->speed2b = (double)ptr->topspeed * 1000;
+		if (call < 2) {
+			if (ptr->topspeed >= 10) /* don't go faster than warp 10 if cruising */
+				ptr->speed2b = ((gernd() % 10) + 1) * 1000;
+			else
+				ptr->speed2b = ((gernd() % ptr->topspeed) + 1) * 1000;
+		}
+	}
+}
+
+/**************************************************************************
+** Shared NPC decoy deployment helper                                    **
+**************************************************************************/
+
+void FUNC npc_lay_decoys(WARSHP *ptr)
+{
+	int i;
+
+	if (!shipclass[ptr->shpclass].has_decoy)
+		return;
+	if (ptr->items[I_DECOYS] == 0)
+		return;
+	if (ptr->decload != 0)
+		return;
+
+	/* send out a decoy */
+	for (i = 0; i < 3; ++i)
+		if (ptr->decout[i] == 0 && gernd() % (50 * (i + 1)) == 0 &&
+			ptr->items[I_DECOYS] > 0) {
+			--ptr->items[I_DECOYS];
+			ptr->decout[i] = DECOYTIME;
+			ptr->decload = 1;
+			return;
+		}
+}
+
+/**************************************************************************
 ** Fire standard phasers at targets inside the current firing arc        **
 **************************************************************************/
 

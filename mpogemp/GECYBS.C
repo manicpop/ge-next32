@@ -66,6 +66,16 @@ char cybname[UIDSIZ];
 int cybhaltflg = 0;
 double d_topspeed;
 
+static int FUNC notclaimed(WARSHP *ptr, int usrn);
+static void FUNC cyb_annoy(WARSHP *ptr, int usrn, int msgtype);
+static void FUNC cyb_msg(WARSHP *ptr, int usrn, int msgtype);
+static void FUNC db_update(WARSHP *ptr, int usrn);
+static void FUNC cyb_attack(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn);
+static void FUNC cyb_check_damage(WARSHP *ptr, int usrn);
+static void FUNC cyb_check_lockon(WARSHP *ptr, int usrn);
+static int FUNC cyb_pick_fight(int usrn, int call);
+static void FUNC cyb_check_proj(WARSHP *ptr, int usrn);
+
 /**************************************************************************
 ** Initialize or load a cyborg ship                                      **
 **************************************************************************/
@@ -123,7 +133,7 @@ void FUNC cyb_init(WARSHP *ptr, int usrn, int class)
 				ptr->npcmsg = (byte)255;
 				ptr->holdcourse = 0;
 				ptr->cantexit = 0;
-				cyb_cruise(ptr, usrn, 0);
+				npc_cruise(ptr, usrn, 0);
 				ptr->cybupdate = 100 + gernd() % 20;
 				ptr->tick = CYBTICKTIME + gernd() % (CYBTICKTIME * 5);
 				have_ship = TRUE;
@@ -387,7 +397,7 @@ void FUNC cyb_lives(WARSHP *ptr, int usrn)
 		ptr->npcmsg = 255;
 		ptr->holdcourse = 0;
 		if (shipclass[ptr->shpclass].max_accel > 0)
-			cyb_cruise(ptr, usrn, 0);
+			npc_cruise(ptr, usrn, 0);
 		if (ptr->where == 0 && ptr->shieldstat == SHIELDDN)
 			shieldup(ptr, usrn);
 		ptr->energy = 50000L;
@@ -397,7 +407,7 @@ void FUNC cyb_lives(WARSHP *ptr, int usrn)
 
 	/* still moving at pursuit speed, but no longer pursuing */
 	if (cyb_fast(ptr) && ptr->cybmine == 255)
-		cyb_cruise(ptr, usrn, 0);
+		npc_cruise(ptr, usrn, 0);
 
 	/* am I being jammed ? */
 	if (ptr->jam_sev <= (byte)3) {
@@ -463,7 +473,7 @@ void FUNC cyb_lives(WARSHP *ptr, int usrn)
 							cyb_attack(ptr, usrn, wptr, zothusn);
 							if (shipclass[ptr->shpclass].has_decoy &&
 								ptr->items[I_DECOYS] > 0)
-								cyb_lay_decoys(ptr);
+								npc_lay_decoys(ptr);
 						}
 					}
 				}
@@ -477,7 +487,7 @@ void FUNC cyb_lives(WARSHP *ptr, int usrn)
 			if (shipclass[ptr->shpclass].has_mine && ptr->items[I_MINE] > 0 &&
 				ptr->mineload == 0 && !neutral(&ptr->coord) && gernd() % 5 == 0) {
 				laymine(ptr, usrn, 10);
-				cyb_cruise(ptr, usrn, 2);
+				npc_cruise(ptr, usrn, 2);
 			}
 		}
 	}
@@ -511,7 +521,7 @@ void FUNC cyb_lives(WARSHP *ptr, int usrn)
 ** Check whether a ship still has room for more cyb claims               **
 **************************************************************************/
 
-int FUNC notclaimed(WARSHP *ptr, int usrn)
+static int FUNC notclaimed(WARSHP *ptr, int usrn)
 {
 	WARSHP *wptr;
 	int zothusn, nc, noclaim, tpmag;
@@ -551,7 +561,7 @@ int FUNC notclaimed(WARSHP *ptr, int usrn)
 ** Decide whether a cyb message should be shown                          **
 **************************************************************************/
 
-void FUNC cyb_annoy(WARSHP *ptr, int usrn, int msgtype)
+static void FUNC cyb_annoy(WARSHP *ptr, int usrn, int msgtype)
 {
 	/* skip NPCs entirely */
 	if (usrn >= nterms)
@@ -630,7 +640,7 @@ void FUNC cyb_annoy(WARSHP *ptr, int usrn, int msgtype)
 ** Emit one cyb message to a user                                         **
 **************************************************************************/
 
-void FUNC cyb_msg(WARSHP *ptr, int usrn, int msgtype)
+static void FUNC cyb_msg(WARSHP *ptr, int usrn, int msgtype)
 
 {
 	int base, sel;
@@ -655,7 +665,7 @@ void FUNC cyb_msg(WARSHP *ptr, int usrn, int msgtype)
 ** Count down and perform cyb database updates                           **
 **************************************************************************/
 
-void FUNC db_update(WARSHP *ptr, int usrn)
+static void FUNC db_update(WARSHP *ptr, int usrn)
 {
 	WARUSR *wuptr;
 
@@ -667,7 +677,7 @@ void FUNC db_update(WARSHP *ptr, int usrn)
 	if (ptr->cybupdate == 1 &&
 		(ptr->cybmine >= nships ||
 		(warshpoff(ptr->cybmine)->status == GESTAT_AUTO && ptr->cantexit == 0))) {
-		cyb_cruise(ptr, usrn, 0);	/* keep cyb from endlessly chasing npcs it can't catch */
+		npc_cruise(ptr, usrn, 0);	/* keep cyb from endlessly chasing npcs it can't catch */
 		--ptr->cybupdate;
 		return;
 	}
@@ -690,7 +700,7 @@ void FUNC db_update(WARSHP *ptr, int usrn)
 ** Attack the other player                                               **
 **************************************************************************/
 
-void FUNC cyb_attack(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn)
+static void FUNC cyb_attack(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn)
 {
 	int i, j, acted;
 	int zipden, mden, tden;
@@ -739,7 +749,7 @@ void FUNC cyb_attack(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn)
 		zip(ptr);
 		acted = 1;
 		/* get the hell out of here ...then come back */
-		cyb_cruise(ptr, usrn, 3);
+		npc_cruise(ptr, usrn, 3);
 	}
 
 	/* if damage in flee range, don't talk trash */
@@ -754,36 +764,10 @@ void FUNC cyb_attack(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn)
 }
 
 /**************************************************************************
-** Lay down some decoys                                                  **
-**************************************************************************/
-
-void FUNC cyb_lay_decoys(WARSHP *ptr)
-{
-	int i;
-
-	if (!shipclass[ptr->shpclass].has_decoy)
-		return;
-	if (ptr->items[I_DECOYS] == 0)
-		return;
-	if (ptr->decload != 0)
-		return;
-
-	/* send out a decoy */
-	for (i = 0; i < 3; ++i)
-		if (ptr->decout[i] == 0 && gernd() % (50 * (i + 1)) == 0 &&
-			ptr->items[I_DECOYS] > 0) {
-			--ptr->items[I_DECOYS];
-			ptr->decout[i] = DECOYTIME;
-			ptr->decload = 1;
-			return;
-		}
-}
-
-/**************************************************************************
 ** if hunting, and badly damaged dump mines, jam, and boogie             **
 **************************************************************************/
 
-void FUNC cyb_check_damage(WARSHP *ptr, int usrn)
+static void FUNC cyb_check_damage(WARSHP *ptr, int usrn)
 {
 	if (ptr->damage > CYB_MINDAM &&
 		((gernd() % 10 == 0) || ptr->holdcourse > 0)) {
@@ -808,7 +792,7 @@ void FUNC cyb_check_damage(WARSHP *ptr, int usrn)
 			cyb_annoy(ptr, ptr->cybmine, FLEE);
 			ptr->head2b = normal(vector(&ptr->coord, &warshpoff(ptr->cybmine)->coord) +
 				180.0 + (rand() % 51 - 25));
-			cyb_cruise(ptr, usrn, 3);
+			npc_cruise(ptr, usrn, 3);
 		}
 	}
 }
@@ -817,7 +801,7 @@ void FUNC cyb_check_damage(WARSHP *ptr, int usrn)
 ** Check lockon status                                                   **
 **************************************************************************/
 
-void FUNC cyb_check_lockon(WARSHP *ptr, int usrn)
+static void FUNC cyb_check_lockon(WARSHP *ptr, int usrn)
 {
 	WARSHP *wptr;
 	int zothusn, inbound, keepwarp, attackwarp, closemove, phatwarp;
@@ -843,7 +827,7 @@ void FUNC cyb_check_lockon(WARSHP *ptr, int usrn)
 	} else {
 		if (!ingegame(zothusn)) {
 			ptr->cyb_grace = 0;
-			cyb_cruise(ptr, usrn, 0);
+			npc_cruise(ptr, usrn, 0);
 			return;
 		}
 
@@ -1078,7 +1062,7 @@ void FUNC cyb_check_lockon(WARSHP *ptr, int usrn)
 
 void FUNC cyb_won(WARSHP *ptr, int usrn)
 {
-	cyb_cruise(ptr, usrn, 0);
+	npc_cruise(ptr, usrn, 0);
 	ptr->cybupdate = 0;
 }
 
@@ -1092,69 +1076,11 @@ void FUNC cyb_died(WARSHP *ptr)
 }
 
 /**************************************************************************
-** Set random speed and heading if cruising                              **
-**************************************************************************/
-
-void FUNC cyb_cruise(WARSHP *ptr, int usrn, int call)
-{
-	/* 0 = drop pursuits and random, 1 = random, 2 = top speed short hold,
-	3 = top speed long hold, 4 top speed no hold */
-
-	if (call == 0) {
-		ptr->cybmine = (byte)255;
-		ptr->npcmsg = 255;
-		ptr->distress = (byte)255;
-	}
-
-	if (shipclass[ptr->shpclass].max_accel == 0)	/* bases don't do any of the below */
-		return;
-
-	if (call == 2)
-		ptr->holdcourse = gernd() % 10 + 6;
-	if (call == 3)
-		ptr->holdcourse = gernd() % 18 + 12;
-
-	if (ptr->helm < 0)
-		return;
-
-	if (call < 2)
-		ptr->head2b = rndm(359.9);
-
-	if (ptr->topspeed == 0) {
-		if (call > 1)
-			ptr->speed2b = 990;
-		else
-			ptr->speed2b = ((gernd() % 99) + 1) * 10;
-	} else {
-		if (ptr->speed < 1000) {	/* quick jump to warp, no fractional warp speeds */
-			hyperspace(ptr, usrn, 1);
-			if (shipclass[ptr->shpclass].max_accel <= ptr->topspeed * 1000)
-				ptr->speed = shipclass[ptr->shpclass].max_accel;
-			else
-				ptr->speed = ptr->topspeed * 1000;
-		}
-		if (cyb_fast(ptr)) {
-			ptr->speed2b = (double)ptr->topspeed * 1000;
-			ptr->speed = ptr->speed2b;
-		}
-		if (call > 1) {
-			ptr->speed2b = (double)ptr->topspeed * 1000;
-		}
-		if (call < 2) {
-			if (ptr->topspeed >= 10) /* don't go faster than warp 10 if cruising */
-				ptr->speed2b = ((gernd() % 10) + 1) * 1000;
-			else
-				ptr->speed2b = ((gernd() % ptr->topspeed) + 1) * 1000;
-		}
-	}
-}
-
-/**************************************************************************
 ** Don't pick new fights with NPCs if no users are playing               **
 ** Allow msg-configurable frequency of cyb-on-droid attacks              **
 **************************************************************************/
 
-int FUNC cyb_pick_fight(int usrn, int call)
+static int FUNC cyb_pick_fight(int usrn, int call)
 {
 	int zothusn, usersin, nc;
 	WARSHP *wptr;
@@ -1210,7 +1136,7 @@ int FUNC cyb_pick_fight(int usrn, int call)
 /**************************************************************************
 ** React to incoming projectiles                                         **
 **************************************************************************/
-void FUNC cyb_check_proj(WARSHP *ptr, int usrn)
+static void FUNC cyb_check_proj(WARSHP *ptr, int usrn)
 {
 	MISSILE *mptr;
 	TORPEDO *tptr;
@@ -1227,7 +1153,7 @@ void FUNC cyb_check_proj(WARSHP *ptr, int usrn)
 			for (i = 0, tptr = ptr->ltorps; i < MAXTORPS; ++i, ++tptr) {
 				if (tptr->distance > 0 && tptr->channel == ptr->cybmine) {
 					ptr->head2b = vector(&ptr->coord, &wptr->coord);
-					cyb_cruise(ptr, usrn, 2);
+					npc_cruise(ptr, usrn, 2);
 					return;
 				}
 			}

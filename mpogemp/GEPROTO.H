@@ -183,6 +183,8 @@
 /*    2890 */ char *FUNC showarp P((double speed ));
 /*    2908 */ void FUNC assign_cybs P((int usrnum , int call ));
 /*    2957 */ int FUNC cyb_fast P((WARSHP *ptr ));
+/*         */ void FUNC npc_cruise P((WARSHP *ptr , int usrn , int call ));
+/*         */ void FUNC npc_lay_decoys P((WARSHP *ptr ));
 /*    2971 */ void FUNC set_dislike P((WARUSR *wuptr , int facnum , int dislike ));
 /*         */ void FUNC rospos P((WARUSR *losptr , WARUSR *winptr , int *lospos , int *winpos ));
 /*         */ void FUNC damstr P((int damage ));
@@ -284,38 +286,14 @@
 /* gecybs.c */
 /*      76 */ void FUNC cyb_init P((WARSHP *ptr , int usrn , int class ));
 /*     257 */ void FUNC cyb_lives P((WARSHP *ptr , int usrn ));
-/*     398 */ int FUNC notclaimed P((WARSHP *ptr , int usrn ));
-/*     420 */ void FUNC cyb_annoy P((WARSHP *ptr , int usrn , int msgtype ));
-/*     481 */ void FUNC cyb_msg P((WARSHP *ptr , int usrn , int msgtype ));
-/*     502 */ void FUNC db_update P((WARSHP *ptr , int usrn ));
-/*     539 */ void FUNC cyb_attack P((WARSHP *ptr , int usrn , WARSHP *wptr , int zothusn ));
-/*     589 */ void FUNC cyb_lay_decoys P((WARSHP *ptr ));
-/*     610 */ void FUNC cyb_check_damage P((WARSHP *ptr , int usrn ));
-/*     641 */ void FUNC cyb_check_lockon P((WARSHP *ptr , int usrn ));
 /*     875 */ void FUNC cyb_won P((WARSHP *ptr , int usrn ));
 /*     887 */ void FUNC cyb_died P((WARSHP *ptr ));
-/*     903 */ void FUNC cyb_cruise P((WARSHP *ptr , int usrn , int call ));
-/*     967 */ int FUNC cyb_pick_fight P((int usrn , int call ));
-/*    1023 */ void FUNC cyb_check_proj P((WARSHP *ptr , int usrn ));
 
 /* gedroids.c */
 /*      73 */ void FUNC droid_init P((WARSHP *ptr , int usrn , int class ));
 /*     214 */ void FUNC droid_lives P((WARSHP *ptr , int usrn ));
-/*     289 */ void FUNC droid_annoy P((WARSHP *ptr , int usrn ));
-/*     348 */ void FUNC droid_distress P((WARSHP *ptr , int usrn ));
-/*     370 */ void FUNC droid_act_1 P((WARSHP *ptr , int usrn ));
-/*     434 */ void FUNC droid_act_2 P((WARSHP *ptr , int usrn ));
-/*     519 */ void FUNC droid_act_3 P((WARSHP *ptr , int usrn ));
-/*     604 */ void FUNC droid_act_4 P((WARSHP *ptr , int usrn ));
-/*     686 */ void FUNC droid_act_5 P((WARSHP *ptr , int usrn ));
-/*     838 */ void FUNC droid_act_6 P((WARSHP *ptr , int usrn ));
 /*    1002 */ void FUNC droid_won P((WARSHP *ptr , int usrn));
 /*    1010 */ void FUNC droid_died P((WARSHP *ptr ));
-/*    1018 */ void FUNC droid_check_state P((WARSHP *ptr , int usrn ));
-/*    1037 */ int FUNC notclaimed_d P((int drtype , int usrn ));
-/*    1054 */ void FUNC droid_phaser P((WARSHP *ptr , int usrn , WARSHP *wptr ));
-/*    1075 */ void FUNC droid_torp P((WARSHP *ptr , int usrn , WARSHP *wptr , int zothusn ));
-/*    1098 */ void FUNC droid_zyg_loadout P((WARSHP *ptr ));
 
 
 /* geplanet.c */
