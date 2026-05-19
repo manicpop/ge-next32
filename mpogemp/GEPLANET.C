@@ -67,327 +67,288 @@
 WORMTAB	wormtab[MAXPLANETS];
 int	wormnum;
 
+static int FUNC xgetsector(COORD *sect, int wormy);
+static void FUNC build_plan_1(int idx);
+static void FUNC build_plan_2(int idx);
+static void FUNC build_other(int idx);
+static void FUNC build_worm(int idx);
 
+/**************************************************************************
+** Check Spy Function                                                    **
+**************************************************************************/
 
-void FUNC check_spy()
-
+void FUNC check_spy(void)
 {
-int	spycnt,odds,i,j;
+	int spycnt, odds, i, j;
+	long itemcnt;
+	double d_itemcnt, d_rptcnt, d_odds;
 
-long	int	itemcnt;
+	/* is the spy owned by the planet owner? - if so kill him */
+	if (sameas(plptr->spyowner, plptr->userid))
+		plptr->spyowner[0] = 0;
 
-double		d_itemcnt, d_rptcnt, d_odds;
+	if (plptr->spyowner[0] != 0) {
+			setmbk(gemb);
+			xsect = coord1(plptr->coord.xcoord);
+			ysect = coord1(plptr->coord.ycoord);
+			logthis(spr("Spy on %s in %d %d present", plptr->name, xsect, ysect));
+			/* there is a spy on this planet */
+			/* calculate his odds of getting caught */
+			spycnt = (int)plptr->items[I_SPY].qty;
 
-/* is the spy owned by the planet owner? - if so kill him */
-if (sameas(plptr->spyowner,plptr->userid))
-	plptr->spyowner[0] = 0;
+			if (spycnt > 0) {
+				odds = (50 / spycnt) + 1;
 
-if	(plptr->spyowner[0] != 0)
-	{
-		{
-		setmbk(gemb);
-		xsect = coord1(plptr->coord.xcoord);
-		ysect = coord1(plptr->coord.ycoord);
-		logthis(spr("Spy on %s in %d %d present",plptr->name,xsect,ysect));
-		/* there is a spy on this planet */
-		/* calculate his odds of getting caught */
-		spycnt = (int)plptr->items[I_SPY].qty;
+				if (gernd() % odds == 0) {
+					/* caught him */
+					logthis(spr("Spy on %s in %d %d caught", plptr->name, xsect, ysect));
+					/* mail message to spy owner informing him of the death of his spy */
+					clrprf();
+					prfmsg(SPYC1, plptr->name, xsect, ysect);
+					strcpy(mail.userid, plptr->spyowner);
+					strcpy(mail.topic, "** Official Protest **");
+					mail.class = MAIL_CLASS_DISTRESS;
+					sendit();
 
-		/*DEBUG
-		spycnt = 1;*/
+					/* mail message to the planet owner informing him that a spy was caught */
+					clrprf();
+					prfmsg(SPYC2, plptr->name, xsect, ysect, plptr->spyowner, plptr->spyowner);
+					strcpy(mail.userid, plptr->userid);
+					strcpy(mail.topic, "** Official Protest **");
+					mail.class = MAIL_CLASS_DISTRESS;
+					sendit();
+					clrprf();
 
-		if (spycnt > 0)
-			{
-			odds = (50/spycnt)+1;
+					/* kill the spy */
+					plptr->spyowner[0] = 0;
 
-			if (gernd()%odds == 0)
-				/* caught him */
-				{
-				logthis(spr("Spy on %s in %d %d caught",plptr->name,xsect,ysect));
-				/* mail message to spy owner informing him of the death of his spy */
-				clrprf();
-				prfmsg(SPYC1,plptr->name,xsect,ysect);
-				strcpy(mail.userid,plptr->spyowner);
-				strcpy(mail.topic,"** Official Protest **");
-				mail.class = MAIL_CLASS_DISTRESS;
-				sendit();
-
-				/* mail message to the planet owner informing him that a spy was caught */
-				clrprf();
-				prfmsg(SPYC2,plptr->name,xsect,ysect,plptr->spyowner,plptr->spyowner);
-				strcpy(mail.userid,plptr->userid);
-				strcpy(mail.topic,"** Official Protest **");
-				mail.class = MAIL_CLASS_DISTRESS;
-				sendit();
-				clrprf();
-
-				/* kill the spy */
-				plptr->spyowner[0]=0;
-
-				return;
+					return;
 				}
 			}
 
-		/* calculate the odds of the spy finding some usefull information */
+			/* calculate the odds of the spy finding some usefull information */
+			if (gernd() % 10 == 0) {
+				logthis(spr("Spy on %s in %d %d found stuff", plptr->name, xsect, ysect));
 
-		if (gernd()%10 == 0)
-			{
-			logthis(spr("Spy on %s in %d %d found stuff",plptr->name,xsect,ysect));
-
-			/* pick a topic to report */
-			itemcnt = -1;
-			for (j=0;j<10;++j)
-				{
-				i = gernd()%NUMITEMS;
-				itemcnt = plptr->items[i].qty;
-				if (itemcnt > 0)
-					break;
+				/* pick a topic to report */
+				itemcnt = -1;
+				for (j = 0; j < 10; ++j) {
+					i = gernd() % NUMITEMS;
+					itemcnt = plptr->items[i].qty;
+					if (itemcnt > 0)
+						break;
 				}
 
-			if (itemcnt > 0)
-				{
+				if (itemcnt > 0) {
 
-				/* calculate the accuracy of the information */
-				d_odds = 50.0+rndm(48.0);
-				odds = d_odds;
+					/* calculate the accuracy of the information */
+					d_odds = 50.0 + rndm(48.0);
+					odds = d_odds;
 
-				d_itemcnt = itemcnt;
+					d_itemcnt = itemcnt;
 
-				/* convert it to a factor */
-				d_odds = (100.0 - d_odds)/100.0;
+					/* convert it to a factor */
+					d_odds = (100.0 - d_odds) / 100.0;
 
-				d_rptcnt = d_itemcnt - (d_itemcnt*rndm(d_odds)) + (d_itemcnt*rndm(d_odds)); /* calc the deviation */
+					/* calc the deviation */
+					d_rptcnt = d_itemcnt - (d_itemcnt * rndm(d_odds)) +
+						(d_itemcnt * rndm(d_odds));
 
-				itemcnt = d_rptcnt;
+					itemcnt = d_rptcnt;
 
-				clrprf();
-				prfmsg(SPYM2,plptr->name,xsect,ysect,odds,item_name[i],spr("%ld",itemcnt));
-				strcpy(mail.userid,plptr->spyowner);
-				strcpy(mail.topic,"Intelligence Report");
-				mail.class = MAIL_CLASS_DISTRESS;
+					clrprf();
+					prfmsg(SPYM2, plptr->name, xsect, ysect, odds, item_name[i],
+						spr("%ld", itemcnt));
+					strcpy(mail.userid, plptr->spyowner);
+					strcpy(mail.topic, "Intelligence Report");
+					mail.class = MAIL_CLASS_DISTRESS;
 
-				sendit();
-				clrprf();
+					sendit();
+					clrprf();
 				}
 			}
-		}
 	}
 }
 
 
-void FUNC multiply(final_mult)
-int final_mult;
+void FUNC multiply(int final_mult)
 {
+	int i, j;
+	double qty, men, rate, hrs, fact, tfact, taxfact, maxf;
+	long max, cnt;
+	unsigned long temp;
 
+	/* kill off 1/8th the troops if no food */
+	if ((plptr->items[I_TROOPS].qty / 100) > plptr->items[I_FOOD].qty) {
+		cnt = plptr->items[I_TROOPS].qty / 8;
+		plptr->items[I_TROOPS].qty -= cnt;
 
-int i,j;
-double qty,men,rate,hrs,fact,tfact,taxfact,maxf;
-long max,cnt;
-unsigned long temp;
-
-/* kill off 1/8th the troops if no food */
-
-if ((plptr->items[I_TROOPS].qty/100)> plptr->items[I_FOOD].qty)
-	{
-	cnt = plptr->items[I_TROOPS].qty / 8;
-	plptr->items[I_TROOPS].qty -= cnt;
-
-	if (final_mult == TRUE)
-		{
-		mail.class = MAIL_CLASS_DISTRESS;
-		mail.type = MESG06;
-		strncpy(mail.userid,plptr->userid,UIDSIZ);
-		strcpy(mail.name1,plptr->name);
-		mail.int1 = plptr->xsect;
-		mail.int2 = plptr->ysect;
-		mail.long1 = cnt;
-		mailit(0);
-		}
-	}
-
-/* troops eat first */
-temp = plptr->items[I_FOOD].qty;
-if (temp > plptr->items[I_TROOPS].qty/100)
-	{
-	temp -= plptr->items[I_TROOPS].qty/100;
-
-	plptr->items[I_FOOD].qty = temp;
-	}
-else
-	plptr->items[I_FOOD].qty = 0;
-
-/* kill off 1/8th the men if no food */
-
-if ((plptr->items[I_MEN].qty/100)> plptr->items[I_FOOD].qty)
-	{
-	cnt = plptr->items[I_MEN].qty / 8;
-
-	temp = plptr->items[I_MEN].qty;
-
-	if (temp > cnt)
-		temp -= cnt;
-	else
-		temp = 0;
-
-	plptr->items[I_MEN].qty = temp;
-
-	if (final_mult == TRUE)
-		{
-		mail.class = MAIL_CLASS_DISTRESS;
-		mail.type = MESG07;
-		strncpy(mail.userid,plptr->userid,UIDSIZ);
-		strcpy(mail.name1,plptr->name);
-		mail.int1 = plptr->xsect;
-		mail.int2 = plptr->ysect;
-		mail.long1 = cnt;
-		mailit(0);
-		}
-	}
-
-/* men eat */
-if (meneat)
-	{
-	temp = plptr->items[I_FOOD].qty;
-	if (temp > plptr->items[I_MEN].qty/100)
-		{
-		temp -= plptr->items[I_MEN].qty/100;
-
-		plptr->items[I_FOOD].qty = temp;
-		}
-	else
-		plptr->items[I_FOOD].qty = 0;
-	}
-
-taxfact = 1-((float)plptr->taxrate/120.0);
-
-/* take any donated cash */
-
-temp = (long)(baseprice[I_GOLD]);
-temp = (plptr->items[I_GOLD].qty)*temp;
-if (plptr->cash > ULCAP - temp)
-	temp = ULCAP - plptr->cash;
-plptr->cash += temp;
-
-plptr->items[I_GOLD].qty = 0;
-
-
-for (i=0;i<NUMITEMS;++i)
-	{
-	men = (float)plptr->items[I_MEN].qty;
-	rate= (float)plptr->items[i].rate;
-	hrs = (float)manhours[i];
-	hrs = hrs/10000.0;
-
-	fact = 1.0;
-
-	qty = (men * (rate/100.0)*(hrs/6.0))/7.0;
-
-	fact *= ((float)(plptr->enviorn+plptr->resource+2) * .25);
-
-	fact *= taxfact;
-
-	j = (6 - (plptr->resource+plptr->enviorn))*10;
-	tfact = .95-((float)j/100);
-	plptr->cash = (float)plptr->cash*tfact;
-
-	if (plptr->cash > 0) /* if plenty of cash increase production */
-		fact *= 1.5;
-	temp = plptr->items[i].qty;
-	temp += (long)(qty * fact);
-
-/* cap out planet maximums */
-
-	maxf = maxpl[i];
-
-	max = (long)(maxf * fact);
-
-	sprintf(gechrbuf,"Pl prod %d %d %s %s max:%ld f:%g hrs:%f qty:%f maxf:%f cnt:%ld",
-		plptr->xsect,
-		plptr->ysect,
-		plptr->userid,
-		item_name[i],
-		max,
-		fact,
-		hrs,
-		qty,
-		maxf,
-		temp);
-
-	logthis(gechrbuf);
-
-	if (final_mult == TRUE && temp > max)
-		{
-		logthis("Mailing production report");
-		temp = max;
-		mail.class = MAIL_CLASS_PRODRPT;
-		mail.type = MESG08+i;
-		strncpy(mail.userid,plptr->userid,UIDSIZ);
-		strcpy(mail.name1,plptr->name);
-		mail.int1 = plptr->xsect;
-		mail.int2 = plptr->ysect;
-		mail.long1 = max;
-		mailit(0);
-		logthis("Mail sent");
-		}
-
-	plptr->items[i].qty = temp;
-	}
-
-fact = (float)plptr->taxrate/1200;
-
-qty = fact * (float)plptr->items[I_MEN].qty;
-if (plptr->tax > ULCAP - qty)
-	qty = ULCAP - plptr->tax;
-plptr->tax += (unsigned long)qty;
-
-
-/* see if there is a revolt */
-
-if (!sameas(plptr->userid,"**Free**"))
-	{
-
-	/* the higher the taxes the greater the chance of revolt */
-
-	tfact = ((float)plptr->taxrate/120.0)* .35;
-
-	qty = (float)plptr->items[I_TROOPS].qty;
-	men = (float)plptr->items[I_MEN].qty;
-
-	men *=tfact;
-
-	/* if there are not enough troops the odds are really high */
-
-	if (men > qty)
-		{
-		if (gernd()%10 == 0)
-			{
-
-			logthis("Revolt!!");
-			cnt = plptr->items[I_TROOPS].qty / ((gernd()%8)+2);
-			plptr->items[I_TROOPS].qty = cnt;
-
-			/* decrement planet counter for this user */
-			setbtv(gebb5);
-			if (qeqbtv(plptr->userid, 0))
-				{
-				gcrbtv(&tmpusr,0);
-				if (tmpusr.planets > 0)
-					--tmpusr.planets;
-				geudb(GEUPDATE, tmpusr.userid, &tmpusr);
-				}
-			setbtv(gebb2);
-
+		if (final_mult == TRUE) {
 			mail.class = MAIL_CLASS_DISTRESS;
-			mail.type = MESG30;
-			strncpy(mail.userid,plptr->userid,UIDSIZ);
-			strcpy(mail.name1,plptr->name);
+			mail.type = MESG06;
+			strncpy(mail.userid, plptr->userid, UIDSIZ);
+			strcpy(mail.name1, plptr->name);
 			mail.int1 = plptr->xsect;
 			mail.int2 = plptr->ysect;
 			mail.long1 = cnt;
 			mailit(0);
+		}
+	}
 
-			logthis("back from mailing it");
-			strcpy(plptr->userid,"**Free**");
+	/* troops eat first */
+	temp = plptr->items[I_FOOD].qty;
+	if (temp > plptr->items[I_TROOPS].qty / 100) {
+		temp -= plptr->items[I_TROOPS].qty / 100;
+
+		plptr->items[I_FOOD].qty = temp;
+	} else
+		plptr->items[I_FOOD].qty = 0;
+
+	/* kill off 1/8th the men if no food */
+	if ((plptr->items[I_MEN].qty / 100) > plptr->items[I_FOOD].qty) {
+		cnt = plptr->items[I_MEN].qty / 8;
+		temp = plptr->items[I_MEN].qty;
+
+		if (temp > cnt)
+			temp -= cnt;
+		else
+			temp = 0;
+
+		plptr->items[I_MEN].qty = temp;
+
+		if (final_mult == TRUE) {
+			mail.class = MAIL_CLASS_DISTRESS;
+			mail.type = MESG07;
+			strncpy(mail.userid, plptr->userid, UIDSIZ);
+			strcpy(mail.name1, plptr->name);
+			mail.int1 = plptr->xsect;
+			mail.int2 = plptr->ysect;
+			mail.long1 = cnt;
+			mailit(0);
+		}
+	}
+
+	/* men eat */
+	if (meneat) {
+		temp = plptr->items[I_FOOD].qty;
+		if (temp > plptr->items[I_MEN].qty / 100) {
+			temp -= plptr->items[I_MEN].qty / 100;
+			plptr->items[I_FOOD].qty = temp;
+		} else
+			plptr->items[I_FOOD].qty = 0;
+	}
+
+	taxfact = 1 - ((float)plptr->taxrate / 120.0);
+
+	/* take any donated cash */
+
+	temp = (long)baseprice[I_GOLD];
+	temp = plptr->items[I_GOLD].qty * temp;
+	if (plptr->cash > ULCAP - temp)
+		temp = ULCAP - plptr->cash;
+	plptr->cash += temp;
+
+	plptr->items[I_GOLD].qty = 0;
+
+	for (i = 0; i < NUMITEMS; ++i) {
+		men = (float)plptr->items[I_MEN].qty;
+		rate = (float)plptr->items[i].rate;
+		hrs = (float)manhours[i];
+		hrs = hrs / 10000.0;
+
+		fact = 1.0;
+		qty = (men * (rate / 100.0) * (hrs / 6.0)) / 7.0;
+
+		fact *= ((float)(plptr->enviorn + plptr->resource + 2) * .25);
+		fact *= taxfact;
+
+		j = (6 - (plptr->resource + plptr->enviorn)) * 10;
+		tfact = .95 - ((float)j / 100);
+		plptr->cash = (float)plptr->cash * tfact;
+
+		if (plptr->cash > 0) /* if plenty of cash increase production */
+			fact *= 1.5;
+		temp = plptr->items[i].qty;
+		temp += (long)(qty * fact);
+
+		/* cap out planet maximums */
+		maxf = maxpl[i];
+		max = (long)(maxf * fact);
+
+		sprintf(gechrbuf, "Pl prod %d %d %s %s max:%ld f:%g hrs:%f qty:%f maxf:%f cnt:%ld",
+			plptr->xsect,
+			plptr->ysect,
+			plptr->userid,
+			item_name[i],
+			max,
+			fact,
+			hrs,
+			qty,
+			maxf,
+			temp);
+
+		logthis(gechrbuf);
+
+		if (final_mult == TRUE && temp > max) {
+			logthis("Mailing production report");
+			temp = max;
+			mail.class = MAIL_CLASS_PRODRPT;
+			mail.type = MESG08 + i;
+			strncpy(mail.userid, plptr->userid, UIDSIZ);
+			strcpy(mail.name1, plptr->name);
+			mail.int1 = plptr->xsect;
+			mail.int2 = plptr->ysect;
+			mail.long1 = max;
+			mailit(0);
+			logthis("Mail sent");
+		}
+
+		plptr->items[i].qty = temp;
+	}
+
+	fact = (float)plptr->taxrate / 1200;
+	qty = fact * (float)plptr->items[I_MEN].qty;
+	if (plptr->tax > ULCAP - qty)
+		qty = ULCAP - plptr->tax;
+	plptr->tax += (unsigned long)qty;
+
+	/* see if there is a revolt */
+	if (!sameas(plptr->userid, "**Free**")) {
+		/* the higher the taxes the greater the chance of revolt */
+		tfact = ((float)plptr->taxrate / 120.0) * .35;
+
+		qty = (float)plptr->items[I_TROOPS].qty;
+		men = (float)plptr->items[I_MEN].qty;
+		men *= tfact;
+
+		/* if there are not enough troops the odds are really high */
+		if (men > qty) {
+			if (gernd() % 10 == 0) {
+				logthis("Revolt!!");
+				cnt = plptr->items[I_TROOPS].qty / ((gernd() % 8) + 2);
+				plptr->items[I_TROOPS].qty = cnt;
+
+				/* decrement planet counter for this user */
+				setbtv(gebb5);
+				if (qeqbtv(plptr->userid, 0)) {
+					gcrbtv(&tmpusr, 0);
+					if (tmpusr.planets > 0)
+						--tmpusr.planets;
+					geudb(GEUPDATE, tmpusr.userid, &tmpusr);
+				}
+				setbtv(gebb2);
+
+				mail.class = MAIL_CLASS_DISTRESS;
+				mail.type = MESG30;
+				strncpy(mail.userid, plptr->userid, UIDSIZ);
+				strcpy(mail.name1, plptr->name);
+				mail.int1 = plptr->xsect;
+				mail.int2 = plptr->ysect;
+				mail.long1 = cnt;
+				mailit(0);
+
+				logthis("back from mailing it");
+				strcpy(plptr->userid, "**Free**");
 			}
 		}
 	}
@@ -397,408 +358,366 @@ if (!sameas(plptr->userid,"**Free**"))
 ** look up sector. If not fnd make one... xsect and ysect are used       **
 **************************************************************************/
 
-int FUNC getsector(sect)
-COORD	*sect;
+void FUNC getsector(COORD *sect)
 {
-int	i;
+	int i;
 
-/* I know when you look at this later Mike you will never remember why
-   you did this. So before you go tear it apart or go crazy trying to
-   figure it out I'll explain.
+	/* please keep this MBM comment here forever, thank you --AGS 2026 */
 
-   We call the getsector routine the first time to either get a previously
-   created sector or to create one. If one is created and there is a
-   wormhole (or more) in it the function Xgetsect returns TRUE. If so then
-   we must call it again to get the sectors that are the destination points
-   of the wormhole(s). Since we don't want it to create more wormholes in
-   the new sector (risking a runaway cascade effect) a flag is tripped on
-   telling Xgetsector to NOT create any wormholes.
+	/* I know when you look at this later Mike you will never remember why
+	   you did this. So before you go tear it apart or go crazy trying to
+	   figure it out I'll explain.
 
-   If on the second pass Xgetsector gets a sector that already exists then
-   we have to insert a wormhole into the next planet slot and create
-   the planet record. If there are already 9 planets then too bad, this
-   wormhole is a one way bugger.
-*/
+	   We call the getsector routine the first time to either get a previously
+	   created sector or to create one. If one is created and there is a
+	   wormhole (or more) in it the function Xgetsect returns TRUE. If so then
+	   we must call it again to get the sectors that are the destination points
+	   of the wormhole(s). Since we don't want it to create more wormholes in
+	   the new sector (risking a runaway cascade effect) a flag is tripped on
+	   telling Xgetsector to NOT create any wormholes.
 
-wormnum = 0;
+	   If on the second pass Xgetsector gets a sector that already exists then
+	   we have to insert a wormhole into the next planet slot and create
+	   the planet record. If there are already 9 planets then too bad, this
+	   wormhole is a one way bugger.
+	*/
 
-if (xgetsector(sect,FALSE))
+	wormnum = 0;
+
+	if (xgetsector(sect, FALSE))
 	{
-	logthis("GE:DBG:Getsector-had worms");
-	for (i=0;i<wormnum;++i)
+		logthis("GE:DBG:Getsector-had worms");
+		for (i = 0; i < wormnum; ++i)
 		{
-		logthis("GE:DBG:Getsector-get worm dest sect");
+			logthis("GE:DBG:Getsector-get worm dest sect");
 
-		xgetsector(&wormtab[i].coord,TRUE);
-		if (sector.numplan < MAXPLANETS)
+			xgetsector(&wormtab[i].coord, TRUE);
+			if (sector.numplan < MAXPLANETS)
 			{
-			/* insert new wormhole */
-			setmem(&worm,sizeof(GALWORM),0);
-			worm.xsect = pkey.xsect;
-			worm.ysect = pkey.ysect;
-			worm.plnum = sector.numplan+1;
-			worm.coord.xcoord = wormtab[i].coord.xcoord;
-			worm.coord.ycoord = wormtab[i].coord.ycoord;
-			worm.visible = 1;
-			worm.destination.xcoord = wormtab[i].dest.xcoord;
-			worm.destination.ycoord = wormtab[i].dest.ycoord;
-			worm.type = PLTYPE_WORM;
-
-		logthis("GE:DBG:Getsector-add dest worm record");
-			/* write the database record */
-			gesdb(GEADD,(PKEY *)&worm,(GALSECT *)&worm);
-
-		logthis("GE:DBG:Getsector-update sector record");
-
-			/* now update the sector record */
-			sector.ptab[sector.numplan].type = worm.type;
-			sector.ptab[sector.numplan].coord.xcoord = worm.coord.xcoord;
-			sector.ptab[sector.numplan].coord.ycoord = worm.coord.ycoord;
-			sector.numplan++;
-			gesdb(GEUPDATE,(PKEY *)&sector,&sector);
-			}
-		}
-	/* if we had to add another sector get the original again */
-	logthis("GE:DBG:Getsector-get orig record");
-	xgetsector(sect,FALSE);
-	}
-return(0);
-}
-
-int FUNC xgetsector(sect,wormy)
-COORD	*sect;
-int	wormy;
-{
-
-int	p,i,k,j;
-
-double	ddist;
-byte	tooclose;
-
-/* Build the integer key for lookup */
-
-pkey.xsect = coord1(sect->xcoord);
-pkey.ysect = coord1(sect->ycoord);
-pkey.plnum = 0;
-
-if (!gesdb(GEGET,&pkey,&sector))
-	{
-	/* Is the DB full? */
-	if (cntrbtv() >= max_plrec && !wormy)
-		{
-		geshocst(1,spr("GE:INF:Planet DB full, sector %d %d shown as empty",pkey.xsect,pkey.ysect));
-		setmem(&sector, sizeof(GALSECT), 0);
-		sector.xsect = pkey.xsect;
-		sector.ysect = pkey.ysect;
-		sector.numplan = 0;
-		sector.type = SECTYPE_NORMAL;
-		return(FALSE);
-		}
-
-	/* Didn't find a record - make one */
-	logthis("GE:DBG:Getsector-new sect");
-
-	setmem(&sector,sizeof(GALSECT),0);
-
-	sector.xsect = pkey.xsect;
-	sector.ysect = pkey.ysect;
-	sector.plnum = 0;
-	sector.type = SECTYPE_NORMAL;
-
-	/* figure out how many planets this sector has */
-	if (gernd()%plodds == 0)
-		p = gernd()%(maxplanets+1);
-	else
-		p = 0;
-
-	logthis(spr("GE: Ins sect X:%d Y:%d Pl:%d",
-		pkey.xsect,pkey.ysect,p));
-
-	/* Figure out where they are */
-	if (neutral(sect))
-		{
-		for (i=0; i<s00plnum; ++i)
-			{
-			logthis(spr("GE:DBG:Bld Pl %d %d %s",i,s00[i].type,s00[i].name));
-
-			sector.ptab[i].coord.xcoord = 0.0 + s00[i].xcoord;
-			sector.ptab[i].coord.ycoord = 0.0 + s00[i].ycoord;
-
-
-			if (s00[i].type == 1)
-				{
-				sector.ptab[i].type = PLTYPE_PLNT;
-				build_plan_1(i);
-				gesdb(GEADD,&pkey,(GALSECT *)&planet);
-				}
-			else
-			if (s00[i].type == 2)
-				{
-				sector.ptab[i].type = PLTYPE_PLNT;
-				build_plan_2(i);
-				gesdb(GEADD,&pkey,(GALSECT *)&planet);
-				}
-			else
-			if (s00[i].type == 3)
-				{
-				sector.ptab[i].type = PLTYPE_WORM;
-				build_worm(i);
-				gesdb(GEADD,&pkey,(GALSECT *)&worm);
-				}
-			else
-				{
-				sector.ptab[i].type = PLTYPE_PLNT;
-				build_other(i);
-				gesdb(GEADD,&pkey,(GALSECT *)&planet);
-				}
-
-			}
-		/* write the sector database record */
-
-		sector.plnum = 0;
-		sector.type = SECTYPE_NORMAL;
-		sector.numplan = s00plnum;
-
-		pkey.plnum = 0;
-		pkey.xsect = 0;
-		pkey.ysect = 0;
-
-		gesdb(GEADD,&pkey,&sector);
-		}
-	else
-		{
-		for (i=0; i<p; ++i)
-			{
-			/* is it a worm hole */
-			if (wormy == FALSE && gernd()%wormodds == 0)
-				sector.ptab[i].type = PLTYPE_WORM;
-			else
-				sector.ptab[i].type = PLTYPE_PLNT;
-			/* place it and check distance to other planets */
-			do
-				{
-				sector.ptab[i].coord.xcoord = (((double)pkey.xsect)+rndm(0.800))+.1;
-				sector.ptab[i].coord.ycoord = (((double)pkey.ysect)+rndm(0.800))+.1;
-				tooclose = FALSE;
-				for (j=0;j<i;++j)
-					{
-					ddist = cdistance(&sector.ptab[i].coord,&sector.ptab[j].coord);
-					if (ddist < 0.0700)
-						tooclose = TRUE;
-					}
-				}
-			while (tooclose == TRUE);
-
-			sector.numplan = p;
-			sector.type = SECTYPE_NORMAL;
-			}
-
-		logthis("GE:DBG:Getsector-add sect record");
-
-		/* write the sector database record */
-		gesdb(GEADD,(PKEY *)&sector,&sector);
-
-		logthis("GE:DBG:Getsector-add planet records");
-
-		/* add the planet records */
-		for (i=0; i<p; ++i)
-			{
-			if (sector.ptab[i].type == PLTYPE_PLNT)
-				{
-				setmem(&planet,sizeof(GALPLNT),0);
-				planet.xsect = pkey.xsect;
-				planet.ysect = pkey.ysect;
-
-				planet.plnum = i+1;
-				planet.coord.xcoord = sector.ptab[i].coord.xcoord;
-				planet.coord.ycoord = sector.ptab[i].coord.ycoord;
-				planet.type = sector.ptab[i].type;
-				planet.enviorn = (char)(rndm(3.999));
-				planet.resource = (char)(rndm(3.999));
-
-				strcpy(planet.password,"none");
-
-				for (k = 0; k < NUMITEMS;++k)
-					planet.items[k].sell = 'N';
-				if (rndm(3.99) > 3)
-					{
-					for (k = 0; k < NUMITEMS;++k)
-						planet.items[k].rate = (unsigned int)rndm(5.1);
-
-					planet.items[I_MEN].qty = (unsigned long)rndm(50000.0);
-					planet.items[I_MEN].rate = 5+(unsigned int)rndm(25.0);
-					planet.items[I_FOOD].qty = (unsigned long)rndm(3200.0);
-					planet.items[I_FOOD].rate = 15+(unsigned int)rndm(15.0);
-					}
-				logthis("GE:DBG:Getsector-write planet record");
-				/* write the database record */
-				gesdb(GEADD,(PKEY *)&planet,(GALSECT *)&planet);
-				}
-			else
-			if (sector.ptab[i].type == PLTYPE_WORM)
-				{
-				setmem(&worm,sizeof(GALWORM),0);
+				/* insert new wormhole */
+				setmem(&worm, sizeof(GALWORM), 0);
 				worm.xsect = pkey.xsect;
 				worm.ysect = pkey.ysect;
-				worm.plnum = i+1;
-				worm.coord.xcoord = sector.ptab[i].coord.xcoord;
-				worm.coord.ycoord = sector.ptab[i].coord.ycoord;
+				worm.plnum = sector.numplan + 1;
+				worm.coord.xcoord = wormtab[i].coord.xcoord;
+				worm.coord.ycoord = wormtab[i].coord.ycoord;
 				worm.visible = 1;
-				worm.destination.xcoord = rndm((double)univmax*2)-(double)univmax;
-				worm.destination.ycoord = rndm((double)univmax*2)-(double)univmax;
-				worm.type = sector.ptab[i].type;
+				worm.destination.xcoord = wormtab[i].dest.xcoord;
+				worm.destination.ycoord = wormtab[i].dest.ycoord;
+				worm.type = PLTYPE_WORM;
 
-				logthis("GE:DBG:Getsector-add worm record");
+				logthis("GE:DBG:Getsector-add dest worm record");
 				/* write the database record */
-				gesdb(GEADD,(PKEY *)&worm,(GALSECT *)&worm);
-				/* add to worm table so we can go build the other sector */
+				gesdb(GEADD, (PKEY *)&worm, (GALSECT *)&worm);
 
-				wormtab[wormnum].coord.xcoord=worm.destination.xcoord;
-				wormtab[wormnum].coord.ycoord=worm.destination.ycoord;
-				wormtab[wormnum].dest.xcoord = worm.coord.xcoord;
-				wormtab[wormnum].dest.ycoord = worm.coord.ycoord;
-				++wormnum;
+				logthis("GE:DBG:Getsector-update sector record");
+
+				/* now update the sector record */
+				sector.ptab[sector.numplan].type = worm.type;
+				sector.ptab[sector.numplan].coord.xcoord = worm.coord.xcoord;
+				sector.ptab[sector.numplan].coord.ycoord = worm.coord.ycoord;
+				sector.numplan++;
+				gesdb(GEUPDATE, (PKEY *)&sector, &sector);
+			}
+		}
+		/* if we had to add another sector get the original again */
+		logthis("GE:DBG:Getsector-get orig record");
+		xgetsector(sect, FALSE);
+	}
+}
+
+static int FUNC xgetsector(COORD *sect, int wormy)
+{
+	int p, i, k, j;
+	double ddist;
+	byte tooclose;
+
+	/* Build the integer key for lookup */
+	pkey.xsect = coord1(sect->xcoord);
+	pkey.ysect = coord1(sect->ycoord);
+	pkey.plnum = 0;
+
+	if (!gesdb(GEGET, &pkey, &sector)) {
+		/* Is the DB full? */
+		if (cntrbtv() >= max_plrec && !wormy) {
+			geshocst(1, spr("GE:INF:Planet DB full, sector %d %d shown as empty",
+				pkey.xsect, pkey.ysect));
+			setmem(&sector, sizeof(GALSECT), 0);
+			sector.xsect = pkey.xsect;
+			sector.ysect = pkey.ysect;
+			sector.numplan = 0;
+			sector.type = SECTYPE_NORMAL;
+			return (FALSE);
+		}
+
+		/* Didn't find a record - make one */
+		logthis("GE:DBG:Getsector-new sect");
+
+		setmem(&sector, sizeof(GALSECT), 0);
+
+		sector.xsect = pkey.xsect;
+		sector.ysect = pkey.ysect;
+		sector.plnum = 0;
+		sector.type = SECTYPE_NORMAL;
+
+		/* figure out how many planets this sector has */
+		if (gernd() % plodds == 0)
+			p = gernd() % (maxplanets + 1);
+		else
+			p = 0;
+
+		logthis(spr("GE: Ins sect X:%d Y:%d Pl:%d",
+			pkey.xsect, pkey.ysect, p));
+
+		/* Figure out where they are */
+		if (neutral(sect)) {
+			for (i = 0; i < s00plnum; ++i) {
+				logthis(spr("GE:DBG:Bld Pl %d %d %s", i, s00[i].type, s00[i].name));
+
+				sector.ptab[i].coord.xcoord = 0.0 + s00[i].xcoord;
+				sector.ptab[i].coord.ycoord = 0.0 + s00[i].ycoord;
+
+
+				if (s00[i].type == 1) {
+					sector.ptab[i].type = PLTYPE_PLNT;
+					build_plan_1(i);
+					gesdb(GEADD, &pkey, (GALSECT *)&planet);
+				}
+				else if (s00[i].type == 2) {
+					sector.ptab[i].type = PLTYPE_PLNT;
+					build_plan_2(i);
+					gesdb(GEADD, &pkey, (GALSECT *)&planet);
+				}
+				else if (s00[i].type == 3) {
+					sector.ptab[i].type = PLTYPE_WORM;
+					build_worm(i);
+					gesdb(GEADD, &pkey, (GALSECT *)&worm);
+				}
+				else {
+					sector.ptab[i].type = PLTYPE_PLNT;
+					build_other(i);
+					gesdb(GEADD, &pkey, (GALSECT *)&planet);
+				}
+
+			}
+			/* write the sector database record */
+
+			sector.plnum = 0;
+			sector.type = SECTYPE_NORMAL;
+			sector.numplan = s00plnum;
+
+			pkey.plnum = 0;
+			pkey.xsect = 0;
+			pkey.ysect = 0;
+
+			gesdb(GEADD, &pkey, &sector);
+		}
+		else {
+			for (i = 0; i < p; ++i) {
+				/* is it a worm hole */
+				if (wormy == FALSE && gernd() % wormodds == 0)
+					sector.ptab[i].type = PLTYPE_WORM;
+				else
+					sector.ptab[i].type = PLTYPE_PLNT;
+				/* place it and check distance to other planets */
+				do {
+					sector.ptab[i].coord.xcoord = (((double)pkey.xsect) + rndm(0.800)) + .1;
+					sector.ptab[i].coord.ycoord = (((double)pkey.ysect) + rndm(0.800)) + .1;
+					tooclose = FALSE;
+					for (j = 0; j < i; ++j) {
+						ddist = cdistance(&sector.ptab[i].coord, &sector.ptab[j].coord);
+						if (ddist < 0.0700)
+							tooclose = TRUE;
+					}
+					} while (tooclose == TRUE);
+
+				sector.numplan = p;
+				sector.type = SECTYPE_NORMAL;
+			}
+
+			logthis("GE:DBG:Getsector-add sect record");
+
+		/* write the sector database record */
+		gesdb(GEADD, (PKEY *)&sector, &sector);
+
+			logthis("GE:DBG:Getsector-add planet records");
+
+		/* add the planet records */
+			for (i = 0; i < p; ++i) {
+				if (sector.ptab[i].type == PLTYPE_PLNT) {
+					setmem(&planet, sizeof(GALPLNT), 0);
+					planet.xsect = pkey.xsect;
+					planet.ysect = pkey.ysect;
+					planet.plnum = i + 1;
+					planet.coord.xcoord = sector.ptab[i].coord.xcoord;
+					planet.coord.ycoord = sector.ptab[i].coord.ycoord;
+					planet.type = sector.ptab[i].type;
+					planet.enviorn = (char)(rndm(3.999));
+					planet.resource = (char)(rndm(3.999));
+					strcpy(planet.password, "none");
+
+					for (k = 0; k < NUMITEMS; ++k)
+						planet.items[k].sell = 'N';
+					if (rndm(3.99) > 3) {
+						for (k = 0; k < NUMITEMS; ++k)
+							planet.items[k].rate = (unsigned int)rndm(5.1);
+
+						planet.items[I_MEN].qty = (unsigned long)rndm(50000.0);
+						planet.items[I_MEN].rate = 5 + (unsigned int)rndm(25.0);
+						planet.items[I_FOOD].qty = (unsigned long)rndm(3200.0);
+						planet.items[I_FOOD].rate = 15 + (unsigned int)rndm(15.0);
+					}
+					logthis("GE:DBG:Getsector-write planet record");
+					/* write the database record */
+					gesdb(GEADD, (PKEY *)&planet, (GALSECT *)&planet);
+				} else if (sector.ptab[i].type == PLTYPE_WORM) {
+					setmem(&worm, sizeof(GALWORM), 0);
+					worm.xsect = pkey.xsect;
+					worm.ysect = pkey.ysect;
+					worm.plnum = i + 1;
+					worm.coord.xcoord = sector.ptab[i].coord.xcoord;
+					worm.coord.ycoord = sector.ptab[i].coord.ycoord;
+					worm.visible = 1;
+					worm.destination.xcoord = rndm((double)univmax * 2) - (double)univmax;
+					worm.destination.ycoord = rndm((double)univmax * 2) - (double)univmax;
+					worm.type = sector.ptab[i].type;
+					logthis("GE:DBG:Getsector-add worm record");
+					/* write the database record */
+					gesdb(GEADD, (PKEY *)&worm, (GALSECT *)&worm);
+					/* add to worm table so we can go build the other sector */
+					wormtab[wormnum].coord.xcoord = worm.destination.xcoord;
+					wormtab[wormnum].coord.ycoord = worm.destination.ycoord;
+					wormtab[wormnum].dest.xcoord = worm.coord.xcoord;
+					wormtab[wormnum].dest.ycoord = worm.coord.ycoord;
+					++wormnum;
 				}
 			}
 		}
 	}
-if (wormnum >0)
-	return(TRUE);
-return(FALSE);
+	if (wormnum > 0)
+		return (TRUE);
+	return (FALSE);
 }
 
-void FUNC build_plan_1(idx)
-int	idx;
+static void FUNC build_plan_1(int idx)
 {
+	setmem(&planet, sizeof(GALPLNT), 0);
 
-setmem(&planet,sizeof(GALPLNT),0);
+	strncpy(planet.userid, s00[idx].owner, UIDSIZ);
+	strncpy(planet.name, s00[idx].name, 20);
+	strcpy(planet.password, "none");
 
-strncpy(planet.userid,s00[idx].owner,UIDSIZ);
-strncpy(planet.name,s00[idx].name,20);
-strcpy(planet.password,"none");
+	planet.enviorn = s00[idx].env;
+	planet.resource = s00[idx].res;
 
-planet.enviorn = s00[idx].env;
-planet.resource = s00[idx].res;
+	pkey.plnum = idx + 1;
+	pkey.xsect = 0;
+	pkey.ysect = 0;
 
-pkey.plnum = idx+1;
-pkey.xsect = 0;
-pkey.ysect = 0;
+	planet.xsect = pkey.xsect;
+	planet.ysect = pkey.ysect;
+	planet.plnum = pkey.plnum;
+	planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
+	planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
+	planet.type = PLTYPE_PLNT;
+	planet.nebseed = nebseed;
+	if (planet.nebseed == 0L)
+		planet.nebseed = 1L;
 
-planet.xsect = pkey.xsect;
-planet.ysect = pkey.ysect;
-planet.plnum = pkey.plnum;
-planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
-planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
-planet.type = PLTYPE_PLNT;
-planet.nebseed = nebseed;
-if (planet.nebseed == 0L)
-	planet.nebseed = 1L;
+	plptr = &planet;
+	update_plan_1();
 
-plptr = &planet;
-update_plan_1();
-
-logthis("Zygor build first time");
+	logthis("Zygor build first time");
 }
 
-void FUNC build_plan_2(idx)
-int	idx;
+static void FUNC build_plan_2(int idx)
 {
+	setmem(&planet, sizeof(GALPLNT), 0);
 
-setmem(&planet,sizeof(GALPLNT),0);
+	strncpy(planet.userid, s00[idx].owner, UIDSIZ);
+	strncpy(planet.name, s00[idx].name, 20);
+	strcpy(planet.password, "none");
 
-strncpy(planet.userid,s00[idx].owner,UIDSIZ);
-strncpy(planet.name,s00[idx].name,20);
-strcpy(planet.password,"none");
+	planet.enviorn = s00[idx].env;
+	planet.resource = s00[idx].res;
 
-planet.enviorn = s00[idx].env;
-planet.resource = s00[idx].res;
+	pkey.plnum = idx + 1;
+	pkey.xsect = 0;
+	pkey.ysect = 0;
 
-pkey.plnum = idx+1;
-pkey.xsect = 0;
-pkey.ysect = 0;
+	planet.xsect = pkey.xsect;
+	planet.ysect = pkey.ysect;
+	planet.plnum = pkey.plnum;
+	planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
+	planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
+	planet.type = PLTYPE_PLNT;
 
-planet.xsect = pkey.xsect;
-planet.ysect = pkey.ysect;
-planet.plnum = pkey.plnum;
-planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
-planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
-planet.type = PLTYPE_PLNT;
+	plptr = &planet;
+	update_plan_2();
 
-plptr = &planet;
-update_plan_2();
-
-logthis("T-Station build first time");
+	logthis("T-Station build first time");
 
 }
 
-void FUNC build_other(idx)
-int	idx;
+static void FUNC build_other(int idx)
 {
+	setmem(&planet, sizeof(GALPLNT), 0);
 
-setmem(&planet,sizeof(GALPLNT),0);
+	strncpy(planet.userid, s00[idx].owner, UIDSIZ);
+	strncpy(planet.name, s00[idx].name, 20);
+	strcpy(planet.password, "none");
 
+	planet.enviorn = s00[idx].env;
+	planet.resource = s00[idx].res;
 
-strncpy(planet.userid,s00[idx].owner,UIDSIZ);
-strncpy(planet.name,s00[idx].name,20);
-strcpy(planet.password,"none");
+	pkey.plnum = idx + 1;
+	pkey.xsect = 0;
+	pkey.ysect = 0;
 
-planet.enviorn = s00[idx].env;
-planet.resource = s00[idx].res;
+	planet.xsect = pkey.xsect;
+	planet.ysect = pkey.ysect;
+	planet.plnum = pkey.plnum;
+	planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
+	planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
+	planet.type = PLTYPE_PLNT;
 
-pkey.plnum = idx+1;
-pkey.xsect = 0;
-pkey.ysect = 0;
-
-planet.xsect = pkey.xsect;
-planet.ysect = pkey.ysect;
-planet.plnum = pkey.plnum;
-planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
-planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
-planet.type = PLTYPE_PLNT;
-
-logthis("Other build first time");
+	logthis("Other build first time");
 
 }
 
-void FUNC build_worm(idx)
-int	idx;
+static void FUNC build_worm(int idx)
 {
+	setmem(&worm, sizeof(GALWORM), 0);
 
-setmem(&worm,sizeof(GALWORM),0);
+	strncpy(worm.name, s00[idx].name, 20);
 
-strncpy(worm.name,s00[idx].name,20);
+	pkey.plnum = idx + 1;
+	pkey.xsect = 0;
+	pkey.ysect = 0;
 
+	worm.xsect = pkey.xsect;
+	worm.ysect = pkey.ysect;
+	worm.plnum = pkey.plnum;
 
-pkey.plnum = idx+1;
-pkey.xsect = 0;
-pkey.ysect = 0;
+	worm.coord.xcoord = sector.ptab[idx].coord.xcoord;
+	worm.coord.ycoord = sector.ptab[idx].coord.ycoord;
 
-worm.xsect = pkey.xsect;
-worm.ysect = pkey.ysect;
-worm.plnum = pkey.plnum;
+	worm.type = PLTYPE_WORM;
 
-worm.coord.xcoord = sector.ptab[idx].coord.xcoord;
-worm.coord.ycoord = sector.ptab[idx].coord.ycoord;
+	worm.visible = 1;
+	worm.destination.xcoord = rndm((double)univmax * 2) - (double)univmax;
+	worm.destination.ycoord = rndm((double)univmax * 2) - (double)univmax;
 
-worm.type = PLTYPE_WORM;
+	logthis("GE:DBG:Getsector-add worm record");
 
-worm.visible = 1;
-worm.destination.xcoord = rndm((double)univmax*2)-(double)univmax;
-worm.destination.ycoord = rndm((double)univmax*2)-(double)univmax;
+	/* add to worm table so we can go build the other sector */
+	wormtab[wormnum].coord.xcoord = worm.destination.xcoord;
+	wormtab[wormnum].coord.ycoord = worm.destination.ycoord;
+	wormtab[wormnum].dest.xcoord = worm.coord.xcoord;
+	wormtab[wormnum].dest.ycoord = worm.coord.ycoord;
+	++wormnum;
 
-
-logthis("GE:DBG:Getsector-add worm record");
-
-
-/* add to worm table so we can go build the other sector */
-
-wormtab[wormnum].coord.xcoord = worm.destination.xcoord;
-wormtab[wormnum].coord.ycoord = worm.destination.ycoord;
-wormtab[wormnum].dest.xcoord = worm.coord.xcoord;
-wormtab[wormnum].dest.ycoord = worm.coord.ycoord;
-++wormnum;
-
-logthis("Worm build first time");
+	logthis("Worm build first time");
 
 }
 
@@ -806,23 +725,21 @@ logthis("Worm build first time");
 ** look up planet.                                                       **
 **************************************************************************/
 
-int FUNC getplanet(sect,plnt)
-COORD	*sect;
-int	plnt;
+int FUNC getplanet(COORD *sect, int plnt)
 {
-setmem(&planet,sizeof(GALPLNT),0);
+	setmem(&planet, sizeof(GALPLNT), 0);
 
-pkey.xsect = coord1(sect->xcoord);
-pkey.ysect = coord1(sect->ycoord);
-pkey.plnum = plnt;
+	pkey.xsect = coord1(sect->xcoord);
+	pkey.ysect = coord1(sect->ycoord);
+	pkey.plnum = plnt;
 
-if (!gesdb(GEGET,&pkey,(GALSECT *)&planet))
+	if (!gesdb(GEGET, &pkey, (GALSECT *)&planet))
 	{
-	geshocst(0,spr("GE:ERR:Missing planet record pl=%d sect=%d,%d",
-		pkey.plnum, pkey.xsect, pkey.ysect));
-	return(FALSE);
+		geshocst(0, spr("GE:ERR:Missing planet record pl=%d sect=%d,%d",
+			pkey.plnum, pkey.xsect, pkey.ysect));
+		return (FALSE);
 	}
-return(TRUE);
+	return (TRUE);
 }
 
 
@@ -830,72 +747,74 @@ return(TRUE);
 ** is this players ship in the neutral zone ?                            **
 **************************************************************************/
 
-int FUNC neutral(coord)
-COORD	*coord;
+int FUNC neutral(COORD *coord)
 {
-xsect=coord1(coord->xcoord);
-ysect=coord1(coord->ycoord);
-return (xsect == 0 && ysect == 0);
+	xsect = coord1(coord->xcoord);
+	ysect = coord1(coord->ycoord);
+	return (xsect == 0 && ysect == 0);
 }
 
-int FUNC innebula(x,y)
-int	x,y;
+/**************************************************************************
+** is this coordinate in a nebula ?                                      **
+**************************************************************************/
+
+int FUNC innebula(int x, int y)
 {
-unsigned	dmod;
-unsigned long	work;
+	unsigned dmod;
+	unsigned long work;
 
-if (x == 0 && y == 0)
-	return(FALSE);
+	if (x == 0 && y == 0)
+		return (FALSE);
 
-if (nebodds <= 0)
-	return(FALSE);
+	if (nebodds <= 0)
+		return (FALSE);
 
-work = nebseed;
-work ^= (((unsigned long)(unsigned)x) << 16) | (unsigned)y;
-work += ((unsigned long)(unsigned)x * 214013L) + ((unsigned long)(unsigned)y * 2531011L);
-work ^= (work >> 16);
+	work = nebseed;
+	work ^= (((unsigned long)(unsigned)x) << 16) | (unsigned)y;
+	work += ((unsigned long)(unsigned)x * 214013L) + ((unsigned long)(unsigned)y * 2531011L);
+	work ^= (work >> 16);
 
-dmod = (unsigned)(180 / nebodds);
-if (dmod == 0)
-	dmod = 1;
+	dmod = (unsigned)(180 / nebodds);
+	if (dmod == 0)
+		dmod = 1;
 
-return((unsigned)(work % (unsigned long)dmod) == 0);
+	return ((unsigned)(work % (unsigned long)dmod) == 0);
 }
 
 void FUNC update_plan_1(void)
 {
-int i;
-for (i = 0; i < NUMITEMS; ++i)
+	int i;
+	for (i = 0; i < NUMITEMS; ++i)
 	{
-	plptr->items[i].qty = ULCAP;
-	plptr->items[i].sell = 'Y';
-	plptr->items[i].markup2a = (baseprice[i]*2) + (gernd() % baseprice[i]);
+		plptr->items[i].qty = ULCAP;
+		plptr->items[i].sell = 'Y';
+		plptr->items[i].markup2a = (baseprice[i]*2) + (gernd() % baseprice[i]);
 	}
 }
 
 void FUNC update_plan_2(void)
 {
-int i;
-for (i = 0; i < NUMITEMS; ++i)
+	int i;
+	for (i = 0; i < NUMITEMS; ++i)
 	{
-	plptr->items[i].qty = 0;
-	plptr->items[i].sell = 'N';
-	plptr->items[i].markup2a = (baseprice[i]*2) + (gernd() % baseprice[i]);
+		plptr->items[i].qty = 0;
+		plptr->items[i].sell = 'N';
+		plptr->items[i].markup2a = (baseprice[i]*2) + (gernd() % baseprice[i]);
 	}
-plptr->items[I_MEN].qty = ULCAP;
-plptr->items[I_FOOD].qty = ULCAP;
-plptr->items[I_TROOPS].qty = ULCAP;
-plptr->items[I_MEN].sell = 'Y';
-plptr->items[I_FOOD].sell = 'Y';
-plptr->items[I_TROOPS].sell = 'Y';
+	plptr->items[I_MEN].qty = ULCAP;
+	plptr->items[I_FOOD].qty = ULCAP;
+	plptr->items[I_TROOPS].qty = ULCAP;
+	plptr->items[I_MEN].sell = 'Y';
+	plptr->items[I_FOOD].sell = 'Y';
+	plptr->items[I_TROOPS].sell = 'Y';
 }
 
 void FUNC update_plan_3(void)
 {
-int i;
-for (i = 0; i < NUMITEMS; ++i)
+	int i;
+	for (i = 0; i < NUMITEMS; ++i)
 	{
-	plptr->items[i].qty = 0;
-	plptr->items[i].sell = 'N';
+		plptr->items[i].qty = 0;
+		plptr->items[i].sell = 'N';
 	}
 }

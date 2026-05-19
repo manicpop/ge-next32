@@ -299,12 +299,7 @@
 /* geplanet.c */
 /*      73 */ void FUNC check_spy P((void ));
 /*     179 */ void FUNC multiply P((int final_mult ));
-/*     391 */ int FUNC getsector P((COORD *sect ));
-/*     459 */ int FUNC xgetsector P((COORD *sect , int wormy ));
-/*     668 */ void FUNC build_plan_1 P((int idx ));
-/*     695 */ void FUNC build_plan_2 P((int idx ));
-/*     723 */ void FUNC build_other P((int idx ));
-/*     752 */ void FUNC build_worm P((int idx ));
+/*     391 */ void FUNC getsector P((COORD *sect ));
 /*     798 */ int FUNC getplanet P((COORD *sect , int plnt ));
 /*     819 */ int FUNC neutral P((COORD *coord ));
 /*     825 */ int FUNC innebula P((int x , int y ));
