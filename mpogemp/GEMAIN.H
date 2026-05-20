@@ -42,6 +42,9 @@
 /* if FASTPLANET defined updates happen every 3 seconds */
 /* #define FASTPLANET 1 */
 
+/* the DATA command is currently in disrepair and disabled */
+/* #define DATACMD 1 */
+
 /* workarounds for mbbsemu math functions */
 /* hopefully not necessary much longer */
 /* #define MBBSEMU 1 */

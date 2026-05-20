@@ -66,6 +66,77 @@ static void	shieldhitmsg(int shmsg, int usrn);	/* map shieldhit() result codes t
 static void	pick_letter(SCANTAB *ptr);
 
 /**************************************************************************
+** Lockon helper for torp and misl                                       **
+**************************************************************************/
+
+int FUNC lockon(WARSHP *ptr, int type, int ship, int usrn)
+{
+	WARSHP *wptr;
+	double dist, speed, fact = 0.0;
+
+	if (type == 0 && ptr->torpcntl > 0) {
+		prfmsg(TRBROKE);
+		outprfge(FLT_NONE,usrn);
+		return(0);
+	}
+
+	if (type == 1 && ptr->mislcntl > 0) {
+		prfmsg(MIBROKE);
+		outprfge(FLT_NONE,usrn);
+		return(0);
+	}
+
+	if (ptr->jam_sev > (byte)2) {
+		prfmsg(JAMMER4W);
+		outprfge(FLT_NONE,usrn);
+		return(0);
+	}
+
+	wptr = warshpoff(ship);
+
+	if (neutral(&(wptr->coord))) {
+		prfmsg(FCNONO);
+		outprfge(FLT_NONE,usrn);
+		return(0);
+	}
+
+	dist = cdistance(&ptr->coord,&(wptr->coord));
+	if (wptr->cloak < 10 && (dist * 10000.0) < (double)ship_scanrange(ptr)) {
+		speed = ptr->speed + wptr->speed;
+
+		if (type == 0) { /* torpedo */
+			if (wptr->speed > 999)
+				fact = 0.0;
+			else {
+				fact = (1.2 - (speed / 5000));
+				fact *= ((5.0 - dist) / tor_fact);
+			}
+		}
+
+		if (type == 1) /* missile */
+			fact = ((5.0 - dist) / mis_fact);
+
+		if (fact > .7) {
+			if (wptr->status == GESTAT_AUTO) {	/* if npc... */
+				wptr->cybmine = usrn;	/* engage user */
+				wptr->cyb_grace = CYBGRACE;
+				wptr->tick = 2;		/* do it fast */
+				wptr->npcmsg = 255;	/* reset annoy msg tracking */
+			}
+			return(1);
+		} else {
+			prfmsg(FCNOLOCK,shpltr(usrn,ship));
+			outprfge(FLT_NONE,usrn);
+			return(0);
+		}
+	} else {
+		prfmsg(NOSHIP);
+		outprfge(FLT_NONE,usrn);
+		return(0);
+	}
+}
+
+/**************************************************************************
 ** Check whether a user's pending-entry buffer is empty                  **
 **************************************************************************/
 

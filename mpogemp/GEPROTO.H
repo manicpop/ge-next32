@@ -232,13 +232,6 @@
 /*    2154 */ void FUNC cmd_report P((void ));
 /*         */ void FUNC show_rep_sysdam P((WARSHP *ptr ));
 /*    2598 */ void FUNC cmd_scan P((void ));
-/*    2647 */ void FUNC scan_sh P((void ));
-/*         */ int FUNC build_ship_name P((int othusn ));
-/*    2743 */ void FUNC scan_pl P((void ));
-/*    2932 */ void FUNC scan_ra P((void ));
-/*    3091 */ void FUNC scan_se P((void ));
-/*    3160 */ void FUNC scan_lo P((void ));
-/*    3736 */ void FUNC printmap P((int maptype , long dist_filter ));
 /*    3803 */ void FUNC cmd_shields P((void ));
 /*    3870 */ void FUNC cmd_cloak P((void ));
 /*    3954 */ void FUNC cmd_transfer P((void ));

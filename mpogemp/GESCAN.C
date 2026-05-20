@@ -64,6 +64,12 @@ const int scan_side_blocks[15] =
 static int se_nebula = FALSE;
 static byte owned_planet[MAXPLANETS];
 
+static void printmap(int maptype, long dist_filter);
+static void scan_sh(void);
+static void scan_pl(void);
+static void scan_ra(void);
+static void scan_se(void);
+static void scan_lo(void);
 static byte owns_planet(int shp)
 {
 	return(owned_planet[shp]);
@@ -73,7 +79,7 @@ static byte owns_planet(int shp)
 ** Functions for printmap()                                              **
 **************************************************************************/
 
-void FUNC set_map_color(int color)
+static void FUNC set_map_color(int color)
 {
 	switch (color) {
 	case 1: prf(CLR_RED2); break;
@@ -86,7 +92,7 @@ void FUNC set_map_color(int color)
 	}
 }
 
-void FUNC print_ship_letter(int othusn, char letter)
+static void FUNC print_ship_letter(int othusn, char letter)
 {
 	int type = shipclass[warshpoff(othusn)->shpclass].max_type;
 
@@ -103,7 +109,7 @@ void FUNC print_ship_letter(int othusn, char letter)
 		prf("%s%c%s", CLR_GREEN2, letter, CLR_WHITE2);
 }
 
-void FUNC print_ship_data(long dist, int bearing, int heading, double speed)
+static void FUNC print_ship_data(long dist, int bearing, int heading, double speed)
 {
 	int i;
 
@@ -127,7 +133,7 @@ void FUNC print_ship_data(long dist, int bearing, int heading, double speed)
 	prf("%s", gechrbuf);
 }
 
-void FUNC print_shiptab_data(SCANTAB *sptr, int shp)
+static void FUNC print_shiptab_data(SCANTAB *sptr, int shp)
 {
 	if (sptr->ship[shp].flag == 2)
 		prf("%6s    %4s    %4s%9s","?????","????","????","??.??");
@@ -136,7 +142,7 @@ void FUNC print_shiptab_data(SCANTAB *sptr, int shp)
 }
 
 
-int FUNC build_ship_name(int othusn)
+static int FUNC build_ship_name(int othusn)
 {
 	WARSHP *wptr;
 	int ulen, slen, show, maxlen;
@@ -183,7 +189,7 @@ int FUNC build_ship_name(int othusn)
 	return((int)strlen(gechrbuf));
 }
 
-void FUNC print_ship_name(int othusn)
+static void FUNC print_ship_name(int othusn)
 {
 	int len, k;
 	unsigned int rseed = gernd();
@@ -211,7 +217,7 @@ void FUNC print_ship_name(int othusn)
 		prf(" %s%s", CLR_CYAN1, gechrbuf);
 }
 
-int FUNC print_planet_line(int shp)
+static int FUNC print_planet_line(int shp)
 {
 	unsigned int rseed = gernd();
 	int jam_digits, len, k;
@@ -265,7 +271,7 @@ int FUNC print_planet_line(int shp)
 	return(TRUE);
 }
 
-void FUNC print_map_header(int maptype)
+static void FUNC print_map_header(int maptype)
 {
 	switch (maptype) {
 	case SECTORNOMAP:
@@ -314,7 +320,7 @@ void FUNC print_map_header(int maptype)
 	prf("\r");
 }
 
-void FUNC print_map_row(int i, int maptype)
+static void FUNC print_map_row(int i, int maptype)
 {
 	int j = 0, start;
 	int prev_color = 6, cur_color;
@@ -381,7 +387,7 @@ void FUNC print_map_row(int i, int maptype)
 }
 
 /* RANGEEXTRA / RANGENOMAP pairs */
-void FUNC print_ship_pair(SCANTAB *sptr, int left, int right, long dist_filter)
+static void FUNC print_ship_pair(SCANTAB *sptr, int left, int right, long dist_filter)
 {
 	int i, pad, othusn;
 
@@ -416,7 +422,7 @@ void FUNC print_ship_pair(SCANTAB *sptr, int left, int right, long dist_filter)
 }
 
 /* RANGENAMES (or first eight of RANGEEXTRA) */
-int FUNC print_range_line(SCANTAB *sptr, int shp, int *ff, long dist_filter)
+static int FUNC print_range_line(SCANTAB *sptr, int shp, int *ff, long dist_filter)
 {
 	int othusn;
 
@@ -440,7 +446,7 @@ int FUNC print_range_line(SCANTAB *sptr, int shp, int *ff, long dist_filter)
 }
 
 /* RANGEFULL */
-int FUNC print_fullrange_line(SCANTAB *sptr, int shp, long dist_filter)
+static int FUNC print_fullrange_line(SCANTAB *sptr, int shp, long dist_filter)
 {
 	int othusn;
 
@@ -456,7 +462,7 @@ int FUNC print_fullrange_line(SCANTAB *sptr, int shp, long dist_filter)
 }
 
 /* RANGEEXTRA / RANGENOMAP */
-void FUNC print_range_summary(SCANTAB *sptr, int shp, long dist_filter, int maptype)
+static void FUNC print_range_summary(SCANTAB *sptr, int shp, long dist_filter, int maptype)
 {
 	int visible[NOSCANTAB];
 	int count = 0;
@@ -486,7 +492,7 @@ void FUNC print_range_summary(SCANTAB *sptr, int shp, long dist_filter, int mapt
 }
 
 /* SECTORNOMAP */
-void FUNC print_planet_summary(int shp)
+static void FUNC print_planet_summary(int shp)
 {
 	for (; shp < MAXPLANETS && ptab[usrnum].planets[shp].type != 0; ++shp) {
 		if (print_planet_line(shp) == TRUE)
@@ -497,7 +503,7 @@ void FUNC print_planet_summary(int shp)
 		prfmsg(SCANNOPL);
 }
 
-void FUNC jam_scramble(char *buf, byte sev, unsigned int *rseed)
+static void FUNC jam_scramble(char *buf, byte sev, unsigned int *rseed)
 {
 	int i;
 
@@ -558,7 +564,43 @@ static void clearmap(void)
 
 /* SCAN SHIP FUNCTION */
 
-void FUNC scan_sh(void)
+void FUNC cmd_scan(void)
+{
+	if (warsptr->tactical != 0) {
+		prfmsg(TABROKE);
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+
+	if (warsptr->damage >= 100.0) {
+		prfmsg(RNDTACT);
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+
+	if (margc > 1) {
+		if (sameto("sh",margv[1]))
+			scan_sh();
+		else if (sameto("pl",margv[1]))
+			scan_pl();
+		else if (sameto("ra",margv[1]))
+			scan_ra();
+		else if (sameto("se",margv[1]))
+			scan_se();
+		else if (sameto("lo",margv[1]))
+			scan_lo();
+		else {
+			prfmsg(FORMAT,"SCAN");
+			outprfge(FLT_NONE,usrnum);
+		}
+	}
+	else {
+		prfmsg(FORMAT,"SCAN");
+		outprfge(FLT_NONE,usrnum);
+	}
+}
+
+static void FUNC scan_sh(void)
 {
 	int shpnum, gheading;
 	WARSHP *wptr;
@@ -750,7 +792,7 @@ void FUNC scan_sh(void)
 	}
 }
 
-void FUNC scan_pl(void)
+static void FUNC scan_pl(void)
 {
 	unsigned i;
 	unsigned int rseed = gernd();
@@ -964,7 +1006,7 @@ void FUNC scan_pl(void)
 	}
 }
 
-void FUNC scan_ra(void)
+static void FUNC scan_ra(void)
 {
 	int i, x, y;
 	double xf, yf, x1, y1, range;
@@ -1111,7 +1153,7 @@ void FUNC scan_ra(void)
 	outprfge(FLT_NONE, usrnum);
 }
 
-void FUNC scan_se(void)
+static void FUNC scan_se(void)
 {
 	unsigned i, x, y;
 	WARSHP *wptr;
@@ -1209,7 +1251,7 @@ void FUNC scan_se(void)
 	outprfge(FLT_NONE,usrnum);
 }
 
-void FUNC scan_lo(void)
+static void FUNC scan_lo(void)
 {
 	int x, y, fullgal;
 	double xf, yf, x1, y1, range;
@@ -1352,7 +1394,7 @@ void FUNC scan_lo(void)
 ** Print the map                                                         **
 **************************************************************************/
 
-void FUNC printmap(int maptype, long dist_filter)
+static void FUNC printmap(int maptype, long dist_filter)
 {
 	SCANTAB *sptr = &scantab[usrnum];
 	int i, shp = 0, ff = 0;

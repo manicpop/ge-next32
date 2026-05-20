@@ -67,12 +67,6 @@
 WORMTAB	wormtab[MAXPLANETS];
 int	wormnum;
 
-static int FUNC xgetsector(COORD *sect, int wormy);
-static void FUNC build_plan_1(int idx);
-static void FUNC build_plan_2(int idx);
-static void FUNC build_other(int idx);
-static void FUNC build_worm(int idx);
-
 /**************************************************************************
 ** Check Spy Function                                                    **
 **************************************************************************/
@@ -355,76 +349,131 @@ void FUNC multiply(int final_mult)
 }
 
 /**************************************************************************
-** look up sector. If not fnd make one... xsect and ysect are used       **
+** build special planet # 1                                              **
 **************************************************************************/
 
-void FUNC getsector(COORD *sect)
+static void FUNC build_plan_1(int idx)
 {
-	int i;
+	setmem(&planet, sizeof(GALPLNT), 0);
 
-	/* please keep this MBM comment here forever, thank you --AGS 2026 */
+	strncpy(planet.userid, s00[idx].owner, UIDSIZ);
+	strncpy(planet.name, s00[idx].name, 20);
+	strcpy(planet.password, "none");
 
-	/* I know when you look at this later Mike you will never remember why
-	   you did this. So before you go tear it apart or go crazy trying to
-	   figure it out I'll explain.
+	planet.enviorn = s00[idx].env;
+	planet.resource = s00[idx].res;
 
-	   We call the getsector routine the first time to either get a previously
-	   created sector or to create one. If one is created and there is a
-	   wormhole (or more) in it the function Xgetsect returns TRUE. If so then
-	   we must call it again to get the sectors that are the destination points
-	   of the wormhole(s). Since we don't want it to create more wormholes in
-	   the new sector (risking a runaway cascade effect) a flag is tripped on
-	   telling Xgetsector to NOT create any wormholes.
+	pkey.plnum = idx + 1;
+	pkey.xsect = 0;
+	pkey.ysect = 0;
 
-	   If on the second pass Xgetsector gets a sector that already exists then
-	   we have to insert a wormhole into the next planet slot and create
-	   the planet record. If there are already 9 planets then too bad, this
-	   wormhole is a one way bugger.
-	*/
+	planet.xsect = pkey.xsect;
+	planet.ysect = pkey.ysect;
+	planet.plnum = pkey.plnum;
+	planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
+	planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
+	planet.type = PLTYPE_PLNT;
+	planet.nebseed = nebseed;
+	if (planet.nebseed == 0L)
+		planet.nebseed = 1L;
 
-	wormnum = 0;
+	plptr = &planet;
+	update_plan_1();
 
-	if (xgetsector(sect, FALSE))
-	{
-		logthis("GE:DBG:Getsector-had worms");
-		for (i = 0; i < wormnum; ++i)
-		{
-			logthis("GE:DBG:Getsector-get worm dest sect");
-
-			xgetsector(&wormtab[i].coord, TRUE);
-			if (sector.numplan < MAXPLANETS)
-			{
-				/* insert new wormhole */
-				setmem(&worm, sizeof(GALWORM), 0);
-				worm.xsect = pkey.xsect;
-				worm.ysect = pkey.ysect;
-				worm.plnum = sector.numplan + 1;
-				worm.coord.xcoord = wormtab[i].coord.xcoord;
-				worm.coord.ycoord = wormtab[i].coord.ycoord;
-				worm.visible = 1;
-				worm.destination.xcoord = wormtab[i].dest.xcoord;
-				worm.destination.ycoord = wormtab[i].dest.ycoord;
-				worm.type = PLTYPE_WORM;
-
-				logthis("GE:DBG:Getsector-add dest worm record");
-				/* write the database record */
-				gesdb(GEADD, (PKEY *)&worm, (GALSECT *)&worm);
-
-				logthis("GE:DBG:Getsector-update sector record");
-
-				/* now update the sector record */
-				sector.ptab[sector.numplan].type = worm.type;
-				sector.ptab[sector.numplan].coord.xcoord = worm.coord.xcoord;
-				sector.ptab[sector.numplan].coord.ycoord = worm.coord.ycoord;
-				sector.numplan++;
-				gesdb(GEUPDATE, (PKEY *)&sector, &sector);
-			}
-		}
-		/* if we had to add another sector get the original again */
-		logthis("GE:DBG:Getsector-get orig record");
-		xgetsector(sect, FALSE);
-	}
+	logthis("Zygor build first time");
 }
+
+static void FUNC build_plan_2(int idx)
+{
+	setmem(&planet, sizeof(GALPLNT), 0);
+
+	strncpy(planet.userid, s00[idx].owner, UIDSIZ);
+	strncpy(planet.name, s00[idx].name, 20);
+	strcpy(planet.password, "none");
+
+	planet.enviorn = s00[idx].env;
+	planet.resource = s00[idx].res;
+
+	pkey.plnum = idx + 1;
+	pkey.xsect = 0;
+	pkey.ysect = 0;
+
+	planet.xsect = pkey.xsect;
+	planet.ysect = pkey.ysect;
+	planet.plnum = pkey.plnum;
+	planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
+	planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
+	planet.type = PLTYPE_PLNT;
+
+	plptr = &planet;
+	update_plan_2();
+
+	logthis("T-Station build first time");
+}
+
+static void FUNC build_other(int idx)
+{
+	setmem(&planet, sizeof(GALPLNT), 0);
+
+	strncpy(planet.userid, s00[idx].owner, UIDSIZ);
+	strncpy(planet.name, s00[idx].name, 20);
+	strcpy(planet.password, "none");
+
+	planet.enviorn = s00[idx].env;
+	planet.resource = s00[idx].res;
+
+	pkey.plnum = idx + 1;
+	pkey.xsect = 0;
+	pkey.ysect = 0;
+
+	planet.xsect = pkey.xsect;
+	planet.ysect = pkey.ysect;
+	planet.plnum = pkey.plnum;
+	planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
+	planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
+	planet.type = PLTYPE_PLNT;
+
+	logthis("Other build first time");
+}
+
+static void FUNC build_worm(int idx)
+{
+	setmem(&worm, sizeof(GALWORM), 0);
+
+	strncpy(worm.name, s00[idx].name, 20);
+
+	pkey.plnum = idx + 1;
+	pkey.xsect = 0;
+	pkey.ysect = 0;
+
+	worm.xsect = pkey.xsect;
+	worm.ysect = pkey.ysect;
+	worm.plnum = pkey.plnum;
+
+	worm.coord.xcoord = sector.ptab[idx].coord.xcoord;
+	worm.coord.ycoord = sector.ptab[idx].coord.ycoord;
+
+	worm.type = PLTYPE_WORM;
+
+	worm.visible = 1;
+	worm.destination.xcoord = rndm((double)univmax * 2) - (double)univmax;
+	worm.destination.ycoord = rndm((double)univmax * 2) - (double)univmax;
+
+	logthis("GE:DBG:Getsector-add worm record");
+
+	/* add to worm table so we can go build the other sector */
+	wormtab[wormnum].coord.xcoord = worm.destination.xcoord;
+	wormtab[wormnum].coord.ycoord = worm.destination.ycoord;
+	wormtab[wormnum].dest.xcoord = worm.coord.xcoord;
+	wormtab[wormnum].dest.ycoord = worm.coord.ycoord;
+	++wormnum;
+
+	logthis("Worm build first time");
+}
+
+/**************************************************************************
+** look up planet.                                                       **
+**************************************************************************/
 
 static int FUNC xgetsector(COORD *sect, int wormy)
 {
@@ -599,126 +648,76 @@ static int FUNC xgetsector(COORD *sect, int wormy)
 	return (FALSE);
 }
 
-static void FUNC build_plan_1(int idx)
+/**************************************************************************
+** look up sector. If not fnd make one... xsect and ysect are used       **
+**************************************************************************/
+
+void FUNC getsector(COORD *sect)
 {
-	setmem(&planet, sizeof(GALPLNT), 0);
+	int i;
 
-	strncpy(planet.userid, s00[idx].owner, UIDSIZ);
-	strncpy(planet.name, s00[idx].name, 20);
-	strcpy(planet.password, "none");
+	/* please keep this MBM comment here forever, thank you --AGS 2026 */
 
-	planet.enviorn = s00[idx].env;
-	planet.resource = s00[idx].res;
+	/* I know when you look at this later Mike you will never remember why
+	   you did this. So before you go tear it apart or go crazy trying to
+	   figure it out I'll explain.
 
-	pkey.plnum = idx + 1;
-	pkey.xsect = 0;
-	pkey.ysect = 0;
+	   We call the getsector routine the first time to either get a previously
+	   created sector or to create one. If one is created and there is a
+	   wormhole (or more) in it the function Xgetsect returns TRUE. If so then
+	   we must call it again to get the sectors that are the destination points
+	   of the wormhole(s). Since we don't want it to create more wormholes in
+	   the new sector (risking a runaway cascade effect) a flag is tripped on
+	   telling Xgetsector to NOT create any wormholes.
 
-	planet.xsect = pkey.xsect;
-	planet.ysect = pkey.ysect;
-	planet.plnum = pkey.plnum;
-	planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
-	planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
-	planet.type = PLTYPE_PLNT;
-	planet.nebseed = nebseed;
-	if (planet.nebseed == 0L)
-		planet.nebseed = 1L;
+	   If on the second pass Xgetsector gets a sector that already exists then
+	   we have to insert a wormhole into the next planet slot and create
+	   the planet record. If there are already 9 planets then too bad, this
+	   wormhole is a one way bugger.
+	*/
 
-	plptr = &planet;
-	update_plan_1();
+	wormnum = 0;
 
-	logthis("Zygor build first time");
-}
+	if (xgetsector(sect, FALSE))
+	{
+		logthis("GE:DBG:Getsector-had worms");
+		for (i = 0; i < wormnum; ++i)
+		{
+			logthis("GE:DBG:Getsector-get worm dest sect");
 
-static void FUNC build_plan_2(int idx)
-{
-	setmem(&planet, sizeof(GALPLNT), 0);
+			xgetsector(&wormtab[i].coord, TRUE);
+			if (sector.numplan < MAXPLANETS)
+			{
+				/* insert new wormhole */
+				setmem(&worm, sizeof(GALWORM), 0);
+				worm.xsect = pkey.xsect;
+				worm.ysect = pkey.ysect;
+				worm.plnum = sector.numplan + 1;
+				worm.coord.xcoord = wormtab[i].coord.xcoord;
+				worm.coord.ycoord = wormtab[i].coord.ycoord;
+				worm.visible = 1;
+				worm.destination.xcoord = wormtab[i].dest.xcoord;
+				worm.destination.ycoord = wormtab[i].dest.ycoord;
+				worm.type = PLTYPE_WORM;
 
-	strncpy(planet.userid, s00[idx].owner, UIDSIZ);
-	strncpy(planet.name, s00[idx].name, 20);
-	strcpy(planet.password, "none");
+				logthis("GE:DBG:Getsector-add dest worm record");
+				/* write the database record */
+				gesdb(GEADD, (PKEY *)&worm, (GALSECT *)&worm);
 
-	planet.enviorn = s00[idx].env;
-	planet.resource = s00[idx].res;
+				logthis("GE:DBG:Getsector-update sector record");
 
-	pkey.plnum = idx + 1;
-	pkey.xsect = 0;
-	pkey.ysect = 0;
-
-	planet.xsect = pkey.xsect;
-	planet.ysect = pkey.ysect;
-	planet.plnum = pkey.plnum;
-	planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
-	planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
-	planet.type = PLTYPE_PLNT;
-
-	plptr = &planet;
-	update_plan_2();
-
-	logthis("T-Station build first time");
-
-}
-
-static void FUNC build_other(int idx)
-{
-	setmem(&planet, sizeof(GALPLNT), 0);
-
-	strncpy(planet.userid, s00[idx].owner, UIDSIZ);
-	strncpy(planet.name, s00[idx].name, 20);
-	strcpy(planet.password, "none");
-
-	planet.enviorn = s00[idx].env;
-	planet.resource = s00[idx].res;
-
-	pkey.plnum = idx + 1;
-	pkey.xsect = 0;
-	pkey.ysect = 0;
-
-	planet.xsect = pkey.xsect;
-	planet.ysect = pkey.ysect;
-	planet.plnum = pkey.plnum;
-	planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
-	planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
-	planet.type = PLTYPE_PLNT;
-
-	logthis("Other build first time");
-
-}
-
-static void FUNC build_worm(int idx)
-{
-	setmem(&worm, sizeof(GALWORM), 0);
-
-	strncpy(worm.name, s00[idx].name, 20);
-
-	pkey.plnum = idx + 1;
-	pkey.xsect = 0;
-	pkey.ysect = 0;
-
-	worm.xsect = pkey.xsect;
-	worm.ysect = pkey.ysect;
-	worm.plnum = pkey.plnum;
-
-	worm.coord.xcoord = sector.ptab[idx].coord.xcoord;
-	worm.coord.ycoord = sector.ptab[idx].coord.ycoord;
-
-	worm.type = PLTYPE_WORM;
-
-	worm.visible = 1;
-	worm.destination.xcoord = rndm((double)univmax * 2) - (double)univmax;
-	worm.destination.ycoord = rndm((double)univmax * 2) - (double)univmax;
-
-	logthis("GE:DBG:Getsector-add worm record");
-
-	/* add to worm table so we can go build the other sector */
-	wormtab[wormnum].coord.xcoord = worm.destination.xcoord;
-	wormtab[wormnum].coord.ycoord = worm.destination.ycoord;
-	wormtab[wormnum].dest.xcoord = worm.coord.xcoord;
-	wormtab[wormnum].dest.ycoord = worm.coord.ycoord;
-	++wormnum;
-
-	logthis("Worm build first time");
-
+				/* now update the sector record */
+				sector.ptab[sector.numplan].type = worm.type;
+				sector.ptab[sector.numplan].coord.xcoord = worm.coord.xcoord;
+				sector.ptab[sector.numplan].coord.ycoord = worm.coord.ycoord;
+				sector.numplan++;
+				gesdb(GEUPDATE, (PKEY *)&sector, &sector);
+			}
+		}
+		/* if we had to add another sector get the original again */
+		logthis("GE:DBG:Getsector-get orig record");
+		xgetsector(sect, FALSE);
+	}
 }
 
 /**************************************************************************

@@ -113,7 +113,7 @@ static struct upgdef upgdefs[NUMUPGRADES] = {
 };
 
 void FUNC cmd_gehelp(void), cmd_cloak(void), cmd_impulse(void), cmd_phas(void),
-	cmd_report(void), cmd_rotate(void), cmd_send(void), cmd_scan(void),
+	cmd_report(void), cmd_rotate(void), cmd_send(void),
 	cmd_shields(void), cmd_warp(void), cmd_torp(void), cmd_missl(void),
 	cmd_decoy(void), cmd_flux(void), cmd_set(void), cmd_orbit(void),
 	cmd_transfer(void), cmd_admin(void), cmd_attack(void), cmd_geroster(void),
@@ -121,8 +121,12 @@ void FUNC cmd_gehelp(void), cmd_cloak(void), cmd_impulse(void), cmd_phas(void),
 	cmd_new(void), cmd_sell(void), cmd_sysop(void), cmd_rename(void),
 	cmd_destruct(void), cmd_abort(void), cmd_jammer(void), cmd_mine(void),
 	cmd_abandon(void), cmd_zipper(void), cmd_lock(void), cmd_navigate(void),
-	cmd_who(void), cmd_clear(void), cmd_data(void), cmd_team(void), cmd_spy(void),
+	cmd_who(void), cmd_clear(void), cmd_team(void), cmd_spy(void),
 	cmd_jettison(void), cmd_stop(void);
+
+#ifdef DATACMD
+void FUNC cmd_data(void);
+#endif
 
 #define GECMDSIZ (sizeof(gecmds)/sizeof(struct cmd))
 
@@ -138,7 +142,9 @@ struct	cmd	gecmds[]={
 			{"buy",	cmd_buy,	0},
 			{"clo",	cmd_cloak,	1},
 			{"cls",	cmd_clear,	0},
+#ifdef DATACMD
 			{"dat",	cmd_data,	0},
+#endif
 			{"dec",	cmd_decoy,	1},
 			{"des",	cmd_destruct,	1},
 			{"flu",	cmd_flux,	1},
@@ -1119,80 +1125,6 @@ void FUNC cmd_missl(void)
 }
 
 /**************************************************************************
-** Lockon helper for torp and misl                                       **
-**************************************************************************/
-
-int FUNC lockon(WARSHP *ptr, int type, int ship, int usrn)
-{
-	WARSHP *wptr;
-	double dist, speed, fact = 0.0;
-
-	if (type == 0 && ptr->torpcntl > 0) {
-		prfmsg(TRBROKE);
-		outprfge(FLT_NONE,usrn);
-		return(0);
-	}
-
-	if (type == 1 && ptr->mislcntl > 0) {
-		prfmsg(MIBROKE);
-		outprfge(FLT_NONE,usrn);
-		return(0);
-	}
-
-	if (ptr->jam_sev > (byte)2) {
-		prfmsg(JAMMER4W);
-		outprfge(FLT_NONE,usrn);
-		return(0);
-	}
-
-	wptr= warshpoff(ship);
-
-	if (neutral(&(wptr->coord))) {
-		prfmsg(FCNONO);
-		outprfge(FLT_NONE,usrn);
-		return(0);
-	}
-
-	dist = cdistance(&ptr->coord,&(wptr->coord));
-	if (wptr->cloak < 10 && (dist*10000.0) < (double)ship_scanrange(ptr)) {
-		speed = ptr->speed + wptr->speed;
-
-		if (type == 0) { /* torpedo */
-			if (wptr->speed > 999) {
-				fact = 0.0;
-			}
-			else {
-				fact = (1.2-(speed/5000));
-				fact *= ((5.0-dist)/tor_fact);
-			}
-		}
-
-		if (type == 1) /* missile */
-			fact = ((5.0-dist)/mis_fact);
-
-		if (fact > .7) {
-			if (wptr->status == GESTAT_AUTO) {	/* if npc... */
-				wptr->cybmine = usrn;	/* engage user */
-				wptr->cyb_grace = CYBGRACE;
-				wptr->tick = 2;		/* do it fast */
-				wptr->npcmsg = 255;	/* reset annoy msg tracking */
-			}
-			return(1);
-		}
-		else {
-			prfmsg(FCNOLOCK,shpltr(usrn,ship));
-			outprfge(FLT_NONE,usrn);
-			return(0);
-		}
-	}
-	else {
-		prfmsg(NOSHIP);
-		outprfge(FLT_NONE,usrn);
-		return(0);
-	}
-}
-
-/**************************************************************************
 ** Find a ship by letter or current lock                                 **
 **************************************************************************/
 
@@ -2071,42 +2003,6 @@ void FUNC cmd_report(void)
 ** Scan Command                                                          **
 **************************************************************************/
 
-void FUNC cmd_scan(void)
-{
-	if (warsptr->tactical != 0) {
-		prfmsg(TABROKE);
-		outprfge(FLT_NONE,usrnum);
-		return;
-	}
-
-	if (warsptr->damage >= 100.0) {
-		prfmsg(RNDTACT);
-		outprfge(FLT_NONE,usrnum);
-		return;
-	}
-
-	if (margc > 1) {
-		if (sameto("sh",margv[1]))
-			scan_sh();
-		else if (sameto("pl",margv[1]))
-			scan_pl();
-		else if (sameto("ra",margv[1]))
-			scan_ra();
-		else if (sameto("se",margv[1]))
-			scan_se();
-		else if (sameto("lo",margv[1]))
-			scan_lo();
-		else {
-			prfmsg(FORMAT,"SCAN");
-			outprfge(FLT_NONE,usrnum);
-		}
-	}
-	else {
-		prfmsg(FORMAT,"SCAN");
-		outprfge(FLT_NONE,usrnum);
-	}
-}
-
 /**************************************************************************
 ** Format a repair ETA string for REPORT SYS                             **
 **************************************************************************/
@@ -2631,94 +2527,10 @@ void FUNC cmd_admin(void)
 }
 
 /**************************************************************************
-** Attack Command                                                        **
+** Attack helpers                                                       **
 **************************************************************************/
 
-void FUNC cmd_attack(void)
-{
-	int won;
-	unsigned long num;
-
-	if (warsptr->where < 10) {
-		prfmsg(ADMIN1);
-		outprfge(FLT_NONE,usrnum);
-		return;
-	}
-
-	if (!load_orbit_planet(usrnum))
-		return;
-
-	if (sameas(plptr->userid,warsptr->userid)) {
-		prfmsg(ATTACK0);
-		outprfge(FLT_NONE,usrnum);
-		return;
-	}
-
-	if (neutral(&warsptr->coord)) {
-		zaphim(warsptr,usrnum);
-		prfmsg(ATTKER);
-		outprfge(FLT_NONE,usrnum);
-		return;
-	}
-
-	if (margc == 3) {
-		if (sameto("tro",margv[2])) {
-			if (sameas("ALL",margv[1]))
-				num = warsptr->items[I_TROOPS];
-			else
-				num = atol(margv[1]);
-			if (num > 0L && num <= warsptr->items[I_TROOPS]) {
-				warsptr->hostile = warsptr->where;
-				warsptr->cantexit = FIRETICKS;
-				won = attack_men(num);
-				if (won == 1) {
-					prfmsg(ATTACK8);
-					outprfge(FLT_NONE,usrnum);
-				} else {
-					prfmsg(ATTACK9);
-					outprfge(FLT_NONE,usrnum);
-				}
-			} else {
-				prfmsg(ATTACKM0);
-				outprfge(FLT_NONE,usrnum);
-			}
-			return;
-		} else if (sameto("fig",margv[2])) {
-			if (shipclass[warsptr->shpclass].max_attk > 0) {
-				if (sameas("ALL",margv[1]))
-					num = warsptr->items[I_FIGHTER];
-				else
-					num = atol(margv[1]);
-				if (num > 0 && num <= warsptr->items[I_FIGHTER]) {
-					warsptr->hostile = warsptr->where;
-					warsptr->cantexit = FIRETICKS;
-					won = attack_fig(num);
-					if (won == 1) {
-						prfmsg(ATTACK8);
-						outprfge(FLT_NONE,usrnum);
-					} else {
-						prfmsg(ATTACK9);
-						outprfge(FLT_NONE,usrnum);
-					}
-				} else {
-					prfmsg(ATTACKF0);
-					outprfge(FLT_NONE,usrnum);
-				}
-				return;
-			} else {
-				prfmsg(ATTACK0A);
-				outprfge(FLT_NONE,usrnum);
-				return;
-			}
-		}
-		prfmsg(FORMAT,"ATTACK");
-	} else {
-		prfmsg(FORMAT,"ATTACK");
-	}
-	outprfge(FLT_NONE,usrnum);
-}
-
-int FUNC attack_men(unsigned long num)
+static int FUNC attack_men(unsigned long num)
 {
 	double r;
 	int won = 0;
@@ -2879,7 +2691,7 @@ int FUNC attack_men(unsigned long num)
 	return (won);
 }
 
-int FUNC attack_fig(unsigned long num)
+static int FUNC attack_fig(unsigned long num)
 {
 	double r;
 	int won = 0;
@@ -3021,7 +2833,7 @@ int FUNC attack_fig(unsigned long num)
 ** Notify the owner about a planetary attack                             **
 **************************************************************************/
 
-void FUNC call_4_help(int send_spy_mail, int won)
+static void FUNC call_4_help(int send_spy_mail, int won)
 {
 	if (instat(plptr->userid, gestt) && othusp->substt >= FIGHTSUB) {
 		if (warsptr->shipname[0] == '\0')
@@ -3061,7 +2873,7 @@ void FUNC call_4_help(int send_spy_mail, int won)
 ** Transfer a conquered planet to the attacking player                   **
 **************************************************************************/
 
-void FUNC wonplnt(void)
+static void FUNC wonplnt(void)
 {
 	char olduid[UIDSIZ];
 
@@ -3090,6 +2902,94 @@ void FUNC wonplnt(void)
 	/* add planet to winner */
 	++waruptr->planets;
 	geudb(GEUPDATE, waruptr->userid, waruptr);
+}
+
+/**************************************************************************
+** Attack Command                                                        **
+**************************************************************************/
+
+void FUNC cmd_attack(void)
+{
+	int won;
+	unsigned long num;
+
+	if (warsptr->where < 10) {
+		prfmsg(ADMIN1);
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+
+	if (!load_orbit_planet(usrnum))
+		return;
+
+	if (sameas(plptr->userid,warsptr->userid)) {
+		prfmsg(ATTACK0);
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+
+	if (neutral(&warsptr->coord)) {
+		zaphim(warsptr,usrnum);
+		prfmsg(ATTKER);
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+
+	if (margc == 3) {
+		if (sameto("tro",margv[2])) {
+			if (sameas("ALL",margv[1]))
+				num = warsptr->items[I_TROOPS];
+			else
+				num = atol(margv[1]);
+			if (num > 0L && num <= warsptr->items[I_TROOPS]) {
+				warsptr->hostile = warsptr->where;
+				warsptr->cantexit = FIRETICKS;
+				won = attack_men(num);
+				if (won == 1) {
+					prfmsg(ATTACK8);
+					outprfge(FLT_NONE,usrnum);
+				} else {
+					prfmsg(ATTACK9);
+					outprfge(FLT_NONE,usrnum);
+				}
+			} else {
+				prfmsg(ATTACKM0);
+				outprfge(FLT_NONE,usrnum);
+			}
+			return;
+		} else if (sameto("fig",margv[2])) {
+			if (shipclass[warsptr->shpclass].max_attk > 0) {
+				if (sameas("ALL",margv[1]))
+					num = warsptr->items[I_FIGHTER];
+				else
+					num = atol(margv[1]);
+				if (num > 0 && num <= warsptr->items[I_FIGHTER]) {
+					warsptr->hostile = warsptr->where;
+					warsptr->cantexit = FIRETICKS;
+					won = attack_fig(num);
+					if (won == 1) {
+						prfmsg(ATTACK8);
+						outprfge(FLT_NONE,usrnum);
+					} else {
+						prfmsg(ATTACK9);
+						outprfge(FLT_NONE,usrnum);
+					}
+				} else {
+					prfmsg(ATTACKF0);
+					outprfge(FLT_NONE,usrnum);
+				}
+				return;
+			} else {
+				prfmsg(ATTACK0A);
+				outprfge(FLT_NONE,usrnum);
+				return;
+			}
+		}
+		prfmsg(FORMAT,"ATTACK");
+	} else {
+		prfmsg(FORMAT,"ATTACK");
+	}
+	outprfge(FLT_NONE,usrnum);
 }
 
 /**************************************************************************
@@ -3202,53 +3102,10 @@ void FUNC cmd_planet(void)
 }
 
 /**************************************************************************
-** Sell goods                                                            **
+** Sell goods helper                                                     **
 **************************************************************************/
 
-void FUNC cmd_sell(void)
-{
-	int i;
-
-	if (warsptr->where < 10) {
-		prfmsg(SELL1);
-		outprfge(FLT_NONE, usrnum);
-		return;
-	}
-
-	if (!neutral(&warsptr->coord)) {
-		prfmsg(SELL1);
-		outprfge(FLT_NONE, usrnum);
-		return;
-	}
-
-	if (waruptr->factions[gcnum] > 100) { /* don't buy from jerks */
-		prfmsg(NOZYG, (int)((waruptr->factions[gcnum] - 61) / 40));
-		outprfge(FLT_NONE, usrnum);
-		return;
-	}
-
-	plnum = warsptr->where - 10;
-
-	if (!load_orbit_planet(usrnum))
-		return;
-
-	if (neutral(&warsptr->coord) && plnum == 1) { /* must be Zygor */
-		if (margc == 3) {
-			for (i = 0; i < NUMITEMS; ++i) {
-				if (sameto(kwrd[i], margv[2])) {
-					sell(i);
-					outprfge(FLT_NONE, usrnum);
-					return;
-				}
-			}
-		}
-	}
-
-	prfmsg(FORMAT, "SELL");
-	outprfge(FLT_NONE, usrnum);
-}
-
-void FUNC sell(int item)
+static void FUNC sell(int item)
 {
 	unsigned long amt, gross, fee, net;
 	byte toorich, toomuch;
@@ -3353,101 +3210,89 @@ void FUNC sell(int item)
 }
 
 /**************************************************************************
-** Buy goods                                                             **
+** Sell goods                                                            **
 **************************************************************************/
 
-void FUNC cmd_buy(void)
+void FUNC cmd_sell(void)
 {
 	int i;
 
 	if (warsptr->where < 10) {
-		prfmsg(BUY1);
+		prfmsg(SELL1);
 		outprfge(FLT_NONE, usrnum);
 		return;
 	}
 
-	if (!load_orbit_planet(usrnum))
+	if (!neutral(&warsptr->coord)) {
+		prfmsg(SELL1);
+		outprfge(FLT_NONE, usrnum);
 		return;
-	fixplanetteam();
+	}
 
-	if (neutral(&warsptr->coord) && plnum == 1 && waruptr->factions[gcnum] > 100) { /* if Zygor, don't sell to jerks */
+	if (waruptr->factions[gcnum] > 100) { /* don't buy from jerks */
 		prfmsg(NOZYG, (int)((waruptr->factions[gcnum] - 61) / 40));
 		outprfge(FLT_NONE, usrnum);
 		return;
 	}
 
-	if (sameas(plptr->password, "team")
-		&& plptr->teamcode > 0
-		&& plptr->teamcode != waruptr->teamcode) {
-		prfmsg(BUYPAS3);
-		outprfge(FLT_NONE, usrnum);
-		return;
-	} else if (sameas(plptr->password, "team")
-		&& plptr->teamcode > 0
-		&& plptr->teamcode == waruptr->teamcode) {
-		prfmsg(BUYPAS4);
-		outprfge(FLT_NONE, usrnum);
-	} else if (!sameas(plptr->password, "none") && margc > 1 && margc < 4) {
-		prfmsg(BUYPAS1);
-		outprfge(FLT_NONE, usrnum);
-		return;
-	} else if (!sameas(plptr->password, "none")
-		&& !sameas(plptr->password, margv[3])) {
-		prfmsg(BUYPAS2);
-		outprfge(FLT_NONE, usrnum);
-		return;
-	}
+	plnum = warsptr->where - 10;
 
-	if (margc > 2) {
-		for (i = 0; i < NUMITEMS; ++i) {
-			if (sameto(kwrd[i], margv[2])) {
-				buy(i);
-				outprfge(FLT_NONE, usrnum);
-				return;
+	if (!load_orbit_planet(usrnum))
+		return;
+
+	if (neutral(&warsptr->coord) && plnum == 1) { /* must be Zygor */
+		if (margc == 3) {
+			for (i = 0; i < NUMITEMS; ++i) {
+				if (sameto(kwrd[i], margv[2])) {
+					sell(i);
+					outprfge(FLT_NONE, usrnum);
+					return;
+				}
 			}
 		}
 	}
-	prfmsg(FORMAT, "BUY");
+
+	prfmsg(FORMAT, "SELL");
 	outprfge(FLT_NONE, usrnum);
 }
 
 /**************************************************************************
-** Price goods                                                           **
+** Buy-side helpers                                                      **
 **************************************************************************/
 
-void FUNC cmd_price(void)
+static unsigned long FUNC amt4sale(int item)
 {
-	int i;
+	unsigned long forsale = 0;
 
-	if (warsptr->where < 10) {
-		prfmsg(BUY1);
-		outprfge(FLT_NONE, usrnum);
-		return;
-	}
+	if (sameas(plptr->userid, warsptr->userid))
+		forsale = plptr->items[item].qty;
+	else if (plptr->items[item].qty > plptr->items[item].reserve && plptr->items[item].sell == 'Y')
+		forsale = plptr->items[item].qty - plptr->items[item].reserve;
 
-	if (!load_orbit_planet(usrnum))
-		return;
-
-	if (neutral(&warsptr->coord) && plnum == 1 && waruptr->factions[gcnum] > 100) { /* if Zygor, don't price to jerks */
-		prfmsg(NOZYG, (int)((waruptr->factions[gcnum] - 61) / 40));
-		outprfge(FLT_NONE, usrnum);
-		return;
-	}
-
-	if (margc == 3) {
-		for (i = 0; i < NUMITEMS; ++i) {
-			if (sameto(kwrd[i], margv[2])) {
-				buy(i);
-				outprfge(FLT_NONE, usrnum);
-				return;
-			}
-		}
-	}
-	prfmsg(FORMAT, "PRICE");
-	outprfge(FLT_NONE, usrnum);
+	return (forsale);
 }
 
-void FUNC buy(int item)
+/**************************************************************************
+** Calculate the purchase price for a planet item                        **
+**************************************************************************/
+
+static long FUNC price(unsigned item, unsigned long amt)
+{
+	long tot;
+
+	if (sameas(plptr->userid, warsptr->userid))
+		tot = ((long)baseprice[item]) * amt;
+	else
+		tot = ((long)plptr->items[item].markup2a) * amt;
+
+	return (tot);
+}
+
+/**************************************************************************
+** Buy goods helper                                                      **
+**************************************************************************/
+
+static void FUNC buy(int item)
 {
 	unsigned long amt, avail, tot, ptot;
 	unsigned long room100;
@@ -3541,35 +3386,98 @@ void FUNC buy(int item)
 }
 
 /**************************************************************************
-** Determine how much of an item is available for sale                   **
+** Buy goods                                                             **
 **************************************************************************/
 
-unsigned long FUNC amt4sale(int item)
+void FUNC cmd_buy(void)
 {
-	unsigned long forsale = 0;
+	int i;
 
-	if (sameas(plptr->userid, warsptr->userid))
-		forsale = plptr->items[item].qty;
-	else if (plptr->items[item].qty > plptr->items[item].reserve && plptr->items[item].sell == 'Y')
-		forsale = plptr->items[item].qty - plptr->items[item].reserve;
+	if (warsptr->where < 10) {
+		prfmsg(BUY1);
+		outprfge(FLT_NONE, usrnum);
+		return;
+	}
 
-	return (forsale);
+	if (!load_orbit_planet(usrnum))
+		return;
+	fixplanetteam();
+
+	if (neutral(&warsptr->coord) && plnum == 1 && waruptr->factions[gcnum] > 100) { /* if Zygor, don't sell to jerks */
+		prfmsg(NOZYG, (int)((waruptr->factions[gcnum] - 61) / 40));
+		outprfge(FLT_NONE, usrnum);
+		return;
+	}
+
+	if (sameas(plptr->password, "team")
+		&& plptr->teamcode > 0
+		&& plptr->teamcode != waruptr->teamcode) {
+		prfmsg(BUYPAS3);
+		outprfge(FLT_NONE, usrnum);
+		return;
+	} else if (sameas(plptr->password, "team")
+		&& plptr->teamcode > 0
+		&& plptr->teamcode == waruptr->teamcode) {
+		prfmsg(BUYPAS4);
+		outprfge(FLT_NONE, usrnum);
+	} else if (!sameas(plptr->password, "none") && margc > 1 && margc < 4) {
+		prfmsg(BUYPAS1);
+		outprfge(FLT_NONE, usrnum);
+		return;
+	} else if (!sameas(plptr->password, "none")
+		&& !sameas(plptr->password, margv[3])) {
+		prfmsg(BUYPAS2);
+		outprfge(FLT_NONE, usrnum);
+		return;
+	}
+
+	if (margc > 2) {
+		for (i = 0; i < NUMITEMS; ++i) {
+			if (sameto(kwrd[i], margv[2])) {
+				buy(i);
+				outprfge(FLT_NONE, usrnum);
+				return;
+			}
+		}
+	}
+	prfmsg(FORMAT, "BUY");
+	outprfge(FLT_NONE, usrnum);
 }
 
 /**************************************************************************
-** Calculate the purchase price for a planet item                        **
+** Price goods                                                           **
 **************************************************************************/
 
-long FUNC price(unsigned item, unsigned long amt)
+void FUNC cmd_price(void)
 {
-	long tot;
+	int i;
 
-	if (sameas(plptr->userid, warsptr->userid))
-		tot = ((long)baseprice[item]) * amt;
-	else
-		tot = ((long)plptr->items[item].markup2a) * amt;
+	if (warsptr->where < 10) {
+		prfmsg(BUY1);
+		outprfge(FLT_NONE, usrnum);
+		return;
+	}
 
-	return (tot);
+	if (!load_orbit_planet(usrnum))
+		return;
+
+	if (neutral(&warsptr->coord) && plnum == 1 && waruptr->factions[gcnum] > 100) { /* if Zygor, don't price to jerks */
+		prfmsg(NOZYG, (int)((waruptr->factions[gcnum] - 61) / 40));
+		outprfge(FLT_NONE, usrnum);
+		return;
+	}
+
+	if (margc == 3) {
+		for (i = 0; i < NUMITEMS; ++i) {
+			if (sameto(kwrd[i], margv[2])) {
+				buy(i);
+				outprfge(FLT_NONE, usrnum);
+				return;
+			}
+		}
+	}
+	prfmsg(FORMAT, "PRICE");
+	outprfge(FLT_NONE, usrnum);
 }
 
 /**************************************************************************
@@ -5273,9 +5181,78 @@ void FUNC cmd_clear(void)
 	outprfge(FLT_NONE,usrnum);
 }
 
+#ifdef DATACMD
+
+/**************************************************************************
+** DATA scan helpers                                                     **
+**************************************************************************/
+
+static void FUNC scan_data1(void)
+{
+	SCANTAB *sptr;
+	WARSHP *wptr;
+	int i, j;
+	char mask[] = {" %c %d %d %d %d %s %d %d %s %d/%s%s\r"};
+
+	prf("DataScan: Range: %s\r",spr("%6ld",shipclass[warsptr->shpclass].scanrange));
+
+	update_scantab(warsptr, usrnum);
+
+	sptr = &scantab[usrnum];
+
+	prf("Shp Xsect Ysect Xcoord Ycoord Distance Bearing Heading Speed Class\r");
+
+	setsect(warsptr);
+
+	prf(mask,'*',xsect,ysect,xcord,ycord,"0",0,
+		(int)warsptr->heading,showarp(warsptr->speed),
+		warsptr->shpclass,shipclass[warsptr->shpclass].typename,showupg(warsptr));
+
+	if (warsptr->jam_sev > (byte)2) {
+		prf("** Jammed **\r");
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+
+	for (i=0; i<NOSCANTAB; ++i) {
+		if (sptr->ship[i].flag == 1) {
+			wptr = warshpoff(sptr->ship[i].shipno);
+
+			setsect(wptr);
+
+			j = wptr->shpclass;
+			prf(mask,sptr->ship[i].letter,xsect,ysect,xcord,ycord,spr("%ld",(long)(sptr->ship[i].dist)),
+				sptr->ship[i].bearing,sptr->ship[i].heading,showarp(sptr->ship[i].speed),
+				j,shipclass[j].typename,showupg(wptr));
+		}
+	}
+
+	outprfge(FLT_NONE,usrnum);
+}
+
+static void FUNC scan_data2(void)
+{
+	unsigned i, x, y;
+
+	refresh(warsptr, usrnum);
+
+	setsect(warsptr);
+	prf("Datascan: Sector X:%u Y:%u\r",xsect,ysect);
+
+	getsector(&warsptr->coord);
+
+	prf("NPlnts = %d\r",sector.numplan);
+	for (i=0; i < sector.numplan; ++i) {
+		if (sector.ptab[i].coord.xcoord != 0) {
+			x = coord2(sector.ptab[i].coord.xcoord);
+			y = coord2(sector.ptab[i].coord.ycoord);
+			prf("Pl#%d: Xcoord:%d, Ycoord:%d, Type:%d\r",i+1,x,y,sector.ptab[i].type);
+		}
+	}
+}
+
 void FUNC cmd_data(void)
 {
-#ifdef DATACMD
 	int i, j;
 
 	if (margc != 3) {
@@ -5379,75 +5356,7 @@ void FUNC cmd_data(void)
 	outprfge(FLT_NONE,usrnum);
 }
 
-void FUNC scan_data1(void)
-{
-	SCANTAB *sptr;
-	WARSHP *wptr;
-	int i, j;
-	char mask[] = {" %c %d %d %d %d %s %d %d %s %d/%s%s\r"};
-
-	prf("DataScan: Range: %s\r",spr("%6ld",shipclass[warsptr->shpclass].scanrange));
-
-	update_scantab(warsptr, usrnum);
-
-	sptr = &scantab[usrnum];
-
-	prf("Shp Xsect Ysect Xcoord Ycoord Distance Bearing Heading Speed Class\r");
-
-	setsect(warsptr);
-
-	prf(mask,'*',xsect,ysect,xcord,ycord,"0",0,
-		(int)warsptr->heading,showarp(warsptr->speed),
-		warsptr->shpclass,shipclass[warsptr->shpclass].typename,showupg(warsptr));
-
-	if (warsptr->jam_sev > (byte)2) {
-		prf("** Jammed **\r");
-		outprfge(FLT_NONE,usrnum);
-		return;
-	}
-
-	for (i=0; i<NOSCANTAB; ++i) {
-		if (sptr->ship[i].flag == 1) {
-			wptr = warshpoff(sptr->ship[i].shipno);
-
-			setsect(wptr);
-
-			j = wptr->shpclass;
-			prf(mask,sptr->ship[i].letter,xsect,ysect,xcord,ycord,spr("%ld",(long)(sptr->ship[i].dist)),
-				sptr->ship[i].bearing,sptr->ship[i].heading,showarp(sptr->ship[i].speed),
-				j,shipclass[j].typename,showupg(wptr));
-		}
-	}
-
-	outprfge(FLT_NONE,usrnum);
-}
-
-void FUNC scan_data2(void)
-{
-	unsigned i, x, y;
-
-	refresh(warsptr, usrnum);
-
-	setsect(warsptr);
-	prf("Datascan: Sector X:%u Y:%u\r",xsect,ysect);
-
-	getsector(&warsptr->coord);
-
-	prf("NPlnts = %d\r",sector.numplan);
-	for (i=0; i < sector.numplan; ++i) {
-		if (sector.ptab[i].coord.xcoord != 0) {
-			x = coord2(sector.ptab[i].coord.xcoord);
-			y = coord2(sector.ptab[i].coord.ycoord);
-			prf("Pl#%d: Xcoord:%d, Ycoord:%d, Type:%d\r",i+1,x,y,sector.ptab[i].type);
-		}
-	}
-
-#else
-	prfmsg(INVCMD,usrnum);
 #endif
-
-	outprfge(FLT_NONE,usrnum);
-}
 
 char *FUNC gedots(int numdots)
 {
@@ -5508,27 +5417,10 @@ void FUNC cmd_spy(void)
 }
 
 /**************************************************************************
-** Jettison Command                                                      **
+** Jettison helper                                                       **
 **************************************************************************/
 
-void FUNC cmd_jettison(void)
-{
-	int i;
-
-	if (margc == 3) {
-		for (i=0; i < NUMITEMS; ++i) {
-			if (sameto(kwrd[i],margv[2])) {
-				jettison(i);
-				return;
-			}
-		}
-	}
-
-	prfmsg(FORMAT,"JETTISON");
-	outprfge(FLT_NONE,usrnum);
-}
-
-void FUNC jettison(int item)
+static void FUNC jettison(int item)
 {
 	unsigned long amt;
 	long req;
@@ -5572,4 +5464,25 @@ void FUNC jettison(int item)
 		prfmsg(FORMAT,"JETTISON");
 		outprfge(FLT_NONE,usrnum);
 	}
+}
+
+/**************************************************************************
+** Jettison Command                                                      **
+**************************************************************************/
+
+void FUNC cmd_jettison(void)
+{
+	int i;
+
+	if (margc == 3) {
+		for (i=0; i < NUMITEMS; ++i) {
+			if (sameto(kwrd[i],margv[2])) {
+				jettison(i);
+				return;
+			}
+		}
+	}
+
+	prfmsg(FORMAT,"JETTISON");
+	outprfge(FLT_NONE,usrnum);
 }

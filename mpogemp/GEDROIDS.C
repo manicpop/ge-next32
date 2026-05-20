@@ -65,19 +65,30 @@
 char	droidname[UIDSIZ];
 double	dr_topspeed;
 
-static void FUNC droid_annoy(WARSHP *ptr, int usrn);
-static void FUNC droid_distress(WARSHP *ptr, int usrn);
 static void FUNC droid_act_1(WARSHP *ptr, int usrn);
 static void FUNC droid_act_2(WARSHP *ptr, int usrn);
 static void FUNC droid_act_3(WARSHP *ptr, int usrn);
 static void FUNC droid_act_4(WARSHP *ptr, int usrn);
 static void FUNC droid_act_5(WARSHP *ptr, int usrn);
 static void FUNC droid_act_6(WARSHP *ptr, int usrn);
-static void FUNC droid_check_state(WARSHP *ptr, int usrn);
-static int FUNC notclaimed_d(int drtype, int usrn);
-static void FUNC droid_phaser(WARSHP *ptr, int usrn, WARSHP *wptr);
-static void FUNC droid_torp(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn);
-static void FUNC droid_zyg_loadout(WARSHP *ptr);
+
+/**************************************************************************
+** Droid Zygor Loadout Function                                          **
+**************************************************************************/
+
+static void FUNC droid_zyg_loadout(WARSHP *ptr)
+{
+	ptr->items[I_MISSILE] = (gernd() % 50) + 10;
+	ptr->items[I_TORPEDO] = (gernd() % 50) + 10;
+	ptr->items[I_IONCANNON] = (gernd() % 20) + 10;
+	ptr->items[I_FIGHTER] = (gernd() % 100) + 20;
+	ptr->items[I_FLUXPOD] = (gernd() % 40) + 10;
+	ptr->items[I_DECOYS] = (gernd() % 100) + 10;
+	ptr->items[I_JAMMERS] = (gernd() % 100) + 10;
+	ptr->items[I_ZIPPERS] = (gernd() % 100) + 10;
+	ptr->items[I_MINE] = (gernd() % 100) + 10;
+	ptr->items[I_GOLD] = (gernd() % cyb_gold) + 1000;
+}
 
 /**************************************************************************
 ** Droid Init Function                                                   **
@@ -210,6 +221,153 @@ void FUNC droid_init(WARSHP *ptr, int usrn, int class)
 	}
 
 /**************************************************************************
+** Droid Annoy Function                                                  **
+**************************************************************************/
+
+/* ptr to sender , usrn = reciever */
+static void FUNC droid_annoy(WARSHP *ptr, int usrn)
+{
+	int base, sel, interval;
+
+	/* skip NPCs entirely */
+	if (usrn >= nterms)
+		return;
+
+	base = DRBASEM + ((ptr->shpclass - dr_class) * 12);
+	interval = 10 + shipclass[ptr->shpclass].tough_factor;	/* tougher npcs have fewer ticks */
+	sel = 0;
+
+	/* display friend or foe msg if not engaged with that user */
+	if (ptr->cybmine == 255) {
+		if (ptr->npcmsg == 0)			/* if starting fresh or coming back from cybmine set */
+			ptr->npcmsg = interval;
+		if (ptr->npcmsg > interval * 4)		/* cycle through msgs instead of rnd pick */
+			ptr->npcmsg = 1;
+		if (ptr->npcmsg % interval == 0)
+			sel = base + (ptr->npcmsg / interval);
+		if (sel != 0) {
+			if (sel + 4 >= DRLASTM) {
+				geshocst(0, "GE:BAD DROID MSG FF");
+				logthis(spr("droid_annoy:bad msg ff usrn [%d]", usrn));
+				return;
+			}
+			if (warusroff(usrn)->factions[shipclass[ptr->shpclass].faction] > 50) {
+				prfmsg(sel + 4, ptr->shipname);
+				outprfge(FLT_BEACON, usrn);
+			} else {
+				prfmsg(sel, ptr->shipname);
+				outprfge(FLT_NONE, usrn);
+			}
+		}
+	} else {
+		/* npcmsg 255 means the ship was just hit, say ouch */
+		if (ptr->npcmsg == 255) {
+			sel = base + (gernd() % 4) + 9;
+			if (sel >= DRLASTM) {
+				geshocst(0, "GE:BAD DROID MSG BTL");
+				logthis(spr("droid_annoy:bad msg btl usrn [%d]", usrn));
+				return;
+			}
+			prfmsg(sel, ptr->shipname);
+			outprfge(FLT_NONE, usrn);
+			ptr->npcmsg = 0;
+		}
+	}
+}
+
+/**************************************************************************
+** Droid Distress Function                                               **
+**************************************************************************/
+
+static void FUNC droid_distress(WARSHP *ptr, int usrn)
+{
+	if (ptr->distress >= nships || !ingegame(ptr->distress))
+		ptr->distress = 255;
+	if (ptr->distress != ptr->cybmine && ptr->cybmine < nships) {
+		setsect(ptr);
+		prfmsg(DRDISMSG, ptr->shipname, shipclass[ptr->shpclass].typename,
+			username(warshpoff(ptr->cybmine)), xsect, ysect);
+		outwar(FLT_DISTRESS, usrn, 0, 0);
+		ptr->distress = ptr->cybmine;
+	}
+}
+
+/**************************************************************************
+** Droid Check State Function                                            **
+**************************************************************************/
+
+static void FUNC droid_check_state(WARSHP *ptr, int usrn)
+{
+	if (ptr->speed < 1000.0) {
+		ptr->where = 0;
+		if (ptr->shieldstat != SHIELDDM)
+			shieldup(ptr, usrn);
+	} else {
+		ptr->where = 1;
+		if (ptr->shieldstat == SHIELDUP)
+			shielddn(ptr, usrn);
+	}
+}
+
+/**************************************************************************
+** Not Claimed Droid Function                                            **
+**************************************************************************/
+
+static int FUNC notclaimed_d(int drtype, int usrn)
+{
+	WARSHP *wptr;
+	int zothusn;
+
+	for (zothusn = nterms; zothusn < nships; zothusn++) {
+		wptr = warshpoff(zothusn);
+		if (wptr->status == GESTAT_AUTO && shipclass[wptr->shpclass].loadout == drtype && wptr->cybmine == (byte)usrn)
+			return (FALSE);
+	}
+	return (TRUE);
+}
+
+/**************************************************************************
+** Droid Phaser Function                                                 **
+**************************************************************************/
+
+static void FUNC droid_phaser(WARSHP *ptr, int usrn, WARSHP *wptr)
+{
+	if (shipclass[ptr->shpclass].max_phasr > 0 && !neutral(&ptr->coord) &&
+		!neutral(&wptr->coord) && isvisible(ptr, wptr) &&
+		gernd() % (4 - (shipclass[ptr->shpclass].tough_factor / 2)) == 0) {
+		ptr->degrees = cbearing(&ptr->coord, &wptr->coord, ptr->heading);
+		if (wptr->where == 1 && ptr->where == 1 && ptr->hypha == 0 && ptr->phasr >= 0)
+			firehp(ptr, usrn);
+		else if (ptr->where == 0 && (wptr->where == 0 || (wptr->where == 1 &&
+			shipclass[ptr->shpclass].max_phasr >= phatowrp)) && ptr->phasr >= PMINFIRE) {
+			ptr->percent = 2;
+			firep(ptr, usrn);
+		}
+	}
+}
+
+/**************************************************************************
+** Droid Torpedo Function                                                **
+**************************************************************************/
+
+static void FUNC droid_torp(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn)
+{
+	int i, tden;
+
+	if (!neutral(&ptr->coord) && !neutral(&wptr->coord) && isvisible(ptr, wptr) &&
+		ptr->where == 0 && wptr->where == 0 &&
+		shipclass[ptr->shpclass].max_torps && gernd() % 2 == 0) {
+		tden = 5 - shipclass[ptr->shpclass].tough_factor;
+		if (tden < 1)
+			tden = 1;
+		for (i = 0; i < shipclass[ptr->shpclass].max_torps; ++i) {
+			if (ptr->items[I_TORPEDO] > 0 && gernd() % tden == 0)
+				torp(ptr, usrn, zothusn);
+		}
+	}
+}
+
+/**************************************************************************
 ** Droid Lives Function                                                  **
 **************************************************************************/
 
@@ -285,78 +443,6 @@ void FUNC droid_lives(WARSHP *ptr, int usrn)
 		else
 			ptr->tick = CYBTICKTIME +
 				gernd() % (5 - shipclass[ptr->shpclass].tough_factor);
-	}
-}
-
-/**************************************************************************
-** Droid Annoy Function                                                  **
-**************************************************************************/
-
-/* ptr to sender , usrn = reciever */
-static void FUNC droid_annoy(WARSHP *ptr, int usrn)
-{
-	int base, sel, interval;
-
-	/* skip NPCs entirely */
-	if (usrn >= nterms)
-		return;
-
-	base = DRBASEM + ((ptr->shpclass - dr_class) * 12);
-	interval = 10 + shipclass[ptr->shpclass].tough_factor;	/* tougher npcs have fewer ticks */
-	sel = 0;
-
-	/* display friend or foe msg if not engaged with that user */
-	if (ptr->cybmine == 255) {
-		if (ptr->npcmsg == 0)			/* if starting fresh or coming back from cybmine set */
-			ptr->npcmsg = interval;
-		if (ptr->npcmsg > interval * 4)		/* cycle through msgs instead of rnd pick */
-			ptr->npcmsg = 1;
-		if (ptr->npcmsg % interval == 0)
-			sel = base + (ptr->npcmsg / interval);
-		if (sel != 0) {
-			if (sel + 4 >= DRLASTM) {
-				geshocst(0, "GE:BAD DROID MSG FF");
-				logthis(spr("droid_annoy:bad msg ff usrn [%d]", usrn));
-				return;
-			}
-			if (warusroff(usrn)->factions[shipclass[ptr->shpclass].faction] > 50) {
-				prfmsg(sel + 4, ptr->shipname);
-				outprfge(FLT_BEACON, usrn);
-			} else {
-				prfmsg(sel, ptr->shipname);
-				outprfge(FLT_NONE, usrn);
-			}
-		}
-	} else {
-		/* npcmsg 255 means the ship was just hit, say ouch */
-		if (ptr->npcmsg == 255) {
-			sel = base + (gernd() % 4) + 9;
-			if (sel >= DRLASTM) {
-				geshocst(0, "GE:BAD DROID MSG BTL");
-				logthis(spr("droid_annoy:bad msg btl usrn [%d]", usrn));
-				return;
-			}
-			prfmsg(sel, ptr->shipname);
-			outprfge(FLT_NONE, usrn);
-			ptr->npcmsg = 0;
-		}
-	}
-}
-
-/**************************************************************************
-** Droid Distress Function                                               **
-**************************************************************************/
-
-static void FUNC droid_distress(WARSHP *ptr, int usrn)
-{
-	if (ptr->distress >= nships || !ingegame(ptr->distress))
-		ptr->distress = 255;
-	if (ptr->distress != ptr->cybmine && ptr->cybmine < nships) {
-		setsect(ptr);
-		prfmsg(DRDISMSG, ptr->shipname, shipclass[ptr->shpclass].typename,
-			username(warshpoff(ptr->cybmine)), xsect, ysect);
-		outwar(FLT_DISTRESS, usrn, 0, 0);
-		ptr->distress = ptr->cybmine;
 	}
 }
 
@@ -975,97 +1061,4 @@ void FUNC droid_died(WARSHP *ptr)
 {
 	ptr->status = GESTAT_AVAIL;
 	logthis(spr("GE:INF:%s Died!", ptr->userid));
-}
-
-/**************************************************************************
-** Droid Check State Function                                            **
-**************************************************************************/
-
-static void FUNC droid_check_state(WARSHP *ptr, int usrn)
-{
-	if (ptr->speed < 1000.0) {
-		ptr->where = 0;
-		if (ptr->shieldstat != SHIELDDM)
-			shieldup(ptr, usrn);
-	} else {
-		ptr->where = 1;
-		if (ptr->shieldstat == SHIELDUP)
-			shielddn(ptr, usrn);
-	}
-}
-
-/**************************************************************************
-** Not Claimed Droid Function                                            **
-**************************************************************************/
-
-static int FUNC notclaimed_d(int drtype, int usrn)
-{
-	WARSHP *wptr;
-	int zothusn;
-
-	for (zothusn = nterms; zothusn < nships; zothusn++) {
-		wptr = warshpoff(zothusn);
-		if (wptr->status == GESTAT_AUTO && shipclass[wptr->shpclass].loadout == drtype && wptr->cybmine == (byte)usrn)
-			return (FALSE);
-	}
-	return (TRUE);
-}
-
-/**************************************************************************
-** Droid Phaser Function                                                 **
-**************************************************************************/
-
-static void FUNC droid_phaser(WARSHP *ptr, int usrn, WARSHP *wptr)
-{
-	if (shipclass[ptr->shpclass].max_phasr > 0 && !neutral(&ptr->coord) &&
-		!neutral(&wptr->coord) && isvisible(ptr, wptr) &&
-		gernd() % (4 - (shipclass[ptr->shpclass].tough_factor / 2)) == 0) {
-		ptr->degrees = cbearing(&ptr->coord, &wptr->coord, ptr->heading);
-		if (wptr->where == 1 && ptr->where == 1 && ptr->hypha == 0 && ptr->phasr >= 0)
-			firehp(ptr, usrn);
-		else if (ptr->where == 0 && (wptr->where == 0 || (wptr->where == 1 &&
-			shipclass[ptr->shpclass].max_phasr >= phatowrp)) && ptr->phasr >= PMINFIRE) {
-			ptr->percent = 2;
-			firep(ptr, usrn);
-		}
-	}
-}
-
-/**************************************************************************
-** Droid Torpedo Function                                                **
-**************************************************************************/
-
-static void FUNC droid_torp(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn)
-{
-	int i, tden;
-
-	if (!neutral(&ptr->coord) && !neutral(&wptr->coord) && isvisible(ptr, wptr) &&
-		ptr->where == 0 && wptr->where == 0 &&
-		shipclass[ptr->shpclass].max_torps && gernd() % 2 == 0) {
-		tden = 5 - shipclass[ptr->shpclass].tough_factor;
-		if (tden < 1)
-			tden = 1;
-		for (i = 0; i < shipclass[ptr->shpclass].max_torps; ++i) {
-			if (ptr->items[I_TORPEDO] > 0 && gernd() % tden == 0)
-				torp(ptr, usrn, zothusn);
-		}
-	}
-}
-
-/**************************************************************************
-** Droid Zygor Loadout Function                                          **
-**************************************************************************/
-
-static void FUNC droid_zyg_loadout(WARSHP *ptr)
-{
-	ptr->items[I_MISSILE] = (gernd() % 50) + 10;
-	ptr->items[I_TORPEDO] = (gernd() % 50) + 10;
-	ptr->items[I_IONCANNON] = (gernd() % 20) + 10;
-	ptr->items[I_FIGHTER] = (gernd() % 100) + 20;
-	ptr->items[I_FLUXPOD] = (gernd() % 40) + 10;
-	ptr->items[I_DECOYS] = (gernd() % 100) + 10;
-	ptr->items[I_JAMMERS] = (gernd() % 100) + 10;
-	ptr->items[I_ZIPPERS] = (gernd() % 100) + 10;
-	ptr->items[I_MINE] = (gernd() % 100) + 10;
-	ptr->items[I_GOLD] = (gernd() % cyb_gold) + 1000;
 }
