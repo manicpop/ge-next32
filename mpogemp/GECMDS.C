@@ -126,6 +126,7 @@ void FUNC cmd_gehelp(void), cmd_cloak(void), cmd_impulse(void), cmd_phas(void),
 
 #define GECMDSIZ (sizeof(gecmds)/sizeof(struct cmd))
 
+/* these must be in order for gesearch() to work */
 struct	cmd	gecmds[]={
 		/*	command	function	0=payers only */
 		/*	-------	----------- 	------------- */
@@ -263,6 +264,10 @@ struct hlpcmd gehlp[] = {
 		{NULL,				0}
 };
 
+/**************************************************************************
+** Search a sorted command table                                         **
+**************************************************************************/
+
 struct cmd *FUNC gesearch(char *ptr, struct cmd tab[], int len)
 {
 	int c;
@@ -317,7 +322,7 @@ void FUNC gwar(void)
 		}
 
 		for (mv0ptr = margv[0]; *mv0ptr != '\0'; mv0ptr++) {
-			*mv0ptr = tolower(*mv0ptr);
+			*mv0ptr = (char)tolower((unsigned char)*mv0ptr);
 		}
 		if (sameas(margv[0], ">")) {
 #ifdef PHARLAP
@@ -1230,7 +1235,7 @@ int FUNC findshp(char *ptr, int type) /* 0 = this sector only, 1 = everywhere */
 			}
 		}
 	} else {
-		letter = toupper(*ptr);
+		letter = (char)toupper((unsigned char)*ptr);
 		update_scantab(warsptr,usrnum);
 		for (i=0; i<NOSCANTAB; ++i) {
 			if (scantab[usrnum].ship[i].flag && scantab[usrnum].ship[i].letter == letter) {
@@ -1866,7 +1871,7 @@ void FUNC cmd_report(void)
 		for (i=0; i<NUMITEMS; ++i) {
 			if (warsptr->items[i] > 0) {
 				sprintf(gechrbuf,"%s%s%16lu",item_name[i],gedots(22-strlen(item_name[i])),warsptr->items[i]);
-				gechrbuf[0] = toupper(gechrbuf[0]);
+				gechrbuf[0] = (char)toupper((unsigned char)gechrbuf[0]);
 				prf("%s\r",gechrbuf);
 			}
 		}

@@ -958,7 +958,7 @@ if (plnum <= MAXPLANETS && plnum > 0)
 					if (plptr->items[i].qty > 0)
 						{
 						sprintf(gechrbuf,"%s%s%12lu",item_name[i],gedots(26-strlen(item_name[i])),plptr->items[i].qty);
-						gechrbuf[0] = toupper(gechrbuf[0]);
+						gechrbuf[0] = (char)toupper((unsigned char)gechrbuf[0]);
 						prf("%s\r",gechrbuf);
 						}
 					}

@@ -482,7 +482,7 @@ void FUNC iniwara(void)
 
 	optmenu = ynopt(OPTMENU);			/* optional text/help menu enabled */
 	optchr = chropt(OPTCHR);			/* optional text trigger character */
-	optchr = toupper(optchr);
+	optchr = (char)toupper((unsigned char)optchr);
 	opttxt = stgopt(OPTTXT);			/* optional text/help prompt */
 
 	opttbl = (long *)alcmem(n = nterms * sizeof(long));	/* per-user option-text offsets */
@@ -2425,7 +2425,7 @@ int FUNC mnu_main_ans(void)
 			return 0;
 		}
 		else if (optmenu) {
-			input[0] = toupper(input[0]);
+			input[0] = (char)toupper((unsigned char)input[0]);
 			if (input[0] == optchr) {
 				optdisp();
 				return 1;
@@ -2535,7 +2535,7 @@ int mnu_admenu1a(void)
 			return 1;
 		rstrin();
 
-		*margv[0] = toupper(*margv[0]);
+		*margv[0] = (char)toupper((unsigned char)*margv[0]);
 		strncpy(plptr->name, margv[0], 19);
 		plptr->name[19] = 0;
 
@@ -2788,7 +2788,7 @@ int FUNC mnu_admenu2f3(void)
 		return 1;
 	}
 	if (margc == 1 && (sameto("y", margv[0]) || sameto("n", margv[0]))) {
-		titems[usrnum].sell = toupper(*margv[0]);
+		titems[usrnum].sell = (char)toupper((unsigned char)*margv[0]);
 		prfmsg(ADMEN2F4, item_name[warsptr->titem], plptr->items[warsptr->titem].reserve);
 		outprfge(FLT_NONE, usrnum);
 		usrptr->substt = ADMEN2F4;
@@ -2960,7 +2960,7 @@ int FUNC mnu_choosesh(void)
 int mnu_menug(void)
 {
 	if (margc > 0) {
-		switch (tolower(*margv[0])) {
+		switch (tolower((unsigned char)*margv[0])) {
 
 		case '1':
 
@@ -3014,7 +3014,7 @@ int mnu_menug(void)
 int FUNC mnu_menug1(void)
 {
 	if (margc > 0) {
-		switch (tolower(*margv[0])) {
+		switch (tolower((unsigned char)*margv[0])) {
 
 		case 'n':
 
@@ -3055,7 +3055,7 @@ int FUNC mnu_menug1(void)
 int FUNC mnu_menug2(void)
 {
 	if (margc > 0) {
-		switch (tolower(*margv[0])) {
+		switch (tolower((unsigned char)*margv[0])) {
 
 		case 'n':
 

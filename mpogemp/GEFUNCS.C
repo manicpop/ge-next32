@@ -3900,7 +3900,7 @@ int FUNC valpcnt(char *ptr, unsigned minnum, unsigned maxnum)
 
 	stripb(ptr);
 	if (inplen != 0) {
-		for (inpptr = ptr; isdigit(*inpptr); inpptr++) {
+		for (inpptr = ptr; isdigit((unsigned char)*inpptr); inpptr++) {
 		}
 		if (*inpptr == '\0' || *inpptr == ' ') {
 			if ((val = atoi(ptr)) >= minnum && val <= maxnum) {
