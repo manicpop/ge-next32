@@ -112,23 +112,6 @@ static struct upgdef upgdefs[NUMUPGRADES] = {
 	{NCORE, UPGR8, UPGRD8, 7}
 };
 
-static int load_orbit_planet(int usrn);
-
-static int upg_allowed(WARSHP *ptr, unsigned int loadout, int idx)
-{
-	if (!(loadout & upgdefs[idx].bit))
-		return(FALSE);
-	if (upgdefs[idx].bit == TPONDER && shipclass[ptr->shpclass].noclaim == 0)
-		return(FALSE);
-	return(TRUE);
-}
-
-static long upg_price(WARSHP *ptr, int idx)
-{
-	return((long)(((double)upgrprice[upgdefs[idx].priceidx] *
-		shipclass[ptr->shpclass].damfact) / 100.0));
-}
-
 void FUNC cmd_gehelp(void), cmd_cloak(void), cmd_impulse(void), cmd_phas(void),
 	cmd_report(void), cmd_rotate(void), cmd_send(void), cmd_scan(void),
 	cmd_shields(void), cmd_warp(void), cmd_torp(void), cmd_missl(void),
@@ -140,26 +123,6 @@ void FUNC cmd_gehelp(void), cmd_cloak(void), cmd_impulse(void), cmd_phas(void),
 	cmd_abandon(void), cmd_zipper(void), cmd_lock(void), cmd_navigate(void),
 	cmd_who(void), cmd_clear(void), cmd_data(void), cmd_team(void), cmd_spy(void),
 	cmd_jettison(void), cmd_stop(void);
-
-static char *repdmg_eta(WARSHP *ptr, int steps, int active, int fuzz)
-{
-	int secs;
-
-	if (ptr->repair > 0 || !(ptr->upgrade & DAMCTRL) || steps <= 0)
-		return("");
-
-	if (!active) {
-		sprintf(gechrbuf3, "(ETA: TBD)");
-		return(gechrbuf3);
-	}
-
-	secs = ((steps + 1) / 2) * TICKTIME;
-	secs += fuzz;
-	if (secs < TICKTIME)
-		secs = TICKTIME;
-	sprintf(gechrbuf3, "(ETA: %d seconds)", secs);
-	return(gechrbuf3);
-}
 
 #define GECMDSIZ (sizeof(gecmds)/sizeof(struct cmd))
 
@@ -2138,6 +2101,26 @@ void FUNC cmd_scan(void)
 	}
 }
 
+static char *repdmg_eta(WARSHP *ptr, int steps, int active, int fuzz)
+{
+	int secs;
+
+	if (ptr->repair > 0 || !(ptr->upgrade & DAMCTRL) || steps <= 0)
+		return("");
+
+	if (!active) {
+		sprintf(gechrbuf3, "(ETA: TBD)");
+		return(gechrbuf3);
+	}
+
+	secs = ((steps + 1) / 2) * TICKTIME;
+	secs += fuzz;
+	if (secs < TICKTIME)
+		secs = TICKTIME;
+	sprintf(gechrbuf3, "(ETA: %d seconds)", secs);
+	return(gechrbuf3);
+}
+
 void FUNC show_rep_sysdam(WARSHP *ptr)
 {
 	int need;
@@ -2199,6 +2182,22 @@ void FUNC show_rep_sysdam(WARSHP *ptr)
 		active = FALSE;
 	}
 }
+
+/**************************************************************************
+** Load the planet currently being orbited                               **
+**************************************************************************/
+
+static int load_orbit_planet(int usrn)
+{
+	plnum = warsptr->where - 10;
+	if (!getplanetdat(usrn)) {
+		prfmsg(NOPLNT);
+		outprfge(FLT_NONE, usrn);
+		return FALSE;
+	}
+	return TRUE;
+}
+
 
 /**************************************************************************
 ** Take the shields up or down                                           **
@@ -3645,6 +3644,21 @@ void FUNC cmd_maint(void)
 /**************************************************************************
 ** New ship or goods command                                             **
 **************************************************************************/
+
+static int upg_allowed(WARSHP *ptr, unsigned int loadout, int idx)
+{
+	if (!(loadout & upgdefs[idx].bit))
+		return(FALSE);
+	if (upgdefs[idx].bit == TPONDER && shipclass[ptr->shpclass].noclaim == 0)
+		return(FALSE);
+	return(TRUE);
+}
+
+static long upg_price(WARSHP *ptr, int idx)
+{
+	return((long)(((double)upgrprice[upgdefs[idx].priceidx] *
+		shipclass[ptr->shpclass].damfact) / 100.0));
+}
 
 void FUNC cmd_new(void)
 {
@@ -5550,15 +5564,4 @@ void FUNC jettison(int item)
 		prfmsg(FORMAT,"JETTISON");
 		outprfge(FLT_NONE,usrnum);
 	}
-}
-
-static int load_orbit_planet(int usrn)
-{
-	plnum = warsptr->where - 10;
-	if (!getplanetdat(usrn)) {
-		prfmsg(NOPLNT);
-		outprfge(FLT_NONE, usrn);
-		return FALSE;
-	}
-	return TRUE;
 }
