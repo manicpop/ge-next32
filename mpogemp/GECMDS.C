@@ -290,6 +290,10 @@ struct cmd *FUNC gesearch(char *ptr, struct cmd tab[], int len)
 	return(NULL);
 }
 
+/**************************************************************************
+** Parse and dispatch a Galactic Empire command                          **
+**************************************************************************/
+
 void FUNC gwar(void)
 {
 	struct cmd *cmdptr;
@@ -367,6 +371,9 @@ void FUNC warnop(void)
 	outprfge(FLT_NONE, usrnum);
 }
 
+/**************************************************************************
+** Display command and topic help                                        **
+**************************************************************************/
 
 void FUNC cmd_gehelp(void)
 {
@@ -953,18 +960,8 @@ void FUNC cmd_torp(void)
 		return;
 	}
 
-	if (warsptr->shieldstat == SHIELDUP) {
-		shielddn(warsptr,usrnum);
-	}
-
 	if (warsptr->items[I_TORPEDO] == 0) {
 		prfmsg(NOTORPS);
-		outprfge(FLT_NONE,usrnum);
-		return;
-	}
-
-	if (margv[1] == NULL) {
-		prfmsg(NOSHIP);
 		outprfge(FLT_NONE,usrnum);
 		return;
 	}
@@ -1008,6 +1005,8 @@ void FUNC cmd_torp(void)
 				outprfge(FLT_NONE,usrnum);
 				return;
 			}
+			if (warsptr->shieldstat == SHIELDUP)
+				shielddn(warsptr,usrnum);
 			torp(warsptr,usrnum,shpnum);
 		}
 	} else {
@@ -1046,17 +1045,8 @@ void FUNC cmd_missl(void)
 		return;
 	}
 
-	if (warsptr->shieldstat == SHIELDUP)
-		shielddn(warsptr,usrnum);
-
 	if (warsptr->items[I_MISSILE] == 0) {
 		prfmsg(NOMISSL);
-		outprfge(FLT_NONE,usrnum);
-		return;
-	}
-
-	if (margv[1] == NULL && margc == 3) {
-		prfmsg(NOSHIP);
 		outprfge(FLT_NONE,usrnum);
 		return;
 	}
@@ -1111,6 +1101,8 @@ void FUNC cmd_missl(void)
 				outprfge(FLT_NONE,usrnum);
 				return;
 			}
+			if (warsptr->shieldstat == SHIELDUP)
+				shielddn(warsptr,usrnum);
 			misl(warsptr,usrnum,shpnum,energy,energy);
 		}
 	} else {
@@ -1147,7 +1139,7 @@ int FUNC lockon(WARSHP *ptr, int type, int ship, int usrn)
 		return(0);
 	}
 
-	if (warsptr->jam_sev > (byte)2) {
+	if (ptr->jam_sev > (byte)2) {
 		prfmsg(JAMMER4W);
 		outprfge(FLT_NONE,usrn);
 		return(0);
@@ -1162,7 +1154,7 @@ int FUNC lockon(WARSHP *ptr, int type, int ship, int usrn)
 	}
 
 	dist = cdistance(&ptr->coord,&(wptr->coord));
-	if (wptr->cloak < 10 && (dist*10000.0) < (double)ship_scanrange(warsptr)) {
+	if (wptr->cloak < 10 && (dist*10000.0) < (double)ship_scanrange(ptr)) {
 		speed = ptr->speed + wptr->speed;
 
 		if (type == 0) { /* torpedo */
@@ -1200,6 +1192,10 @@ int FUNC lockon(WARSHP *ptr, int type, int ship, int usrn)
 	}
 }
 
+/**************************************************************************
+** Find a ship by letter or current lock                                 **
+**************************************************************************/
+
 int FUNC findshp(char *ptr, int type) /* 0 = this sector only, 1 = everywhere */
 {
 	char letter;
@@ -1209,6 +1205,7 @@ int FUNC findshp(char *ptr, int type) /* 0 = this sector only, 1 = everywhere */
 
 	shpnum = -1;
 	if (ptr[0] == '@') {
+		/* resolve current lock target, clearing stale locks as needed */
 		if (warsptr->lock < 0 || warsptr->lock >= nships) {
 			warsptr->lock = -1;
 			warsptr->lock_grace = 0;
@@ -1235,6 +1232,7 @@ int FUNC findshp(char *ptr, int type) /* 0 = this sector only, 1 = everywhere */
 			}
 		}
 	} else {
+		/* otherwise resolve the current scan-table letter mapping */
 		letter = (char)toupper((unsigned char)*ptr);
 		update_scantab(warsptr,usrnum);
 		for (i=0; i<NOSCANTAB; ++i) {
@@ -1303,7 +1301,7 @@ void FUNC cmd_decoy(void)
 		return;
 	}
 
-	if (warsptr->cloak > 0 ) {
+	if (warsptr->cloak > 0) {
 		prfmsg(PCLOKUP,"The decoy launcher is");
 		outprfge(FLT_NONE,usrnum);
 		return;
@@ -1750,6 +1748,7 @@ void FUNC cmd_send(void)
 void FUNC cmd_report(void)
 {
 	WARSHP *ptr;
+	char *tname;
 	int max, pcnt, i, none, zothusn;
 	double ddist;
 
@@ -1847,7 +1846,6 @@ void FUNC cmd_report(void)
 				prfmsg(REP13);
 		}
 
-		damage = (unsigned)(warsptr->damage+.5);
 		damstr(damage);
 
 		prfmsg(REP14,gechrbuf);
@@ -1900,8 +1898,11 @@ void FUNC cmd_report(void)
 
 		prfmsg(REP32,warsptr->kills,warsptr->ukills);
 
-		if (waruptr->teamcode > 0)
-			prfmsg(REP33,teamname(waruptr));
+		if (waruptr->teamcode > 0) {
+			tname = teamname(waruptr);
+			if (tname != NULL)
+				prfmsg(REP33,tname);
+		}
 	} else if (sameas(margv[1],"ord")) {
 		prfmsg(REP41);
 		none = TRUE;
@@ -2106,6 +2107,10 @@ void FUNC cmd_scan(void)
 	}
 }
 
+/**************************************************************************
+** Format a repair ETA string for REPORT SYS                             **
+**************************************************************************/
+
 static char *repdmg_eta(WARSHP *ptr, int steps, int active, int fuzz)
 {
 	int secs;
@@ -2125,6 +2130,10 @@ static char *repdmg_eta(WARSHP *ptr, int steps, int active, int fuzz)
 	sprintf(gechrbuf3, "(ETA: %d seconds)", secs);
 	return(gechrbuf3);
 }
+
+/**************************************************************************
+** Show subsystem damage details for REPORT SYS                          **
+**************************************************************************/
 
 void FUNC show_rep_sysdam(WARSHP *ptr)
 {
@@ -2720,7 +2729,7 @@ int FUNC attack_men(unsigned long num)
 	warsptr->items[I_TROOPS] -= num;
 	sprintf(gechrbuf, "%ld", num);
 
-	/* tell him there gone*/
+	/* tell him they're gone*/
 	prfmsg(ATTACKM1, gechrbuf);
 	outprfge(FLT_NONE, usrnum);
 
@@ -2876,7 +2885,6 @@ int FUNC attack_fig(unsigned long num)
 	int won = 0;
 	int ii;
 	unsigned long j, left1, left2, kill1, kill2, ratio;
-	float fl1, fl2, fl3;
 
 	warsptr->items[I_FIGHTER] -= num;
 	sprintf(gechrbuf, "%ld", num);
@@ -2890,13 +2898,8 @@ int FUNC attack_fig(unsigned long num)
 	kill2 = 0;
 
 	/* figure out the proportion of this attack */
-
-	/* there is a bug here */
 	if (left2 > 0) {
-		fl1 = left1;
-		fl2 = left2;
-		fl3 = (fl1 / fl2) * 100.0;
-		ratio = (unsigned long)fl3;
+		ratio = (left1 * 100UL) / left2;
 	} else {
 		ratio = 0;
 	}
@@ -3014,6 +3017,10 @@ int FUNC attack_fig(unsigned long num)
 	return (won);
 }
 
+/**************************************************************************
+** Notify the owner about a planetary attack                             **
+**************************************************************************/
+
 void FUNC call_4_help(int send_spy_mail, int won)
 {
 	if (instat(plptr->userid, gestt) && othusp->substt >= FIGHTSUB) {
@@ -3049,6 +3056,10 @@ void FUNC call_4_help(int send_spy_mail, int won)
 		clrprf();
 	}
 }
+
+/**************************************************************************
+** Transfer a conquered planet to the attacking player                   **
+**************************************************************************/
 
 void FUNC wonplnt(void)
 {
@@ -3529,6 +3540,10 @@ void FUNC buy(int item)
 	}
 }
 
+/**************************************************************************
+** Determine how much of an item is available for sale                   **
+**************************************************************************/
+
 unsigned long FUNC amt4sale(int item)
 {
 	unsigned long forsale = 0;
@@ -3538,16 +3553,12 @@ unsigned long FUNC amt4sale(int item)
 	else if (plptr->items[item].qty > plptr->items[item].reserve && plptr->items[item].sell == 'Y')
 		forsale = plptr->items[item].qty - plptr->items[item].reserve;
 
-	if (item == I_GOLD) {
-		if (!load_orbit_planet(usrnum))
-			return (forsale);
-		if (neutral(&warsptr->coord) && plnum == 1) {
-			forsale = waruptr->cash;
-		}
-	}
-
 	return (forsale);
 }
+
+/**************************************************************************
+** Calculate the purchase price for a planet item                        **
+**************************************************************************/
 
 long FUNC price(unsigned item, unsigned long amt)
 {
@@ -3801,7 +3812,6 @@ void FUNC cmd_new(void)
 		}
 		if (sameas(margv[1], "ship")) {
 			type = atoi(margv[2]) - 1;
-/* FIX THIS - Change to use full name instead of number */
 			if (type >= 0 && type < cyb_class && shipclass[type].max_type == CLASSTYPE_USER) {
 				if (waruptr->noships < maxships) {
 					if (shipclass[type].max_price <= waruptr->cash) {
@@ -4104,7 +4114,7 @@ void FUNC cmd_sysop(void)
 			return;
 		}
 	} else if (sameas("maint",margv[1])) {
-		if (sameas("now",margv[2])) {
+		if (margc >= 3 && sameas("now",margv[2])) {
 			fullrepair(warsptr);
 			prfmsg(MAINT7);
 			outprfge(FLT_NONE,usrnum);
@@ -4338,12 +4348,6 @@ void FUNC cmd_lock(void)
 		warsptr->lock = -1;
 		warsptr->lock_grace = 0;
 		prfmsg(LOCK01);
-		outprfge(FLT_NONE, usrnum);
-		return;
-	}
-
-	if (margv[1] == NULL) {
-		prfmsg(NOSHIP);
 		outprfge(FLT_NONE, usrnum);
 		return;
 	}
@@ -5047,7 +5051,7 @@ void FUNC cmd_team(void)
 		i = 0;
 
 		if (qeqbtv(&waruptr->teamcode,2)) {
-			prfmsg(TEAMMHDR,gemaxlist);
+			prfmsg(TEAMMHDR);
 
 			do {
 				gcrbtv(&tmpusr,2);
@@ -5253,7 +5257,6 @@ void FUNC cmd_team(void)
 char *FUNC teamname(WARUSR *ptr)
 {
 	int i;
-	static char badteamname[]={"Invalid Team Code"};
 
 	for (i=0; i<MAXTEAMS; ++i) {
 		if (ptr->teamcode == teamtab[i].teamcode
@@ -5261,7 +5264,7 @@ char *FUNC teamname(WARUSR *ptr)
 			return(teamtab[i].teamname);
 		}
 	}
-	return(&badteamname[0]);
+	return(NULL);
 }
 
 void FUNC cmd_clear(void)

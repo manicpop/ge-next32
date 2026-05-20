@@ -678,6 +678,7 @@ if (shpnum == usrnum)
 else
 if (shpnum >= 0)
 	{
+	char *tname;
 	wptr = warshpoff(shpnum);
 	wuptr = warusroff(shpnum);
 	scandist = cdistance(&warsptr->coord,&wptr->coord)*10000;
@@ -710,8 +711,11 @@ if (shpnum >= 0)
 			{
 			if (wptr->shipname[0] != '\0')
 				prfmsg(SCAN02,username(wptr));
-			if (warusroff(shpnum)->teamcode >0)
-				prfmsg(SCAN02A,teamname(wuptr));
+			if (warusroff(shpnum)->teamcode > 0) {
+				tname = teamname(wuptr);
+				if (tname != NULL)
+					prfmsg(SCAN02A,tname);
+			}
 			}
 		memset(gechrbuf, 0, 255);
 		sprintf(gechrbuf,"%d",bearing);
