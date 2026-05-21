@@ -659,7 +659,9 @@ typedef struct _mail {
 /*86*/
 	char string1[80];		/* aux text field (usually attacker userid) */
 /*166*/
-	char name1[25];			/* primary name field (usually planet name) */
+	char name1[20];			/* primary name field (usually planet name) */
+/*186*/
+	char filler1[5];		/* reserved for future primary-name growth */
 /*191*/
 	char name2[20];			/* secondary name field (usually ship name) */
 /*211*/
@@ -693,7 +695,9 @@ typedef struct _mailstat {
 /*56*/
 	char topic[30];			/* mail subject/topic text                 */
 /*86*/
-	char name1[25];			/* planet name                             */
+	char name1[20];			/* planet name                             */
+/*106*/
+	char filler1[5];		/* reserved for future planet-name growth  */
 /*111*/
 	int int1;			/* planet sector x                         */
 /*113*/

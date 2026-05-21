@@ -1574,7 +1574,7 @@ void FUNC cmd_send(void)
 {
 	int i;
 	int validteam = FALSE;
-	unsigned long val;
+	long val;
 	char *msgptr;
 
 	if (sameas(margv[0],">") && margc < 2) {
@@ -1591,7 +1591,7 @@ void FUNC cmd_send(void)
 				prfmsg(MSGSNT4,warsptr->freq);
 		} else if (margc == 3) {
 			val = atol(margv[2]);
-			if (val <= 65535L) {
+			if (val >= 0L && val <= 65535L) {
 				warsptr->freq = (unsigned)val;
 				if (warsptr->freq == 0)
 					prfmsg(MSGSNT4N);
@@ -3958,8 +3958,24 @@ void FUNC cmd_sysop(void)
 		}
 		return;
 	} else if (sameas("cash",margv[1]) && margc == 3) {
-		waruptr->cash += atol(margv[2]);
-		sprintf(gechrbuf,"%lu",atol(margv[2]));
+		long delta;
+		unsigned long amount;
+
+		delta = atol(margv[2]);
+		if (delta < 0L) {
+			amount = (unsigned long)(-(delta + 1L)) + 1UL;
+			if (amount > waruptr->cash)
+				waruptr->cash = 0;
+			else
+				waruptr->cash -= amount;
+		} else {
+			amount = (unsigned long)delta;
+			if (amount > ULCAP - waruptr->cash)
+				waruptr->cash = ULCAP;
+			else
+				waruptr->cash += amount;
+		}
+		sprintf(gechrbuf,"%ld",delta);
 		prfmsg(SYSCASH,gechrbuf);
 		outprfge(FLT_NONE, usrnum);
 		return;
@@ -4015,15 +4031,17 @@ void FUNC cmd_sysop(void)
 			return;
 		}
 	} else if (sameas("shieldtype",margv[1]) && margc == 3) {
-		if (atoi(margv[2]) < 255) {
-			warsptr->shieldtype = atoi(margv[2]);
+		i = atoi(margv[2]);
+		if (i >= 0 && i < 255) {
+			warsptr->shieldtype = i;
 			prfmsg(NEW7,"0",warsptr->shieldtype);
 			outprfge(FLT_NONE, usrnum);
 			return;
 		}
 	} else if (sameas("phasertype",margv[1]) && margc == 3) {
-		if (atoi(margv[2]) < 255) {
-			warsptr->phasrtype = atoi(margv[2]);
+		i = atoi(margv[2]);
+		if (i >= 0 && i < 255) {
+			warsptr->phasrtype = i;
 			prfmsg(NEW10,"0",warsptr->phasrtype);
 			outprfge(FLT_NONE, usrnum);
 			return;

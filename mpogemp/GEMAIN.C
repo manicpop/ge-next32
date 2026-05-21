@@ -437,7 +437,7 @@ void FUNC iniwara(void)
 		maxpl[i] = (double)lngopt(ITMPL01 + i, 0L, 201228378L);
 		logthis(spr("Itm #%d maxpl=%ld", i, (long)maxpl[i]));
 
-		weight[i] = lngopt(ITMWT01 + i, 0L, 201228378L);
+		weight[i] = lngopt(ITMWT01 + i, 1L, 201228378L);
 		logthis(spr("Itm #%d weight=%ld", i, weight[i]));
 
 		value[i] = lngopt(ITMVAL01 + i, 0L, 201228378L);
@@ -1538,6 +1538,7 @@ void FUNC load_team_tab(void)
 	char buffer[256];
 	FILE *mzfp;
 	int i;
+	long val;
 
 	/* clear out the memory team table */
 	for (i = 0; i < MAXTEAMS; ++i) {
@@ -1560,7 +1561,10 @@ void FUNC load_team_tab(void)
 				/* unpack the fixed-position fields into the in-memory team table */
 				strncpy(gechrbuf, &buffer[5], 5);
 				gechrbuf[5] = 0;
-				teamtab[i].teamcode = atol(gechrbuf);
+				val = atol(gechrbuf);
+				if (val < 0L)
+					val = 0L;
+				teamtab[i].teamcode = val;
 				logthis(spr(" Team Code [%s]", gechrbuf));
 
 				strncpy(teamtab[i].teamname, &buffer[11], 30);
@@ -1570,12 +1574,22 @@ void FUNC load_team_tab(void)
 
 				strncpy(gechrbuf, &buffer[42], 5);
 				gechrbuf[5] = 0;
-				teamtab[i].teamcount = atoi(gechrbuf);
+				val = atol(gechrbuf);
+				if (val < 0L)
+					val = 0L;
+				else if (val > 65535L)
+					val = 65535L;
+				teamtab[i].teamcount = (unsigned int)val;
 				logthis(spr(" Team Cnt [%s]", gechrbuf));
 
 				strncpy(gechrbuf, &buffer[48], 10);
 				gechrbuf[10] = 0;
-				teamtab[i].teamdeldate = atoi(gechrbuf);
+				val = atol(gechrbuf);
+				if (val < 0L)
+					val = 0L;
+				else if (val > 65535L)
+					val = 65535L;
+				teamtab[i].teamdeldate = (unsigned int)val;
 				logthis(spr(" Team Del [%s]", gechrbuf));
 
 				strncpy(teamtab[i].password, &buffer[59], 10);
@@ -2661,6 +2675,7 @@ int FUNC mnu_admenu2(void)
 
 int FUNC mnu_admenu2b(void)
 {
+	long val;
 	unsigned long amt;
 
 	if (!load_admin_planet())
@@ -2670,7 +2685,15 @@ int FUNC mnu_admenu2b(void)
 		outprfge(FLT_NONE, usrnum);
 		return 1;
 	}
-	amt = atol(margv[0]);
+	val = atol(margv[0]);
+	if (val < 0L) {
+		prfmsg(ADMENU2D);
+		prfmsg(ADMENU2);
+		outprfge(FLT_NONE, usrnum);
+		usrptr->substt = ADMENU2;
+		return 1;
+	}
+	amt = (unsigned long)val;
 
 	if (amt <= plptr->tax) {
 		if (waruptr->cash > ULCAP - amt) {
@@ -2733,7 +2756,7 @@ int FUNC mnu_admenu2e(void)
 
 int FUNC mnu_admenu2f1(void)
 {
-	unsigned amt;
+	int amt;
 
 	if (!load_admin_planet())
 		return 1;
@@ -2746,7 +2769,7 @@ int FUNC mnu_admenu2f1(void)
 		return 1;
 	}
 	amt = atoi(margv[0]);
-	if (margc == 1 && amt <= 100) {
+	if (margc == 1 && amt >= 0 && amt <= 100) {
 		titems[usrnum].rate = amt;
 		prfmsg(ADMEN2F2, item_name[warsptr->titem], plptr->items[warsptr->titem].markup2a);
 		outprfge(FLT_NONE, usrnum);
@@ -2762,7 +2785,7 @@ int FUNC mnu_admenu2f1(void)
 
 int FUNC mnu_admenu2f2(void)
 {
-	unsigned amt;
+	int amt;
 
 	if (!load_admin_planet())
 		return 1;
@@ -2775,7 +2798,7 @@ int FUNC mnu_admenu2f2(void)
 		return 1;
 	}
 	amt = atoi(margv[0]);
-	if (margc == 1 && amt <= 32000) {
+	if (margc == 1 && amt >= 0 && amt <= 32000) {
 		titems[usrnum].markup2a = amt;
 		prfmsg(ADMEN2F3, item_name[warsptr->titem], plptr->items[warsptr->titem].sell);
 		outprfge(FLT_NONE, usrnum);
@@ -2818,7 +2841,7 @@ int FUNC mnu_admenu2f3(void)
 
 int FUNC mnu_admenu2f4(void)
 {
-	unsigned amt;
+	int amt;
 
 	if (!load_admin_planet())
 		return 1;
@@ -2832,7 +2855,7 @@ int FUNC mnu_admenu2f4(void)
 		return 1;
 	}
 	amt = atoi(margv[0]);
-	if (margc == 1 && amt <= 32000) {
+	if (margc == 1 && amt >= 0 && amt <= 32000) {
 		titems[usrnum].reserve = amt;
 		update_items();
 		prfmsg(ADMENU2);
@@ -2849,11 +2872,11 @@ int FUNC mnu_admenu2f4(void)
 
 int FUNC mnu_admenu2h(void)
 {
-	unsigned amt;
+	int amt;
 
 	if (margc == 1) {
 		amt = atoi(margv[0]);
-		if (amt > 100) {
+		if (amt < 0 || amt > 100) {
 			prfmsg(ADMENU2H);
 			outprfge(FLT_NONE, usrnum);
 			return 1;
