@@ -398,7 +398,9 @@ typedef struct warshp {
 /*30*/
 	int shipno;			/* ship id number; Btrieve key 1           */
 /*32*/
-	char shipname[35];		/* ship name                               */
+	char shipname[20];		/* ship name                               */
+/*52*/
+	char filler3[15];		/* reserved for when i restruct            */
 /*67*/
 	int shpclass;			/* ship class                              */
 /*69*/
@@ -659,7 +661,9 @@ typedef struct _mail {
 /*166*/
 	char name1[25];			/* primary name field (usually planet name) */
 /*191*/
-	char name2[25];			/* secondary name field (usually ship name) */
+	char name2[20];			/* secondary name field (usually ship name) */
+/*211*/
+	char filler2[5];		/* reserved for future secondary-name growth */
 /*216*/
 	int int1;			/* generic integer field 1 (usually sector x) */
 /*218*/

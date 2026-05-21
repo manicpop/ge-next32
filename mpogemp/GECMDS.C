@@ -2758,7 +2758,8 @@ static int attack_men(unsigned long num)
 			else if (mail.type == MESG03)
 				mail.type = MESG03O;
 		} else
-			sprintf(mail.name2, "%s", warsptr->shipname);
+			strncpy(mail.name2, warsptr->shipname, sizeof(mail.name2) - 1);
+			mail.name2[sizeof(mail.name2) - 1] = 0;
 		sprintf(mail.string1, "%s", warsptr->userid);
 
 		mailit(1);
@@ -2896,7 +2897,8 @@ static int attack_fig(unsigned long num)
 			else if (mail.type == MESG05)
 				mail.type = MESG05O;
 		} else {
-			sprintf(mail.name2, "%s", warsptr->shipname);
+			strncpy(mail.name2, warsptr->shipname, sizeof(mail.name2) - 1);
+			mail.name2[sizeof(mail.name2) - 1] = 0;
 		}
 		sprintf(mail.string1, "%s", warsptr->userid);
 
