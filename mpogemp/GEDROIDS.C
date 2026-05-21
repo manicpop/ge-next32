@@ -65,18 +65,18 @@
 char	droidname[UIDSIZ];
 double	dr_topspeed;
 
-static void FUNC droid_act_1(WARSHP *ptr, int usrn);
-static void FUNC droid_act_2(WARSHP *ptr, int usrn);
-static void FUNC droid_act_3(WARSHP *ptr, int usrn);
-static void FUNC droid_act_4(WARSHP *ptr, int usrn);
-static void FUNC droid_act_5(WARSHP *ptr, int usrn);
-static void FUNC droid_act_6(WARSHP *ptr, int usrn);
+static void droid_act_1(WARSHP *ptr, int usrn);
+static void droid_act_2(WARSHP *ptr, int usrn);
+static void droid_act_3(WARSHP *ptr, int usrn);
+static void droid_act_4(WARSHP *ptr, int usrn);
+static void droid_act_5(WARSHP *ptr, int usrn);
+static void droid_act_6(WARSHP *ptr, int usrn);
 
 /**************************************************************************
 ** Droid Zygor Loadout Function                                          **
 **************************************************************************/
 
-static void FUNC droid_zyg_loadout(WARSHP *ptr)
+static void droid_zyg_loadout(WARSHP *ptr)
 {
 	ptr->items[I_MISSILE] = (gernd() % 50) + 10;
 	ptr->items[I_TORPEDO] = (gernd() % 50) + 10;
@@ -225,7 +225,7 @@ void FUNC droid_init(WARSHP *ptr, int usrn, int class)
 **************************************************************************/
 
 /* ptr to sender , usrn = reciever */
-static void FUNC droid_annoy(WARSHP *ptr, int usrn)
+static void droid_annoy(WARSHP *ptr, int usrn)
 {
 	int base, sel, interval;
 
@@ -279,7 +279,7 @@ static void FUNC droid_annoy(WARSHP *ptr, int usrn)
 ** Droid Distress Function                                               **
 **************************************************************************/
 
-static void FUNC droid_distress(WARSHP *ptr, int usrn)
+static void droid_distress(WARSHP *ptr, int usrn)
 {
 	if (ptr->distress >= nships || !ingegame(ptr->distress))
 		ptr->distress = 255;
@@ -296,7 +296,7 @@ static void FUNC droid_distress(WARSHP *ptr, int usrn)
 ** Droid Check State Function                                            **
 **************************************************************************/
 
-static void FUNC droid_check_state(WARSHP *ptr, int usrn)
+static void droid_check_state(WARSHP *ptr, int usrn)
 {
 	if (ptr->speed < 1000.0) {
 		ptr->where = 0;
@@ -313,7 +313,7 @@ static void FUNC droid_check_state(WARSHP *ptr, int usrn)
 ** Not Claimed Droid Function                                            **
 **************************************************************************/
 
-static int FUNC notclaimed_d(int drtype, int usrn)
+static int notclaimed_d(int drtype, int usrn)
 {
 	WARSHP *wptr;
 	int zothusn;
@@ -321,16 +321,16 @@ static int FUNC notclaimed_d(int drtype, int usrn)
 	for (zothusn = nterms; zothusn < nships; zothusn++) {
 		wptr = warshpoff(zothusn);
 		if (wptr->status == GESTAT_AUTO && shipclass[wptr->shpclass].loadout == drtype && wptr->cybmine == (byte)usrn)
-			return (FALSE);
+			return FALSE;
 	}
-	return (TRUE);
+	return TRUE;
 }
 
 /**************************************************************************
 ** Droid Phaser Function                                                 **
 **************************************************************************/
 
-static void FUNC droid_phaser(WARSHP *ptr, int usrn, WARSHP *wptr)
+static void droid_phaser(WARSHP *ptr, int usrn, WARSHP *wptr)
 {
 	if (shipclass[ptr->shpclass].max_phasr > 0 && !neutral(&ptr->coord) &&
 		!neutral(&wptr->coord) && isvisible(ptr, wptr) &&
@@ -350,7 +350,7 @@ static void FUNC droid_phaser(WARSHP *ptr, int usrn, WARSHP *wptr)
 ** Droid Torpedo Function                                                **
 **************************************************************************/
 
-static void FUNC droid_torp(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn)
+static void droid_torp(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn)
 {
 	int i, tden;
 
@@ -451,7 +451,7 @@ void FUNC droid_lives(WARSHP *ptr, int usrn)
 ** Impulse only, no phasers, no projectiles                              **
 **************************************************************************/
 
-static void FUNC droid_act_1(WARSHP *ptr, int usrn)
+static void droid_act_1(WARSHP *ptr, int usrn)
 {
 	WARSHP *wptr;
 	int zothusn;
@@ -508,7 +508,7 @@ static void FUNC droid_act_1(WARSHP *ptr, int usrn)
 ** Warp, phasers, no projectiles                                         **
 **************************************************************************/
 
-static void FUNC droid_act_2(WARSHP *ptr, int usrn)
+static void droid_act_2(WARSHP *ptr, int usrn)
 {
 	WARSHP *wptr;
 	int zothusn, around;
@@ -587,7 +587,7 @@ static void FUNC droid_act_2(WARSHP *ptr, int usrn)
 ** Warp, phasers, torps, jammers, mines                                  **
 **************************************************************************/
 
-static void FUNC droid_act_3(WARSHP *ptr, int usrn)
+static void droid_act_3(WARSHP *ptr, int usrn)
 {
 	WARSHP *wptr;
 	int zothusn;
@@ -669,7 +669,7 @@ static void FUNC droid_act_3(WARSHP *ptr, int usrn)
 ** Warp, phasers, decoys, jammers                                        **
 **************************************************************************/
 
-static void FUNC droid_act_4(WARSHP *ptr, int usrn)
+static void droid_act_4(WARSHP *ptr, int usrn)
 {
 	WARSHP *wptr;
 	int zothusn;
@@ -748,7 +748,7 @@ static void FUNC droid_act_4(WARSHP *ptr, int usrn)
 ** Warp, phasers, torps, mines, zippers                                  **
 **************************************************************************/
 
-static void FUNC droid_act_5(WARSHP *ptr, int usrn)
+static void droid_act_5(WARSHP *ptr, int usrn)
 {
 	WARSHP *wptr;
 	int zothusn, lta, low_ship, pickcyb;
@@ -894,7 +894,7 @@ static void FUNC droid_act_5(WARSHP *ptr, int usrn)
 ** Warp, phasers, torps, decoys, jammers, zippers                        **
 **************************************************************************/
 
-static void FUNC droid_act_6(WARSHP *ptr, int usrn)
+static void droid_act_6(WARSHP *ptr, int usrn)
 {
 	WARSHP *wptr;
 	int zothusn, setship;

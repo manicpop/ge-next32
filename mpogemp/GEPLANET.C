@@ -352,7 +352,7 @@ void FUNC multiply(int final_mult)
 ** build special planet # 1                                              **
 **************************************************************************/
 
-static void FUNC build_plan_1(int idx)
+static void build_plan_1(int idx)
 {
 	setmem(&planet, sizeof(GALPLNT), 0);
 
@@ -383,7 +383,7 @@ static void FUNC build_plan_1(int idx)
 	logthis("Zygor build first time");
 }
 
-static void FUNC build_plan_2(int idx)
+static void build_plan_2(int idx)
 {
 	setmem(&planet, sizeof(GALPLNT), 0);
 
@@ -411,7 +411,7 @@ static void FUNC build_plan_2(int idx)
 	logthis("T-Station build first time");
 }
 
-static void FUNC build_other(int idx)
+static void build_other(int idx)
 {
 	setmem(&planet, sizeof(GALPLNT), 0);
 
@@ -436,7 +436,7 @@ static void FUNC build_other(int idx)
 	logthis("Other build first time");
 }
 
-static void FUNC build_worm(int idx)
+static void build_worm(int idx)
 {
 	setmem(&worm, sizeof(GALWORM), 0);
 
@@ -475,7 +475,7 @@ static void FUNC build_worm(int idx)
 ** look up planet.                                                       **
 **************************************************************************/
 
-static int FUNC xgetsector(COORD *sect, int wormy)
+static int xgetsector(COORD *sect, int wormy)
 {
 	int p, i, k, j;
 	double ddist;
@@ -496,7 +496,7 @@ static int FUNC xgetsector(COORD *sect, int wormy)
 			sector.ysect = pkey.ysect;
 			sector.numplan = 0;
 			sector.type = SECTYPE_NORMAL;
-			return (FALSE);
+			return FALSE;
 		}
 
 		/* Didn't find a record - make one */
@@ -644,8 +644,8 @@ static int FUNC xgetsector(COORD *sect, int wormy)
 		}
 	}
 	if (wormnum > 0)
-		return (TRUE);
-	return (FALSE);
+		return TRUE;
+	return FALSE;
 }
 
 /**************************************************************************
@@ -736,9 +736,9 @@ int FUNC getplanet(COORD *sect, int plnt)
 	{
 		geshocst(0, spr("GE:ERR:Missing planet record pl=%d sect=%d,%d",
 			pkey.plnum, pkey.xsect, pkey.ysect));
-		return (FALSE);
+		return FALSE;
 	}
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -750,7 +750,7 @@ int FUNC neutral(COORD *coord)
 {
 	xsect = coord1(coord->xcoord);
 	ysect = coord1(coord->ycoord);
-	return (xsect == 0 && ysect == 0);
+	return xsect == 0 && ysect == 0;
 }
 
 /**************************************************************************
@@ -763,10 +763,10 @@ int FUNC innebula(int x, int y)
 	unsigned long work;
 
 	if (x == 0 && y == 0)
-		return (FALSE);
+		return FALSE;
 
 	if (nebodds <= 0)
-		return (FALSE);
+		return FALSE;
 
 	work = nebseed;
 	work ^= (((unsigned long)(unsigned)x) << 16) | (unsigned)y;
@@ -777,7 +777,7 @@ int FUNC innebula(int x, int y)
 	if (dmod == 0)
 		dmod = 1;
 
-	return ((unsigned)(work % (unsigned long)dmod) == 0);
+	return (unsigned)(work % (unsigned long)dmod) == 0;
 }
 
 void FUNC update_plan_1(void)

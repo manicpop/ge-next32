@@ -339,7 +339,7 @@ void FUNC assign_cybs(int usrnum, int call)
 
 int FUNC cyb_fast(WARSHP *ptr)
 {
-	return (ptr->speed != 0.0) &&
+	return ptr->speed != 0.0 &&
 #ifdef MBBSEMU
 		(fabs(ptr->speed - (long)(ptr->speed / FARSPEED) * FARSPEED) < 1e-6);
 #else
@@ -351,7 +351,7 @@ int FUNC cyb_fast(WARSHP *ptr)
 ** Check whether a ship still has room for more cyb claims               **
 **************************************************************************/
 
-static int FUNC notclaimed(WARSHP *ptr, int usrn)
+static int notclaimed(WARSHP *ptr, int usrn)
 {
 	WARSHP *wptr;
 	int zothusn, nc, noclaim, tpmag;
@@ -384,14 +384,14 @@ static int FUNC notclaimed(WARSHP *ptr, int usrn)
 
 	logthis(spr("notclaimed: nc = %d, class = %d, class.noclaim = %d",
 		nc, ptr->shpclass, noclaim));
-	return (nc < noclaim);
+	return nc < noclaim;
 }
 
 /**************************************************************************
 ** Emit one cyb message to a user                                         **
 **************************************************************************/
 
-static void FUNC cyb_msg(WARSHP *ptr, int usrn, int msgtype)
+static void cyb_msg(WARSHP *ptr, int usrn, int msgtype)
 {
 	int base, sel;
 
@@ -415,7 +415,7 @@ static void FUNC cyb_msg(WARSHP *ptr, int usrn, int msgtype)
 ** Decide whether a cyb message should be shown                          **
 **************************************************************************/
 
-static void FUNC cyb_annoy(WARSHP *ptr, int usrn, int msgtype)
+static void cyb_annoy(WARSHP *ptr, int usrn, int msgtype)
 {
 	/* skip NPCs entirely */
 	if (usrn >= nterms)
@@ -494,7 +494,7 @@ static void FUNC cyb_annoy(WARSHP *ptr, int usrn, int msgtype)
 ** Count down and perform cyb database updates                           **
 **************************************************************************/
 
-static void FUNC db_update(WARSHP *ptr, int usrn)
+static void db_update(WARSHP *ptr, int usrn)
 {
 	WARUSR *wuptr;
 
@@ -529,7 +529,7 @@ static void FUNC db_update(WARSHP *ptr, int usrn)
 ** Attack the other player                                               **
 **************************************************************************/
 
-static void FUNC cyb_attack(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn)
+static void cyb_attack(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn)
 {
 	int i, j, acted;
 	int zipden, mden, tden;
@@ -596,7 +596,7 @@ static void FUNC cyb_attack(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn)
 ** if hunting, and badly damaged dump mines, jam, and boogie             **
 **************************************************************************/
 
-static void FUNC cyb_check_damage(WARSHP *ptr, int usrn)
+static void cyb_check_damage(WARSHP *ptr, int usrn)
 {
 	if (ptr->damage > CYB_MINDAM &&
 		((gernd() % 10 == 0) || ptr->holdcourse > 0)) {
@@ -631,7 +631,7 @@ static void FUNC cyb_check_damage(WARSHP *ptr, int usrn)
 ** Allow msg-configurable frequency of cyb-on-droid attacks              **
 **************************************************************************/
 
-static int FUNC cyb_pick_fight(int usrn, int call)
+static int cyb_pick_fight(int usrn, int call)
 {
 	int zothusn, usersin, nc;
 	WARSHP *wptr;
@@ -641,11 +641,11 @@ static int FUNC cyb_pick_fight(int usrn, int call)
 
 	/* users always */
 	if (usrn < nterms)
-		return (TRUE);
+		return TRUE;
 
 	/* cyb vs droid can be turned off */
 	if (cattkd <= 0)
-		return (FALSE);
+		return FALSE;
 
 	/* is anyone actually playing */
 	for (zothusn = 0; zothusn < nterms; zothusn++)
@@ -656,11 +656,11 @@ static int FUNC cyb_pick_fight(int usrn, int call)
 
 	/* don't attack npc if no users around to see it */
 	if (usersin == FALSE)
-		return (FALSE);
+		return FALSE;
 
 	/* you want mayhem? you asked for it */
 	if (cattkd >= 10)
-		return (TRUE);
+		return TRUE;
 
 	/* limit total amount of cybs pursuing droids to cattkd */
 	for (zothusn = nterms; zothusn < nships; zothusn++) {
@@ -671,23 +671,23 @@ static int FUNC cyb_pick_fight(int usrn, int call)
 			++nc;
 	}
 	if (nc >= cattkd)
-		return (FALSE);
+		return FALSE;
 
 	/* random encounter */
 	if (call == 0)
-		return (TRUE);
+		return TRUE;
 
 	/* picks on a 600x scale of 600 to 5400 */
 	if (call == 1 && gernd() % ((10 - cattkd) * 600) == 0)
-		return (TRUE);
+		return TRUE;
 
-	return (FALSE);
+	return FALSE;
 }
 
 /**************************************************************************
 ** React to incoming projectiles                                         **
 **************************************************************************/
-static void FUNC cyb_check_proj(WARSHP *ptr, int usrn)
+static void cyb_check_proj(WARSHP *ptr, int usrn)
 {
 	MISSILE *mptr;
 	TORPEDO *tptr;
@@ -736,7 +736,7 @@ static void FUNC cyb_check_proj(WARSHP *ptr, int usrn)
 ** Check lockon status                                                   **
 **************************************************************************/
 
-static void FUNC cyb_check_lockon(WARSHP *ptr, int usrn)
+static void cyb_check_lockon(WARSHP *ptr, int usrn)
 {
 	WARSHP *wptr;
 	int zothusn, inbound, keepwarp, attackwarp, closemove, phatwarp;

@@ -77,19 +77,19 @@ int FUNC lockon(WARSHP *ptr, int type, int ship, int usrn)
 	if (type == 0 && ptr->torpcntl > 0) {
 		prfmsg(TRBROKE);
 		outprfge(FLT_NONE,usrn);
-		return(0);
+		return 0;
 	}
 
 	if (type == 1 && ptr->mislcntl > 0) {
 		prfmsg(MIBROKE);
 		outprfge(FLT_NONE,usrn);
-		return(0);
+		return 0;
 	}
 
 	if (ptr->jam_sev > (byte)2) {
 		prfmsg(JAMMER4W);
 		outprfge(FLT_NONE,usrn);
-		return(0);
+		return 0;
 	}
 
 	wptr = warshpoff(ship);
@@ -97,7 +97,7 @@ int FUNC lockon(WARSHP *ptr, int type, int ship, int usrn)
 	if (neutral(&(wptr->coord))) {
 		prfmsg(FCNONO);
 		outprfge(FLT_NONE,usrn);
-		return(0);
+		return 0;
 	}
 
 	dist = cdistance(&ptr->coord,&(wptr->coord));
@@ -123,16 +123,16 @@ int FUNC lockon(WARSHP *ptr, int type, int ship, int usrn)
 				wptr->tick = 2;		/* do it fast */
 				wptr->npcmsg = 255;	/* reset annoy msg tracking */
 			}
-			return(1);
+			return 1;
 		} else {
 			prfmsg(FCNOLOCK,shpltr(usrn,ship));
 			outprfge(FLT_NONE,usrn);
-			return(0);
+			return 0;
 		}
 	} else {
 		prfmsg(NOSHIP);
 		outprfge(FLT_NONE,usrn);
-		return(0);
+		return 0;
 	}
 }
 
@@ -2936,16 +2936,16 @@ int FUNC fluxstat(WARSHP *ptr, int usrn, unsigned energy)
 				prfmsg(LASTFLUX);
 				outprfge(FLT_NONE, usrn);
 			}
-			return(1);
+		return 1;
 		}
 		else {
 			prfmsg(NOFLUX);
 			outprfge(FLT_NONE, usrn);
-			return(0);
+		return 0;
 		}
 	}
 	else
-		return(1);
+		return 1;
 }
 
 
@@ -3006,19 +3006,19 @@ int FUNC isvisible(WARSHP *ptr, WARSHP *wptr)
 	byte ptr_neb, oth_neb;
 
 	if (wptr->cloak == 10)
-		return(FALSE);
+		return FALSE;
 
 	ptr_neb = (byte)innebula(coord1(ptr->coord.xcoord), coord1(ptr->coord.ycoord));
 	oth_neb = (byte)innebula(coord1(wptr->coord.xcoord), coord1(wptr->coord.ycoord));
 
 	if (!(ptr_neb || oth_neb))
-		return(TRUE);
+		return TRUE;
 
 	ddist = cdistance(&ptr->coord, &wptr->coord) * 10000.0;
 	if (ptr_neb && oth_neb && ddist < (double)NEBRNG)
-		return(TRUE);
+		return TRUE;
 
-	return(FALSE);
+	return FALSE;
 }
 
 /**************************************************************************
@@ -3718,13 +3718,13 @@ int FUNC chkitm(int usrn)
 
 	for (i = 0; i < MAXTORPS; ++i) {
 		if (ptr->ltorps[i].distance > 0)
-			return(FALSE);
+			return FALSE;
 	}
 	for (i = 0; i < MAXMISSL; ++i) {
 		if (ptr->lmissl[i].distance > 0)
-			return(FALSE);
+			return FALSE;
 	}
-	return(TRUE);
+	return TRUE;
 }
 
 /**************************************************************************
@@ -3976,13 +3976,13 @@ int FUNC valpcnt(char *ptr, unsigned minnum, unsigned maxnum)
 		if (*inpptr == '\0' || *inpptr == ' ') {
 			if ((val = atoi(ptr)) >= minnum && val <= maxnum) {
 				warsptr->percent = val;
-				return(1);
+				return 1;
 			}
 		}
 	}
 	prfmsg(NUMOOR, minnum, maxnum);
 	outprfge(FLT_NONE, usrnum);
-	return(0);
+	return 0;
 }
 
 /**************************************************************************
@@ -3997,12 +3997,12 @@ int FUNC valdegree(char *ptr)
 		val = atoi(ptr);
 		if (val >= -180 && val <= 180) {
 			warsptr->degrees = val;
-			return(1);
+		return 1;
 		}
 	}
 	prfmsg(NUMOOR, -180, 180);
 	outprfge(FLT_NONE, usrnum);
-	return(0);
+	return 0;
 }
 
 /**************************************************************************
@@ -4058,7 +4058,7 @@ static int rd_item(WARSHP *ptr, unsigned int r, int itemnum, int damcomb)
 		qty = 1;
 
 	ptr->items[itemnum] = have - qty;
-	return (qty > 32767UL) ? 32767 : (int)qty;
+	return qty > 32767UL ? 32767 : (int)qty;
 }
 
 static void rd_append(char *buf, byte *comma, int qty, const char *sing, const char *plur)
@@ -4511,7 +4511,7 @@ double FUNC pdamage(WARSHP *wptr, double dist, int foc)
 	}
 
 	logthis(spr("Pdamage %s %ld %d",wptr->userid,(long)dist,(int)dam));
-	return(dam);
+	return dam;
 }
 
 
@@ -4553,7 +4553,7 @@ int FUNC samesect(COORD *pointb, COORD *pointa)
 	bx = coord1(pointb->xcoord);
 	by = coord1(pointb->ycoord);
 
-	return((ax == bx) && (ay == by));
+	return ax == bx && ay == by;
 }
 
 /**************************************************************************
@@ -4572,15 +4572,15 @@ int FUNC mailscan(char *userid, int class)
 		if (qeqbtv(userid,0)) {
 			/* DEBUG
 			prf("mail.userid=%s\rmail.class=%d\rmail.type=%d\r",mail.userid,mail.class,mail.type);*/
-			return(TRUE);
+			return TRUE;
 		}
 	}
 	else
 	/* otherwize see if he has this class of mail */
 	if (qeqbtv(&mailkey,1)) {
-		return(TRUE);
+		return TRUE;
 	}
-	return(FALSE);
+	return FALSE;
 }
 
 int FUNC mailread(char *userid, int class)
@@ -4602,13 +4602,13 @@ int FUNC mailread(char *userid, int class)
 
 		delbtv();
 
-		return(TRUE);
+		return TRUE;
 	}
 
 
 	prfmsg(MAIL1);
 	outprfge(FLT_NONE,usrnum);
-	return(FALSE);
+	return FALSE;
 }
 
 
@@ -4703,7 +4703,7 @@ int FUNC sendit(void)
 	/* don't send mail to non-live players */
 
 	if (mail.userid[0] == '*')
-		return(FALSE);
+		return FALSE;
 
 	setmem(gemsg,FIXEDMSGSIZ,0);
 
@@ -4724,7 +4724,7 @@ int FUNC sendit(void)
 
 	prf2tx();
 
-	return(sendgemsg(gemsg));
+	return sendgemsg(gemsg);
 
 }
 
@@ -4752,7 +4752,7 @@ int FUNC sendgemsg(struct message *msgptr)
 	if (!dinsbtv(msgptr))
 		logthis(spr("GE:ERR:Mail Insert Fail to=%s topic=%s", msgptr->to, msgptr->topic));
 	rstbtv();
-	return(TRUE);
+	return TRUE;
 }
 
 /**************************************************************************
@@ -4806,11 +4806,11 @@ int FUNC shieldhit(WARSHP *wptr, int dam)   /* 0% to 100% damage */
 	if (wptr->shield <=2 ) {
 		wptr->shieldstat = SHIELDDM;
 		wptr->shield -= (knock*3);
-		return(1);
+		return 1;
 	}
 	else if (wptr->shield < SHMINCHG )
-		return(2);
-	return(0);
+		return 2;
+	return 0;
 }
 
 
@@ -4887,8 +4887,8 @@ int FUNC chkweight(WARSHP *wptr, int itm, long amt)
 	total = cargo_weight100(wptr);
 	add = (unsigned long)amt * (unsigned long)weight[itm];
 
-	return ((total + add) <= ((unsigned long)shipclass[wptr->shpclass].max_tons * 100UL)
-		&& (wptr->items[itm] <= ULCAP - amt));
+	return (total + add) <= ((unsigned long)shipclass[wptr->shpclass].max_tons * 100UL)
+		&& (wptr->items[itm] <= ULCAP - amt);
 }
 
 /* tell the total weight on board */
@@ -4916,7 +4916,7 @@ char FUNC shpltr(int usrn, int ship)
 	for (i=0; i<NOSCANTAB; ++i)
 		{
 		if (sptr->ship[i].flag && sptr->ship[i].shipno == ship)
-			return(sptr->ship[i].letter);
+			return sptr->ship[i].letter;
 		}
 
 	/* not found, update scantab */
@@ -4926,11 +4926,11 @@ char FUNC shpltr(int usrn, int ship)
 	for (i=0; i<NOSCANTAB; ++i)
 		{
 		if (sptr->ship[i].flag && sptr->ship[i].shipno == ship)
-			return(sptr->ship[i].letter);
+			return sptr->ship[i].letter;
 		}
 
 	/* still not found, too many ships */
-	return('?');
+	return '?';
 }
 
 /**************************************************************************
@@ -4940,10 +4940,10 @@ char FUNC shpltr(int usrn, int ship)
 char * FUNC username(WARSHP *ptr)
 {
 	if (shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG)  /* CYBORG */
-		return(ptr->shipname);
+		return ptr->shipname;
 	if (shipclass[ptr->shpclass].max_type == CLASSTYPE_DROID)  /* DROID */
-		return(ptr->shipname);
-	return(ptr->userid);
+		return ptr->shipname;
+	return ptr->userid;
 }
 
 /**************************************************************************
@@ -5015,7 +5015,7 @@ double FUNC ton_fact(WARSHP *ptr, double damfact)
 	if (ptr->upgrade & ARMOR)
 		temp *= 0.625;
 
-	return(temp);
+	return temp;
 }
 
 /**************************************************************************
@@ -5028,7 +5028,7 @@ char * FUNC showupg(WARSHP *ptr)
 	int count;
 
 	if (ptr->upgrade == 0)
-		return("");
+		return "";
 
 	upg = ptr->upgrade;
 	count = 0;
@@ -5039,13 +5039,13 @@ char * FUNC showupg(WARSHP *ptr)
 	}
 
 	if (count > 4)
-		return("+++");
+		return "+++";
 	else if (count > 2)
-		return("++");
+		return "++";
 	else if (count > 0)
-		return("+");
+		return "+";
 
-	return("");
+	return "";
 }
 
 /**************************************************************************
@@ -5073,7 +5073,7 @@ char * FUNC showarp(double speed)
 	if (warpbuf[strlen(warpbuf) - 3] != '.')
 		strcat(warpbuf, ".00");
 #endif
-	return(warpbuf);
+	return warpbuf;
 }
 
 /**************************************************************************

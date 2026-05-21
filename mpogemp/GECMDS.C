@@ -291,9 +291,9 @@ struct cmd *FUNC gesearch(char *ptr, struct cmd tab[], int len)
 		else if (c > 0)
 			lo = md + 1;
 		else
-			return(md);
+			return md;
 	}
-	return(NULL);
+	return NULL;
 }
 
 /**************************************************************************
@@ -1143,7 +1143,7 @@ int FUNC findshp(char *ptr, int type) /* 0 = this sector only, 1 = everywhere */
 			warsptr->lock = -1;
 			warsptr->lock_grace = 0;
 			prfmsg(NOLOCK);
-			return(-1);
+			return -1;
 		}
 		else {
 			shpnum = warsptr->lock;
@@ -1151,7 +1151,7 @@ int FUNC findshp(char *ptr, int type) /* 0 = this sector only, 1 = everywhere */
 				warsptr->lock = -1;
 				warsptr->lock_grace = 0;
 				prfmsg(NOLOCK);
-				return(-1);
+				return -1;
 			}
 			wptr=warshpoff(shpnum);
 			dist = cdistance(&warsptr->coord,&(wptr->coord));
@@ -1176,11 +1176,11 @@ int FUNC findshp(char *ptr, int type) /* 0 = this sector only, 1 = everywhere */
 		}
 
 		if (i >= NOSCANTAB)
-			return(-1);
+			return -1;
 	}
 
 	if (!ingegame(shpnum)) {
-		return(-1);
+		return -1;
 	}
 
 	wptr=warshpoff(shpnum);
@@ -1188,18 +1188,18 @@ int FUNC findshp(char *ptr, int type) /* 0 = this sector only, 1 = everywhere */
 	if (type == 0) {
 		if (samesect(&(wptr->coord), &warsptr->coord)
 			&& wptr->cloak < 10) {
-			return (shpnum);
+			return shpnum;
 		} else {
-			return (-1);
+			return -1;
 		}
 	} else if (type == 1) {
 		if (wptr->cloak < 10) {
-			return (shpnum);
+			return shpnum;
 		} else {
-			return (-1);
+			return -1;
 		}
 	}
-	return(-1);
+	return -1;
 }
 
 /**************************************************************************
@@ -1545,15 +1545,15 @@ int FUNC laymine(WARSHP *ptr, int usrn, int timer)
 	}
 
 	if (cnt >= usermines) {
-		return(0);
+		return 0;
 	}
 
 	if (slot < 0) {
-		return(2);
+		return 2;
 	}
 
 	if (ptr->mineload > 0) {
-		return(3);
+		return 3;
 	}
 
 	ptr->cantexit = FIRETICKS;
@@ -1563,7 +1563,7 @@ int FUNC laymine(WARSHP *ptr, int usrn, int timer)
 	mines[slot].coord.ycoord = ptr->coord.ycoord;
 	--ptr->items[I_MINE];
 	ptr->mineload = 1;
-	return(1);
+	return 1;
 }
 
 /**************************************************************************
@@ -2013,11 +2013,11 @@ static char *repdmg_eta(WARSHP *ptr, int steps, int active, int fuzz)
 	int secs;
 
 	if (ptr->repair > 0 || !(ptr->upgrade & DAMCTRL) || steps <= 0)
-		return("");
+		return "";
 
 	if (!active) {
 		sprintf(gechrbuf3, "(ETA: TBD)");
-		return(gechrbuf3);
+		return gechrbuf3;
 	}
 
 	secs = ((steps + 1) / 2) * TICKTIME;
@@ -2025,7 +2025,7 @@ static char *repdmg_eta(WARSHP *ptr, int steps, int active, int fuzz)
 	if (secs < TICKTIME)
 		secs = TICKTIME;
 	sprintf(gechrbuf3, "(ETA: %d seconds)", secs);
-	return(gechrbuf3);
+	return gechrbuf3;
 }
 
 /**************************************************************************
@@ -2531,7 +2531,7 @@ void FUNC cmd_admin(void)
 ** Notify the owner about a planetary attack                             **
 **************************************************************************/
 
-static void FUNC call_4_help(int send_spy_mail, int won)
+static void call_4_help(int send_spy_mail, int won)
 {
 	if (instat(plptr->userid, gestt) && othusp->substt >= FIGHTSUB) {
 		if (warsptr->shipname[0] == '\0')
@@ -2571,7 +2571,7 @@ static void FUNC call_4_help(int send_spy_mail, int won)
 ** Transfer a conquered planet to the attacking player                   **
 **************************************************************************/
 
-static void FUNC wonplnt(void)
+static void wonplnt(void)
 {
 	char olduid[UIDSIZ];
 
@@ -2606,7 +2606,7 @@ static void FUNC wonplnt(void)
 ** Attack helpers                                                       **
 **************************************************************************/
 
-static int FUNC attack_men(unsigned long num)
+static int attack_men(unsigned long num)
 {
 	double r;
 	int won = 0;
@@ -2764,10 +2764,10 @@ static int FUNC attack_men(unsigned long num)
 	setsect(warsptr);
 	pkey.plnum = plnum;
 	gesdb(GEUPDATE, &pkey, (GALSECT *)&planet);
-	return (won);
+	return won;
 }
 
-static int FUNC attack_fig(unsigned long num)
+static int attack_fig(unsigned long num)
 {
 	double r;
 	int won = 0;
@@ -2902,7 +2902,7 @@ static int FUNC attack_fig(unsigned long num)
 	setsect(warsptr);
 	pkey.plnum = plnum;
 	gesdb(GEUPDATE, &pkey, (GALSECT *)&planet);
-	return (won);
+	return won;
 }
 
 /**************************************************************************
@@ -3106,7 +3106,7 @@ void FUNC cmd_planet(void)
 ** Sell goods helper                                                     **
 **************************************************************************/
 
-static void FUNC sell(int item)
+static void sell(int item)
 {
 	unsigned long amt, gross, fee, net;
 	byte toorich, toomuch;
@@ -3261,7 +3261,7 @@ void FUNC cmd_sell(void)
 ** Buy-side helpers                                                      **
 **************************************************************************/
 
-static unsigned long FUNC amt4sale(int item)
+static unsigned long amt4sale(int item)
 {
 	unsigned long forsale = 0;
 
@@ -3270,14 +3270,14 @@ static unsigned long FUNC amt4sale(int item)
 	else if (plptr->items[item].qty > plptr->items[item].reserve && plptr->items[item].sell == 'Y')
 		forsale = plptr->items[item].qty - plptr->items[item].reserve;
 
-	return (forsale);
+	return forsale;
 }
 
 /**************************************************************************
 ** Calculate the purchase price for a planet item                        **
 **************************************************************************/
 
-static long FUNC price(unsigned item, unsigned long amt)
+static long price(unsigned item, unsigned long amt)
 {
 	long tot;
 
@@ -3286,14 +3286,14 @@ static long FUNC price(unsigned item, unsigned long amt)
 	else
 		tot = ((long)plptr->items[item].markup2a) * amt;
 
-	return (tot);
+	return tot;
 }
 
 /**************************************************************************
 ** Buy goods helper                                                      **
 **************************************************************************/
 
-static void FUNC buy(int item)
+static void buy(int item)
 {
 	unsigned long amt, avail, tot, ptot;
 	unsigned long room100;
@@ -3573,10 +3573,10 @@ void FUNC cmd_maint(void)
 static int upg_allowed(WARSHP *ptr, unsigned int loadout, int idx)
 {
 	if (!(loadout & upgdefs[idx].bit))
-		return(FALSE);
+		return FALSE;
 	if (upgdefs[idx].bit == TPONDER && shipclass[ptr->shpclass].noclaim == 0)
-		return(FALSE);
-	return(TRUE);
+		return FALSE;
+	return TRUE;
 }
 
 static long upg_price(WARSHP *ptr, int idx)
@@ -5170,10 +5170,10 @@ char *FUNC teamname(WARUSR *ptr)
 	for (i=0; i<MAXTEAMS; ++i) {
 		if (ptr->teamcode == teamtab[i].teamcode
 			&& teamtab[i].teamname[0] != '@') {
-			return(teamtab[i].teamname);
+			return teamtab[i].teamname;
 		}
 	}
-	return(NULL);
+	return NULL;
 }
 
 void FUNC cmd_clear(void)
@@ -5188,7 +5188,7 @@ void FUNC cmd_clear(void)
 ** DATA scan helpers                                                     **
 **************************************************************************/
 
-static void FUNC scan_data1(void)
+static void scan_data1(void)
 {
 	SCANTAB *sptr;
 	WARSHP *wptr;
@@ -5231,7 +5231,7 @@ static void FUNC scan_data1(void)
 	outprfge(FLT_NONE,usrnum);
 }
 
-static void FUNC scan_data2(void)
+static void scan_data2(void)
 {
 	unsigned i, x, y;
 
@@ -5370,7 +5370,7 @@ char *FUNC gedots(int numdots)
 	for (i=0; i<numdots; ++i)
 		dotbuf[i] = '.';
 	dotbuf[numdots] = 0;
-	return (dotbuf);
+	return dotbuf;
 }
 
 /**************************************************************************
@@ -5421,7 +5421,7 @@ void FUNC cmd_spy(void)
 ** Jettison helper                                                       **
 **************************************************************************/
 
-static void FUNC jettison(int item)
+static void jettison(int item)
 {
 	unsigned long amt;
 	long req;
