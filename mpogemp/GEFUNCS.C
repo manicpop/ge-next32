@@ -1256,7 +1256,7 @@ void FUNC lookupshp(void)
 
 void FUNC suddenappear(WARSHP *ptr, int usrn)
 {
-	if (ptr->shipname[0] == '\0')
+	if (ptr->shipname[0] == 0)
 		prfmsg(ENTWARNO,ptr->userid);
 	else
 		prfmsg(ENTWAR,ptr->shipname);
@@ -1293,7 +1293,7 @@ static void send_entrymsg(int entrant, int recipient)
 	eptr = warshpoff(entrant);
 	euptr = warusroff(entrant);
 
-	if (eptr->shipname[0] == '\0')
+	if (eptr->shipname[0] == 0)
 		prfmsg(ANNOUNO,euptr->userid,shipclass[eptr->shpclass].typename,showupg(eptr));
 	else
 		prfmsg(ANNOUN,shipclass[eptr->shpclass].typename,showupg(eptr),eptr->shipname,euptr->userid);
@@ -1312,7 +1312,7 @@ static void send_exitmsg(int entrant, int recipient)
 	eptr = warshpoff(entrant);
 	euptr = warusroff(entrant);
 
-	if (eptr->shipname[0] == '\0')
+	if (eptr->shipname[0] == 0)
 		prfmsg(PEACEONO,euptr->userid);
 	else
 		prfmsg(PEACEOUT,euptr->userid,eptr->shipname);
@@ -1518,6 +1518,7 @@ int FUNC initshp(char *userid, int type)
 	/* build a fresh ship record from zero, then layer explicit defaults on top */
 	setmem(&tmpshp,sizeof(WARSHP),0);
 	strncpy(tmpshp.userid,userid,UIDSIZ);
+	tmpshp.userid[UIDSIZ - 1] = 0;
 	tmpshp.shpclass	= type;
 
 	if (shipclass[type].max_type == CLASSTYPE_USER) {
@@ -1573,6 +1574,7 @@ int FUNC initusr(char *userid)
 {
 	setmem(&tmpusr,sizeof(WARUSR),0);
 	strncpy(tmpusr.userid,userid,UIDSIZ);
+	tmpusr.userid[UIDSIZ - 1] = 0;
 	tmpusr.cash		= startcash;
 	tmpusr.options[0]	= FULLNAMES; /* set scan default */
 
@@ -1679,7 +1681,7 @@ int FUNC findships(int direction, int quiet)
 			for (j = strlen(shipclass[warsptr->shpclass].typename) + strlen(upg); j < 20; ++j)
 				prf(" ");
 			prf(" %-20s %6d %6d  ",
-				(warsptr->shipname[0] == '\0' ? " <NO NAME> " : warsptr->shipname), xsect, ysect);
+				(warsptr->shipname[0] == 0 ? " <NO NAME> " : warsptr->shipname), xsect, ysect);
 
 			if (warsptr->energy < 5000 && warsptr->items[I_FLUXPOD] == 0)
 				prf("%sflux depleted%s", CLR_RED1, CLR_WHITE2);
@@ -2019,7 +2021,7 @@ void FUNC hyperspace(WARSHP *ptr, int usrn, int flag)
 
 		if (ptr->status == GESTAT_AUTO)
 			prfmsg(HYPERINN, ptr->shipname);
-		else if (ptr->shipname[0] == '\0')
+		else if (ptr->shipname[0] == 0)
 			prfmsg(HYPERIN3, ptr->userid);
 		else
 			prfmsg(HYPERIN2, ptr->shipname);
@@ -2064,7 +2066,7 @@ void FUNC hyperspace(WARSHP *ptr, int usrn, int flag)
 				shieldup(ptr, usrn);
 			prfmsg(HYPEROU2, ptr->shipname);
 		}
-		else if (ptr->shipname[0] == '\0')
+		else if (ptr->shipname[0] == 0)
 			prfmsg(HYPERONO, ptr->userid);
 		else
 			prfmsg(HYPEROUN, ptr->shipname);
@@ -2188,7 +2190,7 @@ void FUNC moveship(WARSHP *ptr, int usrn)
 				if (ptr->speed < 21000.0) {
 					if (ptr->status == GESTAT_AUTO)
 						prfmsg(MOVE2N, ptr->shipname);
-					else if (ptr->shipname[0] == '\0')
+					else if (ptr->shipname[0] == 0)
 						prfmsg(MOVE2NO, ptr->userid);
 					else
 						prfmsg(MOVE2, ptr->shipname);
@@ -2197,7 +2199,7 @@ void FUNC moveship(WARSHP *ptr, int usrn)
 				if (ptr->speed < 21000.0) {
 					if (ptr->status == GESTAT_AUTO)
 						prfmsg(MOVE3N, ptr->shipname);
-					else if (ptr->shipname[0] == '\0')
+					else if (ptr->shipname[0] == 0)
 						prfmsg(MOVE3NO, ptr->userid);
 					else
 						prfmsg(MOVE3, ptr->shipname);
@@ -2497,7 +2499,7 @@ void FUNC checkdam(WARSHP *ptr, int usrn)
 
 		/* only reset btupmt on "real" users */
 		if (usrn < nterms)
-			btupmt(usrn, '\0');
+			btupmt(usrn, 0);
 
 		if (ptr->status == GESTAT_AUTO || ptr->userid[0] == '@')
 			ptr->status = GESTAT_AVAIL;
@@ -2618,7 +2620,7 @@ void FUNC killem(WARSHP *ptr, int usrn)
 
 		if (ptr->status == GESTAT_AUTO)
 			prfmsg(KILLGOTN,ptr->shipname);
-		else if (ptr->shipname[0] == '\0')
+		else if (ptr->shipname[0] == 0)
 			prfmsg(KILLGTNO,ptr->userid);
 		else
 			prfmsg(KILLGOT1,ptr->shipname);
@@ -2879,7 +2881,7 @@ void FUNC killem(WARSHP *ptr, int usrn)
 	else {
 		if (shipclass[ptr->shpclass].max_type != CLASSTYPE_USER)
 			prfmsg(DIEDNPC,ptr->shipname);
-		else if (ptr->shipname[0] == '\0')
+		else if (ptr->shipname[0] == 0)
 			prfmsg(DIEDNO,username(ptr));
 		else
 			prfmsg(DIED,ptr->shipname,username(ptr));
@@ -3688,7 +3690,7 @@ void FUNC acctm(WARSHP *ptr, int usrn, int mt, unsigned char channel, int count)
 		if (count <= 1) {
 			if (ptr->status == GESTAT_AUTO)
 				prfmsg(MTACC1N + mt, shpltr(channel, usrn), ptr->shipname);
-			else if (ptr->shipname[0] == '\0')
+			else if (ptr->shipname[0] == 0)
 				prfmsg(MTACC1NO + mt, shpltr(channel, usrn), ptr->userid);
 			else
 				prfmsg(MTACC1 + mt, shpltr(channel, usrn), ptr->shipname);
@@ -3696,7 +3698,7 @@ void FUNC acctm(WARSHP *ptr, int usrn, int mt, unsigned char channel, int count)
 		else {
 			if (ptr->status == GESTAT_AUTO)
 				prfmsg(MTACC3N + mt, count, shpltr(channel, usrn), ptr->shipname);
-			else if (ptr->shipname[0] == '\0')
+			else if (ptr->shipname[0] == 0)
 				prfmsg(MTACC3NO + mt, count, shpltr(channel, usrn), ptr->userid);
 			else
 				prfmsg(MTACC3 + mt, count, shpltr(channel, usrn), ptr->shipname);
@@ -3869,7 +3871,7 @@ void FUNC destruct(WARSHP *ptr, int usrn)
 	if (ptr->destruct > (byte)0) {
 		if (--ptr->destruct > (byte)0) {
 			if (ptr->destruct == 10) {
-				if (ptr->shipname[0] == '\0')
+				if (ptr->shipname[0] == 0)
 					prfmsg(SELFD2AO,ptr->userid);
 				else
 					prfmsg(SELFD2A,ptr->shipname);
@@ -3877,7 +3879,7 @@ void FUNC destruct(WARSHP *ptr, int usrn)
 			}
 
 			if (ptr->destruct == 5) {
-				if (ptr->shipname[0] == '\0')
+				if (ptr->shipname[0] == 0)
 					prfmsg(SELFD2BO,ptr->userid);
 				else
 					prfmsg(SELFD2B,ptr->shipname);
@@ -3885,7 +3887,7 @@ void FUNC destruct(WARSHP *ptr, int usrn)
 			}
 
 			if (ptr->destruct == 2) {
-				if (ptr->shipname[0] == '\0')
+				if (ptr->shipname[0] == 0)
 					prfmsg(SELFD2CO,ptr->userid);
 				else
 					prfmsg(SELFD2C,ptr->shipname);
@@ -3899,7 +3901,7 @@ void FUNC destruct(WARSHP *ptr, int usrn)
 			prfmsg(SELFD3);
 			ptr->damage = 101;
 			outprfge(FLT_NONE,usrn);
-			if (ptr->shipname[0] == '\0')
+			if (ptr->shipname[0] == 0)
 				prfmsg(SELFD3AO,ptr->userid);
 			else
 				prfmsg(SELFD3A,ptr->shipname);
@@ -3947,7 +3949,7 @@ void FUNC destruct(WARSHP *ptr, int usrn)
 							}
 							wptr->damage += (double)damage;
 							wptr->lastfired = -1;
-							if (wptr->shipname[0] == '\0')
+							if (wptr->shipname[0] == 0)
 								prfmsg(SELFD3N,gechrbuf,username(wptr));
 							else
 								prfmsg(SELFD3O,gechrbuf,wptr->shipname);
@@ -3973,7 +3975,7 @@ int FUNC valpcnt(char *ptr, unsigned minnum, unsigned maxnum)
 	if (inplen != 0) {
 		for (inpptr = ptr; isdigit((unsigned char)*inpptr); inpptr++) {
 		}
-		if (*inpptr == '\0' || *inpptr == ' ') {
+		if (*inpptr == 0 || *inpptr == ' ') {
 			if ((val = atoi(ptr)) >= minnum && val <= maxnum) {
 				warsptr->percent = val;
 				return 1;
@@ -4096,7 +4098,7 @@ void FUNC randamage(WARSHP *ptr, int usrn, double hitdam)
 	byte comma = 0, doitems = 0, dosys = 0;
 	unsigned int r, r2;
 
-	gechrbuf[0] = '\0';
+	gechrbuf[0] = 0;
 
 	/* already dead */
 	if (ptr->damage >= 100.0)
@@ -4734,9 +4736,9 @@ void FUNC prf2tx(void)		/* xfer prfbuf contents to message text area */
 
 	stpans(prfbuf);
 	if (strlen(prfbuf) >= GEMSGSIZ) {
-		prfbuf[GEMSGSIZ-1]='\0';
+		prfbuf[GEMSGSIZ-1]=0;
 	}
-	for (cp = prfbuf; *cp != '\0'; cp++) {
+	for (cp = prfbuf; *cp != 0; cp++) {
 		if (*cp == '\n') {
 			*cp='\r';
 		}

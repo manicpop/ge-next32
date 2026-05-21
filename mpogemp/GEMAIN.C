@@ -939,6 +939,7 @@ void FUNC gemidnighta(void)
 
 						/* now go create the Status Record */
 						strncpy(tmpstat.userid, tmpusr.userid, UIDSIZ);
+						tmpstat.userid[UIDSIZ - 1] = 0;
 						tmpstat.class = MAIL_CLASS_PRODRPT;
 						tmpstat.type = MESG20;
 						tmpstat.stamp = cofdat(today());
@@ -1817,7 +1818,7 @@ void FUNC plartia(void)
 			}
 
 			gcrbtv(&planet, 2);
-			if (planet.userid[0] != '\0' && ((planet.items[I_MEN].qty > 0 || planet.items[I_TROOPS].qty > 0)
+			if (planet.userid[0] != 0 && ((planet.items[I_MEN].qty > 0 || planet.items[I_TROOPS].qty > 0)
 				|| (planet.xsect == 0 && planet.ysect == 0))) {	/* owned and populated or in neut */
 				fpos = absbtv();
 				foundpl = TRUE;
@@ -1830,7 +1831,7 @@ void FUNC plartia(void)
 				/* remember where the search left off even when this record needs no update */
 				fpos = absbtv();
 				sprintf(gechrbuf, "%lu", fpos);
-				if (planet.userid[0] != '\0')
+				if (planet.userid[0] != 0)
 					++plemt;
 				else
 					++plnob;
@@ -2309,7 +2310,7 @@ void FUNC geshocst(int opt, char *str)
 		usrnum = -1;
 #ifdef PHARLAP
 		strncpy(tmpbuf, str, 32);
-		tmpbuf[31] = '\0';
+		tmpbuf[31] = 0;
 		shocst(tmpbuf, str);
 #else
 		shocst(0, str);
@@ -2322,7 +2323,7 @@ void FUNC geshocst(int opt, char *str)
 		usrnum = -1;
 #ifdef PHARLAP
 		strncpy(tmpbuf, str, 32);
-		tmpbuf[31] = '\0';
+		tmpbuf[31] = 0;
 		shocst(tmpbuf, str);
 #else
 		shocst(0, str);
@@ -2492,6 +2493,7 @@ int FUNC mnu_admenu1(void)
 				return 1;
 
 			strncpy(plptr->userid, warsptr->userid, UIDSIZ);
+			plptr->userid[UIDSIZ - 1] = 0;
 			++waruptr->planets;
 			geudb(GEUPDATE, waruptr->userid, waruptr);
 
@@ -2546,7 +2548,7 @@ static int mnu_admenu1a(void)
 		pkey.plnum = plnum;
 		gesdb(GEUPDATE, (PKEY *)&pkey, (GALSECT *)&planet);
 
-		if (warsptr->shipname[0] == '\0')
+		if (warsptr->shipname[0] == 0)
 			prfmsg(ADMNU1BO, plnum, plptr->name, warsptr->userid);
 		else
 			prfmsg(ADMENU1B, plnum, plptr->name, warsptr->userid, warsptr->shipname);

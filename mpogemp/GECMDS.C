@@ -331,7 +331,7 @@ void FUNC gwar(void)
 			logthis(gechrbuf);
 		}
 
-		for (mv0ptr = margv[0]; *mv0ptr != '\0'; mv0ptr++) {
+		for (mv0ptr = margv[0]; *mv0ptr != 0; mv0ptr++) {
 			*mv0ptr = (char)tolower((unsigned char)*mv0ptr);
 		}
 		if (sameas(margv[0], ">")) {
@@ -1442,7 +1442,7 @@ void FUNC zip(WARSHP *ptr)
 	}
 	if (ptr->status == GESTAT_AUTO)
 		prfmsg(ZIPPER3N,ptr->shipname);
-	else if (ptr->shipname[0] == '\0')
+	else if (ptr->shipname[0] == 0)
 		prfmsg(ZIPPER3O,ptr->userid);
 	else
 		prfmsg(ZIPPER3,ptr->shipname);
@@ -1615,7 +1615,7 @@ void FUNC cmd_send(void)
 				else
 					msgptr = margv[2];
 				rstrin();
-				if (warsptr->shipname[0] == '\0')
+				if (warsptr->shipname[0] == 0)
 					prfmsg(MSGSNT1O,"Hailing",waruptr->userid,msgptr);
 				else
 					prfmsg(MSGSNT1,"Hailing",waruptr->userid,warsptr->shipname,msgptr);
@@ -1642,7 +1642,7 @@ void FUNC cmd_send(void)
 					prfmsg(TEAMNOT);
 				} else {
 					rstrin();
-					if (warsptr->shipname[0] == '\0')
+					if (warsptr->shipname[0] == 0)
 						prfmsg(MSGSNT1O,"Team",waruptr->userid,margv[2]);
 					else
 						prfmsg(MSGSNT1,"Team",waruptr->userid,warsptr->shipname,margv[2]);
@@ -1658,7 +1658,7 @@ void FUNC cmd_send(void)
 					prfmsg(MSGSNT4N);
 				else {
 					rstrin();
-					if (warsptr->shipname[0] == '\0')
+					if (warsptr->shipname[0] == 0)
 						prfmsg(MSGSNT1O,"Encoded",waruptr->userid,margv[2]);
 					else
 						prfmsg(MSGSNT1,"Encoded",waruptr->userid,warsptr->shipname,margv[2]);
@@ -1698,7 +1698,7 @@ void FUNC cmd_report(void)
 	speed = ((unsigned)warsptr->speed + .5);
 	heading = (int)(warsptr->heading + .5);
 
-	if (warsptr->shipname[0] == '\0')
+	if (warsptr->shipname[0] == 0)
 		prfmsg(REP01O,shipclass[warsptr->shpclass].typename,showupg(warsptr),waruptr->userid);
 	else
 		prfmsg(REP01,shipclass[warsptr->shpclass].typename,showupg(warsptr),warsptr->shipname);
@@ -2534,7 +2534,7 @@ void FUNC cmd_admin(void)
 static void call_4_help(int send_spy_mail, int won)
 {
 	if (instat(plptr->userid, gestt) && othusp->substt >= FIGHTSUB) {
-		if (warsptr->shipname[0] == '\0')
+		if (warsptr->shipname[0] == 0)
 			prfmsg(ATTACK6O, plptr->name, xsect, ysect, warsptr->userid);
 		else
 			prfmsg(ATTACK6, plptr->name, xsect, ysect, warsptr->userid, warsptr->shipname);
@@ -2577,6 +2577,7 @@ static void wonplnt(void)
 
 	/* save old owner */
 	strncpy(olduid, plptr->userid, UIDSIZ);
+	olduid[UIDSIZ - 1] = 0;
 
 	/* remove planet from old owner, if they still exist */
 	if (olduid[0] && !sameas(olduid, warsptr->userid)) {
@@ -2591,6 +2592,7 @@ static void wonplnt(void)
 
 	/* assign planet to new owner */
 	strncpy(plptr->userid, warsptr->userid, UIDSIZ);
+	plptr->userid[UIDSIZ - 1] = 0;
 	if (sameas(plptr->password, "team")) {
 		plptr->password[0] = 0;
 		plptr->teamcode = 0;
@@ -2737,6 +2739,7 @@ static int attack_men(unsigned long num)
 	if (ratio > 1L || won == 1) {
 		mail.type = MESG02;
 		strncpy(mail.userid, plptr->userid, UIDSIZ);
+		mail.userid[UIDSIZ - 1] = 0;
 
 		if (won == 1) {
 			wonplnt();
@@ -2748,7 +2751,7 @@ static int attack_men(unsigned long num)
 		mail.int1 = sector.xsect;
 		mail.int2 = sector.ysect;
 		mail.long1 = num;
-		if (warsptr->shipname[0] == '\0') {
+		if (warsptr->shipname[0] == 0) {
 			mail.name2[0] = 0;
 			if (mail.type == MESG02)
 				mail.type = MESG02O;
@@ -2874,6 +2877,7 @@ static int attack_fig(unsigned long num)
 		mail.class = MAIL_CLASS_DISTRESS;
 		mail.type = MESG04;
 		strncpy(mail.userid, plptr->userid, UIDSIZ);
+		mail.userid[UIDSIZ - 1] = 0;
 
 		if (won == 1) {
 			wonplnt();
@@ -2885,7 +2889,7 @@ static int attack_fig(unsigned long num)
 		mail.int1 = sector.xsect;
 		mail.int2 = sector.ysect;
 		mail.long1 = num;
-		if (warsptr->shipname[0] == '\0') {
+		if (warsptr->shipname[0] == 0) {
 			mail.name2[0] = 0;
 			if (mail.type == MESG04)
 				mail.type = MESG04O;
@@ -3017,7 +3021,7 @@ void FUNC cmd_geroster(void)
 		outprfge(FLT_NONE, usrnum);
 	}
 
-	if (usaptr->userid[0] != '\0' && usaptr->userid[0] != '@' && qeqbtv(usaptr->userid, 0))
+	if (usaptr->userid[0] != 0 && usaptr->userid[0] != '@' && qeqbtv(usaptr->userid, 0))
 		target = absbtv();
 
 	if (qhibtv(1)) {
@@ -4183,12 +4187,12 @@ void FUNC cmd_rename(void)
 		rstrin();
 		strncpy(warsptr->shipname,margv[1],19);
 		warsptr->shipname[19] = 0;
-		if (warsptr->shipname[0] == '\0')
+		if (warsptr->shipname[0] == 0)
 			prfmsg(RENAME1O);
 		else
 			prfmsg(RENAME1,warsptr->shipname);
 	} else {
-		warsptr->shipname[0] = '\0';
+		warsptr->shipname[0] = 0;
 		prfmsg(RENAME1O);
 	}
 	outprfge(FLT_NONE,usrnum);
@@ -4223,7 +4227,7 @@ void FUNC cmd_abort(void)
 {
 	if (warsptr->destruct > (byte)0) {
 		if (warsptr->destruct < 10) {
-			if (warsptr->shipname[0] == '\0')
+			if (warsptr->shipname[0] == 0)
 				prfmsg(SELFD4AO, warsptr->userid);
 			else
 				prfmsg(SELFD4A, warsptr->shipname);
@@ -4304,7 +4308,7 @@ void FUNC cmd_lock(void)
 			warshpoff(shpnum)->npcmsg = 255;	/* reset annoy msg tracking */
 		}
 		if (warshpoff(shpnum)->status == GESTAT_USER) {
-			if (warshpoff(shpnum)->shipname[0] == '\0')
+			if (warshpoff(shpnum)->shipname[0] == 0)
 				prfmsg(LOCK02O, username(warshpoff(shpnum)));
 			else
 				prfmsg(LOCK02, warshpoff(shpnum)->shipname, username(warshpoff(shpnum)));
@@ -5006,6 +5010,7 @@ void FUNC cmd_team(void)
 					/* check to see if its a valid userid */
 					rstrin();
 					strncpy(tmpusr.userid,margv[3],UIDSIZ);
+					tmpusr.userid[UIDSIZ - 1] = 0;
 					makhdl(tmpusr.userid);
 					if (geudb(GELOOKUP,tmpusr.userid,&tmpusr)) {
 						gcrbtv(&tmpusr,0);
@@ -5283,7 +5288,7 @@ void FUNC cmd_data(void)
 		setsect(warsptr);
 
 		prf("SD1:%s,%d*\r",
-			(warsptr->status == GESTAT_USER && warsptr->shipname[0] == '\0' ? warsptr->userid : warsptr->shipname),
+			(warsptr->status == GESTAT_USER && warsptr->shipname[0] == 0 ? warsptr->userid : warsptr->shipname),
 			warsptr->shpclass);
 
 		prf("SD2:%s,%s,%d,%d,%d,%d,%s,%s*\r",

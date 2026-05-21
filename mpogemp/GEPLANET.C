@@ -181,6 +181,7 @@ void FUNC multiply(int final_mult)
 			mail.class = MAIL_CLASS_DISTRESS;
 			mail.type = MESG06;
 			strncpy(mail.userid, plptr->userid, UIDSIZ);
+			mail.userid[UIDSIZ - 1] = 0;
 			strcpy(mail.name1, plptr->name);
 			mail.int1 = plptr->xsect;
 			mail.int2 = plptr->ysect;
@@ -214,6 +215,7 @@ void FUNC multiply(int final_mult)
 			mail.class = MAIL_CLASS_DISTRESS;
 			mail.type = MESG07;
 			strncpy(mail.userid, plptr->userid, UIDSIZ);
+			mail.userid[UIDSIZ - 1] = 0;
 			strcpy(mail.name1, plptr->name);
 			mail.int1 = plptr->xsect;
 			mail.int2 = plptr->ysect;
@@ -289,6 +291,7 @@ void FUNC multiply(int final_mult)
 			mail.class = MAIL_CLASS_PRODRPT;
 			mail.type = MESG08 + i;
 			strncpy(mail.userid, plptr->userid, UIDSIZ);
+			mail.userid[UIDSIZ - 1] = 0;
 			strcpy(mail.name1, plptr->name);
 			mail.int1 = plptr->xsect;
 			mail.int2 = plptr->ysect;
@@ -335,6 +338,7 @@ void FUNC multiply(int final_mult)
 				mail.class = MAIL_CLASS_DISTRESS;
 				mail.type = MESG30;
 				strncpy(mail.userid, plptr->userid, UIDSIZ);
+				mail.userid[UIDSIZ - 1] = 0;
 				strcpy(mail.name1, plptr->name);
 				mail.int1 = plptr->xsect;
 				mail.int2 = plptr->ysect;
@@ -357,7 +361,9 @@ static void build_plan_1(int idx)
 	setmem(&planet, sizeof(GALPLNT), 0);
 
 	strncpy(planet.userid, s00[idx].owner, UIDSIZ);
+	planet.userid[UIDSIZ - 1] = 0;
 	strncpy(planet.name, s00[idx].name, 20);
+	planet.name[19] = 0;
 	strcpy(planet.password, "none");
 
 	planet.enviorn = s00[idx].env;
@@ -388,7 +394,9 @@ static void build_plan_2(int idx)
 	setmem(&planet, sizeof(GALPLNT), 0);
 
 	strncpy(planet.userid, s00[idx].owner, UIDSIZ);
+	planet.userid[UIDSIZ - 1] = 0;
 	strncpy(planet.name, s00[idx].name, 20);
+	planet.name[19] = 0;
 	strcpy(planet.password, "none");
 
 	planet.enviorn = s00[idx].env;
@@ -416,7 +424,9 @@ static void build_other(int idx)
 	setmem(&planet, sizeof(GALPLNT), 0);
 
 	strncpy(planet.userid, s00[idx].owner, UIDSIZ);
+	planet.userid[UIDSIZ - 1] = 0;
 	strncpy(planet.name, s00[idx].name, 20);
+	planet.name[19] = 0;
 	strcpy(planet.password, "none");
 
 	planet.enviorn = s00[idx].env;
@@ -441,6 +451,7 @@ static void build_worm(int idx)
 	setmem(&worm, sizeof(GALWORM), 0);
 
 	strncpy(worm.name, s00[idx].name, 20);
+	worm.name[19] = 0;
 
 	pkey.plnum = idx + 1;
 	pkey.xsect = 0;

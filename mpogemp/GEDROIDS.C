@@ -124,7 +124,7 @@ void FUNC droid_init(WARSHP *ptr, int usrn, int class)
 
 	memcpy(ptr, &tmpshp, sizeof(WARSHP));	/* make is the current ship */
 	strncpy(ptr->shipname, shipclass[class].npcprefx, sizeof(ptr->shipname) - 1);
-	ptr->shipname[sizeof(ptr->shipname) - 1] = '\0';
+	ptr->shipname[sizeof(ptr->shipname) - 1] = 0;
 	sprintf(gechrbuf, "%u", usrn * usrn + gernd() % (2 * usrn + 1) + 1000);
 	strncat(ptr->shipname, gechrbuf,
 		sizeof(ptr->shipname) - strlen(ptr->shipname) - 1);

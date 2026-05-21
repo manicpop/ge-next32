@@ -142,7 +142,7 @@ void FUNC cyb_init(WARSHP *ptr, int usrn, int class)
 
 			logthis(spr("GE:INF:Add shp,cls=%d/%d", class, ptr->shpclass));
 			strncpy(ptr->shipname, shipclass[class].npcprefx, sizeof(ptr->shipname) - 1);
-			ptr->shipname[sizeof(ptr->shipname) - 1] = '\0';
+			ptr->shipname[sizeof(ptr->shipname) - 1] = 0;
 			sprintf(gechrbuf, "%u", usrn * usrn + gernd() % (2 * usrn + 1) + 1000);
 			strncat(ptr->shipname, gechrbuf,
 				sizeof(ptr->shipname) - strlen(ptr->shipname) - 1);
