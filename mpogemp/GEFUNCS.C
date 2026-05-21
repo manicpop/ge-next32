@@ -4685,7 +4685,7 @@ void FUNC mailit(int flag)
 			for (i = 0; i < NUMITEMS; ++i) {
 				setmem(gechrbuf,20,'.');
 				gechrbuf[20-strlen(item_name[i])] = 0;
-				sprintf(gechrbuf2,"%ld",tmpstat.itemqty[i]);
+				sprintf(gechrbuf2,"%lu",tmpstat.itemqty[i]);
 				prf("%s%s%14s\r",item_name[i],gechrbuf,gechrbuf2);
 			}
 			sendit();

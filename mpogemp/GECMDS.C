@@ -2757,9 +2757,10 @@ static int attack_men(unsigned long num)
 				mail.type = MESG02O;
 			else if (mail.type == MESG03)
 				mail.type = MESG03O;
-		} else
+		} else {
 			strncpy(mail.name2, warsptr->shipname, sizeof(mail.name2) - 1);
 			mail.name2[sizeof(mail.name2) - 1] = 0;
+		}
 		sprintf(mail.string1, "%s", warsptr->userid);
 
 		mailit(1);
@@ -4078,6 +4079,8 @@ void FUNC cmd_sysop(void)
 			i = 0;
 		else
 			i = atoi(margv[2]);
+		if (i < 0)
+			i = 0;
 
 		prfmsg(SYSLST);
 		if (nships > i+50)
@@ -5299,9 +5302,9 @@ void FUNC cmd_data(void)
 			waruptr->noships,
 			waruptr->kills,
 			waruptr->planets);
-		sprintf(gechrbuf,"%ld",waruptr->score);
+		sprintf(gechrbuf,"%lu",waruptr->score);
 		sprintf(gechrbuf2,"%lu",waruptr->cash);
-		sprintf(gechrbuf3,"%ld",waruptr->population);
+		sprintf(gechrbuf3,"%lu",waruptr->population);
 		prf("UD2:%s,%s,%s*\r",gechrbuf,gechrbuf2,gechrbuf3);
 		outprfge(FLT_NONE,usrnum);
 
