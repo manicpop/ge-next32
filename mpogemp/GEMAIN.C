@@ -2663,6 +2663,11 @@ int FUNC mnu_admenu2b(void)
 
 	if (!load_admin_planet())
 		return 1;
+	if (margc != 1) {
+		prfmsg(ADMENU2B);
+		outprfge(FLT_NONE, usrnum);
+		return 1;
+	}
 	amt = atol(margv[0]);
 
 	if (amt <= plptr->tax) {
@@ -2700,6 +2705,11 @@ int FUNC mnu_admenu2e(void)
 
 	if (!load_admin_planet())
 		return 1;
+	if (margc == 0) {
+		prfmsg(ADMENU2E);
+		outprfge(FLT_NONE, usrnum);
+		return 1;
+	}
 
 	for (i = 0; i < NUMITEMS; ++i) { /* skip notused */
 		if (sameto(kwrd[i], margv[0])) {
@@ -2725,7 +2735,6 @@ int FUNC mnu_admenu2f1(void)
 
 	if (!load_admin_planet())
 		return 1;
-	amt = atoi(margv[0]);
 
 	if (margc == 0) {
 		titems[usrnum].rate = plptr->items[warsptr->titem].rate;
@@ -2734,6 +2743,7 @@ int FUNC mnu_admenu2f1(void)
 		usrptr->substt = ADMEN2F2;
 		return 1;
 	}
+	amt = atoi(margv[0]);
 	if (margc == 1 && amt <= 100) {
 		titems[usrnum].rate = amt;
 		prfmsg(ADMEN2F2, item_name[warsptr->titem], plptr->items[warsptr->titem].markup2a);
@@ -2754,7 +2764,6 @@ int FUNC mnu_admenu2f2(void)
 
 	if (!load_admin_planet())
 		return 1;
-	amt = atoi(margv[0]);
 
 	if (margc == 0) {
 		titems[usrnum].markup2a = plptr->items[warsptr->titem].markup2a;
@@ -2763,6 +2772,7 @@ int FUNC mnu_admenu2f2(void)
 		usrptr->substt = ADMEN2F3;
 		return 1;
 	}
+	amt = atoi(margv[0]);
 	if (margc == 1 && amt <= 32000) {
 		titems[usrnum].markup2a = amt;
 		prfmsg(ADMEN2F3, item_name[warsptr->titem], plptr->items[warsptr->titem].sell);
@@ -2810,7 +2820,6 @@ int FUNC mnu_admenu2f4(void)
 
 	if (!load_admin_planet())
 		return 1;
-	amt = atoi(margv[0]);
 
 	if (margc == 0) {
 		titems[usrnum].reserve = plptr->items[warsptr->titem].reserve;
@@ -2820,6 +2829,7 @@ int FUNC mnu_admenu2f4(void)
 		usrptr->substt = ADMENU2;
 		return 1;
 	}
+	amt = atoi(margv[0]);
 	if (margc == 1 && amt <= 32000) {
 		titems[usrnum].reserve = amt;
 		update_items();
@@ -2839,9 +2849,13 @@ int FUNC mnu_admenu2h(void)
 {
 	unsigned amt;
 
-	amt = atoi(margv[0]);
-
-	if (margc == 1 && amt <= 100) {
+	if (margc == 1) {
+		amt = atoi(margv[0]);
+		if (amt > 100) {
+			prfmsg(ADMENU2H);
+			outprfge(FLT_NONE, usrnum);
+			return 1;
+		}
 		if (!load_admin_planet())
 			return 1;
 

@@ -608,6 +608,12 @@ void FUNC cmd_warp(void)
 	unsigned deg;
 	int speed, topspeed, cap, classcap, capwarn;
 
+	if (margc < 2 || margc > 3) {
+		prfmsg(FORMAT, "WARP");
+		outprfge(FLT_NONE, usrnum);
+		return;
+	}
+
 	if (shipclass[warsptr->shpclass].max_warp == 0 && atoi(margv[1]) != 0) {
 		prfmsg(WARP01);
 		outprfge(FLT_NONE, usrnum);
@@ -626,100 +632,96 @@ void FUNC cmd_warp(void)
 		return;
 	}
 
-	if (margc < 2 || margc > 3) {
+	speed = atoi(margv[1]);
+	topspeed = warsptr->topspeed;
+	cap = topspeed + (topspeed / 2);
+	classcap = shipclass[warsptr->shpclass].max_warp +
+		(shipclass[warsptr->shpclass].max_warp / 2);
+	capwarn = FALSE;
+	if (speed < 0) {
 		prfmsg(FORMAT, "WARP");
 		outprfge(FLT_NONE, usrnum);
-	} else {
-		speed = atoi(margv[1]);
-		topspeed = warsptr->topspeed;
-		cap = topspeed + (topspeed / 2);
-		classcap = shipclass[warsptr->shpclass].max_warp +
-			(shipclass[warsptr->shpclass].max_warp / 2);
-		capwarn = FALSE;
-		if (speed < 0) {
-			prfmsg(FORMAT, "WARP");
-			outprfge(FLT_NONE, usrnum);
-			return;
-		}
+		return;
+	}
 
-		if (speed > classcap && speed > warsptr->speed / 1000) {
+	if (speed > classcap && speed > warsptr->speed / 1000) {
+		prfmsg(WARP03);
+		outprfge(FLT_NONE, usrnum);
+		return;
+	}
+
+	/* if requsted speed is over 150% cruising speed and over current speed */
+	if (speed > cap && speed > warsptr->speed/1000) {
+		/* if current speed is over 100% cruising speed */
+		if (warsptr->speed/1000 > warsptr->topspeed) {
+			/* if current speed is over 150% cruising speed, don't change */
+			if (warsptr->speed/1000 > cap) {
+				prfmsg(WARPSPD3);
+				outprfge(FLT_NONE,usrnum);
+				return;
+			}
+			/* if not, change to 150% cruising speed */
+			else {
+				speed = cap;
+				capwarn = TRUE;
+				prfmsg(WARPSPD4,speed);
+				outprfge(FLT_NONE,usrnum);
+			}
+		} else {
 			prfmsg(WARP03);
+			outprfge(FLT_NONE,usrnum);
+			return;
+		}
+	}
+
+	if (margc == 3)
+		strcpy(gechrbuf,margv[2]);
+	else
+		strcpy(gechrbuf,"0");
+	strcpy(gechrbuf2,gechrbuf);
+	if (*gechrbuf == '@') {
+		*gechrbuf = '+';
+		deg = atoi(gechrbuf);
+		if (deg > 359) {
+			prfmsg(NUMOOR,0,359);
 			outprfge(FLT_NONE, usrnum);
 			return;
 		}
-
-		/* if requsted speed is over 150% cruising speed and over current speed */
-		if (speed > cap && speed > warsptr->speed/1000) {
-			/* if current speed is over 100% cruising speed */
-			if (warsptr->speed/1000 > warsptr->topspeed) {
-				/* if current speed is over 150% cruising speed, don't change */
-				if (warsptr->speed/1000 > cap) {
-					prfmsg(WARPSPD3);
-					outprfge(FLT_NONE,usrnum);
-					return;
-				}
-				/* if not, change to 150% cruising speed */
-				else {
-					speed = cap;
-					capwarn = TRUE;
-					prfmsg(WARPSPD4,speed);
-					outprfge(FLT_NONE,usrnum);
-				}
-			} else {
-				prfmsg(WARP03);
-				outprfge(FLT_NONE,usrnum);
+	}
+	if (warsptr->helm == 0) {
+		if (*gechrbuf2 != '@')
+			if (!valdegree(gechrbuf))
 				return;
-			}
-		}
-
-		if (margc == 3)
-			strcpy(gechrbuf,margv[2]);
-		else
-			strcpy(gechrbuf,"0");
-		strcpy(gechrbuf2,gechrbuf);
-		if (*gechrbuf == '@') {
-			*gechrbuf = '+';
-			deg = atoi(gechrbuf);
-			if (deg > 359) {
-				prfmsg(NUMOOR,0,359);
-				outprfge(FLT_NONE, usrnum);
-				return;
-			}
-		}
-		if (warsptr->helm == 0) {
-			if (*gechrbuf2 != '@')
-				if (!valdegree(gechrbuf))
-					return;
-			if (speed > topspeed && capwarn == FALSE) {
-				if (topspeed < shipclass[warsptr->shpclass].max_warp)
-					prfmsg(WARPSPD,topspeed);
-				else
-					prfmsg(WARP04,topspeed);
-				outprfge(FLT_NONE,usrnum);
-			}
-
-			if (warsptr->where >= 10) {
-				refresh(warsptr,usrnum);
-				lock_sector(warsptr,usrnum,LOCKORB2);
-				prfmsg(LEAVEORB);
-				outprfge(FLT_SHIP,usrnum);
-				warsptr->where = 0;
-				warsptr->repair = 0;
-			}
-
-			if (*gechrbuf2 != '@') {
-				if (warsptr->degrees != 0)
-					deg = (unsigned)normal(warsptr->heading + (double)warsptr->degrees);
-				else
-					deg = warsptr->head2b;
-			}
-			prfmsg(ENGFIRE,deg);
+		if (speed > topspeed && capwarn == FALSE) {
+			if (topspeed < shipclass[warsptr->shpclass].max_warp)
+				prfmsg(WARPSPD,topspeed);
+			else
+				prfmsg(WARP04,topspeed);
 			outprfge(FLT_NONE,usrnum);
-			if (ship_accel(warsptr) >= 1000.0 && warsptr->speed < 1000.0 && speed != 0)
-				warsptr->speed = 0.0;	/* no fractional warp speeds */
-			warsptr->speed2b = 1000.0 * (float)speed;
-			if (deg != warsptr->head2b)
-				warsptr->head2b = (double)deg;
+		}
+
+		if (warsptr->where >= 10) {
+			refresh(warsptr,usrnum);
+			lock_sector(warsptr,usrnum,LOCKORB2);
+			prfmsg(LEAVEORB);
+			outprfge(FLT_SHIP,usrnum);
+			warsptr->where = 0;
+			warsptr->repair = 0;
+		}
+
+		if (*gechrbuf2 != '@') {
+			if (warsptr->degrees != 0)
+				deg = (unsigned)normal(warsptr->heading + (double)warsptr->degrees);
+			else
+				deg = warsptr->head2b;
+		}
+		prfmsg(ENGFIRE,deg);
+		outprfge(FLT_NONE,usrnum);
+		if (ship_accel(warsptr) >= 1000.0 && warsptr->speed < 1000.0 && speed != 0)
+			warsptr->speed = 0.0;	/* no fractional warp speeds */
+		warsptr->speed2b = 1000.0 * (float)speed;
+		if (deg != warsptr->head2b)
+			warsptr->head2b = (double)deg;
 		} else {
 			prfmsg(HLBROKE);
 			if (warsptr->speed != 0)
@@ -727,7 +729,6 @@ void FUNC cmd_warp(void)
 			outprfge(FLT_NONE,usrnum);
 		}
 	}
-}
 
 /**************************************************************************
 ** Emergency stop                                                        **
@@ -778,9 +779,9 @@ void FUNC cmd_rotate(void)
 				prfmsg(HLBROKE2);
 			outprfge(FLT_NONE, usrnum);
 		}
-	} else if (valdegree(margv[1])) {
-		if (warsptr->helm == 0) {
-			if (warsptr->degrees == 0) {
+		} else if (valdegree(margv[1])) {
+			if (warsptr->helm == 0) {
+				if (warsptr->degrees == 0) {
 				prfmsg(NOWALRD, (int)(warsptr->heading + .5));
 			} else {
 				deg = (unsigned)normal(warsptr->heading + (double)warsptr->degrees);
@@ -792,8 +793,8 @@ void FUNC cmd_rotate(void)
 			prfmsg(HLBROKE);
 			if (warsptr->speed != 0)
 				prfmsg(HLBROKE2);
-			outprfge(FLT_NONE, usrnum);
-		}
+				outprfge(FLT_NONE, usrnum);
+			}
 	}
 }
 

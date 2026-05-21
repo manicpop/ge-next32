@@ -1081,8 +1081,11 @@ static void FUNC scan_ra(void)
 	else if (margc == 3 && sameto("q",margv[2]))
 		range = (double)(ship_scanrange(warsptr) / 4);
 	else {
-		x = atoi(margv[2]);
-		if (x < 1 || x > 9 || margc == 2)
+		if (margc == 2)
+			x = 9;
+		else
+			x = atoi(margv[2]);
+		if (x < 1 || x > 9)
 			x = 9;
 
 		range = (double)(ship_scanrange(warsptr) / ((10 - x) * (10 - x)));
