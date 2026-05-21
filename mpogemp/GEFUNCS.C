@@ -1149,7 +1149,7 @@ int FUNC misl(WARSHP *ptr, int usrnum, int shpnum, unsigned energy, unsigned eng
 ** Look up the ships this player has                                     **
 **************************************************************************/
 
-void FUNC lookupshp()
+void FUNC lookupshp(void)
 {
 	int noships = 0;
 
@@ -1377,7 +1377,7 @@ void FUNC start_entrymsg(int usrn)
 ** Advance deferred entry notifications once per game tick              **
 **************************************************************************/
 
-void FUNC tick_entrymsg()
+void FUNC tick_entrymsg(void)
 {
 	int usrn, zothusn;
 	unsigned char *sentptr, *pendptr;
@@ -1464,7 +1464,7 @@ void FUNC exit_entrymsg(int usrn)
 ** Finish login/setup and place the selected ship into the game         **
 **************************************************************************/
 
-void FUNC tossingegame()
+void FUNC tossingegame(void)
 {
 	int zothusn;
 	unsigned char *sentptr;
@@ -1742,7 +1742,7 @@ int FUNC findships(int direction, int quiet)
 ** Select the ship to board from the list                                **
 **************************************************************************/
 
-void FUNC selectship()
+void FUNC selectship(void)
 {
 	int selection;
 	int shpno;
@@ -3025,7 +3025,7 @@ int FUNC isvisible(WARSHP *ptr, WARSHP *wptr)
 ** Check mine status                                                     **
 **************************************************************************/
 
-void FUNC checkmines()
+void FUNC checkmines(void)
 {
 	int i;
 	int zothusn;	/* general purpose other-user channel number */

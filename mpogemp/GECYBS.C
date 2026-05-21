@@ -62,7 +62,7 @@
 
 /* LOCAL GLOBAL DEFS ****************************************************/
 
-char cybname[UIDSIZ];
+static char cybname[UIDSIZ];
 int cybhaltflg = 0;
 double d_topspeed;
 

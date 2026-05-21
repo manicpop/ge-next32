@@ -118,6 +118,9 @@ GALPLNT planet;		/* temporary planet-record workspace */
 
 GALWORM worm;		/* temporary wormhole-record workspace */
 
+static int mnu_admenu1a(void);
+static int mnu_menug(void);
+
 PLANETAB *ptab;		/* base pointer to per-user planet scan tables */
 
 char map[MAXY][MAXX + 1];	/* scan map character buffer */
@@ -830,7 +833,7 @@ void FUNC pgedelete(char *uid)
 	gedeletea(uid);
 }
 #else
-int gedelete(char *uid)
+static int gedelete(char *uid)
 {
 	gedeletea(uid);
 	return 0;
@@ -2528,7 +2531,7 @@ int FUNC mnu_admenu1(void)
 /* player was asked to enter the name of the new planet and should have
    responded with a string. */
 
-int mnu_admenu1a(void)
+static int mnu_admenu1a(void)
 {
 	if (margc > 0) {
 		if (!load_admin_planet())
@@ -2957,7 +2960,7 @@ int FUNC mnu_choosesh(void)
 /* player selected read messages from main menu, was displayed the mail
    sub-menu, and was asked to select an option */
 
-int mnu_menug(void)
+static int mnu_menug(void)
 {
 	if (margc > 0) {
 		switch (tolower((unsigned char)*margv[0])) {

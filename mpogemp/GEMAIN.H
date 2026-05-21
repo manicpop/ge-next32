@@ -795,10 +795,4 @@ typedef struct _team {
 } TEAM;
 
 
-extern unsigned char	beacontimer;
-extern ENTRYTAB		*entrytab;
-extern unsigned char	*entrysent;
-extern unsigned char	*entrypend;
-extern int		entrybytes;
-
 #define FUNC _export

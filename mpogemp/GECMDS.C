@@ -2263,36 +2263,7 @@ void FUNC cmd_cloak(void)
 ** Transfer goods between ship and planet                                **
 **************************************************************************/
 
-void FUNC cmd_transfer(void)
-{
-	int i;
-
-	if (warsptr->where < 10) {
-		prfmsg(TRANSFR3);
-		outprfge(FLT_NONE,usrnum);
-		return;
-	}
-
-	if (margc == 4) {
-		for (i=0; i < NUMITEMS; ++i) {
-			if (sameto(kwrd[i],margv[3])) {
-				if (sameto("u",margv[1]))
-					trans_up(i);
-				else if (sameto("d",margv[1]))
-					trans_down(i);
-				else
-					prfmsg(FORMAT,"TRANSFER");
-				outprfge(FLT_NONE,usrnum);
-				return;
-			}
-		}
-	}
-
-	prfmsg(FORMAT,"TRANSFER");
-	outprfge(FLT_NONE,usrnum);
-}
-
-void trans_down(int item)
+static void trans_down(int item)
 {
 	long amt;
 
@@ -2370,7 +2341,7 @@ void trans_down(int item)
 	}
 }
 
-void trans_up(int item)
+static void trans_up(int item)
 {
 	long amt;
 	unsigned long room100;
@@ -2449,6 +2420,35 @@ void trans_up(int item)
 	}
 }
 
+void FUNC cmd_transfer(void)
+{
+	int i;
+
+	if (warsptr->where < 10) {
+		prfmsg(TRANSFR3);
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+
+	if (margc == 4) {
+		for (i=0; i < NUMITEMS; ++i) {
+			if (sameto(kwrd[i],margv[3])) {
+				if (sameto("u",margv[1]))
+					trans_up(i);
+				else if (sameto("d",margv[1]))
+					trans_down(i);
+				else
+					prfmsg(FORMAT,"TRANSFER");
+				outprfge(FLT_NONE,usrnum);
+				return;
+			}
+		}
+	}
+
+	prfmsg(FORMAT,"TRANSFER");
+	outprfge(FLT_NONE,usrnum);
+}
+
 /**************************************************************************
 ** abandon a colony                                                      **
 **************************************************************************/
@@ -2524,6 +2524,81 @@ void FUNC cmd_admin(void)
 		prfmsg(ADMIN2);
 		outprfge(FLT_NONE,usrnum);
 	}
+}
+
+/**************************************************************************
+** Notify the owner about a planetary attack                             **
+**************************************************************************/
+
+static void FUNC call_4_help(int send_spy_mail, int won)
+{
+	if (instat(plptr->userid, gestt) && othusp->substt >= FIGHTSUB) {
+		if (warsptr->shipname[0] == '\0')
+			prfmsg(ATTACK6O, plptr->name, xsect, ysect, warsptr->userid);
+		else
+			prfmsg(ATTACK6, plptr->name, xsect, ysect, warsptr->userid, warsptr->shipname);
+		outprf(othusn);
+		prfmsg(ATTACK7);
+		outprfge(FLT_NONE, usrnum);
+		clrprf();
+	} else if (onsys(plptr->userid) && user[othusn].state != fse_state) {
+		prfmsg(ATTACK6A);
+		injoth();
+		prfmsg(ATTACK7);
+		outprfge(FLT_NONE, usrnum);
+		clrprf();
+	} else if (won == 0
+		&& send_spy_mail
+		&& gernd() % 6 == 0
+		&& plptr->spyowner[0] != 0) {
+		prfmsg(SPYM3, plptr->name, xsect, ysect, warsptr->userid);
+		strcpy(mail.userid, plptr->spyowner);
+		strcpy(mail.topic, "Intelligence Report");
+		sendit();
+		clrprf();
+	} else if (won == 1
+		&& plptr->spyowner[0] != 0) {
+		prfmsg(SPYM4, plptr->name, xsect, ysect, warsptr->userid);
+		strcpy(mail.userid, plptr->spyowner);
+		strcpy(mail.topic, "Intelligence Report");
+		sendit();
+		clrprf();
+	}
+}
+
+/**************************************************************************
+** Transfer a conquered planet to the attacking player                   **
+**************************************************************************/
+
+static void FUNC wonplnt(void)
+{
+	char olduid[UIDSIZ];
+
+	/* save old owner */
+	strncpy(olduid, plptr->userid, UIDSIZ);
+
+	/* remove planet from old owner, if they still exist */
+	if (olduid[0] && !sameas(olduid, warsptr->userid)) {
+		setbtv(gebb5);
+		if (qeqbtv(olduid, 0)) {
+			gcrbtv(&tmpusr, 0);
+			if (tmpusr.planets)
+				--tmpusr.planets;
+			geudb(GEUPDATE, tmpusr.userid, &tmpusr);
+		}
+	}
+
+	/* assign planet to new owner */
+	strncpy(plptr->userid, warsptr->userid, UIDSIZ);
+	if (sameas(plptr->password, "team")) {
+		plptr->password[0] = 0;
+		plptr->teamcode = 0;
+	}
+	warsptr->hostile = 0;
+
+	/* add planet to winner */
+	++waruptr->planets;
+	geudb(GEUPDATE, waruptr->userid, waruptr);
 }
 
 /**************************************************************************
@@ -2827,81 +2902,6 @@ static int FUNC attack_fig(unsigned long num)
 	pkey.plnum = plnum;
 	gesdb(GEUPDATE, &pkey, (GALSECT *)&planet);
 	return (won);
-}
-
-/**************************************************************************
-** Notify the owner about a planetary attack                             **
-**************************************************************************/
-
-static void FUNC call_4_help(int send_spy_mail, int won)
-{
-	if (instat(plptr->userid, gestt) && othusp->substt >= FIGHTSUB) {
-		if (warsptr->shipname[0] == '\0')
-			prfmsg(ATTACK6O, plptr->name, xsect, ysect, warsptr->userid);
-		else
-			prfmsg(ATTACK6, plptr->name, xsect, ysect, warsptr->userid, warsptr->shipname);
-		outprf(othusn);
-		prfmsg(ATTACK7);
-		outprfge(FLT_NONE, usrnum);
-		clrprf();
-	} else if (onsys(plptr->userid) && user[othusn].state != fse_state) {
-		prfmsg(ATTACK6A);
-		injoth();
-		prfmsg(ATTACK7);
-		outprfge(FLT_NONE, usrnum);
-		clrprf();
-	} else if (won == 0
-		&& send_spy_mail
-		&& gernd() % 6 == 0
-		&& plptr->spyowner[0] != 0) {
-		prfmsg(SPYM3, plptr->name, xsect, ysect, warsptr->userid);
-		strcpy(mail.userid, plptr->spyowner);
-		strcpy(mail.topic, "Intelligence Report");
-		sendit();
-		clrprf();
-	} else if (won == 1
-		&& plptr->spyowner[0] != 0) {
-		prfmsg(SPYM4, plptr->name, xsect, ysect, warsptr->userid);
-		strcpy(mail.userid, plptr->spyowner);
-		strcpy(mail.topic, "Intelligence Report");
-		sendit();
-		clrprf();
-	}
-}
-
-/**************************************************************************
-** Transfer a conquered planet to the attacking player                   **
-**************************************************************************/
-
-static void FUNC wonplnt(void)
-{
-	char olduid[UIDSIZ];
-
-	/* save old owner */
-	strncpy(olduid, plptr->userid, UIDSIZ);
-
-	/* remove planet from old owner, if they still exist */
-	if (olduid[0] && !sameas(olduid, warsptr->userid)) {
-		setbtv(gebb5);
-		if (qeqbtv(olduid, 0)) {
-			gcrbtv(&tmpusr, 0);
-			if (tmpusr.planets)
-				--tmpusr.planets;
-			geudb(GEUPDATE, tmpusr.userid, &tmpusr);
-		}
-	}
-
-	/* assign planet to new owner */
-	strncpy(plptr->userid, warsptr->userid, UIDSIZ);
-	if (sameas(plptr->password, "team")) {
-		plptr->password[0] = 0;
-		plptr->teamcode = 0;
-	}
-	warsptr->hostile = 0;
-
-	/* add planet to winner */
-	++waruptr->planets;
-	geudb(GEUPDATE, waruptr->userid, waruptr);
 }
 
 /**************************************************************************

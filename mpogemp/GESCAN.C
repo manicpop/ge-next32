@@ -58,7 +58,7 @@
 #define GESCAN 1
 
 /* out of range mask for printmap */
-const int scan_side_blocks[15] =
+static const int scan_side_blocks[15] =
 	{6, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 6};
 
 static int se_nebula = FALSE;

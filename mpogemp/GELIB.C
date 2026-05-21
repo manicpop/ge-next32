@@ -54,6 +54,8 @@
 #include "math.h"
 #include "majorbbs.h"
 
+#define GELIB 1
+
 #include "gemain.h"
 #include "geglobal.h"
 
