@@ -64,16 +64,11 @@ static const int scan_side_blocks[15] =
 static int se_nebula = FALSE;
 static byte owned_planet[MAXPLANETS];
 
-static void printmap(int maptype, long dist_filter);
 static void scan_sh(void);
 static void scan_pl(void);
 static void scan_ra(void);
 static void scan_se(void);
 static void scan_lo(void);
-static byte owns_planet(int shp)
-{
-	return(owned_planet[shp]);
-}
 
 /**************************************************************************
 ** Functions for printmap()                                              **
@@ -194,7 +189,7 @@ static void FUNC print_ship_name(int othusn)
 	int len, k;
 	unsigned int rseed = gernd();
 
-	/* User ships show userid, or userid plus ship name if one exists. */
+	/* user ships show userid, or userid plus ship name if one exists */
 	len = build_ship_name(othusn);
 
 	if (warsptr->jam_sev > (byte)7)
@@ -222,7 +217,7 @@ static int FUNC print_planet_line(int shp)
 	unsigned int rseed = gernd();
 	int jam_digits, len, k;
 	int orbit = (warsptr->where - 11 == shp);
-	int owned = owns_planet(shp);
+	int owned = owned_planet[shp];
 
 	if (se_nebula && cdistance(&warsptr->coord,&ptab[usrnum].planets[shp].coord)*10000.0 > (double)NEBRNG && !orbit && !owned)
 		return(FALSE);
@@ -297,7 +292,7 @@ static void FUNC print_map_header(int maptype)
 			else {
 				for (i=0; i<MAXPLANETS && ptab[usrnum].planets[i].type != 0; ++i) {
 					if (cdistance(&warsptr->coord,&ptab[usrnum].planets[i].coord)*10000.0 <= (double)NEBRNG
-						|| owns_planet(i)) {
+						|| owned_planet[i]) {
 						vispl = TRUE;
 						break;
 					}
@@ -464,7 +459,7 @@ static int FUNC print_fullrange_line(SCANTAB *sptr, int shp, long dist_filter)
 /* RANGEEXTRA / RANGENOMAP */
 static void FUNC print_range_summary(SCANTAB *sptr, int shp, long dist_filter, int maptype)
 {
-	int visible[NOSCANTAB];
+	byte visible[NOSCANTAB];
 	int count = 0;
 	int i;
 
@@ -516,10 +511,6 @@ static void FUNC jam_scramble(char *buf, byte sev, unsigned int *rseed)
 	}
 }
 
-/**************************************************************************
-** Static functions for scans                                            **
-**************************************************************************/
-
 static void map_planets(void)
 {
 	int i;
@@ -529,7 +520,7 @@ static void map_planets(void)
 	for (i = 0; i < sector.numplan; ++i) {
 		if (sector.ptab[i].coord.xcoord != 0) {
 			if (se_nebula && cdistance(&warsptr->coord,&sector.ptab[i].coord)*10000.0 > (double)NEBRNG
-				&& !owns_planet(i))
+				&& !owned_planet[i])
 				continue;
 			x = coord2(sector.ptab[i].coord.xcoord)+25;
 			y = coord2(sector.ptab[i].coord.ycoord)+25;
@@ -559,8 +550,6 @@ static void clearmap(void)
 		mapc[i][MAXX] = 0;
 	}
 }
-
-
 
 /* SCAN SHIP FUNCTION */
 
@@ -598,6 +587,59 @@ void FUNC cmd_scan(void)
 		prfmsg(FORMAT,"SCAN");
 		outprfge(FLT_NONE,usrnum);
 	}
+}
+
+/**************************************************************************
+** Print the map                                                         **
+**************************************************************************/
+
+static void FUNC printmap(int maptype, long dist_filter)
+{
+	SCANTAB *sptr = &scantab[usrnum];
+	int i, shp = 0, ff = 0;
+
+	print_map_header(maptype);
+	outprfge(FLT_NONE, usrnum);
+
+	for (i = 0; i < MAXY + 1; ++i) {
+		if (maptype == SECTORNOMAP || maptype == RANGENOMAP)
+			continue;
+
+		if (i == MAXY)
+			prfmsg(PLUSDASH);
+		else
+			print_map_row(i, maptype);
+
+		if (maptype == SECTORFULL) {
+			while (shp < MAXPLANETS && ptab[usrnum].planets[shp].type != 0 && print_planet_line(shp) == FALSE)
+				shp++;  /* skip jammed planet and immediately try next one */
+
+			shp++;
+		}
+
+		if (maptype == RANGENAMES || maptype == RANGEEXTRA) {
+			while (ff == 0 && warsptr->jam_sev > (byte)7 && gernd()%2 == 0)
+				shp++;
+			shp += print_range_line(sptr, shp, &ff, dist_filter);
+		}
+
+		if (maptype == RANGEFULL) {
+			while (ff == 0 && warsptr->jam_sev > (byte)7 && gernd()%2 == 0)
+				shp++;
+			shp += print_fullrange_line(sptr, shp, dist_filter);
+		}
+
+		prf("\r");
+	}
+
+	if (maptype == RANGEEXTRA || maptype == RANGENOMAP)
+		print_range_summary(sptr, shp, dist_filter, maptype);
+
+	if (maptype == SECTORNOMAP)
+		print_planet_summary(shp);
+
+	prf("\r");
+	prf(CLR_WHITE2);
 }
 
 static void FUNC scan_sh(void)
@@ -1034,9 +1076,9 @@ static void FUNC scan_ra(void)
 		return;
 	}
 
-	if (sameto("h",margv[2]))
+	if (margc == 3 && sameto("h",margv[2]))
 		range = (double)(ship_scanrange(warsptr) / 2);
-	else if (sameto("q",margv[2]))
+	else if (margc == 3 && sameto("q",margv[2]))
 		range = (double)(ship_scanrange(warsptr) / 4);
 	else {
 		x = atoi(margv[2]);
@@ -1388,57 +1430,4 @@ static void FUNC scan_lo(void)
 
 	printmap(LONG,0L);
 	outprfge(FLT_NONE,usrnum);
-}
-
-/**************************************************************************
-** Print the map                                                         **
-**************************************************************************/
-
-static void FUNC printmap(int maptype, long dist_filter)
-{
-	SCANTAB *sptr = &scantab[usrnum];
-	int i, shp = 0, ff = 0;
-
-	print_map_header(maptype);
-	outprfge(FLT_NONE, usrnum);
-
-	for (i = 0; i < MAXY + 1; ++i) {
-		if (maptype == SECTORNOMAP || maptype == RANGENOMAP)
-			continue;
-
-		if (i == MAXY)
-			prfmsg(PLUSDASH);
-		else
-			print_map_row(i, maptype);
-
-		if (maptype == SECTORFULL) {
-			while (shp < MAXPLANETS && ptab[usrnum].planets[shp].type != 0 && print_planet_line(shp) == FALSE)
-				shp++;  /* skip jammed planet and immediately try next one */
-
-			shp++;
-		}
-
-		if (maptype == RANGENAMES || maptype == RANGEEXTRA) {
-			while (ff == 0 && warsptr->jam_sev > (byte)7 && gernd()%2 == 0)
-				shp++;
-			shp += print_range_line(sptr, shp, &ff, dist_filter);
-		}
-
-		if (maptype == RANGEFULL) {
-			while (ff == 0 && warsptr->jam_sev > (byte)7 && gernd()%2 == 0)
-				shp++;
-			shp += print_fullrange_line(sptr, shp, dist_filter);
-		}
-
-		prf("\r");
-	}
-
-	if (maptype == RANGEEXTRA || maptype == RANGENOMAP)
-		print_range_summary(sptr, shp, dist_filter, maptype);
-
-	if (maptype == SECTORNOMAP)
-		print_planet_summary(shp);
-
-	prf("\r");
-	prf(CLR_WHITE2);
 }
