@@ -1,3 +1,7 @@
+# V10 port
+
+This is an in-progress port of ge-next to 32-bit MajorBBS V10. It is not functional yet.
+
 # Galactic Empire ge-next
 
 It is the Standard Year 3285, 1010 years since man developed interplanetary space navigation, 447 years since neutron flux warp technology was perfected by the ship builders of Zygor, and 35 years since the creation of the neutral
