@@ -143,7 +143,7 @@ int FUNC lockon(WARSHP *ptr, int type, int ship, int usrn)
 static int entrypend_empty(int usrn)
 {
 	int i;
-	unsigned char *pendptr;
+	byte *pendptr;
 
 	/* each user owns a fixed-width slice of the shared pending-entry buffer */
 	pendptr = entrypend + (usrn * entrybytes);
@@ -1041,7 +1041,7 @@ int FUNC torp(WARSHP *ptr, int usrn, int shpnum)
 		/* store the initial travel distance plus a small offset for some reason */
 		wptr->ltorps[slot].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
 		wptr->ltorps[slot].distance += 20;	/* why? */
-		wptr->ltorps[slot].channel = (unsigned char)usrn;
+		wptr->ltorps[slot].channel = (byte)usrn;
 		wptr->cantexit = FIRETICKS;
 		ptr->cantexit = FIRETICKS;
 		return 1;
@@ -1135,7 +1135,7 @@ int FUNC misl(WARSHP *ptr, int usrnum, int shpnum, unsigned energy, unsigned eng
 		/* store the initial travel distance plus a small offset, along with the missile's payload energy */
 		wptr->lmissl[slot].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
 		wptr->lmissl[slot].distance += 20;
-		wptr->lmissl[slot].channel = (unsigned char)usrnum;
+		wptr->lmissl[slot].channel = (byte)usrnum;
 		wptr->lmissl[slot].energy = energy;
 		wptr->cantexit = FIRETICKS;
 		ptr->cantexit = FIRETICKS;
@@ -1340,8 +1340,8 @@ void FUNC start_entrymsg(int usrn)
 	int zothusn;
 	int anypend = FALSE;
 	int mode;
-	unsigned char *sentptr, *pendptr;
-	unsigned char mask;
+	byte *sentptr, *pendptr;
+	byte mask;
 
 	clear_entrymsg(usrn);
 	sentptr = entrysent + (usrn * entrybytes);
@@ -1352,7 +1352,7 @@ void FUNC start_entrymsg(int usrn)
 			continue;
 
 		mode = warusroff(zothusn)->options[MSG_FILTER] & MSGF_ENTRY_MASK;
-		mask = (unsigned char)(1 << (zothusn & 7));
+		mask = (byte)(1 << (zothusn & 7));
 
 		if (mode == 0x40)
 			continue;
@@ -1380,8 +1380,8 @@ void FUNC start_entrymsg(int usrn)
 void FUNC tick_entrymsg(void)
 {
 	int usrn, zothusn;
-	unsigned char *sentptr, *pendptr;
-	unsigned char mask;
+	byte *sentptr, *pendptr;
+	byte mask;
 
 	for (usrn = 0; usrn < nterms; ++usrn) {
 		if (!entrytab[usrn].active)
@@ -1398,7 +1398,7 @@ void FUNC tick_entrymsg(void)
 
 		if (entrytab[usrn].ticks < ENTRYWAIT) {
 			for (zothusn = 0; zothusn < nterms; ++zothusn) {
-				mask = (unsigned char)(1 << (zothusn & 7));
+				mask = (byte)(1 << (zothusn & 7));
 				if (!(pendptr[zothusn >> 3] & mask))
 					continue;
 				if (!ingegame(zothusn)) {
@@ -1414,7 +1414,7 @@ void FUNC tick_entrymsg(void)
 		}
 		else {
 			for (zothusn = 0; zothusn < nterms; ++zothusn) {
-				mask = (unsigned char)(1 << (zothusn & 7));
+				mask = (byte)(1 << (zothusn & 7));
 				if (!(pendptr[zothusn >> 3] & mask))
 					continue;
 				if (ingegame(zothusn)) {
@@ -1436,8 +1436,8 @@ void FUNC tick_entrymsg(void)
 void FUNC exit_entrymsg(int usrn)
 {
 	int zothusn;
-	unsigned char *sentptr;
-	unsigned char mask;
+	byte *sentptr;
+	byte mask;
 
 	sentptr = entrysent + (usrn * entrybytes);
 
@@ -1449,7 +1449,7 @@ void FUNC exit_entrymsg(int usrn)
 	}
 	else {
 		for (zothusn = 0; zothusn < nterms; ++zothusn) {
-			mask = (unsigned char)(1 << (zothusn & 7));
+			mask = (byte)(1 << (zothusn & 7));
 			if (sentptr[zothusn >> 3] & mask) {
 				if (ingegame(zothusn))
 					send_exitmsg(usrn,zothusn);
@@ -1467,8 +1467,8 @@ void FUNC exit_entrymsg(int usrn)
 void FUNC tossingegame(void)
 {
 	int zothusn;
-	unsigned char *sentptr;
-	unsigned char mask;
+	byte *sentptr;
+	byte mask;
 
 	start_entrymsg(usrnum);
 
@@ -1491,7 +1491,7 @@ void FUNC tossingegame(void)
 			continue;
 
 		sentptr = entrysent + (zothusn * entrybytes);
-		mask = (unsigned char)(1 << (usrnum & 7));
+		mask = (byte)(1 << (usrnum & 7));
 		sentptr[usrnum >> 3] |= mask;
 	}
 
@@ -3678,7 +3678,7 @@ void FUNC validate_lock(WARSHP *ptr, int usrn)
 ** Credit projectile attackers and notify live user owners of impacts    **
 **************************************************************************/
 
-void FUNC acctm(WARSHP *ptr, int usrn, int mt, unsigned char channel, int count)
+void FUNC acctm(WARSHP *ptr, int usrn, int mt, byte channel, int count)
 {
 	if (channel < nships && ingegame(channel))
 		ptr->lastfired = channel;
@@ -3802,7 +3802,7 @@ void FUNC cleartm(int channel)
 	int zothusn;
 
 	for (i = 0, mptr = mines; i < nummines; ++i, ++mptr) {
-		if (mptr->channel == (unsigned char)channel)
+		if (mptr->channel == (byte)channel)
 			mptr->channel = 255;
 	}
 
@@ -3810,11 +3810,11 @@ void FUNC cleartm(int channel)
 		if (ingegame(zothusn)) {
 			wptr = warshpoff(zothusn);
 			for (j = 0; j < MAXTORPS; ++j) {
-				if (wptr->ltorps[j].channel == (unsigned char)channel)
+				if (wptr->ltorps[j].channel == (byte)channel)
 					wptr->ltorps[j].channel = 255;
 			}
 			for (j = 0; j < MAXMISSL; ++j) {
-				if (wptr->lmissl[j].channel == (unsigned char)channel)
+				if (wptr->lmissl[j].channel == (byte)channel)
 					wptr->lmissl[j].channel = 255;
 			}
 		}

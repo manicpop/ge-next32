@@ -156,7 +156,7 @@ int FUNC isvisible P((WARSHP *ptr , WARSHP *wptr));
 void FUNC checkmines P((void));
 void FUNC checktm P((WARSHP *ptr , int usrn));
 void FUNC validate_lock P((WARSHP *ptr , int usrn));
-void FUNC acctm P((WARSHP *ptr , int usrn , int mt , unsigned char channel , int count));
+void FUNC acctm P((WARSHP *ptr , int usrn , int mt , byte channel , int count));
 int FUNC chkitm P((int usrn));
 void FUNC clearitm P((int usrn));
 void FUNC cleartm P((int channel));

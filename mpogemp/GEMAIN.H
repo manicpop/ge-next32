@@ -50,11 +50,11 @@
 /* #define MBBSEMU 1 */
 
 #ifdef GETRAINER
-#define VERSION "ge-next 0.3-beta2 Trainer"
+#define VERSION "ge-next 0.3-rc1 Trainer"
 #define GEHELP  "MPOG2HLP.MCV"
 #define GEMSG   "MPOG2MSG.MCV"
 #else
-#define VERSION "ge-next 0.3-beta2"
+#define VERSION "ge-next 0.3-rc1"
 #define GEHELP  "MPOGEHLP.MCV"
 #define GEMSG   "MPOGEMSG.MCV"
 #endif
@@ -345,13 +345,13 @@ typedef struct _mine {
 } MINE;
 
 typedef struct _missile {
-	unsigned char channel;	/* target ship/user slot                   */
+	byte channel;		/* target ship/user slot                   */
 	unsigned distance;	/* distance to target                      */
 	unsigned energy;	/* missile energy payload                  */
 } MISSILE;
 
 typedef struct _torpedo {
-	unsigned char channel;	/* target ship/user slot                   */
+	byte channel;		/* target ship/user slot                   */
 	unsigned distance;	/* distance to target                      */
 } TORPEDO;
 
@@ -722,28 +722,28 @@ typedef struct _shpkey {
 typedef struct _ship {
 	char *typename;			/* class display name                      */
 	char *npcprefx;			/* NPC shipname prefix                     */
-	unsigned char max_shlds;	/* max shield class                        */
-	unsigned char max_phasr;	/* max phaser class                        */
-	unsigned char max_torps;	/* max torpedo tubes                       */
-	unsigned char max_missl;	/* max missile tubes                       */
-	unsigned char has_decoy;	/* decoy capability                        */
-	unsigned char has_jam;		/* jammer capability                       */
-	unsigned char has_zip;		/* zipper capability                       */
-	unsigned char has_mine;		/* mine capability                         */
-	unsigned char max_attk;		/* fighter capability                      */
-	unsigned char max_cloak;	/* cloak capability                        */
+	byte max_shlds;			/* max shield class                        */
+	byte max_phasr;			/* max phaser class                        */
+	byte max_torps;			/* max torpedo tubes                       */
+	byte max_missl;			/* max missile tubes                       */
+	byte has_decoy;			/* decoy capability                        */
+	byte has_jam;			/* jammer capability                       */
+	byte has_zip;			/* zipper capability                       */
+	byte has_mine;			/* mine capability                         */
+	byte max_attk;			/* fighter capability                      */
+	byte max_cloak;			/* cloak capability                        */
 	unsigned int max_accel;		/* max acceleration                        */
-	unsigned char max_warp;		/* max warp cruising speed                 */
+	byte max_warp;			/* max warp cruising speed                 */
 	long max_tons;			/* cargo capacity                          */
 	long max_price;			/* ship class price                        */
 	unsigned int max_points;	/* point value if destroyed                */
 	unsigned int max_type;		/* class type (user/cyborg/droid/none)     */
 	long scanrange;			/* scanner range                           */
-	unsigned char cybs_can_att;	/* cybs of this class attack unprovoked    */
-	unsigned char lowest_to_attk;	/* lowest ship class this NPC will pursue  */
-	unsigned char noclaim;		/* max cyborg claims / claim pressure      */
+	byte cybs_can_att;		/* cybs of this class attack unprovoked    */
+	byte lowest_to_attk;		/* lowest ship class this NPC will pursue  */
+	byte noclaim;			/* max cyborg claims / claim pressure      */
 	unsigned int tot_to_create;	/* target live NPC count for this class    */
-	unsigned char tough_factor;	/* NPC toughness/aggression factor         */
+	byte tough_factor;		/* NPC toughness/aggression factor         */
 	unsigned int damfact;		/* damage/price scaling factor             */
 	unsigned int faction;		/* faction id used for NPC relations       */
 	unsigned int loadout;		/* upgrade/loadout profile                 */
@@ -778,8 +778,8 @@ typedef struct _scantab {
 } SCANTAB;
 
 typedef struct _entrytab {
-	unsigned char active;		/* entry-message throttle active           */
-	unsigned char ticks;		/* ticks since entry state began           */
+	byte active;			/* entry-message throttle active           */
+	byte ticks;			/* ticks since entry state began           */
 } ENTRYTAB;
 
 typedef struct _s00 {

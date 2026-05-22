@@ -131,10 +131,10 @@ MINE *mines;			/* base pointer to active mine table */
 MAIL mail;			/* temporary mail record workspace */
 MAILSTAT tmpstat;		/* temporary mail-status workspace */
 
-unsigned char beacontimer;	/* beacon timing state */
+byte beacontimer;		/* beacon timing state */
 ENTRYTAB *entrytab;		/* delayed entry-message state table */
-unsigned char *entrysent;	/* per-entrant sent-recipient bitsets */
-unsigned char *entrypend;	/* per-entrant pending-recipient bitsets */
+byte *entrysent;		/* per-entrant sent-recipient bitsets */
+byte *entrypend;		/* per-entrant pending-recipient bitsets */
 int entrybytes;			/* bytes per entrysent/entrypend bitset */
 
 struct message *gemsg;		/* temporary GE mail/message buffer */
@@ -683,9 +683,9 @@ void FUNC iniwara(void)
 	entrytab = (ENTRYTAB *)alcmem(n = nterms * sizeof(ENTRYTAB));	/* per-user delayed entry-message timers/state */
 	setmem(entrytab, n, 0);
 	entrybytes = (nterms + 7) / 8;					/* bytes needed for one nterms-bit recipient map */
-	entrysent = (unsigned char *)alcmem(n = nterms * entrybytes);	/* per-entrant bitmaps of recipients already sent entry */
+	entrysent = (byte *)alcmem(n = nterms * entrybytes);	/* per-entrant bitmaps of recipients already sent entry */
 	setmem(entrysent, n, 0);
-	entrypend = (unsigned char *)alcmem(n = nterms * entrybytes);	/* per-entrant bitmaps of recipients still pending entry */
+	entrypend = (byte *)alcmem(n = nterms * entrybytes);	/* per-entrant bitmaps of recipients still pending entry */
 	setmem(entrypend, n, 0);
 
 	/* allocate memory for S00 table */
@@ -2161,7 +2161,7 @@ void FUNC warrti3a(void)
 
 void FUNC outprfge(int class, int shpno)
 {
-	unsigned char msgfilter;
+	byte msgfilter;
 
 	if (shpno >= 0 && shpno < nterms) {
 		if (user[shpno].state == gestt) {

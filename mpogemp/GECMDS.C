@@ -4431,7 +4431,7 @@ void FUNC cmd_who(void)
 void FUNC cmd_set(void)
 {
 	int invalid = FALSE;
-	unsigned char msgfilter;
+	byte msgfilter;
 
 	if (margc < 2 || margc > 4) {
 		prfmsg(FORMAT,"SET");

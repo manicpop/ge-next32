@@ -67,10 +67,10 @@ extern MINE *mines;			/* place to stuff mines */
 extern MAIL mail;
 extern MAILSTAT tmpstat;
 
-extern unsigned char beacontimer;
+extern byte beacontimer;
 extern ENTRYTAB *entrytab;
-extern unsigned char *entrysent;
-extern unsigned char *entrypend;
+extern byte *entrysent;
+extern byte *entrypend;
 extern int entrybytes;
 
 extern struct message *gemsg;
