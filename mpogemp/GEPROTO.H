@@ -49,6 +49,7 @@ void FUNC gedeletea P((char *uid));
 void FUNC pgemidnight P((void));
 int FUNC gemidnight P((void));
 void FUNC gemidnighta P((void));
+void FUNC dump_roster_file P((void));
 void FUNC calc_networth P((void));
 unsigned FUNC long value_pl P((void));
 int FUNC pwarlof P((void));
@@ -135,6 +136,9 @@ void FUNC tossingegame P((void));
 int FUNC initshp P((char *userid , int type));
 int FUNC initusr P((char *userid));
 int FUNC valid_user_ship P((WARSHP *ptr));
+int FUNC cyb_slot_class P((int usrn));
+int FUNC cyb_user_slot P((char *userid));
+void FUNC prune_stale_auto_records P((void));
 int FUNC findships P((int direction , int quiet));
 void FUNC selectship P((void));
 void FUNC repairship P((WARSHP *ptr , int usrn));
@@ -257,14 +261,14 @@ void FUNC cyb_init P((WARSHP *ptr , int usrn , int class));
 void FUNC assign_cybs P((int usrnum , int call));
 int FUNC cyb_fast P((WARSHP *ptr));
 void FUNC cyb_lives P((WARSHP *ptr , int usrn));
-void FUNC cyb_won P((WARSHP *ptr , int usrn));
-void FUNC cyb_died P((WARSHP *ptr));
+void FUNC cyb_won P((WARSHP *ptr , int usrn , WARSHP *wptr));
+void FUNC cyb_died P((WARSHP *ptr , int usrn , WARSHP *wptr));
 
 /* gedroids.c */
 void FUNC droid_init P((WARSHP *ptr , int usrn , int class));
 void FUNC droid_lives P((WARSHP *ptr , int usrn));
-void FUNC droid_won P((WARSHP *ptr , int usrn));
-void FUNC droid_died P((WARSHP *ptr));
+void FUNC droid_won P((WARSHP *ptr , int usrn , WARSHP *wptr));
+void FUNC droid_died P((WARSHP *ptr , int usrn , WARSHP *wptr));
 
 /* geplanet.c */
 void FUNC check_spy P((void ));

@@ -67,6 +67,92 @@ int cybhaltflg = 0;
 double d_topspeed;
 
 /**************************************************************************
+** Validate a saved cyborg ship record for the current cyb slot          **
+**************************************************************************/
+
+static int valid_cyb_ship(WARSHP *ptr, int usrn, int class)
+{
+	if (strncmp(ptr->userid, cybname, UIDSIZ) != 0)
+		return FALSE;
+
+	if (ptr->shipno <= 0)
+		return FALSE;
+
+	if (!VALID_SHPCLASS(ptr->shpclass))
+		return FALSE;
+
+	if (shipclass[ptr->shpclass].max_type != CLASSTYPE_CYBORG)
+		return FALSE;
+
+	return ptr->shpclass == class && cyb_user_slot(ptr->userid) == usrn;
+}
+
+/**************************************************************************
+** Load one valid cyb ship and delete invalid or duplicate records       **
+**************************************************************************/
+
+static int load_cyb_ship(WARSHP *ptr, int usrn, int class)
+{
+	int deleted;
+	int have_ship;
+	int keep_shipno;
+
+	have_ship = FALSE;
+	keep_shipno = -1;
+
+	do {
+		deleted = FALSE;
+		setbtv(gebb1);
+		if (qeqbtv(cybname, 0)) {
+			do {
+				gcrbtv(&tmpshp, 0);
+				if (strncmp(tmpshp.userid, cybname, UIDSIZ) != 0)
+					break;
+
+				if (valid_cyb_ship(&tmpshp, usrn, class)) {
+					if (!have_ship) {
+						memcpy(ptr, &tmpshp, sizeof(WARSHP));
+						keep_shipno = tmpshp.shipno;
+						have_ship = TRUE;
+						logthis(spr("GE:INF:Load %s ship %d",
+							ptr->userid, ptr->shipno));
+					} else if (tmpshp.shipno != keep_shipno) {
+						geshocst(1, spr("GE:INF:CYBDUPSHP uid=%s shipno=%d keep=%d",
+							tmpshp.userid, tmpshp.shipno, keep_shipno));
+						if (!gepdb(GEDELETE, tmpshp.userid, tmpshp.shipno, &tmpshp)) {
+							geshocst(0, spr("GE:ERR:CYBDELSHP uid=%s shipno=%d",
+								tmpshp.userid, tmpshp.shipno));
+						} else {
+							deleted = TRUE;
+							break;
+						}
+					}
+				} else {
+					if (VALID_SHPCLASS(tmpshp.shpclass) &&
+						shipclass[tmpshp.shpclass].max_type == CLASSTYPE_CYBORG &&
+						cyb_user_slot(tmpshp.userid) == usrn) {
+						geshocst(1, spr("GE:INF:CYBSHPRECLS usn=%d old=%d new=%d shipno=%d uid=%s",
+							usrn, tmpshp.shpclass, class, tmpshp.shipno, tmpshp.userid));
+					} else {
+						geshocst(0, spr("GE:ERR:BADCYBSHP usn=%d cls=%d shipno=%d uid=%s",
+							usrn, tmpshp.shpclass, tmpshp.shipno, tmpshp.userid));
+					}
+					if (!gepdb(GEDELETE, tmpshp.userid, tmpshp.shipno, &tmpshp)) {
+						geshocst(0, spr("GE:ERR:CYBDELSHP uid=%s shipno=%d",
+							tmpshp.userid, tmpshp.shipno));
+					} else {
+						deleted = TRUE;
+						break;
+					}
+				}
+			} while (qnxbtv());
+		}
+	} while (deleted);
+
+	return have_ship;
+}
+
+/**************************************************************************
 ** Initialize or load a cyborg ship                                      **
 **************************************************************************/
 
@@ -76,11 +162,19 @@ void FUNC cyb_init(WARSHP *ptr, int usrn, int class)
 	int i, goldwin, goldspin, goldtry, zothusn;
 	double ddist;
 	int have_ship = FALSE;
+	int expected_class;
 
 	logthis(spr("@Cyb_init usrn=%d,class=%d", usrn, class));
 
 	if (usrn < 0 || usrn >= nships) {
 		logthis(spr("CYB_INIT:bad usrn [%d]",usrn));
+		return;
+	}
+
+	expected_class = cyb_slot_class(usrn);
+	if (expected_class != class) {
+		geshocst(0, spr("GE:ERR:CYBSLOTCLS usn=%d cls=%d exp=%d",
+			usrn, class, expected_class));
 		return;
 	}
 
@@ -104,30 +198,19 @@ void FUNC cyb_init(WARSHP *ptr, int usrn, int class)
 
 		logthis(spr("GE:INF:Load %s user", waruptr->userid));
 
-		if (gepdb(GELOOKUPNAME, cybname, 0, ptr)) {
-			gcrbtv(ptr, 0);
-			logthis(spr("GE:INF:Load %s ship", ptr->userid));
-			if (!VALID_SHPCLASS(ptr->shpclass) ||
-				shipclass[ptr->shpclass].max_type != CLASSTYPE_CYBORG) {
-				geshocst(0, spr("GE:ERR:BADCYBSHPCLS usn=%d cls=%d shipno=%d uid=%s",
-					usrn, ptr->shpclass, ptr->shipno, ptr->userid));
-				if (!gepdb(GEDELETE, ptr->userid, ptr->shipno, ptr))
-					geshocst(0, spr("GE:ERR:CYBDELSHP uid=%s shipno=%d",
-						ptr->userid, ptr->shipno));
-			} else {
-				ptr->status = GESTAT_AUTO;
-				ptr->shield = 40 + (ptr->shieldtype * 10);
-				ptr->phasr = 100;
-				ptr->cyb_grace = 0;
-				ptr->freq = 255;
-				ptr->npcmsg = (byte)255;
-				ptr->holdcourse = 0;
-				ptr->cantexit = 0;
-				npc_cruise(ptr, usrn, 0);
-				ptr->cybupdate = 100 + gernd() % 20;
-				ptr->tick = CYBTICKTIME + gernd() % (CYBTICKTIME * 5);
-				have_ship = TRUE;
-			}
+		if (load_cyb_ship(ptr, usrn, class)) {
+			ptr->status = GESTAT_AUTO;
+			ptr->shield = 40 + (ptr->shieldtype * 10);
+			ptr->phasr = 100;
+			ptr->track_grace = 0;
+			ptr->npcstate = 255;
+			ptr->npcmsg = (byte)255;
+			ptr->holdcourse = 0;
+			ptr->cantexit = 0;
+			npc_cruise(ptr, usrn, 0);
+			ptr->cybupdate = 100 + gernd() % 20;
+			ptr->tick = CYBTICKTIME + gernd() % (CYBTICKTIME * 5);
+			have_ship = TRUE;
 		}
 
 		if (!have_ship) {
@@ -177,9 +260,9 @@ void FUNC cyb_init(WARSHP *ptr, int usrn, int class)
 				ptr->shieldtype = 0;
 
 			ptr->cybmine = (byte)255;
-			ptr->cyb_grace = 0;
+			ptr->track_grace = 0;
 			ptr->distress = (byte)255;
-			ptr->freq = 255;
+			ptr->npcstate = 255;
 			ptr->npcmsg = (byte)255;
 			ptr->holdcourse = 0;
 			ptr->cantexit = 0;
@@ -329,7 +412,7 @@ void FUNC assign_cybs(int usrnum, int call)
 
 		ptr = warshpoff(low_ship);
 		ptr->cybmine = usrnum;
-		ptr->cyb_grace = CYBGRACE;
+		ptr->track_grace = CYBGRACE;
 	}
 }
 
@@ -614,7 +697,7 @@ static void cyb_check_damage(WARSHP *ptr, int usrn)
 			jam(ptr, usrn);
 		if (ptr->holdcourse == 1) {
 			ptr->cybmine = 255;
-			ptr->freq = 255;
+			ptr->npcstate = 255;
 			ptr->npcmsg = 255;
 		}
 		if (ptr->holdcourse == 0) {
@@ -757,11 +840,11 @@ static void cyb_check_lockon(WARSHP *ptr, int usrn)
 
 	if (zothusn >= nships) {
 		ptr->cybmine = (byte)255;
-		ptr->cyb_grace = 0;
+		ptr->track_grace = 0;
 		ptr->npcmsg = 255;
 	} else {
 		if (!ingegame(zothusn)) {
-			ptr->cyb_grace = 0;
+			ptr->track_grace = 0;
 			npc_cruise(ptr, usrn, 0);
 			return;
 		}
@@ -769,17 +852,17 @@ static void cyb_check_lockon(WARSHP *ptr, int usrn)
 		wptr = warshpoff(zothusn);
 
 		if (!isvisible(ptr, wptr)) {
-			if (ptr->cyb_grace > 0) {
-				--ptr->cyb_grace;
+			if (ptr->track_grace > 0) {
+				--ptr->track_grace;
 			} else {
 				ptr->cybmine = 255;
-				ptr->cyb_grace = 0;
-				ptr->freq = 255;
+				ptr->track_grace = 0;
+				ptr->npcstate = 255;
 				ptr->npcmsg = 255;
 			}
 			return;
 		}
-		ptr->cyb_grace = CYBGRACE;
+		ptr->track_grace = CYBGRACE;
 
 		low_ship = zothusn;
 		low_dist = cdistance(&ptr->coord, &(wptr->coord));
@@ -811,16 +894,16 @@ static void cyb_check_lockon(WARSHP *ptr, int usrn)
 
 		if (low_ship == -1 || low_ship >= nships) {
 		ptr->cybmine = 255;
-		ptr->cyb_grace = 0;
-		ptr->freq = 255;
+		ptr->track_grace = 0;
+		ptr->npcstate = 255;
 		ptr->npcmsg = 255;
 	} else {
 		if (ptr->cybmine != (byte)low_ship) {
 			ptr->npcmsg = 255;
-			ptr->freq = 255;
+			ptr->npcstate = 255;
 		}
 		ptr->cybmine = (byte)low_ship;
-		ptr->cyb_grace = CYBGRACE;
+		ptr->track_grace = CYBGRACE;
 		wptr = warshpoff(low_ship);
 		if (low_dist >= hyperdist1) {
 			ptr->speed2b = ((int)(low_dist / hyperdist1)) * FARSPEED;
@@ -847,9 +930,9 @@ static void cyb_check_lockon(WARSHP *ptr, int usrn)
 				spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
 			outwar(ALWAYS,usrn,0); */
 			if (low_dist * 10000 < shipclass[wptr->shpclass].scanrange &&
-				ptr->freq != (unsigned)low_ship) {
+				ptr->npcstate != (unsigned)low_ship) {
 				cyb_annoy(ptr, low_ship, APPROACH);
-				ptr->freq = low_ship;
+				ptr->npcstate = low_ship;
 			}
 		} else if (low_dist >= 2.85 + (.175 * (d_topspeed / shipclass[ptr->shpclass].max_accel))) {
 			/* fast ships with low accel brake earlier */
@@ -867,9 +950,9 @@ static void cyb_check_lockon(WARSHP *ptr, int usrn)
 				spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
 			outwar(ALWAYS,usrn,0); */
 			if (low_dist * 10000 < shipclass[wptr->shpclass].scanrange &&
-				ptr->freq != (unsigned)low_ship) {
+				ptr->npcstate != (unsigned)low_ship) {
 				cyb_annoy(ptr, low_ship, APPROACH);
-				ptr->freq = low_ship;
+				ptr->npcstate = low_ship;
 			}
 		} else if (wptr->where == 1 && d_topspeed >= 1000) {
 			inbound = FALSE;
@@ -1028,7 +1111,7 @@ void FUNC cyb_lives(WARSHP *ptr, int usrn)
 	/* if cyb loses scanning ability, kick back and chill until fixed */
 	if (ptr->tactical < 0) {
 		ptr->cybmine = 255;
-		ptr->freq = 255;
+		ptr->npcstate = 255;
 		ptr->npcmsg = 255;
 		ptr->holdcourse = 0;
 		if (shipclass[ptr->shpclass].max_accel > 0)
@@ -1071,7 +1154,7 @@ void FUNC cyb_lives(WARSHP *ptr, int usrn)
 						!neutral(&wptr->coord) &&
 						/* if target is NPC, and not traveling to neutral zone or is already targeting me */
 						((wptr->status == GESTAT_AUTO &&
-						((wptr->freq < 2 || wptr->freq > 7) || wptr->cybmine == usrn) &&
+						((wptr->npcstate < 2 || wptr->npcstate > 7) || wptr->cybmine == usrn) &&
 						/* ...and is attackable class and i've already targeted it or decide to do so */
 						(shipclass[wptr->shpclass].cybs_can_att &&
 						(ptr->cybmine == zothusn || cyb_pick_fight(zothusn, 0)))) ||
@@ -1156,8 +1239,9 @@ void FUNC cyb_lives(WARSHP *ptr, int usrn)
 ** Handle cyb victory cleanup                                            **
 **************************************************************************/
 
-void FUNC cyb_won(WARSHP *ptr, int usrn)
+void FUNC cyb_won(WARSHP *ptr, int usrn, WARSHP *wptr)
 {
+	wptr = wptr;
 	npc_cruise(ptr, usrn, 0);
 	ptr->cybupdate = 0;
 }
@@ -1166,7 +1250,9 @@ void FUNC cyb_won(WARSHP *ptr, int usrn)
 ** Handle cyb death cleanup                                              **
 **************************************************************************/
 
-void FUNC cyb_died(WARSHP *ptr)
+void FUNC cyb_died(WARSHP *ptr, int usrn, WARSHP *wptr)
 {
+	usrn = usrn;
+	wptr = wptr;
 	ptr->status = GESTAT_AVAIL;
 }
