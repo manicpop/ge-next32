@@ -89,10 +89,10 @@ static int load_cyb_ship(WARSHP *ptr, int usrn, int class)
 
 	do {
 		deleted = FALSE;
-		setbtv(gebb1);
-		if (qeqbtv(cybname, 0)) {
+		dfaSetBlk(gebb1);
+		if (dfaQueryEQ(cybname, 0)) {
 			do {
-				gcrbtv(&tmpshp, 0);
+				dfaAbsRec(&tmpshp, 0);
 				if (strncmp(tmpshp.userid, cybname, UIDSIZ) != 0)
 					break;
 
@@ -132,7 +132,7 @@ static int load_cyb_ship(WARSHP *ptr, int usrn, int class)
 						break;
 					}
 				}
-			} while (qnxbtv());
+			} while (dfaQueryNX());
 		}
 	} while (deleted);
 

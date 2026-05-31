@@ -66,7 +66,7 @@ struct module mpoge = {		/* module interface block		*/
 	clswar			/* finish-up (sys shutdown) routine	*/
 };
 
-BTVFILE *gebb1,		/* MPOGESHP.DAT */
+DFAFILE *gebb1,		/* MPOGESHP.DAT */
 	*gebb2,		/* MPOGEPLT.DAT */
 	*gebb4,		/* MPOGEMAL.DAT */
 	*gebb5;		/* MPOGEUSR.DAT */
@@ -124,7 +124,7 @@ byte *entrysent;		/* per-entrant sent-recipient bitsets */
 byte *entrypend;		/* per-entrant pending-recipient bitsets */
 int entrybytes;			/* bytes per entrysent/entrypend bitset */
 
-struct message *gemsg;		/* temporary GE mail/message buffer */
+GEMESSAGE *gemsg;		/* temporary GE mail/message buffer */
 
 
 /***********************************************************************/
@@ -472,9 +472,9 @@ void FUNC iniwara(void)
 	opttbl = (long *)alcmem(n = nterms * sizeof(long));	/* per-user option-text offsets */
 	setmem(opttbl, n, 0);
 
-	gebb1 = opnbtv(geship, sizeof(WARSHP));			/* open ship database */
-	gebb4 = opnbtv(gemail, sizeof(struct message) + GEMSGSIZ);	/* open mail database */
-	gebb2 = opnbtv(geplnt, sizeof(GALSECT));		/* open planet database */
+	gebb1 = dfaOpen(geship, sizeof(WARSHP), NULL);			/* open ship database */
+	gebb4 = dfaOpen(gemail, sizeof(GEMESSAGE), NULL);	/* open mail database */
+	gebb2 = dfaOpen(geplnt, sizeof(GALSECT), NULL);		/* open planet database */
 
 	nebseed = 1L;		/* default nebula seed until a saved seed is restored */
 	pkey.xsect = 0;
@@ -610,7 +610,7 @@ void FUNC iniwara(void)
 		++i; /* index the next table entry */
 	}
 
-	gebb5 = opnbtv(geuser, sizeof(WARUSR));
+	gebb5 = dfaOpen(geuser, sizeof(WARUSR), NULL);
 
 	gehlpmb = opnmsg(GEHELP);
 
@@ -676,7 +676,7 @@ void FUNC iniwara(void)
 	beacontimer = 0;
 
 	/* allocate memory for the mail message table */
-	gemsg = (struct message *)alcmem(sizeof(struct message) + GEMSGSIZ);
+	gemsg = (GEMESSAGE *)alcmem(sizeof(GEMESSAGE));
 
 	/* allocate memory for mine table */
 	mines = (MINE *)alcmem(n = nummines * sizeof(MINE));
@@ -805,7 +805,7 @@ void FUNC gedelete(char *uid)
 		/* delete all ships owned by this user, then remove the GE user record */
 		geudb(GEGET, uid, &tmpusr);
 		while (gepdb(GELOOKUPNAME, uid, 0, &tmpshp)) {
-			gcrbtv(&tmpshp, 0);
+			dfaAbsRec(&tmpshp, 0);
 			gepdb(GEDELETE, tmpshp.userid, tmpshp.shipno, &tmpshp);
 			logthis(spr("GE:Deleted %s ship %d", tmpshp.userid, tmpshp.shipno));
 		}
@@ -835,10 +835,10 @@ void FUNC gemidnight(void)
 
 	/* clear out planet counter */
 	geshocst(1, spr("GE:INF:Cleanup Phase-1"));
-	setbtv(gebb5);
-	if (qlobtv(0)) {
+	dfaSetBlk(gebb5);
+	if (dfaQueryLO(0)) {
 		do {
-			gcrbtv(&tmpusr, 0);
+			dfaAbsRec(&tmpusr, 0);
 			tmpusr.planets = 0;
 			tmpusr.score = 0;
 			tmpusr.plscore = 0;
@@ -849,40 +849,40 @@ void FUNC gemidnight(void)
 					tmpusr.factions[i] = tmpusr.factions[i] - 40;
 				else
 					tmpusr.factions[i] = 0;
-			updbtv(&tmpusr);
-			gcrbtv(&tmpusr, 0);	/* thank you BTRIEVE 5.00b */
-		} while (qnxbtv());
+			dfaUpdate(&tmpusr);
+			dfaAbsRec(&tmpusr, 0);	/* thank you BTRIEVE 5.00b */
+		} while (dfaQueryNX());
 	}
 
 	geshocst(1, spr("GE:INF:Cleanup Phase-2"));
 
-	setbtv(gebb2);
+	dfaSetBlk(gebb2);
 
 	/* if we didn't finish one full planet pass, recalc plantime tomorrow */
 	if (passnum <= 1) {
 		geshocst(1, spr("GE:INF:first planet cycle didn't complete, recalc tomorrow"));
-		if (agebtv(&planet, &intkey, 2)) {
+		if (dfaAcqGE(&planet, &intkey, 2)) {
 			/* force the scheduler to recompute the saved planet update timing */
 			planet.plantimesave = 0;
 			gesdb(GEUPDATE, (PKEY *)&planet, (GALSECT *)&planet);
 		}
 	}
 
-	if (qlobtv(0)) {
+	if (dfaQueryLO(0)) {
 		do {
-			gcrbtv(&planet, 0);
-			setbtv(gebb5);
+			dfaAbsRec(&planet, 0);
+			dfaSetBlk(gebb5);
 			if (planet.type == PLTYPE_PLNT) {
 				if (planet.userid[0] != 0) {
 					/* roll each owned planet's value and population back into its owner */
-					if (qeqbtv(planet.userid, 0)) {
-						gcrbtv(&tmpusr, 0);
+					if (dfaQueryEQ(planet.userid, 0)) {
+						dfaAbsRec(&tmpusr, 0);
 						plptr = &planet;
 						calc_networth();
 						++tmpusr.planets;
 						tmpusr.population += (plptr->items[I_MEN].qty / 10000L);
-						updbtv(&tmpusr);
-						gcrbtv(&tmpusr, 0);
+						dfaUpdate(&tmpusr);
+						dfaAbsRec(&tmpusr, 0);
 
 						/* now go create the Status Record */
 						strncpy(tmpstat.userid, tmpusr.userid, UIDSIZ);
@@ -906,38 +906,38 @@ void FUNC gemidnight(void)
 					}
 				}
 			}
-			setbtv(gebb2);
-		} while (qnxbtv());
+			dfaSetBlk(gebb2);
+		} while (dfaQueryNX());
 	}
 
-	sprintf(gechrbuf, "%ld", (cntrbtv() / 2L));
+	sprintf(gechrbuf, "%ld", (dfaCountRec() / 2L));
 	geshocst(0, spr("GE:INF:Plnt DB Size %sk", gechrbuf));
 
-	if (cntrbtv() >= max_plrec)
+	if (dfaCountRec() >= max_plrec)
 		geshocst(0, "GE:INF:Max Sect Reached");
 
 	geshocst(1, spr("GE:INF:Cleanup Phase-3"));
 
 	/* purge mail older than 7 days */
-	setbtv(gebb4);
+	dfaSetBlk(gebb4);
 
 	i = cofdat(today());
 	i -= maildays; /* back up 1 week */
-	if (qlobtv(0)) {
+	if (dfaQueryLO(0)) {
 		do {
-			gcrbtv(gemsg, 0);
+			dfaAbsRec(gemsg, 0);
 			/* GE-owned mail uses nreply as its saved day stamp for retention checks */
-			if (gemsg->nreply < i) /* we robbed nreply for the stamp */
-				delbtv();
+			if (gemsg->m.nrpl < i) /* we robbed nreply for the stamp */
+				dfaDelete();
 			/* purge mail addressed to deleted/non-live players */
-			if (gemsg->userto[0] == '*') /* non-live player */
-				delbtv();
+			if (gemsg->m.to[0] == '*') /* non-live player */
+				dfaDelete();
 
-			} while (qnxbtv());
+			} while (dfaQueryNX());
 	}
 
 	geshocst(1, spr("GE:INF:Cleanup Phase-4"));
-	setbtv(gebb5);
+	dfaSetBlk(gebb5);
 
 	/* zero out the team count */
 	for (i = 0; i < MAXTEAMS; ++i) {
@@ -945,9 +945,9 @@ void FUNC gemidnight(void)
 	}
 
 	/* first count up the members of a team */
-	if (qlobtv(0)) {
+	if (dfaQueryLO(0)) {
 		do {
-			gcrbtv(&tmpusr, 0);
+			dfaAbsRec(&tmpusr, 0);
 			foundit = FALSE;
 			if (tmpusr.teamcode > 0) {
 				/* verify that each saved team code still points to a live team entry */
@@ -969,20 +969,20 @@ void FUNC gemidnight(void)
 			}
 			/* write back users whose stale team assignment was cleared */
 			if (foundit == FALSE)
-				updbtv(&tmpusr);
-			gcrbtv(&tmpusr, 0);
-		} while (qnxbtv());
+				dfaUpdate(&tmpusr);
+			dfaAbsRec(&tmpusr, 0);
+		} while (dfaQueryNX());
 	}
 
 	/* update player scores */
-	if (qlobtv(0)) {
+	if (dfaQueryLO(0)) {
 		do {
-			gcrbtv(&tmpusr, 0);
+			dfaAbsRec(&tmpusr, 0);
 			/* total score is recomputed from planet score plus kill score */
 			tmpusr.score = tmpusr.plscore + tmpusr.klscore;
-			updbtv(&tmpusr);
-			gcrbtv(&tmpusr, 0);
-		} while (qnxbtv());
+			dfaUpdate(&tmpusr);
+			dfaAbsRec(&tmpusr, 0);
+		} while (dfaQueryNX());
 	}
 
 	if (gerostxt)
@@ -1030,10 +1030,10 @@ void FUNC dump_roster_file(void)
 	clrprf();
 
 	i = 0;
-	setbtv(gebb5);
-	if (qhibtv(1)) {
+	dfaSetBlk(gebb5);
+	if (dfaQueryHI(1)) {
 		do {
-			gcrbtv(&tmpusr, 1);
+			dfaAbsRec(&tmpusr, 1);
 			if (tmpusr.score > 0 && tmpusr.userid[0] != '@') {
 				sprintf(gechrbuf, "%11lu", tmpusr.score);
 				sprintf(gechrbuf2, " %10.2fm", ((float)tmpusr.population) / 100.0);
@@ -1046,7 +1046,7 @@ void FUNC dump_roster_file(void)
 					gechrbuf2);
 				++i;
 			}
-		} while (qprbtv() && i < gemaxlist);
+		} while (dfaQueryPR() && i < gemaxlist);
 	}
 
 	fclose(hdl);
@@ -1095,7 +1095,7 @@ int FUNC warlof(void)
 
 void FUNC warhup(void)
 {
-	setbtv(gebb1);
+	dfaSetBlk(gebb1);
 	setmbk(gemb);
 
 	warsptr = warshpoff(usrnum);
@@ -1156,10 +1156,10 @@ void FUNC clswar(void)
 		gemb = NULL;
 	}
 
-	clsbtv(gebb1);
-	clsbtv(gebb4);
-	clsbtv(gebb2);
-	clsbtv(gebb5);
+	dfaClose(gebb1);
+	dfaClose(gebb4);
+	dfaClose(gebb2);
+	dfaClose(gebb5);
 
 	logthis("***GALACTIC EMPIRE SHUTDOWN***");
 }
@@ -1172,7 +1172,7 @@ int FUNC galemp(void)
 {
 	int i, rtn;
 
-	setbtv(gebb1);
+	dfaSetBlk(gebb1);
 	setmbk(gemb);
 	warsptr = warshpoff(usrnum);
 	waruptr = warusroff(usrnum);
@@ -1226,7 +1226,7 @@ int FUNC gepdb(int func, char *usrname, int shipnum, WARSHP *geptr)
 {
 	int rtn;
 
-	setbtv(gebb1);
+	dfaSetBlk(gebb1);
 	rtn = 0;
 
 	strncpy(shpkey.userid, usrname, UIDSIZ);
@@ -1235,12 +1235,12 @@ int FUNC gepdb(int func, char *usrname, int shipnum, WARSHP *geptr)
 	switch (func) {
 
 	case GELOOKUP:
-		if (qeqbtv(&shpkey, 1))
+		if (dfaQueryEQ(&shpkey, 1))
 			rtn = 1;
 		break;
 
 	case GEADD:
-		if (!dinsbtv(geptr))
+		if (!dfaInsertDup(geptr))
 			geshocst(0, spr("GE:ERR:Ship ins Fail %s", usrname));
 		else
 			rtn = 1;
@@ -1248,8 +1248,8 @@ int FUNC gepdb(int func, char *usrname, int shipnum, WARSHP *geptr)
 		break;
 
 	case GEDELETE:
-		if (acqbtv(NULL, &shpkey, 1)) {
-			delbtv();
+		if (dfaAcqEQ(NULL, &shpkey, 1)) {
+			dfaDelete();
 			rtn = 1;
 		}
 		else {
@@ -1258,8 +1258,8 @@ int FUNC gepdb(int func, char *usrname, int shipnum, WARSHP *geptr)
 		break;
 
 	case GEUPDATE:
-		if (acqbtv(NULL, &shpkey, 1)) {
-			updbtv(geptr);
+		if (dfaAcqEQ(NULL, &shpkey, 1)) {
+			dfaUpdate(geptr);
 			rtn = 1;
 		}
 		else {
@@ -1268,17 +1268,17 @@ int FUNC gepdb(int func, char *usrname, int shipnum, WARSHP *geptr)
 		break;
 
 	case GEGET:
-		if (acqbtv(geptr, &shpkey, 1))
+		if (dfaAcqEQ(geptr, &shpkey, 1))
 			rtn = 1;
 		break;
 
 	case GENEXT:
-		if (qnxbtv())
+		if (dfaQueryNX())
 			rtn = 1;
 		break;
 
 	case GELOOKUPNAME:
-		if (qeqbtv(usrname, 0))
+		if (dfaQueryEQ(usrname, 0))
 			rtn = 1;
 		break;
 
@@ -1296,20 +1296,20 @@ int FUNC geudb(int func, char *usrname, WARUSR *geptr)
 {
 	int rtn;
 
-	setbtv(gebb5);
+	dfaSetBlk(gebb5);
 	rtn = 0;
 
 	logthis(spr("GEUDB called: F=%d,%s,%s", func, usrname, geptr->userid));
 	switch (func) {
 
 	case GELOOKUP:
-		if (qeqbtv(usrname, 0))
+		if (dfaQueryEQ(usrname, 0))
 			rtn = 1;
 		logthis(spr("GE: lookup *%s* f:%d", usrname, rtn));
 		break;
 
 	case GEADD:
-		if (!dinsbtv(geptr))
+		if (!dfaInsertDup(geptr))
 			geshocst(0, spr("GE:ERR:User ins Fail %s", usrname));
 		else
 			rtn = 1;
@@ -1317,8 +1317,8 @@ int FUNC geudb(int func, char *usrname, WARUSR *geptr)
 		break;
 
 	case GEDELETE:
-		if (acqbtv(NULL, usrname, 0)) {
-			delbtv();
+		if (dfaAcqEQ(NULL, usrname, 0)) {
+			dfaDelete();
 			rtn = 1;
 		}
 		else {
@@ -1328,8 +1328,8 @@ int FUNC geudb(int func, char *usrname, WARUSR *geptr)
 
 	case GEUPDATE:
 		logthis(spr("DEBUG <%s> <%s> update", usrname, geptr->userid));
-		if (acqbtv(NULL, usrname, 0)) {
-			updbtv(geptr);
+		if (dfaAcqEQ(NULL, usrname, 0)) {
+			dfaUpdate(geptr);
 			rtn = 1;
 		}
 		else {
@@ -1338,7 +1338,7 @@ int FUNC geudb(int func, char *usrname, WARUSR *geptr)
 		break;
 
 	case GEGET:
-		if (acqbtv(geptr, usrname, 0)) {
+		if (dfaAcqEQ(geptr, usrname, 0)) {
 			rtn = 1;
 		}
 		else {
@@ -1364,19 +1364,19 @@ int FUNC gesdb(int func, PKEY *sect, GALSECT *geptr)
 	logthis(spr("Func GESDB, func = %d, sect*= %ld,geptr*=%ld", func, (long)sect, (long)geptr));
 	logthis(spr("            xsect %d, ysect %d, plnum %d", sect->xsect, sect->ysect, sect->plnum));
 
-	setbtv(gebb2);
+	dfaSetBlk(gebb2);
 	rtn = 0;
 
 	switch (func) {
 
 	case GELOOKUP:
-		if (!qeqbtv(sect, 0))
+		if (!dfaQueryEQ(sect, 0))
 			rtn = 1;
 		break;
 
 	case GEUPDATE:
-		if (acqbtv(NULL, sect, 0)) {
-			updbtv(geptr);
+		if (dfaAcqEQ(NULL, sect, 0)) {
+			dfaUpdate(geptr);
 			rtn = 1;
 		}
 		else {
@@ -1388,7 +1388,7 @@ int FUNC gesdb(int func, PKEY *sect, GALSECT *geptr)
 	case GEADD:
 		logthis(spr("GE:DBG:Ins Sect %d %d %d", geptr->xsect, geptr->ysect, geptr->plnum));
 
-		if (!dinsbtv(geptr))
+		if (!dfaInsertDup(geptr))
 			geshocst(0, "GE:ERR:Sect/plt ins Fail");
 		else {
 			logthis("GE:DBG:Ins Sect suceeded");
@@ -1400,8 +1400,8 @@ int FUNC gesdb(int func, PKEY *sect, GALSECT *geptr)
 		if ((geptr->xsect != sect->xsect)
 			|| (geptr->ysect != sect->ysect)
 			|| (geptr->plnum != sect->plnum)) {
-			if (acqbtv(geptr, sect, 0)) {
-				logthis("gesdb GEGET acqbtv found record");
+			if (dfaAcqEQ(geptr, sect, 0)) {
+				logthis("gesdb GEGET dfaAcqEQ found record");
 				rtn = 1;
 			}
 		}
@@ -1412,7 +1412,7 @@ int FUNC gesdb(int func, PKEY *sect, GALSECT *geptr)
 		break;
 
 	case GEGETNOW:
-		if (acqbtv(geptr, sect, 0))
+		if (dfaAcqEQ(geptr, sect, 0))
 			rtn = 1;
 		break;
 
@@ -1609,9 +1609,9 @@ void FUNC plarti(void)
 #define SECSADAY 82800L		/* 23 hours, for breathing room */
 #define MAXTIC 25		/* max planets to scan in a go without finding one to update */
 
-	setbtv(gebb2);
+	dfaSetBlk(gebb2);
 
-	numrecs = cntrbtv();	/* how many total records? sectors, planets, wormholes */
+	numrecs = dfaCountRec();	/* how many total records? sectors, planets, wormholes */
 
 	sprintf(gechrbuf, "%ld", numrecs);
 	logthis(spr("plarti entered, numrecs %s, passnum %d, plantime %u", gechrbuf, passnum, plantime));
@@ -1619,7 +1619,7 @@ void FUNC plarti(void)
 	++tocks;	/* how many times routine has run this passnum */
 
 	if (passnum > planupd) {	/* we've run all the day's updates */
-		agebtv(&planet, &intkey, 2);
+		dfaAcqGE(&planet, &intkey, 2);
 		planet.plantimesave = plantime;
 		planet.timestamp = ((unsigned long)game_day << 4) | passnum;
 		gesdb(GEUPDATE, (PKEY *)&planet, (GALSECT *)&planet);
@@ -1628,7 +1628,7 @@ void FUNC plarti(void)
 	}
 
 	if (passnum == 0) {	/* fresh boot */
-		if (!agebtv(&planet, &intkey, 2)) {
+		if (!dfaAcqGE(&planet, &intkey, 2)) {
 			plantime = 10;
 			logthis(spr("no planet records, wait %u seconds", plantime));
 		}
@@ -1670,11 +1670,11 @@ void FUNC plarti(void)
 	else {
 		if (foundpl == TRUE) {
 			if (fpos == 0) {
-				agebtv(&planet, &intkey, 2);	/* acquire first planet record */
-				fpos = absbtv();		/* save position for next time through */
+				dfaAcqGE(&planet, &intkey, 2);	/* acquire first planet record */
+				fpos = dfaAbs();		/* save position for next time through */
 			}
 			else
-				gabbtv(&planet, fpos, 2);	/* get the planet we found last time */
+				dfaGetAbs(&planet, fpos, 2);	/* get the planet we found last time */
 
 			sprintf(gechrbuf, "%lu", fpos);
 
@@ -1721,7 +1721,7 @@ void FUNC plarti(void)
 				logthis("calling checkspy");
 				check_spy();
 				logthis("back from checkspy");
-				setbtv(gebb2);
+				dfaSetBlk(gebb2);
 				setmbk(gemb);
 			}
 
@@ -1732,7 +1732,7 @@ void FUNC plarti(void)
 		/* mbm was right, see GEREADME 02/04/90 */
 		/* at this point, we either just finished a planet update or are coming into this routine fresh */
 		/* either way, we need to set the key and cursor again for query next to work */
-		gabbtv(&planet, fpos, 2);
+		dfaGetAbs(&planet, fpos, 2);
 
 		foundpl = FALSE;
 		tic = 0;
@@ -1740,7 +1740,7 @@ void FUNC plarti(void)
 		do {
 			tic++;
 
-			if (!qnxbtv() || (int)(gebb2->key[0]) != PLTYPE_PLNT) {	/* hit a wormhole or no wormholes somehow? passnum done */
+			if (!dfaQueryNX() || (int)(gebb2->key[0]) != PLTYPE_PLNT) {	/* hit a wormhole or no wormholes somehow? passnum done */
 				sprintf(gechrbuf, "%ld", tocks);
 				logthis(spr("tocks %s. planets updated %u, empty %u, unowned %u",
 					gechrbuf, plown, plemt, plnob));
@@ -1774,10 +1774,10 @@ void FUNC plarti(void)
 				break;
 			}
 
-			gcrbtv(&planet, 2);
+			dfaAbsRec(&planet, 2);
 			if (planet.userid[0] != 0 && ((planet.items[I_MEN].qty > 0 || planet.items[I_TROOPS].qty > 0)
 				|| (planet.xsect == 0 && planet.ysect == 0))) {	/* owned and populated or in neut */
-				fpos = absbtv();
+				fpos = dfaAbs();
 				foundpl = TRUE;
 				sprintf(gechrbuf, "%lu", fpos);
 				++plown;
@@ -1786,7 +1786,7 @@ void FUNC plarti(void)
 			}
 			else {
 				/* remember where the search left off even when this record needs no update */
-				fpos = absbtv();
+				fpos = dfaAbs();
 				sprintf(gechrbuf, "%lu", fpos);
 				if (planet.userid[0] != 0)
 					++plemt;
@@ -1825,7 +1825,7 @@ void FUNC warrti(void)
 		wptr = warshpoff(zothusn);
 		if (ingegame(zothusn)) {
 			logthis(spr("Chk Shp Stat %s", wptr->userid));
-			setbtv(gebb1);
+			dfaSetBlk(gebb1);
 			setmbk(gemb);
 			if (wptr->status == GESTAT_USER)
 				++cntr;
@@ -1864,7 +1864,7 @@ void FUNC autorti(void)
 	logthis("TICK:autorti entered");
 
 	setmbk(gemb);
-	setbtv(gebb1);
+	dfaSetBlk(gebb1);
 
 	/* 12/19/91 spread out disk I/O over more time */
 
@@ -1982,7 +1982,7 @@ void FUNC warrti2(void)
 	while (zothusn < nships) {
 		if (ingegame(zothusn)) {
 			wptr = warshpoff(zothusn);
-			setbtv(gebb1);
+			dfaSetBlk(gebb1);
 			setmbk(gemb);
 			rotateship(wptr, zothusn);
 			accel(wptr, zothusn);

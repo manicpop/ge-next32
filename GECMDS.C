@@ -2553,9 +2553,9 @@ static void wonplnt(void)
 
 	/* remove planet from old owner, if they still exist */
 	if (olduid[0] && !sameas(olduid, warsptr->userid)) {
-		setbtv(gebb5);
-		if (qeqbtv(olduid, 0)) {
-			gcrbtv(&tmpusr, 0);
+		dfaSetBlk(gebb5);
+		if (dfaQueryEQ(olduid, 0)) {
+			dfaAbsRec(&tmpusr, 0);
 			if (tmpusr.planets)
 				--tmpusr.planets;
 			geudb(GEUPDATE, tmpusr.userid, &tmpusr);
@@ -2983,7 +2983,7 @@ void FUNC cmd_geroster(void)
 	int rank = 0;
 	long target = 0;
 
-	setbtv(gebb5);
+	dfaSetBlk(gebb5);
 
 	j = gemaxlist;
 
@@ -2996,24 +2996,24 @@ void FUNC cmd_geroster(void)
 		outprfge(FLT_NONE, usrnum);
 	}
 
-	if (usaptr->userid[0] != 0 && usaptr->userid[0] != '@' && qeqbtv(usaptr->userid, 0))
-		target = absbtv();
+	if (usaptr->userid[0] != 0 && usaptr->userid[0] != '@' && dfaQueryEQ(usaptr->userid, 0))
+		target = dfaAbs();
 
-	if (qhibtv(1)) {
+	if (dfaQueryHI(1)) {
 		do {
-			gcrbtv(&tmpusr, 1);
+			dfaAbsRec(&tmpusr, 1);
 			logthis(spr("ROS:Got %s Score %lu", tmpusr.userid, tmpusr.score));
 			if ((tmpusr.score > 0 || j == 200) && tmpusr.userid[0] != '@') {
 				++i;
 				sprintf(gechrbuf, "%11lu", tmpusr.score);
 				sprintf(gechrbuf2, " %10.2fm", ((float)tmpusr.population) / 100.0);
 				prf("%-29s%s%6u%6u%4u%s\r", tmpusr.userid, gechrbuf, tmpusr.kills, tmpusr.ukills, tmpusr.planets, gechrbuf2);
-				if (target != 0 && absbtv() == target)
+				if (target != 0 && dfaAbs() == target)
 					rank = i;
 				if (i % 5 == 0)
 					outprfge(FLT_NONE, usrnum);
 			}
-		} while (qprbtv() && i < j);
+		} while (dfaQueryPR() && i < j);
 		if (i % 5 != 0)
 			outprfge(FLT_NONE, usrnum);
 		if (rank != 0) {
@@ -3046,13 +3046,13 @@ void FUNC cmd_planet(void)
 
 	inc = (page - 1) * 20;
 
-	setbtv(gebb2);
+	dfaSetBlk(gebb2);
 
-	if (qlobtv(0)) {
-		if (qeqbtv(warsptr->userid, 1)) {
+	if (dfaQueryLO(0)) {
+		if (dfaQueryEQ(warsptr->userid, 1)) {
 			prfmsg(PLAMSG1);
 			do {
-				gcrbtv(&planet, 1);
+				dfaAbsRec(&planet, 1);
 				if (sameas(planet.userid, warsptr->userid)) {
 					if (stepper >= inc) {
 						prf("%-24s %6d %6d  %6d\r", planet.name, planet.xsect, planet.ysect, planet.plnum);
@@ -3068,7 +3068,7 @@ void FUNC cmd_planet(void)
 				} else {
 					break;
 				}
-			} while (qnxbtv());
+			} while (dfaQueryNX());
 			if (stepper > inc && ((stepper - inc) % 5) != 0)
 				outprfge(FLT_NONE, usrnum);
 		} else {
@@ -4686,7 +4686,7 @@ void FUNC cmd_team(void)
 	} else if (sameas(margv[1],"score")) {
 		/* sort the table */
 		highpos = 0;
-		setbtv(gebb5);
+		dfaSetBlk(gebb5);
 
 		for (i=0; i < MAXTEAMS; ++i) {
 			temptab[i] = 0;
@@ -4695,9 +4695,9 @@ void FUNC cmd_team(void)
 			tmflag[i] = 0; /* flag the records for sorting */
 		}
 
-		if (qlobtv(0)) {
+		if (dfaQueryLO(0)) {
 			do {
-				gcrbtv(&tmpusr,0);
+				dfaAbsRec(&tmpusr,0);
 
 				if (tmpusr.teamcode > 0) {
 					for (i=0; i<MAXTEAMS; ++i) {
@@ -4709,7 +4709,7 @@ void FUNC cmd_team(void)
 						}
 					}
 				}
-			} while (qnxbtv());
+			} while (dfaQueryNX());
 		}
 
 		for (i=0; i < MAXTEAMS; ++i) {
@@ -4949,16 +4949,16 @@ void FUNC cmd_team(void)
 			return;
 		}
 
-		setbtv(gebb5);
+		dfaSetBlk(gebb5);
 
 		j = team_max;
 		i = 0;
 
-		if (qeqbtv(&waruptr->teamcode,2)) {
+		if (dfaQueryEQ(&waruptr->teamcode,2)) {
 			prfmsg(TEAMMHDR);
 
 			do {
-				gcrbtv(&tmpusr,2);
+				dfaAbsRec(&tmpusr,2);
 				if (tmpusr.teamcode == waruptr->teamcode) {
 					if (i == 0)
 						prf("%s",tmpusr.userid);
@@ -4970,7 +4970,7 @@ void FUNC cmd_team(void)
 				} else {
 					break;
 				}
-			} while (qnxbtv() && i < j);
+			} while (dfaQueryNX() && i < j);
 
 			prf("\r");
 			outprfge(FLT_NONE,usrnum);
@@ -5004,7 +5004,7 @@ void FUNC cmd_team(void)
 					tmpusr.userid[UIDSIZ - 1] = 0;
 					makhdl(tmpusr.userid);
 					if (geudb(GELOOKUP,tmpusr.userid,&tmpusr)) {
-						gcrbtv(&tmpusr,0);
+						dfaAbsRec(&tmpusr,0);
 						/* check if the player is currently on this team */
 						if (tmpusr.teamcode == teamtab[i].teamcode) {
 							/* reset the teamcode */

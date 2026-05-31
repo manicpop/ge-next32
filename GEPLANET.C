@@ -311,14 +311,14 @@ void FUNC multiply(int final_mult)
 				plptr->items[I_TROOPS].qty = cnt;
 
 				/* decrement planet counter for this user */
-				setbtv(gebb5);
-				if (qeqbtv(plptr->userid, 0)) {
-					gcrbtv(&tmpusr, 0);
+				dfaSetBlk(gebb5);
+				if (dfaQueryEQ(plptr->userid, 0)) {
+					dfaAbsRec(&tmpusr, 0);
 					if (tmpusr.planets > 0)
 						--tmpusr.planets;
 					geudb(GEUPDATE, tmpusr.userid, &tmpusr);
 				}
-				setbtv(gebb2);
+				dfaSetBlk(gebb2);
 
 				mail.class = MAIL_CLASS_DISTRESS;
 				mail.type = MESG30;
@@ -484,7 +484,7 @@ static int xgetsector(COORD *sect, int wormy)
 
 	if (!gesdb(GEGET, &pkey, &sector)) {
 		/* Is the DB full? */
-		if (cntrbtv() >= max_plrec && !wormy) {
+		if (dfaCountRec() >= max_plrec && !wormy) {
 			geshocst(1, spr("GE:INF:Planet DB full, sector %d %d shown as empty",
 				pkey.xsect, pkey.ysect));
 			setmem(&sector, sizeof(GALSECT), 0);

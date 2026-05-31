@@ -207,7 +207,7 @@
 #define BEACONMSGSZ 75		/* max planet beacon message length        */
 
 #define	GEMSGSIZ 784		/* max GE mail payload size                */
-#define FIXEDMSGSIZ sizeof(struct message)+GEMSGSIZ	/* fixed stored mail record size */
+#define FIXEDMSGSIZ sizeof(GEMESSAGE)	/* fixed stored mail record size */
 
 #define HSTSIZ 57		/* borrowed MajorBBS message topic size    */
 #define TPCSIZ 51		/* borrowed MajorBBS message aux/history size */
@@ -305,236 +305,210 @@
 #define byte unsigned char
 #endif
 
-/*
- * Message structure from GME.H, Copyright (c) 1994-1995 GALACTICOMM, Inc.
- * The mail Btrieve record is sizeof(MESSAGE)+GEMSGSIZ, which is 1000 bytes
- * in the 16-bit packed layout. MAIL and MAILSTAT below are GE payload formats
- * stored inside MESSAGE.text, not separate 1000-byte Btrieve records.
- */
-typedef struct message {
-	long msgno;		/* stored message number                   */
-/*4*/
-	char userto[UIDSIZ];	/* personal recipient userid or "** ALL **"*/
-/*34*/
-	char from[UIDSIZ];	/* message originator                      */
-/*64*/
-	char to[UIDSIZ];	/* recipient userid or signature name; Btrieve keys 0 and 1 */
-/*94*/
-	char topic[TPCSIZ];	/* editable message topic                  */
-/*145*/
-	char auxtpc[HSTSIZ];	/* aux topic/history/routing text          */
-/*202*/
-	unsigned crdate;	/* creation date                           */
-/*204*/
-	unsigned crtime;	/* creation time of day                    */
-/*206*/
-	int nreply;		/* reply count / reused by GE as day stamp */
-/*208*/
-	int flags;		/* message/attachment flag bits            */
-/*210*/
-	char spare[5];		/* reserved expansion space                */
-/*215*/
-	char text[1];		/* start of trailing message-text buffer   */
-/* text up to GEMSGSIZ (784) follows, record size is 1000 bytes */
-} MESSAGE;
+/* MPOGEMAL.DAT stores a V10 message header plus fixed GE text payload. */
+#define GEMESSAGE struct _gemessage
+GEMESSAGE {
+	struct message m;		/* V10 message header; Btrieve keys use m.to and m.flags */
+	CHAR text[GEMSGSIZ];	/* fixed GE mail text payload             */
+};
 
 #define COORD struct _coord
 
 COORD {
-	double xcoord;		/* x coordinate                            */
-	double ycoord;		/* y coordinate                            */
+	DOUBLE xcoord;		/* x coordinate                            */
+	DOUBLE ycoord;		/* y coordinate                            */
 };
 
 typedef struct _mine {
 	byte channel;		/* owning ship/user slot                   */
-	unsigned timer;		/* countdown timer                         */
+	USHORT timer;		/* countdown timer                         */
 	COORD coord;		/* mine location                           */
 } MINE;
 
 typedef struct _missile {
 	byte channel;		/* target ship/user slot                   */
-	unsigned distance;	/* distance to target                      */
-	unsigned energy;	/* missile energy payload                  */
+	USHORT distance;	/* distance to target                      */
+	USHORT energy;	/* missile energy payload                  */
 } MISSILE;
 
 typedef struct _torpedo {
 	byte channel;		/* target ship/user slot                   */
-	unsigned distance;	/* distance to target                      */
+	USHORT distance;	/* distance to target                      */
 } TORPEDO;
 
 typedef struct warusr {
-	char userid[UIDSIZ];		/* userid of player; Btrieve key 0         */
+	CHAR userid[UIDSIZ];		/* userid of player; Btrieve key 0         */
 /*30*/
-	unsigned long score;		/* player score; Btrieve key 1             */
-/*34*/
-	unsigned noships;		/* number of ships owned currently         */
-/*36*/
-	unsigned topshipno;		/* highest ship number ever assigned       */
-/*38*/
-	unsigned kills;			/* number of total kills                   */
-/*40*/
-	unsigned ukills;		/* just user kills                         */
-/*42*/
-	unsigned long cash;		/* cash on hand                            */
-/*46*/
-	unsigned long plscore;		/* score from planets only                 */
-/*50*/
-	unsigned long klscore;		/* score from kills only                   */
-/*54*/
-	unsigned long population;	/* total population                        */
-/*58*/
 	byte options[30];		/* per-user options                        */
+/*60*/
+	ULONG score;		/* player score; Btrieve key 1             */
+/*64*/
+	ULONG cash;		/* cash on hand                            */
+/*68*/
+	ULONG reserved_debt;	/* reserved V10-compatible slot            */
+/*72*/
+	ULONG plscore;		/* score from planets only                 */
+/*76*/
+	ULONG klscore;		/* score from kills only                   */
+/*80*/
+	ULONG population;	/* total population                        */
+/*84*/
+	ULONG teamcode;		/* current team code; Btrieve key 2        */
 /*88*/
-	byte factions[8];		/* do NPCs like me                         */
+	USHORT noships;		/* number of ships owned currently         */
+/*90*/
+	USHORT topshipno;		/* highest ship number ever assigned       */
+/*92*/
+	USHORT kills;			/* number of total kills                   */
+/*94*/
+	USHORT ukills;		/* just user kills                         */
 /*96*/
-	unsigned planets;		/* planets owned                           */
+	USHORT planets;		/* planets owned                           */
 /*98*/
-	char key_filler[36];		/* reserved; keeps teamcode at key offset  */
-/*134*/
-	unsigned long teamcode;		/* current team code; Btrieve key 2        */
-/*138*/
-	char filler[108];		/* pad WARUSR to the real 246-byte record  */
+	byte factions[8];		/* do NPCs like me                         */
+/*106*/
+	CHAR filler[150];		/* pad WARUSR to the 256-byte V10 record   */
 } WARUSR;
 
 typedef struct warshp {
-	char userid[UIDSIZ];		/* userid of player; Btrieve keys 0 and 1  */
+	CHAR userid[UIDSIZ];		/* userid of player; Btrieve keys 0 and 1  */
 /*30*/
-	int shipno;			/* ship id number; Btrieve key 1           */
+	SHORT shipno;			/* ship id number; Btrieve key 1           */
 /*32*/
-	char shipname[20];		/* ship name                               */
+	CHAR shipname[20];		/* ship name                               */
 /*52*/
-	int shpclass;			/* ship class                              */
+	SHORT shpclass;			/* ship class                              */
 /*54*/
 	byte status;			/* status of this record (AVAIL/USER/AUTO) */
-/*55*/
+/*56*/
 	COORD coord;			/* ship coordinates                        */
-/*71*/
-	double heading;			/* heading of this ship                    */
-/*79*/
-	double head2b;			/* pending heading                         */
-/*87*/
-	double speed;			/* speed                                   */
-/*95*/
-	double speed2b;			/* pending speed                           */
-/*103*/
-	int topspeed;			/* top speed w/ damage                     */
-/*105*/
-	int where;			/* impulse / hyper / orbit                 */
-/*107*/
-	double damage;			/* ship damage                             */
-/*115*/
-	double energy;			/* flux energy available                   */
-/*123*/
-	double phasr;			/* phaser energy                           */
-/*131*/
-	byte phasrtype;			/* phaser class                            */
-/*132*/
-	byte shieldtype;		/* shield class                            */
-/*133*/
-	byte shieldstat;		/* shield status                           */
-/*134*/
-	int shield;			/* shield charge                           */
+/*72*/
+	DOUBLE heading;			/* heading of this ship                    */
+/*80*/
+	DOUBLE head2b;			/* pending heading                         */
+/*88*/
+	DOUBLE speed;			/* speed                                   */
+/*96*/
+	DOUBLE speed2b;			/* pending speed                           */
+/*104*/
+	SHORT topspeed;			/* top speed w/ damage                     */
+/*106*/
+	SHORT where;			/* impulse / hyper / orbit                 */
+/*112*/
+	DOUBLE damage;			/* ship damage                             */
+/*120*/
+	DOUBLE energy;			/* flux energy available                   */
+/*128*/
+	DOUBLE phasr;			/* phaser energy                           */
 /*136*/
-	int cloak;			/* cloak status                            */
+	byte phasrtype;			/* phaser class                            */
+/*137*/
+	byte shieldtype;		/* shield class                            */
 /*138*/
-	int tactical;			/* tactical damage                         */
+	byte shieldstat;		/* shield status                           */
 /*140*/
-	int helm;			/* helm damage                             */
+	SHORT shield;			/* shield charge                           */
 /*142*/
-	int lastfired;			/* last to fire on this ship               */
+	SHORT cloak;			/* cloak status                            */
 /*144*/
-	int lock;			/* ship this ship is locked onto           */
+	SHORT tactical;			/* tactical damage                         */
 /*146*/
+	SHORT helm;			/* helm damage                             */
+/*148*/
+	SHORT lastfired;			/* last to fire on this ship               */
+/*150*/
+	SHORT lock;			/* ship this ship is locked onto           */
+/*152*/
 	byte track_grace;		/* lock/NPC target invisibility grace      */
-/*147*/
-	unsigned kills;			/* kills in this ship                      */
-/*149*/
-	unsigned ukills;		/* just user kills                         */
-/*151*/
+/*154*/
+	USHORT kills;			/* kills in this ship                      */
+/*156*/
+	USHORT ukills;		/* just user kills                         */
+/*158*/
 	TORPEDO ltorps[MAXTORPS];	/* torps tracking this ship                */
-/*160*/
+/*170*/
 	MISSILE lmissl[MAXMISSL];	/* misls tracking this ship                */
-/*175*/
-	unsigned decout[MAXDECOY];	/* decoys deployed                         */
-/*195*/
+/*188*/
+	USHORT decout[MAXDECOY];	/* decoys deployed                         */
+/*208*/
 	byte torps_fired;		/* torpedoes fired this tick               */
-/*196*/
+/*209*/
 	byte missl_fired;		/* missiles fired this tick                */
-/*197*/
-	unsigned long items[NUMITEMS];	/* all the items                           */
-/*253*/
-	unsigned titem;			/* colony temp item (User-only)            */
-/*255*/
-	byte upgrade;			/* installed ship upgrades                 */
-/*256*/
-	byte tponder;			/* transponder control (User-only)         */
-/*257*/
-	int degrees;			/* degree workspace                        */
-/*259*/
-	int percent;			/* percent workspace (phaser / engines)    */
-/*261*/
-	unsigned hostile;		/* just attacked a planet (User-only)      */
-/*263*/
-	unsigned cantexit;		/* can't exit battle timer                 */
-/*265*/
-	unsigned repair;		/* repairs underway (User-only)            */
-/*267*/
-	unsigned hypha;			/* hyper-phaser cooldown                   */
-/*269*/
-	byte torpcntl;			/* torpedo damage flag                     */
+/*212*/
+	ULONG items[NUMITEMS];	/* all the items                           */
+/*268*/
+	USHORT titem;			/* colony temp item (User-only)            */
 /*270*/
-	byte mislcntl;			/* missile damage flag                     */
+	byte upgrade;			/* installed ship upgrades                 */
 /*271*/
-	byte destruct;			/* self destruct countdown (User-only)     */
+	byte tponder;			/* transponder control (User-only)         */
 /*272*/
-	byte minesnear;			/* set when mines are near                 */
-/*273*/
-	unsigned overspeed;		/* counter for over max warp (User-only)   */
-/*275*/
-	int zipload;			/* zipper throttle/damage                  */
-/*277*/
-	int jamload;			/* jam throttle/damage                     */
-/*279*/
-	int decload;			/* decoy throttle/damage                   */
-/*281*/
-	int mineload;			/* mine throttle/damage                    */
-/*283*/
-	byte jam_sev;			/* jamming severity                        */
+	SHORT degrees;			/* degree workspace                        */
+/*274*/
+	SHORT percent;			/* percent workspace (phaser / engines)    */
+/*276*/
+	USHORT hostile;		/* just attacked a planet (User-only)      */
+/*278*/
+	USHORT cantexit;		/* can't exit battle timer                 */
+/*280*/
+	USHORT repair;		/* repairs underway (User-only)            */
+/*282*/
+	USHORT hypha;			/* hyper-phaser cooldown                   */
 /*284*/
-	byte jam_time;			/* time left in jamming                    */
+	byte torpcntl;			/* torpedo damage flag                     */
 /*285*/
-	unsigned freq;			/* encoded-message frequency (User-only)   */
+	byte mislcntl;			/* missile damage flag                     */
+/*286*/
+	byte destruct;			/* self destruct countdown (User-only)     */
 /*287*/
-	unsigned npcstate;		/* auxiliary state (NPC-only)              */
-/*289*/
-	byte npcmsg;			/* message throttle/state (NPC-only)       */
+	byte minesnear;			/* set when mines are near                 */
+/*288*/
+	USHORT overspeed;		/* counter for over max warp (User-only)   */
 /*290*/
-	byte warpmsg;			/* over-warp warning throttle (User-only)  */
-/*291*/
-	byte cybmine;			/* target ship (NPC-only)                  */
+	SHORT zipload;			/* zipper throttle/damage                  */
 /*292*/
-	byte cybupdate;			/* save/update counter (NPC-only)          */
-/*293*/
-	byte tick;			/* ticker (NPC-only)                       */
+	SHORT jamload;			/* jam throttle/damage                     */
 /*294*/
-	byte distress;			/* distress target/state (Droid-only)      */
-/*295*/
-	byte holdcourse;		/* hold-course timer/state (NPC-only)      */
+	SHORT decload;			/* decoy throttle/damage                   */
 /*296*/
-	char filler[205];		/* pad WARSHP to the real 501-byte record  */
+	SHORT mineload;			/* mine throttle/damage                    */
+/*298*/
+	byte jam_sev;			/* jamming severity                        */
+/*299*/
+	byte jam_time;			/* time left in jamming                    */
+/*300*/
+	USHORT freq;			/* encoded-message frequency (User-only)   */
+/*302*/
+	USHORT npcstate;		/* auxiliary state (NPC-only)              */
+/*304*/
+	byte npcmsg;			/* message throttle/state (NPC-only)       */
+/*305*/
+	byte warpmsg;			/* over-warp warning throttle (User-only)  */
+/*306*/
+	byte cybmine;			/* target ship (NPC-only)                  */
+/*307*/
+	byte cybupdate;			/* save/update counter (NPC-only)          */
+/*308*/
+	byte tick;			/* ticker (NPC-only)                       */
+/*309*/
+	byte distress;			/* distress target/state (Droid-only)      */
+/*310*/
+	byte holdcourse;		/* hold-course timer/state (NPC-only)      */
+/*311*/
+	CHAR filler[197];		/* pad WARSHP to the 512-byte V10 record   */
 } WARSHP;
 
 typedef struct item {
-	unsigned long qty;		/* quantity on hand                        */
-	unsigned rate;			/* rate of manufacture                     */
-	char sell;			/* sell to allies?                         */
-	unsigned reserve;		/* quantity to reserve                     */
-	unsigned markup2a;		/* markup charged to allies                */
-	unsigned long sold2a;		/* quantity sold to allies                 */
+	ULONG qty;		/* quantity on hand                        */
+	USHORT rate;			/* rate of manufacture                     */
+	CHAR sell;			/* sell to allies?                         */
+	USHORT reserve;		/* quantity to reserve                     */
+	USHORT markup2a;		/* markup charged to allies                */
+	ULONG sold2a;		/* quantity sold to allies                 */
 } ITEM;
 
 typedef struct _plntcoord {
-	int type;			/* object type                             */
+	SHORT type;			/* object type                             */
 	COORD coord;			/* location                                */
 } PLNTCOORD;
 
@@ -543,89 +517,89 @@ typedef struct planetab {
 } PLANETAB;
 
 typedef struct galsect {
-	int xsect;			/* sector x coord; Btrieve key 0           */
+	SHORT xsect;			/* sector x coord; Btrieve key 0           */
 /*2*/
-	int ysect;			/* sector y coord; Btrieve key 0           */
+	SHORT ysect;			/* sector y coord; Btrieve key 0           */
 /*4*/
-	int plnum;			/* always 0; Btrieve key 0                 */
+	SHORT plnum;			/* always 0; Btrieve key 0                 */
 /*6*/
-	int type;			/* type of sector; Btrieve key 2           */
+	SHORT type;			/* type of sector; Btrieve key 2           */
 /*8*/
-	int numplan;			/* number of planetary objects             */
-/*10*/
+	SHORT numplan;			/* number of planetary objects             */
+/*16*/
 	PLNTCOORD ptab[MAXPLANETS];	/* planet/worm coord table                 */
-/*172*/
-	char filler[321];		/* pad GALSECT to the real 493-byte record */
+/*232*/
+	CHAR filler[280];		/* pad GALSECT to the 512-byte V10 record  */
 } GALSECT;
 
 typedef struct _galplnt {
-	int xsect;			/* sector x coord; Btrieve key 0           */
+	SHORT xsect;			/* sector x coord; Btrieve key 0           */
 /*2*/
-	int ysect;			/* sector y coord; Btrieve key 0           */
+	SHORT ysect;			/* sector y coord; Btrieve key 0           */
 /*4*/
-	int plnum;			/* planet number; Btrieve key 0            */
+	SHORT plnum;			/* planet number; Btrieve key 0            */
 /*6*/
-	int type;			/* type of sector; Btrieve key 2           */
+	SHORT type;			/* type of sector; Btrieve key 2           */
 /*8*/
 	COORD coord;			/* planet coordinates                      */
 /*24*/
-	char userid[UIDSIZ];		/* owning userid; Btrieve key 1            */
+	CHAR userid[UIDSIZ];		/* owning userid; Btrieve key 1            */
 /*54*/
-	char name[20];			/* planet name                             */
+	CHAR name[20];			/* planet name                             */
 /*74*/
-	char enviorn;			/* environment factor                      */
+	CHAR enviorn;			/* environment factor                      */
 /*75*/
-	char resource;			/* resource factor                         */
+	CHAR resource;			/* resource factor                         */
 /*76*/
-	unsigned long cash;		/* cash on hand                            */
+	ULONG cash;		/* cash on hand                            */
 /*80*/
-	unsigned long timestamp;	/* time of last update                     */
+	ULONG timestamp;	/* time of last update                     */
 /*84*/
-	unsigned long tax;		/* amount of tax collected                 */
+	ULONG tax;		/* amount of tax collected                 */
 /*88*/
-	int taxrate;			/* rate to tax population                  */
+	SHORT taxrate;			/* rate to tax population                  */
 /*90*/
-	char password[11];		/* trade/team access password              */
-/*101*/
+	CHAR password[11];		/* trade/team access password              */
+/*104*/
 	ITEM items[NUMITEMS];		/* planet inventory and trade settings     */
-/*311*/
-	char beacon[BEACONMSGSZ];	/* beacon message                          */
-/*386*/
-	char spyowner[UIDSIZ];		/* userid of current spy owner             */
-/*416*/
-	unsigned int plantimesave;	/* saved planet update tick interval       */
-/*418*/
-	unsigned long teamcode;		/* team lock/access code                   */
-/*422*/
-	unsigned long nebseed;		/* random seed for nebula map (Zygor only) */
-/*426*/
-	char filler[67];		/* pad GALPLNT to the real 493-byte record */
+/*328*/
+	CHAR beacon[BEACONMSGSZ];	/* beacon message                          */
+/*403*/
+	CHAR spyowner[UIDSIZ];		/* userid of current spy owner             */
+/*434*/
+	USHORT plantimesave;	/* saved planet update tick interval       */
+/*436*/
+	ULONG teamcode;		/* team lock/access code                   */
+/*440*/
+	ULONG nebseed;		/* random seed for nebula map (Zygor only) */
+/*444*/
+	CHAR filler[67];		/* pad GALPLNT to the 512-byte V10 record  */
 } GALPLNT;
 
 typedef struct galworm {
-	int xsect;			/* sector x coord; Btrieve key 0           */
+	SHORT xsect;			/* sector x coord; Btrieve key 0           */
 /*2*/
-	int ysect;			/* sector y coord; Btrieve key 0           */
+	SHORT ysect;			/* sector y coord; Btrieve key 0           */
 /*4*/
-	int plnum;			/* planet number; Btrieve key 0            */
+	SHORT plnum;			/* planet number; Btrieve key 0            */
 /*6*/
-	int type;			/* type of sector; Btrieve key 2           */
+	SHORT type;			/* type of sector; Btrieve key 2           */
 /*8*/
 	COORD coord;			/* wormhole coordinates                    */
 /*24*/
-	int visible;			/* is the wormhole visible                 */
-/*26*/
 	COORD destination;		/* destination coords                      */
+/*40*/
+	SHORT visible;			/* is the wormhole visible                 */
 /*42*/
-	char name[20];			/* wormhole name                           */
+	CHAR name[20];			/* wormhole name                           */
 /*62*/
-	char filler[431];		/* pad GALWORM to the real 493-byte record */
+	CHAR filler[450];		/* pad GALWORM to the 512-byte V10 record  */
 } GALWORM;
 
 typedef struct _pkey {			/* star system data record key             */
-	int xsect;			/* sector x coord                          */
-	int ysect;			/* sector y coord                          */
-	int plnum;			/* always 0                                */
+	SHORT xsect;			/* sector x coord                          */
+	SHORT ysect;			/* sector y coord                          */
+	SHORT plnum;			/* always 0                                */
 } PKEY;
 
 typedef struct _wormtab {
@@ -634,89 +608,88 @@ typedef struct _wormtab {
 } WORMTAB;
 
 typedef struct _mailkey {
-	char userid[UIDSIZ];		/* mail owner userid                       */
-	int class;			/* mail class                              */
-	long msgno;			/* mail message number                     */
+	CHAR userid[UIDSIZ];		/* mail owner userid                       */
+	LONG class;			/* mail class                              */
 } MAILKEY;
 
 typedef struct _mail {
-	char userid[UIDSIZ];		/* GE mail recipient userid                */
+	CHAR userid[UIDSIZ];		/* GE mail recipient userid                */
 /*30*/
-	int class;			/* GE mail class / stored message flags    */
+	LONG class;			/* GE mail class / stored message flags    */
 /*32*/
-	int type;			/* GE message template id                  */
+	SHORT type;			/* GE message template id                  */
 /*34*/
-	int stamp;			/* GE day stamp                            */
+	SHORT stamp;			/* GE day stamp                            */
 /*36*/
-	char dtime[20];			/* display date/time string for mail body  */
+	CHAR dtime[20];			/* display date/time string for mail body  */
 /*56*/
-	char topic[30];			/* mail subject/topic text                 */
+	CHAR topic[30];			/* mail subject/topic text                 */
 /*86*/
-	char string1[80];		/* aux text field (usually attacker userid) */
+	CHAR string1[80];		/* aux text field (usually attacker userid) */
 /*166*/
-	char name1[20];			/* primary name field (usually planet name) */
+	CHAR name1[20];			/* primary name field (usually planet name) */
 /*186*/
-	char filler1[5];		/* reserved for future primary-name growth */
+	CHAR filler1[5];		/* reserved for future primary-name growth */
 /*191*/
-	char name2[20];			/* secondary name field (usually ship name) */
+	CHAR name2[20];			/* secondary name field (usually ship name) */
 /*211*/
-	char filler2[5];		/* reserved for future secondary-name growth */
+	CHAR filler2[5];		/* reserved for future secondary-name growth */
 /*216*/
-	int int1;			/* generic integer field 1 (usually sector x) */
+	SHORT int1;			/* generic integer field 1 (usually sector x) */
 /*218*/
-	int int2;			/* generic integer field 2 (usually sector y) */
+	SHORT int2;			/* generic integer field 2 (usually sector y) */
 /*220*/
-	int int3;			/* generic integer field 3                 */
+	SHORT int3;			/* generic integer field 3                 */
 /*222*/
-	long long1;			/* generic long field 1 (usually quantity/count) */
+	LONG long1;			/* generic long field 1 (usually quantity/count) */
 /*226*/
-	long long2;			/* generic long field 2                    */
+	LONG long2;			/* generic long field 2                    */
 /*230*/
-	long long3;			/* generic long field 3                    */
+	LONG long3;			/* generic long field 3                    */
 /*234*/
-	char filler[253-200-UIDSIZ];	/* pad to 257                              */
+	CHAR filler[253-200-UIDSIZ];	/* pad to 257                              */
 } MAIL;
 
 typedef struct _mailstat {
-	char userid[UIDSIZ];		/* production-report recipient userid      */
+	CHAR userid[UIDSIZ];		/* production-report recipient userid      */
 /*30*/
-	int class;			/* GE mail class / stored message flags    */
+	LONG class;			/* GE mail class / stored message flags    */
 /*32*/
-	int type;			/* GE message template id                  */
+	SHORT type;			/* GE message template id                  */
 /*34*/
-	int stamp;			/* GE day stamp                            */
+	SHORT stamp;			/* GE day stamp                            */
 /*36*/
-	char dtime[20];			/* display date/time string for mail body  */
+	CHAR dtime[20];			/* display date/time string for mail body  */
 /*56*/
-	char topic[30];			/* mail subject/topic text                 */
+	CHAR topic[30];			/* mail subject/topic text                 */
 /*86*/
-	char name1[20];			/* planet name                             */
+	CHAR name1[20];			/* planet name                             */
 /*106*/
-	char filler1[5];		/* reserved for future planet-name growth  */
+	CHAR filler1[5];		/* reserved for future planet-name growth  */
 /*111*/
-	int int1;			/* planet sector x                         */
+	SHORT int1;			/* planet sector x                         */
 /*113*/
-	int int2;			/* planet sector y                         */
+	SHORT int2;			/* planet sector y                         */
 /*115*/
-	unsigned long cash;		/* planet cash on hand                     */
+	ULONG cash;		/* planet cash on hand                     */
 /*119*/
-	unsigned long timestamp;	/* planet timestamp at report time         */
+	ULONG timestamp;	/* planet timestamp at report time         */
 /*123*/
-	unsigned long tax;		/* planet tax on hand                      */
+	ULONG tax;		/* planet tax on hand                      */
 /*127*/
-	unsigned long itemqty[NUMITEMS];	/* per-item quantities at report time */
+	ULONG itemqty[NUMITEMS];	/* per-item quantities at report time */
 /*183*/
-	char filler[253-97-(UIDSIZ)-(sizeof(long)*NUMITEMS)];	/* pad to 253      */
+	CHAR filler[253-97-(UIDSIZ)-(sizeof(LONG)*NUMITEMS)];	/* pad to 253      */
 } MAILSTAT;
 
 typedef struct _shpkey {
-	char userid[UIDSIZ];		/* owning userid                           */
-	int shipno;			/* ship number                             */
+	CHAR userid[UIDSIZ];		/* owning userid                           */
+	SHORT shipno;			/* ship number                             */
 } SHPKEY;
 
 typedef struct _ship {
-	char *typename;			/* class display name                      */
-	char *npcprefx;			/* NPC shipname prefix                     */
+	CHAR *typename;			/* class display name                      */
+	CHAR *npcprefx;			/* NPC shipname prefix                     */
 	byte max_shlds;			/* max shield class                        */
 	byte max_phasr;			/* max phaser class                        */
 	byte max_torps;			/* max torpedo tubes                       */
@@ -727,43 +700,43 @@ typedef struct _ship {
 	byte has_mine;			/* mine capability                         */
 	byte max_attk;			/* fighter capability                      */
 	byte max_cloak;			/* cloak capability                        */
-	unsigned int max_accel;		/* max acceleration                        */
+	USHORT max_accel;		/* max acceleration                        */
 	byte max_warp;			/* max warp cruising speed                 */
-	long max_tons;			/* cargo capacity                          */
-	long max_price;			/* ship class price                        */
-	unsigned int max_points;	/* point value if destroyed                */
-	unsigned int max_type;		/* class type (user/cyborg/droid/none)     */
-	long scanrange;			/* scanner range                           */
+	LONG max_tons;			/* cargo capacity                          */
+	LONG max_price;			/* ship class price                        */
+	USHORT max_points;	/* point value if destroyed                */
+	USHORT max_type;		/* class type (user/cyborg/droid/none)     */
+	LONG scanrange;			/* scanner range                           */
 	byte cybs_can_att;		/* cybs of this class attack unprovoked    */
 	byte lowest_to_attk;		/* lowest ship class this NPC will pursue  */
 	byte noclaim;			/* max cyborg claims / claim pressure      */
-	unsigned int tot_to_create;	/* target live NPC count for this class    */
+	USHORT tot_to_create;	/* target live NPC count for this class    */
 	byte tough_factor;		/* NPC toughness/aggression factor         */
-	unsigned int damfact;		/* damage/price scaling factor             */
-	unsigned int faction;		/* faction id used for NPC relations       */
-	unsigned int loadout;		/* upgrade/loadout profile                 */
+	USHORT damfact;		/* damage/price scaling factor             */
+	USHORT faction;		/* faction id used for NPC relations       */
+	USHORT loadout;		/* upgrade/loadout profile                 */
 
-	int hlpmsg;			/* help message id                         */
-	void (*init_func)(WARSHP *, int, int);		/* class initialization hook */
-	void (*tick_func)(WARSHP *, int);		/* class per-tick hook       */
-	void (*kill_func)(WARSHP *, int, WARSHP *);	/* class death hook          */
-	void (*won_func)(WARSHP *, int, WARSHP *);	/* class victory hook        */
+	SHORT hlpmsg;			/* help message id                         */
+	void (*init_func)(WARSHP *, INT, INT);		/* class initialization hook */
+	void (*tick_func)(WARSHP *, INT);		/* class per-tick hook       */
+	void (*kill_func)(WARSHP *, INT, WARSHP *);	/* class death hook          */
+	void (*won_func)(WARSHP *, INT, WARSHP *);	/* class victory hook        */
 } SHIP;
 
 struct cmd {
-	char *command;			/* command keyword                         */
+	CHAR *command;			/* command keyword                         */
 	void (*func)(void);		/* command handler                         */
 	byte cando;			/* 0 = payers only, 1 = all players        */
 };
 
 typedef struct _shiptab {
-	int shipno;			/* target ship slot                        */
-	char letter;			/* scan letter                             */
-	char flag;			/* visibility/state flag                   */
-	double dist;			/* distance                                */
-	int bearing;			/* bearing                                 */
-	int heading;			/* heading                                 */
-	double speed;			/* speed                                   */
+	SHORT shipno;			/* target ship slot                        */
+	CHAR letter;			/* scan letter                             */
+	CHAR flag;			/* visibility/state flag                   */
+	DOUBLE dist;			/* distance                                */
+	SHORT bearing;			/* bearing                                 */
+	SHORT heading;			/* heading                                 */
+	DOUBLE speed;			/* speed                                   */
 } SHIPTAB;
 
 #define NOSCANTAB 15		/* how many ships can be tracked by scanners at once */
@@ -778,23 +751,23 @@ typedef struct _entrytab {
 } ENTRYTAB;
 
 typedef struct _s00 {
-	char *name;			/* predefined object name                  */
-	char *owner;			/* predefined owner userid                 */
-	int type;			/* predefined object type                  */
-	double xcoord;			/* x coordinate within sector 0,0          */
-	double ycoord;			/* y coordinate within sector 0,0          */
-	int env;			/* environment setting                     */
-	int res;			/* resource setting                        */
+	CHAR *name;			/* predefined object name                  */
+	CHAR *owner;			/* predefined owner userid                 */
+	SHORT type;			/* predefined object type                  */
+	DOUBLE xcoord;			/* x coordinate within sector 0,0          */
+	DOUBLE ycoord;			/* y coordinate within sector 0,0          */
+	SHORT env;			/* environment setting                     */
+	SHORT res;			/* resource setting                        */
 } S00;
 
 typedef struct _team {
-	long teamcode;			/* team identifier                         */
-	char teamname[31];		/* team name                               */
-	unsigned int teamcount;		/* current member count                    */
-	unsigned int teamdeldate;	/* deletion date                           */
-	char password[11];		/* join password                           */
-	char secret[11];		/* team secret                             */
-	int flag;			/* unused                                  */
+	LONG teamcode;			/* team identifier                         */
+	CHAR teamname[31];		/* team name                               */
+	USHORT teamcount;		/* current member count                    */
+	USHORT teamdeldate;	/* deletion date                           */
+	CHAR password[11];		/* join password                           */
+	CHAR secret[11];		/* team secret                             */
+	SHORT flag;			/* unused                                  */
 } TEAM;
 
 

@@ -1161,19 +1161,19 @@ void FUNC lookupshp(void)
 		}
 	}
 
-	setbtv(gebb1);
+	dfaSetBlk(gebb1);
 
 	/* don't count if no ships at all, or no ships for this user */
-	if (qlobtv(0) && gepdb(GELOOKUPNAME, usaptr->userid, 0, warsptr)) {
+	if (dfaQueryLO(0) && gepdb(GELOOKUPNAME, usaptr->userid, 0, warsptr)) {
 		/* get a total for user ship count */
 		do {
-			gcrbtv(warsptr,0);
+			dfaAbsRec(warsptr,0);
 			if (!sameas(usaptr->userid, warsptr->userid))
 				break;
 			if (!valid_user_ship(warsptr))
 				continue;
 			noships++;
-		} while (qnxbtv());
+		} while (dfaQueryNX());
 
 		waruptr->noships = noships;
 		if (!gepdb(GELOOKUPNAME, usaptr->userid, 0, warsptr))
@@ -1197,7 +1197,7 @@ void FUNC lookupshp(void)
 		return;
 	}
 	else if (noships == 1) {
-		setbtv(gebb1);
+		dfaSetBlk(gebb1);
 		/* verify the single-ship list result before trusting scantab[0] */
 		if (findships(0,1) != 1 || scantab[usrnum].ship[0].shipno == 0) {
 			geshocst(0,spr("GE:ERR:Ship List Fail %s",usaptr->userid));
@@ -1688,37 +1688,37 @@ void FUNC prune_stale_auto_records(void)
 	shipdel = 0;
 	do {
 		deleted = FALSE;
-		setbtv(gebb1);
-		if (qlobtv(0)) {
+		dfaSetBlk(gebb1);
+		if (dfaQueryLO(0)) {
 			do {
-				gcrbtv(&tmpshp, 0);
+				dfaAbsRec(&tmpshp, 0);
 				if (tmpshp.userid[0] == '@' && !valid_cyb_userid(tmpshp.userid)) {
 					geshocst(1, spr("GE:INF:AUTOSHPDEL uid=%s shipno=%d",
 						tmpshp.userid, tmpshp.shipno));
-					delbtv();
+					dfaDelete();
 					++shipdel;
 					deleted = TRUE;
 					break;
 				}
-			} while (qnxbtv());
+			} while (dfaQueryNX());
 		}
 	} while (deleted);
 
 	userdel = 0;
 	do {
 		deleted = FALSE;
-		setbtv(gebb5);
-		if (qlobtv(0)) {
+		dfaSetBlk(gebb5);
+		if (dfaQueryLO(0)) {
 			do {
-				gcrbtv(&tmpusr, 0);
+				dfaAbsRec(&tmpusr, 0);
 				if (tmpusr.userid[0] == '@' && !valid_cyb_userid(tmpusr.userid)) {
 					geshocst(1, spr("GE:INF:AUTOUSRDEL uid=%s", tmpusr.userid));
-					delbtv();
+					dfaDelete();
 					++userdel;
 					deleted = TRUE;
 					break;
 				}
-			} while (qnxbtv());
+			} while (dfaQueryNX());
 		}
 	} while (deleted);
 
@@ -1742,7 +1742,7 @@ int FUNC findships(int direction, int quiet)
 	int first_shipno = 0;
 	SCANTAB *sptr;
 
-	setbtv(gebb1);
+	dfaSetBlk(gebb1);
 	sptr = &scantab[usrnum];
 
 	/* if we're paging, grab current page’s known first/last ship numbers from scantab */
@@ -1770,7 +1770,7 @@ int FUNC findships(int direction, int quiet)
 	if (direction > 0 && last_no != 0) {
 		/* last ship of current page, plus one */
 		if (gepdb(GEGET, usaptr->userid, last_no, warsptr)) {
-			if (!qnxbtv())	/* no next page */
+			if (!dfaQueryNX())	/* no next page */
 				return 0;
 		}
 	}
@@ -1778,7 +1778,7 @@ int FUNC findships(int direction, int quiet)
 		/* first ship of current page, then back NOSCANTAB, plus one */
 		if (gepdb(GEGET, usaptr->userid, first_no, warsptr)) {
 			step = 0;
-			while (step < NOSCANTAB && qprbtv())
+			while (step < NOSCANTAB && dfaQueryPR())
 				++step;
 		}
 	}
@@ -1791,7 +1791,7 @@ int FUNC findships(int direction, int quiet)
 	if (!quiet)
 		prf("%s    Class                Name                 Sector         Status\r", CLR_CYAN2);
 	do {
-		gcrbtv(warsptr, 0);
+		dfaAbsRec(warsptr, 0);
 
 		if (!sameas(usaptr->userid, warsptr->userid))
 			break;
@@ -1829,7 +1829,7 @@ int FUNC findships(int direction, int quiet)
 
 		sptr->ship[found].shipno = warsptr->shipno;
 		++found;
-	} while (qnxbtv() && found < NOSCANTAB);
+	} while (dfaQueryNX() && found < NOSCANTAB);
 
 	/* display page X of Y if needed */
 	if (!quiet && waruptr->noships > NOSCANTAB) {
@@ -1837,8 +1837,8 @@ int FUNC findships(int direction, int quiet)
 		before = 0;
 
 		if (first_shipno != 0 && gepdb(GEGET, usaptr->userid, first_shipno, warsptr)) {
-			while (qprbtv()) {
-				gcrbtv(warsptr, 0);
+			while (dfaQueryPR()) {
+				dfaAbsRec(warsptr, 0);
 				if (!sameas(usaptr->userid, warsptr->userid))
 					break;
 				if (!valid_user_ship(warsptr))
@@ -1887,7 +1887,7 @@ void FUNC selectship(void)
 	selection = atoi(margv[0]) - 1;
 	if (selection >= 0 && selection < NOSCANTAB && scantab[usrnum].ship[selection].shipno != 0) {
 		shpno = scantab[usrnum].ship[selection].shipno;
-		setbtv(gebb1);
+		dfaSetBlk(gebb1);
 		if (gepdb(GEGET, usaptr->userid, shpno, warsptr)) {
 			if (!valid_user_ship(warsptr)) {
 				prfmsg(FLEET4);
@@ -2939,9 +2939,9 @@ void FUNC killem(WARSHP *ptr, int usrn)
 
 		if (ptr->status == GESTAT_USER && wptr->status == GESTAT_USER
 			&& showdoc != 0 && r % (11 - showdoc) == 0) {
-			setbtv(gebb2);
+			dfaSetBlk(gebb2);
 
-			if (qlobtv(0) && qeqbtv(ptr->userid,1)) {
+			if (dfaQueryLO(0) && dfaQueryEQ(ptr->userid,1)) {
 				int bits = 1;
 				if (waruptr->planets > 100)	/* if lots of planets, increase rnd threshold */
 					bits = 4;
@@ -2951,7 +2951,7 @@ void FUNC killem(WARSHP *ptr, int usrn)
 				prfmsg(PLAMSG1);
 				i = 0;
 				do {
-					gcrbtv(&planet,1);
+					dfaAbsRec(&planet,1);
 					if (sameas(planet.userid,ptr->userid)) {
 						if ((bits == 1 && (r & 1) == 1) ||	/* different random list each time */
 							(bits == 2 && (r & 3) == 3) ||	/* over 50 planets, 1 in 4 chance to be included */
@@ -2967,10 +2967,10 @@ void FUNC killem(WARSHP *ptr, int usrn)
 					r >>= bits;
 					if (r == 0)
 						r = gernd();
-				} while (qnxbtv() && (i < 20));
+				} while (dfaQueryNX() && (i < 20));
 				if (i == 0) {	/* oops, we didn't pick any planets, so print final planet */
-					qprbtv();
-					gcrbtv(&planet,1);
+					dfaQueryPR();
+					dfaAbsRec(&planet,1);
 					prf("%-24s %6d %6d  %6d\r",planet.name,planet.xsect,planet.ysect,planet.plnum);
 				}
 				if (i % 5 != 0)	/* if we're not on a multiple of 5, we still have to print the remainder */
@@ -4692,11 +4692,11 @@ int FUNC mailscan(char *userid, int class)
 	strncpy(mailkey.userid,userid,UIDSIZ);
 	mailkey.class = class;
 
-	setbtv(gebb4);
+	dfaSetBlk(gebb4);
 
 	/* if class = 0 scan if user has ANY mail */
 	if (class == 0) {
-		if (qeqbtv(userid,0)) {
+		if (dfaQueryEQ(userid,0)) {
 			/* DEBUG
 			prf("mail.userid=%s\rmail.class=%d\rmail.type=%d\r",mail.userid,mail.class,mail.type);*/
 			return TRUE;
@@ -4704,7 +4704,7 @@ int FUNC mailscan(char *userid, int class)
 	}
 	else
 	/* otherwize see if he has this class of mail */
-	if (qeqbtv(&mailkey,1)) {
+	if (dfaQueryEQ(&mailkey,1)) {
 		return TRUE;
 	}
 	return FALSE;
@@ -4714,20 +4714,19 @@ int FUNC mailread(char *userid, int class)
 {
 	strncpy(mailkey.userid,userid,UIDSIZ);
 	mailkey.class = class;
-	mailkey.msgno = 0;
 
-	setbtv(gebb4);
+	dfaSetBlk(gebb4);
 
 	setmem(gemsg,FIXEDMSGSIZ,0);
 
-	if (qeqbtv(&mailkey,1)) {
-		gcrbtv(gemsg,1);
+	if (dfaQueryEQ(&mailkey,1)) {
+		dfaAbsRec(gemsg,1);
 		prf("%s------------------------------------------------------------------------------%s\r",CLR_BLUE2,CLR_CYAN2);
 		prf(gemsg->text);
 		prf("%s------------------------------------------------------------------------------%s",CLR_BLUE2,CLR_WHITE2);
 		outprfge(FLT_NONE,usrnum);
 
-		delbtv();
+		dfaDelete();
 
 		return TRUE;
 	}
@@ -4834,20 +4833,15 @@ int FUNC sendit(void)
 
 	setmem(gemsg,FIXEDMSGSIZ,0);
 
-	gemsg->msgno = 0;
+	strcpy(gemsg->m.from,"** Galactic Empire **");
+	strcpy(gemsg->m.to,mail.userid);
+	strcpy(gemsg->m.topic,mail.topic);
+	gemsg->m.flags = mail.class;
 
-	strcpy(gemsg->userto,mail.userid);
-	strcpy(gemsg->from,"** Galactic Empire **");
-	strcpy(gemsg->to,mail.userid);
-	strcpy(gemsg->topic,mail.topic);
-	gemsg->auxtpc[0] = 0;
+	gemsg->m.crdate=today();
+	gemsg->m.crtime=now();
 
-	gemsg->flags = mail.class;
-
-	gemsg->crdate=today();
-	gemsg->crtime=now();
-
-	gemsg->nreply = cofdat(today());
+	gemsg->m.nrpl = cofdat(today());
 
 	prf2tx();
 
@@ -4873,12 +4867,12 @@ void FUNC prf2tx(void)		/* xfer prfbuf contents to message text area */
 }
 
 
-int FUNC sendgemsg(struct message *msgptr)
+int FUNC sendgemsg(GEMESSAGE *msgptr)
 {
-	setbtv(gebb4);
-	if (!dinsbtv(msgptr))
-		logthis(spr("GE:ERR:Mail Insert Fail to=%s topic=%s", msgptr->to, msgptr->topic));
-	rstbtv();
+	dfaSetBlk(gebb4);
+	if (!dfaInsertDup(msgptr))
+		logthis(spr("GE:ERR:Mail Insert Fail to=%s topic=%s", msgptr->m.to, msgptr->m.topic));
+	dfaRstBlk();
 	return TRUE;
 }
 
@@ -5233,40 +5227,40 @@ void FUNC rospos(WARUSR *losptr, WARUSR *winptr, int *lospos, int *winpos)
 	*lospos = 0;
 	*winpos = 0;
 
-	setbtv(gebb5);
+	dfaSetBlk(gebb5);
 
 	/* find user record for loser */
-	if (qeqbtv(losptr->userid, 0))
-		ltarget = absbtv();
+	if (dfaQueryEQ(losptr->userid, 0))
+		ltarget = dfaAbs();
 
 	/* find user record for winner */
-	if (qeqbtv(winptr->userid, 0))
-		wtarget = absbtv();
+	if (dfaQueryEQ(winptr->userid, 0))
+		wtarget = dfaAbs();
 
 	if (ltarget == 0 && wtarget == 0)
 		return;	/* return both 0 */
 
 	/* start at top of roster (key 1 = score order) */
-	if (!qhibtv(1))
+	if (!dfaQueryHI(1))
 		return;
 
 	do {
-		gcrbtv(&tmpusr, 1);
+		dfaAbsRec(&tmpusr, 1);
 
 		ranked = (tmpusr.score > 0 && tmpusr.userid[0] != '@');
 
 		if (ranked)
 			++i;
 
-		if (ranked && ltarget != 0 && absbtv() == ltarget)
+		if (ranked && ltarget != 0 && dfaAbs() == ltarget)
 			*lospos = i;
-		else if (ranked && wtarget != 0 && absbtv() == wtarget)
+		else if (ranked && wtarget != 0 && dfaAbs() == wtarget)
 			*winpos = i;
 
 		if (*lospos && *winpos)
 			break;	/* we're done here */
 
-	} while (qprbtv());
+	} while (dfaQueryPR());
 
 	if (*winpos == 0)	/* unranked winner */
 		*winpos = i + 1;

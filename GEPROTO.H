@@ -160,7 +160,7 @@ int FUNC mailread P((char *userid , int class));
 void FUNC mailit P((int flag));
 int FUNC sendit P((void));
 void FUNC prf2tx P((void));
-int FUNC sendgemsg P((struct message *msgptr));
+int FUNC sendgemsg P((GEMESSAGE *msgptr));
 void FUNC shieldup P((WARSHP *wptr , int usrn));
 void FUNC shielddn P((WARSHP *wptr , int usrn));
 int FUNC shieldhit P((WARSHP *wptr , int dam));

@@ -38,7 +38,7 @@
 #ifndef GEMAIN
 extern int gestt;
 
-extern BTVFILE *gebb1,		/* GEship.dat */
+extern DFAFILE *gebb1,		/* GEship.dat */
 	       *gebb2,		/* GEplanet.dat */
 	       *gebb4,		/* GEmail.dat */
 	       *gebb5;		/* GEuser.dat */
@@ -73,7 +73,7 @@ extern byte *entrysent;
 extern byte *entrypend;
 extern int entrybytes;
 
-extern struct message *gemsg;
+extern GEMESSAGE *gemsg;
 
 extern int nships;
 extern int heading;
