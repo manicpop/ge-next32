@@ -338,10 +338,12 @@ typedef struct message {
 /* text up to GEMSGSIZ (784) follows, record size is 1000 bytes */
 } MESSAGE;
 
-typedef struct _coord {
+#define COORD struct _coord
+
+COORD {
 	double xcoord;		/* x coordinate                            */
 	double ycoord;		/* y coordinate                            */
-} COORD;
+};
 
 typedef struct _mine {
 	byte channel;		/* owning ship/user slot                   */
