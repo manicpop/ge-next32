@@ -1181,7 +1181,7 @@ void FUNC lookupshp(void)
 	}
 
 	if (noships == 0) {
-		initshp(usaptr->userid,0); /* give the dude a class 1 ship */
+		initshp(usaptr->userid,0); /* give the dude a cls 1 ship */
 		if (!gepdb(GEADD,tmpshp.userid,tmpshp.shipno,&tmpshp))
 			geshocst(0,spr("GE:ERR:Ship Add Fail %s",usaptr->userid));
 		memcpy(warsptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
@@ -1201,7 +1201,7 @@ void FUNC lookupshp(void)
 		/* verify the single-ship list result before trusting scantab[0] */
 		if (findships(0,1) != 1 || scantab[usrnum].ship[0].shipno == 0) {
 			geshocst(0,spr("GE:ERR:Ship List Fail %s",usaptr->userid));
-			initshp(usaptr->userid,0); /* give the dude a class 1 ship */
+			initshp(usaptr->userid,0); /* give the dude a cls 1 ship */
 			if (!gepdb(GEADD,tmpshp.userid,tmpshp.shipno,&tmpshp))
 				geshocst(0,spr("GE:ERR:Ship Add Fail %s",usaptr->userid));
 			memcpy(warsptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
@@ -1214,7 +1214,7 @@ void FUNC lookupshp(void)
 		if (gepdb(GEGET,usaptr->userid,scantab[usrnum].ship[0].shipno,warsptr)) {
 			if (!valid_user_ship(warsptr)) {
 				geshocst(0,spr("GE:DBG:Ship Load Bad %s",usaptr->userid));
-				initshp(usaptr->userid,0); /* give the dude a class 1 ship */
+				initshp(usaptr->userid,0); /* give the dude a cls 1 ship */
 				if (!gepdb(GEADD,tmpshp.userid,tmpshp.shipno,&tmpshp))
 					geshocst(0,spr("GE:ERR:Ship Add Fail %s",usaptr->userid));
 				memcpy(warsptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
@@ -1227,7 +1227,7 @@ void FUNC lookupshp(void)
 		else {
 			/* somehow lost the ship... make one anyway */
 			geshocst(0,spr("GE:DBG:Ship Load Err %s",usaptr->userid));
-			initshp(usaptr->userid,0); /* give the dude a class 1 ship */
+			initshp(usaptr->userid,0); /* give the dude a cls 1 ship */
 			if (!gepdb(GEADD,tmpshp.userid,tmpshp.shipno,&tmpshp))
 				geshocst(0,spr("GE:ERR:Ship Add Fail %s",usaptr->userid));
 			memcpy(warsptr,&tmpshp,sizeof(WARSHP));	/* make is the current ship */
@@ -1498,9 +1498,9 @@ int FUNC initshp(char *userid, int type)
 
 	logthis(spr("GE:DBG:initship %d",type));
 	logthis(spr("%s",userid));
-	/* reject invalid class indexes before touching shipclass[] */
+	/* reject invalid cls indexes before touching shipclass[] */
 	if (!VALID_SHPCLASS(type)) {
-		geshocst(0,spr("GE:ERR:initship bad class %d for %s",type,userid));
+		geshocst(0,spr("GE:ERR:initship bad cls %d for %s",type,userid));
 		return 1;
 	}
 	/* build a fresh ship record from zero, then layer explicit defaults on top */
@@ -1591,7 +1591,7 @@ int FUNC valid_user_ship(WARSHP *ptr)
 }
 
 /**************************************************************************
-** Map an in-memory automaton slot to its configured ship class          **
+** Map an in-memory automaton slot to its configured ship cls          **
 **************************************************************************/
 
 static int auto_slot_class(int usrn)
@@ -1616,21 +1616,21 @@ static int auto_slot_class(int usrn)
 }
 
 /**************************************************************************
-** Return the expected cyborg class for a slot, or -1 if it is not Cyb   **
+** Return the expected cyborg cls for a slot, or -1 if it is not Cyb   **
 **************************************************************************/
 
 int FUNC cyb_slot_class(int usrn)
 {
-	int class;
+	int cls;
 
-	class = auto_slot_class(usrn);
-	if (class < 0)
+	cls = auto_slot_class(usrn);
+	if (cls < 0)
 		return -1;
 
-	if (shipclass[class].max_type != CLASSTYPE_CYBORG)
+	if (shipclass[cls].max_type != CLASSTYPE_CYBORG)
 		return -1;
 
-	return class;
+	return cls;
 }
 
 /**************************************************************************
@@ -4454,7 +4454,7 @@ void FUNC randamage(WARSHP *ptr, int usrn, double hitdam)
 
 			prfmsg(RNDLVNG);
 
-			/* shift the same roll so each personnel class can lose a different amount */
+			/* shift the same roll so each personnel cls can lose a different amount */
 			if (ptr->items[I_MEN] > 0)
 				count += rd_add(ptr, r2, I_MEN, damcomb, gechrbuf, &comma, "man", "men");
 			if (ptr->items[I_TROOPS] > 0)
@@ -4687,33 +4687,33 @@ int FUNC samesect(COORD *pointb, COORD *pointa)
 ** MAIL functions                                                        **
 **************************************************************************/
 
-int FUNC mailscan(char *userid, int class)
+int FUNC mailscan(char *userid, int cls)
 {
 	strncpy(mailkey.userid,userid,UIDSIZ);
-	mailkey.class = class;
+	mailkey.mailclass = cls;
 
 	dfaSetBlk(gebb4);
 
-	/* if class = 0 scan if user has ANY mail */
-	if (class == 0) {
+	/* if cls = 0 scan if user has ANY mail */
+	if (cls == 0) {
 		if (dfaQueryEQ(userid,0)) {
 			/* DEBUG
-			prf("mail.userid=%s\rmail.class=%d\rmail.type=%d\r",mail.userid,mail.class,mail.type);*/
+			prf("mail.userid=%s\rmail.mailclass=%d\rmail.type=%d\r",mail.userid,mail.mailclass,mail.type);*/
 			return TRUE;
 		}
 	}
 	else
-	/* otherwize see if he has this class of mail */
+	/* otherwize see if he has this cls of mail */
 	if (dfaQueryEQ(&mailkey,1)) {
 		return TRUE;
 	}
 	return FALSE;
 }
 
-int FUNC mailread(char *userid, int class)
+int FUNC mailread(char *userid, int cls)
 {
 	strncpy(mailkey.userid,userid,UIDSIZ);
-	mailkey.class = class;
+	mailkey.mailclass = cls;
 
 	dfaSetBlk(gebb4);
 
@@ -4836,7 +4836,7 @@ int FUNC sendit(void)
 	strcpy(gemsg->m.from,"** Galactic Empire **");
 	strcpy(gemsg->m.to,mail.userid);
 	strcpy(gemsg->m.topic,mail.topic);
-	gemsg->m.flags = mail.class;
+	gemsg->m.flags = mail.mailclass;
 
 	gemsg->m.crdate=today();
 	gemsg->m.crtime=now();

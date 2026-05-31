@@ -69,6 +69,8 @@
 #include "mpogeshp.h"
 #endif
 
+#include "gme.h"
+
 /***************************************************************************/
 /* The following defines have been carefully chosen and refined to provide */
 /* a well balanced and entertaining game play. Should they be modified,    */
@@ -609,13 +611,13 @@ typedef struct _wormtab {
 
 typedef struct _mailkey {
 	CHAR userid[UIDSIZ];		/* mail owner userid                       */
-	LONG class;			/* mail class                              */
+	LONG mailclass;		/* mail class                              */
 } MAILKEY;
 
 typedef struct _mail {
 	CHAR userid[UIDSIZ];		/* GE mail recipient userid                */
 /*30*/
-	LONG class;			/* GE mail class / stored message flags    */
+	LONG mailclass;		/* GE mail class / stored message flags    */
 /*32*/
 	SHORT type;			/* GE message template id                  */
 /*34*/
@@ -653,7 +655,7 @@ typedef struct _mail {
 typedef struct _mailstat {
 	CHAR userid[UIDSIZ];		/* production-report recipient userid      */
 /*30*/
-	LONG class;			/* GE mail class / stored message flags    */
+	LONG mailclass;		/* GE mail class / stored message flags    */
 /*32*/
 	SHORT type;			/* GE message template id                  */
 /*34*/

@@ -73,13 +73,13 @@ DFAFILE *gebb1,		/* MPOGESHP.DAT */
 
 FILE *gemb,		/* MPOGEMSG.MSG: main GE messages */
 	*gehlpmb,	/* MPOGEHLP.MSG: GE help messages */
-	*geshmb;	/* MPOGESHP.MSG: ship class messages */
+	*geshmb;	/* MPOGESHP.MSG: ship cls messages */
 
 static char *geuser,		/* configured user database name */
 	*geship,		/* configured ship database name */
 	*geplnt,		/* configured planet database name */
 	*gemail,		/* configured mail database name */
-	*geshipcl;		/* configured ship class message name */
+	*geshipcl;		/* configured ship cls message name */
 
 static char *endmark;		/* startup message/config integrity marker */
 
@@ -193,13 +193,13 @@ int				gemaxplrs,	/* max simultaneous GE players */
 				decodds,	/* decoy effectiveness odds */
 				nummines,	/* total mine slots */
 				usermines,	/* max mines per user */
-				cyb_class,	/* base cyborg class index */
-				dr_class,	/* base droid class index */
+				cyb_class,	/* base cyborg cls index */
+				dr_class,	/* base droid cls index */
 				clenguse,	/* cloak energy use */
 				logflag,	/* GE logging toggle */
 				optmenu,	/* option-menu mode toggle */
 				cyb_gold,	/* cyborg gold reward setting */
-				tot_classes,	/* total ship class slots defined */
+				tot_classes,	/* total ship cls slots defined */
 				team_max,	/* max team size */
 				fse_state,	/* FSE/editor module state id */
 				phatowrp,	/* minimum phasers required to hit ships at warp */
@@ -239,7 +239,7 @@ double				tor_fact,	/* torpedo hit-distance factor */
 SHPKEY				shpkey;		/* ship database key workspace */
 MAILKEY				mailkey;	/* mail database key workspace */
 
-SHIP				*shipclass;	/* base pointer to ship class table */
+SHIP				*shipclass;	/* base pointer to ship cls table */
 
 S00				*s00;		/* sector 0,0 predefined object table */
 int				s00plnum;	/* number of predefined sector 0,0 objects */
@@ -324,7 +324,7 @@ void FUNC iniwara(void)
 	geship = stgopt(GESHIP);		/* configured ship database name */
 	geplnt = stgopt(GEPLNT);		/* configured planet database name */
 	gemail = stgopt(GEMAIL);		/* configured mail database name */
-	geshipcl = stgopt(GESHIPCL);		/* configured ship class message name */
+	geshipcl = stgopt(GESHIPCL);		/* configured ship cls message name */
 
 	gemaxplrs = numopt(MAXPLRS, 1, 256);	/* max simultaneous GE players */
 	gefreebies = numopt(FREEBIES, 0, 1);	/* allow non-paying/freebie access */
@@ -496,11 +496,11 @@ void FUNC iniwara(void)
 	cyb_class = 0;
 	dr_class = 0;
 
-	/* load the ship class table */
+	/* load the ship cls table */
 	geshmb = opnmsg(geshipcl);
 	setmbk(geshmb);
 
-#define NCL 28		/* ship class table entries per class slot */
+#define NCL 28		/* ship cls table entries per cls slot */
 
 	/* first audit the table */
 
@@ -514,7 +514,7 @@ void FUNC iniwara(void)
 	/* since we only load active classes we must go figure	*/
 	/* out how many that really is.				*/
 
-	geshocst(1, spr("GE:INF:Fnd %d class slots", i));
+	geshocst(1, spr("GE:INF:Fnd %d cls slots", i));
 	tot_classes = i;
 
 	n = 0;
@@ -532,7 +532,7 @@ void FUNC iniwara(void)
 
 	geshocst(1, spr("GE:INF:Fnd %d defined classes", n));
 
-	/* allocate memory for ship class table */
+	/* allocate memory for ship cls table */
 
 	shipclass = (SHIP *)alcmem(n = tot_classes * sizeof(SHIP));
 	setmem(shipclass, n, 0);
@@ -541,12 +541,12 @@ void FUNC iniwara(void)
 	/* read in the ship classes */
 	i = 0;
 
-	/* each class is loaded from its fixed-width option block in MPOGESHP.MSG */
+	/* each cls is loaded from its fixed-width option block in MPOGESHP.MSG */
 	for (n = 0; n < tot_classes; ++n) {
 		classbase = class_tab[i];
 		shipclass[i].max_type = tokopt(classbase, "USER", "CYBORG", "DROID", "<NONE>", NULL);
 		shipclass[i].typename = stgopt(++classbase);
-		logthis(spr("Loaded class %d - %s", i, shipclass[i].typename));
+		logthis(spr("Loaded cls %d - %s", i, shipclass[i].typename));
 
 		shipclass[i].npcprefx = stgopt(++classbase);
 		logthis(spr("  NPC prefix %s", shipclass[i].npcprefx));
@@ -583,22 +583,22 @@ void FUNC iniwara(void)
 		shipclass[i].kill_func = NULL;
 		shipclass[i].won_func = NULL;
 
-		/* how many NPCs of this class to make */
+		/* how many NPCs of this cls to make */
 		if (shipclass[i].max_type == CLASSTYPE_CYBORG ||
 			shipclass[i].max_type == CLASSTYPE_DROID) {
 			numships += shipclass[i].tot_to_create;
 		}
 
-		/* attach class-specific behavior hooks; user classes leave these NULL */
+		/* attach cls-specific behavior hooks; user classes leave these NULL */
 		if (shipclass[i].max_type == CLASSTYPE_CYBORG) {
-			if (cyb_class == 0)	/* remember the first cyborg class as the base class */
+			if (cyb_class == 0)	/* remember the first cyborg cls as the base cls */
 				cyb_class = i;
 			shipclass[i].init_func = cyb_init;
 			shipclass[i].tick_func = cyb_lives;
 			shipclass[i].kill_func = cyb_died;
 			shipclass[i].won_func = cyb_won;
 		} else if (shipclass[i].max_type == CLASSTYPE_DROID) {
-			if (dr_class == 0)	/* remember the first droid class as the base class */
+			if (dr_class == 0)	/* remember the first droid cls as the base cls */
 				dr_class = i;
 			shipclass[i].init_func = droid_init;
 			shipclass[i].tick_func = droid_lives;
@@ -887,7 +887,7 @@ void FUNC gemidnight(void)
 						/* now go create the Status Record */
 						strncpy(tmpstat.userid, tmpusr.userid, UIDSIZ);
 						tmpstat.userid[UIDSIZ - 1] = 0;
-						tmpstat.class = MAIL_CLASS_PRODRPT;
+						tmpstat.mailclass = MAIL_CLASS_PRODRPT;
 						tmpstat.type = MESG20;
 						tmpstat.stamp = cofdat(today());
 						sprintf(tmpstat.dtime, "%s - %.5s", ncedat(today()), nctime(now()));
@@ -1859,7 +1859,7 @@ void FUNC autorti(void)
 
 	static int ticktock1 = 0;
 	static int ticktock2 = 0;
-	int count, class, clscnt, i;
+	int count, cls, clscnt, i;
 
 	logthis("TICK:autorti entered");
 
@@ -1882,31 +1882,31 @@ void FUNC autorti(void)
 		zothusn = ticktock1;
 
 		if (wptr->status == GESTAT_AVAIL) {
-			/* map this non-user slot back to its configured automaton class range */
+			/* map this non-user slot back to its configured automaton cls range */
 			clscnt = ticktock1 - nterms;
-			class = -1;
+			cls = -1;
 			logthis("Chan Stat = GESTAT_AVAIL");
 			for (i = 0; i < tot_classes; ++i) {
 				if (shipclass[i].max_type == CLASSTYPE_CYBORG ||
 					shipclass[i].max_type == CLASSTYPE_DROID) {
-					/* is this slot within class i */
+					/* is this slot within cls i */
 					if (clscnt < shipclass[i].tot_to_create) {
-						class = i;
+						cls = i;
 						break;
 					}
-					/* no... check next class */
+					/* no... check next cls */
 					clscnt -= shipclass[i].tot_to_create;
 				}
 			}
 
-			logthis(spr("picked class - %d", class));
+			logthis(spr("picked cls - %d", cls));
 
 			/* initialize the non-user ship areas */
-			if (class > -1 && shipclass[class].init_func != NULL) {
-				logthis(spr("Calling init_func 4 cls %d", class));
+			if (cls > -1 && shipclass[cls].init_func != NULL) {
+				logthis(spr("Calling init_func 4 cls %d", cls));
 				logthis(spr("   Name: %s", shipclass[i].typename));
 
-				(*(shipclass[class].init_func))(wptr, zothusn, class);
+				(*(shipclass[cls].init_func))(wptr, zothusn, cls);
 			}
 		}
 
@@ -2028,14 +2028,14 @@ void FUNC warrti3(void)
 ** OUTPRF special, apply filters, don't send to NPCs                     **
 **************************************************************************/
 
-void FUNC outprfge(int class, int shpno)
+void FUNC outprfge(int cls, int shpno)
 {
 	byte msgfilter;
 
 	if (shpno >= 0 && shpno < nterms) {
 		if (user[shpno].state == gestt) {
 			msgfilter = warusroff(shpno)->options[MSG_FILTER];
-			switch (class) {
+			switch (cls) {
 			case FLT_NONE:
 				outprf(shpno);
 				return;
