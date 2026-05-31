@@ -94,6 +94,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="Dist\LICENSE.txt" />
+    <None Include="Dist\MPOGEHLP.MSG" />
+    <None Include="Dist\MPOGEMAL.DAT" />
+    <None Include="Dist\MPOGEMAL.VIR" />
+    <None Include="Dist\MPOGEMNU.TXT" />
+    <None Include="Dist\MPOGEMP.MDF" />
+    <None Include="Dist\MPOGEMSG.MSG" />
+    <None Include="Dist\MPOGEPLT.DAT" />
+    <None Include="Dist\MPOGEPLT.VIR" />
+    <None Include="Dist\MPOGESHP.DAT" />
+    <None Include="Dist\MPOGESHP.MSG" />
+    <None Include="Dist\MPOGESHP.VIR" />
+    <None Include="Dist\MPOGETEA.DAT" />
+    <None Include="Dist\MPOGEUSR.DAT" />
+    <None Include="Dist\MPOGEUSR.VIR" />
+    <None Include="Dist\README.md" />
+    <None Include="GALCAPS.ALT" />
+    <None Include="MPOGEMAL.BCR" />
+    <None Include="MPOGEPLT.BCR" />
+    <None Include="MPOGESHP.BCR" />
+    <None Include="MPOGEUSR.BCR" />
     <None Include="MPOGEMP_EXP.DEF" />
     <None Include="MPOGEMP_LIB.DEF" />
   </ItemGroup>

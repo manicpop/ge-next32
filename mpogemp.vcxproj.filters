@@ -13,8 +13,74 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Dist">
+      <UniqueIdentifier>{bd559e34-1780-4269-91bf-0a075e34ff08}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Dist\LICENSE.txt">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="Dist\MPOGEHLP.MSG">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="Dist\MPOGEMAL.DAT">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="Dist\MPOGEMAL.VIR">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="Dist\MPOGEMNU.TXT">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="Dist\MPOGEMP.MDF">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="Dist\MPOGEMSG.MSG">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="Dist\MPOGEPLT.DAT">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="Dist\MPOGEPLT.VIR">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="Dist\MPOGESHP.DAT">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="Dist\MPOGESHP.MSG">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="Dist\MPOGESHP.VIR">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="Dist\MPOGETEA.DAT">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="Dist\MPOGEUSR.DAT">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="Dist\MPOGEUSR.VIR">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="Dist\README.md">
+      <Filter>Dist</Filter>
+    </None>
+    <None Include="GALCAPS.ALT">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="MPOGEMAL.BCR">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="MPOGEPLT.BCR">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="MPOGESHP.BCR">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="MPOGEUSR.BCR">
+      <Filter>Source Files</Filter>
+    </None>
     <None Include="MPOGEMP_EXP.DEF">
       <Filter>Source Files</Filter>
     </None>
