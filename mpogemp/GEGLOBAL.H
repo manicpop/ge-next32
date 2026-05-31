@@ -235,38 +235,5 @@ extern int cybhaltflg;
 
 /* MAJORBBS Global Defs **************************************************/
 
-#ifdef PHARLAP
-#else
-
-extern struct usracc *usracc,	/* user accounting block array */
-		     *usacptr;	/* user accounting block pointer for usrnum */
-extern int usrnum;		/* global user-number (channel) in effect */
-
-extern struct user *usrptr,	/* global pointer to user data in effect */
-		   *user;	/* user volatile-data structure array */
-extern char input[INPSIZ],		/* raw user input data buffer */
-	    *margv[INPSIZ / 2];	/* array of ptrs to word starts, a la argv[] */
-
-extern int margc,		/* number of words in margv[], a la argc */
-	   status;		/* raw status from btusts, where appropriate */
-
-extern struct module *module[NMODS];	/* module access block pointer table */
-
-
-extern int inplen,		/* overall raw input string length */
-	   pfnlvl;		/* profanity level of current input (0-3) */
-
-extern char prfbuf[];		/* 2K buffer used by prfutl, used for staging */
-
-extern struct sysvbl sv;	/* sys-variables record instance for updates */
-
-char *curtim(), *curdat();	/* time and date formatter routines */
-
-
-extern int othusn;
-extern struct user *othusp;	/* gen purp other-user user structure ptr */
-extern struct usracc *othuap;	/* gen purp other-user accounting data ptr */
-
-#endif
 
 #include "geproto.h"

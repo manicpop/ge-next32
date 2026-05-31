@@ -3,4 +3,4 @@ LIBRARY MPOGEMP.DLL
 ; *** Visual Studio 2022 EXPORT ALIASES ONLY ***
 ; Galactic Empire ge-next32
 EXPORTS
-    _init__galemp=init__galemp @1
+    _init__mpogemp=init__mpogemp @1

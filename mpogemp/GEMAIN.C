@@ -34,23 +34,10 @@
   *************************************************************************/
 
 
-#ifdef PHARLAP
 
 #include "gcomm.h"
 #include "string.h"
 
-#else
-
-#include "stdio.h"
-#include "ctype.h"
-#include "mem.h"
-#include "dos.h"
-#include "usracc.h"
-#include "btvstf.h"
-#include "portable.h"
-#include "dosface.h"
-
-#endif
 
 #include "math.h"
 #include "stdlib.h"
@@ -72,11 +59,11 @@ struct module mpoge = {		/* module interface block		*/
 	galemp,			/* input routine if selected		*/
 	stshdlr,		/* status-input routine if selected	*/
 	NULL,			/* "injoth" routine for this module	*/
-	pwarlof,		/* user logoff supplemental routine	*/
-	pwarhup,		/* hangup (lost carrier) routine	*/
-	pgemidnight,		/* midnight cleanup routine		*/
-	pgedelete,		/* delete-account routine		*/
-	pclswar			/* finish-up (sys shutdown) routine	*/
+	warlof,		/* user logoff supplemental routine	*/
+	warhup,		/* hangup (lost carrier) routine	*/
+	gemidnight,		/* midnight cleanup routine		*/
+	gedelete,		/* delete-account routine		*/
+	clswar			/* finish-up (sys shutdown) routine	*/
 };
 
 BTVFILE *gebb1,		/* MPOGESHP.DAT */
@@ -304,8 +291,7 @@ MENU menu[] = {
 ** System start up function                                              **
 **************************************************************************/
 
-#ifdef PHARLAP
-void EXPORT init__galemp(void)
+void EXPORT init__mpogemp(void)
 {
 #ifdef GETRAINER
 	stzcpy(mpoge.descrp, gmdnam("MPOG2.MDF"), MNMSIZ);
@@ -316,13 +302,6 @@ void EXPORT init__galemp(void)
 	iniwara();
 	gestt = register_module(&mpoge);
 }
-#else
-int FUNC iniwar(void)
-{
-	iniwara();
-	return 0;
-}
-#endif
 
 void FUNC dummy(void)
 {
@@ -762,20 +741,11 @@ void FUNC iniwara(void)
 	geshocst(0, spr("Galactic Empire %s", VERSION));
 	geshocst(0, spr("Registration # %s", stgopt(REGNO)));
 
-	#ifdef PHARLAP
-	rtkick(TICKTIME, pwarrti);
-	rtkick(TICKTIME2, pwarrti2);
-	rtkick(60, pwarrti3);
-	rtkick(30, pplarti);
-	rtkick(1, pautorti);
-	#else
-
 	rtkick(TICKTIME, warrti);
 	rtkick(TICKTIME2, warrti2);
 	rtkick(60, warrti3);
-	rtkick(10, plarti);
+	rtkick(30, plarti);
 	rtkick(1, autorti);
-	#endif
 
 	/* find the module number (state) of the FSE for later use */
 	fse_state = -1;
@@ -828,21 +798,8 @@ int FUNC gelogon(void)
 ** User deleted routine                                                  **
 **************************************************************************/
 
-#ifdef PHARLAP
-void FUNC pgedelete(char *uid)
-{
-	gedeletea(uid);
-}
-#else
-static int gedelete(char *uid)
-{
-	gedeletea(uid);
-	return 0;
-}
-#endif
-
 /* delete all GE data for a user account that MajorBBS is removing */
-void FUNC gedeletea(char *uid)
+void FUNC gedelete(char *uid)
 {
 	if (geudb(GELOOKUP, uid, &tmpusr)) {
 		/* delete all ships owned by this user, then remove the GE user record */
@@ -864,20 +821,7 @@ void FUNC gedeletea(char *uid)
 ** Midnight cleanup routine                                              **
 **************************************************************************/
 
-#ifdef PHARLAP
-void FUNC pgemidnight(void)
-{
-	gemidnighta();
-}
-#else
-int FUNC gemidnight(void)
-{
-	gemidnighta();
-	return 0;
-}
-#endif
-
-void FUNC gemidnighta(void)
+void FUNC gemidnight(void)
 {
 	int i;
 	int foundit;
@@ -1136,7 +1080,7 @@ unsigned FUNC long value_pl(void)
 ** User logged off                                                       **
 **************************************************************************/
 
-int FUNC pwarlof(void)
+int FUNC warlof(void)
 {
 	warsptr = warshpoff(usrnum);
 	waruptr = warusroff(usrnum);
@@ -1149,21 +1093,7 @@ int FUNC pwarlof(void)
 ** User hungup routine                                                   **
 **************************************************************************/
 
-#ifdef PHARLAP
-void FUNC pwarhup(void)
-{
-	warhupa();
-}
-
-#else
-int FUNC warhup(void)
-{
-	warhupa();
-	return 0;
-}
-#endif
-
-void FUNC warhupa(void)
+void FUNC warhup(void)
 {
 	setbtv(gebb1);
 	setmbk(gemb);
@@ -1219,20 +1149,7 @@ void FUNC warhupa(void)
 ** System shutdown message                                               **
 **************************************************************************/
 
-#ifdef PHARLAP
-void FUNC pclswar(void)
-{
-	clswara();
-}
-#else
-int FUNC clswar(void)
-{
-	clswara();
-	return 0;
-}
-#endif
-
-void FUNC clswara(void)
+void FUNC clswar(void)
 {
 	if (gemb != NULL) {
 		clsmsg(gemb);
@@ -1323,11 +1240,7 @@ int FUNC gepdb(int func, char *usrname, int shipnum, WARSHP *geptr)
 		break;
 
 	case GEADD:
-#ifdef PHARLAP
 		if (!dinsbtv(geptr))
-#else
-		if (!insbtv(geptr))
-#endif
 			geshocst(0, spr("GE:ERR:Ship ins Fail %s", usrname));
 		else
 			rtn = 1;
@@ -1396,11 +1309,7 @@ int FUNC geudb(int func, char *usrname, WARUSR *geptr)
 		break;
 
 	case GEADD:
-#ifdef PHARLAP
 		if (!dinsbtv(geptr))
-#else
-		if (!insbtv(geptr))
-#endif
 			geshocst(0, spr("GE:ERR:User ins Fail %s", usrname));
 		else
 			rtn = 1;
@@ -1479,11 +1388,7 @@ int FUNC gesdb(int func, PKEY *sect, GALSECT *geptr)
 	case GEADD:
 		logthis(spr("GE:DBG:Ins Sect %d %d %d", geptr->xsect, geptr->ysect, geptr->plnum));
 
-#ifdef PHARLAP
 		if (!dinsbtv(geptr))
-#else
-		if (!insbtv(geptr))
-#endif
 			geshocst(0, "GE:ERR:Sect/plt ins Fail");
 		else {
 			logthis("GE:DBG:Ins Sect suceeded");
@@ -1688,20 +1593,7 @@ void FUNC update_team_tab(void)
 /**************************************************************************
 ** Planet economic processing                                            **
 **************************************************************************/
-#ifdef PHARLAP
-void FUNC pplarti(void)
-{
-	plartia();
-}
-#else
-int FUNC plarti(void)
-{
-	plartia();
-	return 0;
-}
-#endif
-
-void FUNC plartia(void)
+void FUNC plarti(void)
 {
 	static int foundpl = TRUE;
 	static long fpos = 0;
@@ -1722,7 +1614,7 @@ void FUNC plartia(void)
 	numrecs = cntrbtv();	/* how many total records? sectors, planets, wormholes */
 
 	sprintf(gechrbuf, "%ld", numrecs);
-	logthis(spr("plartia entered, numrecs %s, passnum %d, plantime %u", gechrbuf, passnum, plantime));
+	logthis(spr("plarti entered, numrecs %s, passnum %d, plantime %u", gechrbuf, passnum, plantime));
 
 	++tocks;	/* how many times routine has run this passnum */
 
@@ -1889,7 +1781,7 @@ void FUNC plartia(void)
 				foundpl = TRUE;
 				sprintf(gechrbuf, "%lu", fpos);
 				++plown;
-				logthis(spr("plartia: found next owned planet at %s", gechrbuf));
+				logthis(spr("plarti: found next owned planet at %s", gechrbuf));
 				break;
 			}
 			else {
@@ -1905,33 +1797,16 @@ void FUNC plartia(void)
 	}
 
 	if (foundpl == FALSE)
-		logthis("plartia: no planet this tock");
+		logthis("plarti: no planet this tock");
 
-#ifdef PHARLAP
-	rtkick(plantime, pplarti);
-#else
 	rtkick(plantime, plarti);
-#endif
 }
 
 /**************************************************************************
 ** Real time kick routine                                                **
 **************************************************************************/
 
-#ifdef PHARLAP
-void FUNC pwarrti(void)
-{
-	warrtia();
-}
-#else
-int FUNC warrti(void)
-{
-	warrtia();
-	return 0;
-}
-#endif
-
-void FUNC warrtia(void)
+void FUNC warrti(void)
 {
 	int zothusn;		/* general purpose other-user channel number */
 	WARSHP *wptr;
@@ -1970,31 +1845,14 @@ void FUNC warrtia(void)
 	}
 	/* keep the global in-game user count in sync with this tick's live user scan */
 	numwar = cntr;
-#ifdef PHARLAP
-	rtkick(TICKTIME, pwarrti);
-#else
 	rtkick(TICKTIME, warrti);
-#endif
 }
 
 /**************************************************************************
 ** Real time kick routine for all automatons                             **
 **************************************************************************/
 
-#ifdef PHARLAP
-void FUNC pautorti(void)
-{
-	autortia();
-}
-#else
-int FUNC autorti(void)
-{
-	autortia();
-	return 0;
-}
-#endif
-
-void FUNC autortia(void)
+void FUNC autorti(void)
 {
 	int zothusn;		/* general purpose other-user channel number */
 	WARSHP *wptr;
@@ -2097,32 +1955,14 @@ void FUNC autortia(void)
 
 	logthis("Exiting AUTORTI");
 
-#ifdef PHARLAP
-	rtkick(1, pautorti);
-#else
 	rtkick(1, autorti);
-#endif
 }
 
 /**************************************************************************
 ** Real time kick routine #2                                             **
 **************************************************************************/
 
-#ifdef PHARLAP
-void FUNC pwarrti2(void)
-{
-	warrti2a();
-}
-
-#else
-int FUNC warrti2(void)
-{
-	warrti2a();
-	return 0;
-}
-#endif
-
-void FUNC warrti2a(void)
+void FUNC warrti2(void)
 {
 	int zothusn;		/* general purpose other-user channel number */
 	WARSHP *wptr;
@@ -2155,32 +1995,14 @@ void FUNC warrti2a(void)
 	/* spread ship movement over three sub-passes to smooth out per-tick work */
 	clicker = (clicker + 1) % 3;
 
-#ifdef PHARLAP
-	rtkick(TICKTIME2, pwarrti2);
-#else
 	rtkick(TICKTIME2, warrti2);
-#endif
 }
 
 /**************************************************************************
 ** Real time kick routine #3                                             **
 **************************************************************************/
 
-#ifdef PHARLAP
-void FUNC pwarrti3(void)
-{
-	warrti3a();
-}
-
-#else
-int FUNC warrti3(void)
-{
-	warrti3a();
-	return 0;
-}
-#endif
-
-void FUNC warrti3a(void)
+void FUNC warrti3(void)
 {
 	COORD tmpcoord;
 
@@ -2193,11 +2015,7 @@ void FUNC warrti3a(void)
 	tmpcoord.xcoord = 0.0;
 	tmpcoord.ycoord = 0.0;
 	outsect(FLT_BEACON, &tmpcoord, 99);
-#ifdef PHARLAP
-	rtkick(120, pwarrti3);
-#else
 	rtkick(120, warrti3);
-#endif
 }
 
 
@@ -2373,26 +2191,18 @@ void FUNC geshocst(int opt, char *str)
 		/* opt 0 always displays, regardless of showopt */
 		tmp_usrnum = usrnum;
 		usrnum = -1;
-#ifdef PHARLAP
 		strncpy(tmpbuf, str, 32);
 		tmpbuf[31] = 0;
 		shocst(tmpbuf, str);
-#else
-		shocst(0, str);
-#endif
 		usrnum = tmp_usrnum;
 	}
 	else if (opt <= showopt) {
 		/* other messages display only when their level is within showopt */
 		tmp_usrnum = usrnum;
 		usrnum = -1;
-#ifdef PHARLAP
 		strncpy(tmpbuf, str, 32);
 		tmpbuf[31] = 0;
 		shocst(tmpbuf, str);
-#else
-		shocst(0, str);
-#endif
 		usrnum = tmp_usrnum;
 	}
 	/* optional console logging mirrors what was sent through shocst */
@@ -2429,21 +2239,12 @@ int FUNC mnu_main_ans(void)
 	}
 	else if (margc == 1) {
 		if (sameas(input, "P")) {
-#ifdef PHARLAP
 			if (!hasmkey(PLAYKEY)) {
 				prfmsg(FORPLAY);
 				outprfge(FLT_NONE, usrnum);
 				prfmsg(REPRMT);
 				outprfge(FLT_NONE, usrnum);
 			}
-#else
-			if (usrptr->class < PAYING && gefreebies == 0) {
-				prfmsg(FORLIVE);
-				outprfge(FLT_NONE, usrnum);
-				prfmsg(REPRMT);
-				outprfge(FLT_NONE, usrnum);
-			}
-#endif
 			else {
 				if (numwar < gemaxplrs) {
 					lookupshp();

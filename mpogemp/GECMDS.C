@@ -34,22 +34,10 @@
   * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA            *
   *************************************************************************/
 
-#ifdef PHARLAP
 
 #include "gcomm.h"
 #include "string.h"
 
-#else
-#include "stdio.h"
-#include "ctype.h"
-#include "dos.h"
-#include "usracc.h"
-#include "btvstf.h"
-#include "stdlib.h"
-#include "portable.h"
-#include "dosface.h"
-
-#endif
 
 #include "math.h"
 #include "majorbbs.h"
@@ -335,11 +323,7 @@ void FUNC gwar(void)
 			*mv0ptr = (char)tolower((unsigned char)*mv0ptr);
 		}
 		if (sameas(margv[0], ">")) {
-#ifdef PHARLAP
 			if (!hasmkey(PLAYKEY))
-#else
-			if (usrptr->class < PAYING)
-#endif
 			{
 				prfmsg(NOCANDO);
 				outprfge(FLT_NONE, usrnum);
@@ -349,11 +333,7 @@ void FUNC gwar(void)
 			return;
 		}
 		if ((cmdptr = gesearch(margv[0], gecmds, GECMDSIZ)) != NULL) {
-#ifdef PHARLAP
 			if (!hasmkey(PLAYKEY) && cmdptr->cando == 0)
-#else
-			if (usrptr->class < PAYING && cmdptr->cando == 0)
-#endif
 			{
 				prfmsg(NOCANDO);
 				outprfge(FLT_NONE, usrnum);
@@ -387,11 +367,7 @@ void FUNC cmd_gehelp(void)
 	char gechrbuf4[12], gechrbuf5[12], gechrbuf6[12], gechrbuf7[12];
 	char gechrbuf8[12], gechrbuf9[12];
 
-#ifdef PHARLAP
 	if ((!syscmds) || (sysonly && !(hasmkey(SYSKEY))))
-#else
-	if ((!syscmds) || (sysonly && !(usrptr->flags & ISYSOP)))
-#endif
 		syshelp = FALSE;
 	else
 		syshelp = TRUE;
@@ -2511,11 +2487,7 @@ void FUNC cmd_admin(void)
 		usrptr->substt = ADMENU1;
 	}
 	else
-#ifdef PHARLAP
 	if (sameas(plptr->userid,warsptr->userid) || (syscmds && !sysonly) || (sysonly && (hasmkey(SYSKEY))))
-#else
-	if (sameas(plptr->userid,warsptr->userid) || (syscmds && !sysonly) || (sysonly && (usrptr->flags&ISYSOP)))
-#endif
 	{
 		prfmsg(ADMENU2);
 		outprfge(FLT_NONE,usrnum);
@@ -3877,11 +3849,7 @@ void FUNC cmd_sysop(void)
 	int count, class, clscnt;
 	WARSHP *ptr;
 
-#ifdef PHARLAP
 	if ((!syscmds) || (sysonly && !(hasmkey(SYSKEY)))) {
-#else
-	if ((!syscmds) || (sysonly && !(usrptr->flags&ISYSOP))) {
-#endif
 		prfmsg(INVCMD);
 		outprfge(FLT_NONE, usrnum);
 		return;
@@ -3981,7 +3949,7 @@ void FUNC cmd_sysop(void)
 		outprfge(FLT_NONE, usrnum);
 		return;
 	} else if (sameas("midnight",margv[1]) && margc == 2) {
-		gemidnighta();
+		gemidnight();
 		return;
 	} else if (sameas("teamdump",margv[1]) && margc == 2) {
 		prfmsg(SYSTEAM);

@@ -33,23 +33,10 @@
   * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA            *
   *************************************************************************/
 
-#ifdef PHARLAP
 
 #include "gcomm.h"
 #include "string.h"
 
-#else
-
-#include "stdio.h"
-#include "ctype.h"
-#include "dos.h"
-#include "usracc.h"
-#include "btvstf.h"
-#include "stdlib.h"
-#include "math.h"
-#include "portable.h"
-#include "dosface.h"
-#endif
 
 #include "majorbbs.h"
 

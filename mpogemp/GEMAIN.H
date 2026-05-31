@@ -796,4 +796,4 @@ typedef struct _team {
 } TEAM;
 
 
-#define FUNC _export
+#define FUNC EXPORT
