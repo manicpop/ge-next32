@@ -39,6 +39,8 @@
 
 
 #include "math.h"
+struct usracc;
+struct user;
 #include "majorbbs.h"
 
 #define GELIB 1

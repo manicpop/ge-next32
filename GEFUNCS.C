@@ -39,6 +39,8 @@
 #include "stdio.h"
 
 #include "math.h"
+struct usracc;
+struct user;
 #include "majorbbs.h"
 
 #include "gemain.h"
