@@ -122,7 +122,7 @@ void FUNC check_spy(void)
 
 					/* calculate the accuracy of the information */
 					d_odds = 50.0 + rndm(48.0);
-					odds = d_odds;
+					odds = (int)d_odds;
 
 					d_itemcnt = itemcnt;
 
@@ -133,7 +133,7 @@ void FUNC check_spy(void)
 					d_rptcnt = d_itemcnt - (d_itemcnt * rndm(d_odds)) +
 						(d_itemcnt * rndm(d_odds));
 
-					itemcnt = d_rptcnt;
+					itemcnt = (long)d_rptcnt;
 
 					clrprf();
 					prfmsg(SPYM2, plptr->name, xsect, ysect, odds, item_name[i],
@@ -189,7 +189,7 @@ void FUNC multiply(int final_mult)
 		cnt = plptr->items[I_MEN].qty / 8;
 		temp = plptr->items[I_MEN].qty;
 
-		if (temp > cnt)
+		if (temp > (unsigned long)cnt)
 			temp -= cnt;
 		else
 			temp = 0;
@@ -245,7 +245,7 @@ void FUNC multiply(int final_mult)
 
 		j = (6 - (plptr->resource + plptr->enviorn)) * 10;
 		tfact = .95 - ((float)j / 100);
-		plptr->cash = (float)plptr->cash * tfact;
+		plptr->cash = (ULONG)((float)plptr->cash * tfact);
 
 		if (plptr->cash > 0) /* if plenty of cash increase production */
 			fact *= 1.5;
@@ -270,11 +270,11 @@ void FUNC multiply(int final_mult)
 
 		logthis(gechrbuf);
 
-		if (final_mult == TRUE && temp > max) {
+		if (final_mult == TRUE && temp > (unsigned long)max) {
 			logthis("Mailing production report");
 			temp = max;
 			mail.mailclass = MAIL_CLASS_PRODRPT;
-			mail.type = MESG08 + i;
+			mail.type = (SHORT)(MESG08 + i);
 			strncpy(mail.userid, plptr->userid, UIDSIZ);
 			mail.userid[UIDSIZ - 1] = 0;
 			strcpy(mail.name1, plptr->name);
@@ -351,10 +351,10 @@ static void build_plan_1(int idx)
 	planet.name[19] = 0;
 	strcpy(planet.password, "none");
 
-	planet.enviorn = s00[idx].env;
-	planet.resource = s00[idx].res;
+	planet.enviorn = (CHAR)s00[idx].env;
+	planet.resource = (CHAR)s00[idx].res;
 
-	pkey.plnum = idx + 1;
+	pkey.plnum = (SHORT)(idx + 1);
 	pkey.xsect = 0;
 	pkey.ysect = 0;
 
@@ -384,10 +384,10 @@ static void build_plan_2(int idx)
 	planet.name[19] = 0;
 	strcpy(planet.password, "none");
 
-	planet.enviorn = s00[idx].env;
-	planet.resource = s00[idx].res;
+	planet.enviorn = (CHAR)s00[idx].env;
+	planet.resource = (CHAR)s00[idx].res;
 
-	pkey.plnum = idx + 1;
+	pkey.plnum = (SHORT)(idx + 1);
 	pkey.xsect = 0;
 	pkey.ysect = 0;
 
@@ -414,10 +414,10 @@ static void build_other(int idx)
 	planet.name[19] = 0;
 	strcpy(planet.password, "none");
 
-	planet.enviorn = s00[idx].env;
-	planet.resource = s00[idx].res;
+	planet.enviorn = (CHAR)s00[idx].env;
+	planet.resource = (CHAR)s00[idx].res;
 
-	pkey.plnum = idx + 1;
+	pkey.plnum = (SHORT)(idx + 1);
 	pkey.xsect = 0;
 	pkey.ysect = 0;
 
@@ -438,7 +438,7 @@ static void build_worm(int idx)
 	strncpy(worm.name, s00[idx].name, 20);
 	worm.name[19] = 0;
 
-	pkey.plnum = idx + 1;
+	pkey.plnum = (SHORT)(idx + 1);
 	pkey.xsect = 0;
 	pkey.ysect = 0;
 
@@ -478,13 +478,13 @@ static int xgetsector(COORD *sect, int wormy)
 	byte planet_too_close;
 
 	/* Build the integer key for lookup */
-	pkey.xsect = coord1(sect->xcoord);
-	pkey.ysect = coord1(sect->ycoord);
+	pkey.xsect = (SHORT)coord1(sect->xcoord);
+	pkey.ysect = (SHORT)coord1(sect->ycoord);
 	pkey.plnum = 0;
 
 	if (!gesdb(GEGET, &pkey, &sector)) {
 		/* Is the DB full? */
-		if (dfaCountRec() >= max_plrec && !wormy) {
+		if (dfaCountRec() >= (unsigned long)max_plrec && !wormy) {
 			geshocst(1, spr("GE:INF:Planet DB full, sector %d %d shown as empty",
 				pkey.xsect, pkey.ysect));
 			setmem(&sector, sizeof(GALSECT), 0);
@@ -549,7 +549,7 @@ static int xgetsector(COORD *sect, int wormy)
 
 			sector.plnum = 0;
 			sector.type = SECTYPE_NORMAL;
-			sector.numplan = s00plnum;
+			sector.numplan = (SHORT)s00plnum;
 
 			pkey.plnum = 0;
 			pkey.xsect = 0;
@@ -576,7 +576,7 @@ static int xgetsector(COORD *sect, int wormy)
 					}
 					} while (planet_too_close == TRUE);
 
-				sector.numplan = p;
+				sector.numplan = (SHORT)p;
 				sector.type = SECTYPE_NORMAL;
 			}
 
@@ -593,7 +593,7 @@ static int xgetsector(COORD *sect, int wormy)
 					setmem(&planet, sizeof(GALPLNT), 0);
 					planet.xsect = pkey.xsect;
 					planet.ysect = pkey.ysect;
-					planet.plnum = i + 1;
+					planet.plnum = (SHORT)(i + 1);
 					planet.coord.xcoord = sector.ptab[i].coord.xcoord;
 					planet.coord.ycoord = sector.ptab[i].coord.ycoord;
 					planet.type = sector.ptab[i].type;
@@ -605,12 +605,12 @@ static int xgetsector(COORD *sect, int wormy)
 						planet.items[k].sell = 'N';
 					if (rndm(3.99) > 3) {
 						for (k = 0; k < NUMITEMS; ++k)
-							planet.items[k].rate = (unsigned int)rndm(5.1);
+							planet.items[k].rate = (USHORT)rndm(5.1);
 
 						planet.items[I_MEN].qty = (unsigned long)rndm(50000.0);
-						planet.items[I_MEN].rate = 5 + (unsigned int)rndm(25.0);
+						planet.items[I_MEN].rate = (USHORT)(5 + (unsigned int)rndm(25.0));
 						planet.items[I_FOOD].qty = (unsigned long)rndm(3200.0);
-						planet.items[I_FOOD].rate = 15 + (unsigned int)rndm(15.0);
+						planet.items[I_FOOD].rate = (USHORT)(15 + (unsigned int)rndm(15.0));
 					}
 					logthis("GE:DBG:Getsector-write planet record");
 					/* write the database record */
@@ -619,7 +619,7 @@ static int xgetsector(COORD *sect, int wormy)
 					setmem(&worm, sizeof(GALWORM), 0);
 					worm.xsect = pkey.xsect;
 					worm.ysect = pkey.ysect;
-					worm.plnum = i + 1;
+					worm.plnum = (SHORT)(i + 1);
 					worm.coord.xcoord = sector.ptab[i].coord.xcoord;
 					worm.coord.ycoord = sector.ptab[i].coord.ycoord;
 					worm.visible = 1;
@@ -724,9 +724,9 @@ int FUNC getplanet(COORD *sect, int plnt)
 {
 	setmem(&planet, sizeof(GALPLNT), 0);
 
-	pkey.xsect = coord1(sect->xcoord);
-	pkey.ysect = coord1(sect->ycoord);
-	pkey.plnum = plnt;
+	pkey.xsect = (SHORT)coord1(sect->xcoord);
+	pkey.ysect = (SHORT)coord1(sect->ycoord);
+	pkey.plnum = (SHORT)plnt;
 
 	if (!gesdb(GEGET, &pkey, (GALSECT *)&planet))
 	{
@@ -783,7 +783,7 @@ void FUNC update_plan_1(void)
 	{
 		plptr->items[i].qty = ULCAP;
 		plptr->items[i].sell = 'Y';
-		plptr->items[i].markup2a = (baseprice[i]*2) + (gernd() % baseprice[i]);
+		plptr->items[i].markup2a = (USHORT)((baseprice[i] * 2) + (gernd() % baseprice[i]));
 	}
 }
 
@@ -794,7 +794,7 @@ void FUNC update_plan_2(void)
 	{
 		plptr->items[i].qty = 0;
 		plptr->items[i].sell = 'N';
-		plptr->items[i].markup2a = (baseprice[i]*2) + (gernd() % baseprice[i]);
+		plptr->items[i].markup2a = (USHORT)((baseprice[i] * 2) + (gernd() % baseprice[i]));
 	}
 	plptr->items[I_MEN].qty = ULCAP;
 	plptr->items[I_FOOD].qty = ULCAP;

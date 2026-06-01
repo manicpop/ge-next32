@@ -462,7 +462,7 @@ void FUNC iniwara(void)
 	chgloser = numopt(CHGLOSER, 0, 100);		/* loser cash-charge percentage */
 
 	optmenu = ynopt(OPTMENU);			/* optional text/help menu enabled */
-	optchr = chropt(OPTCHR);			/* optional text trigger character */
+	optchr = (char)chropt(OPTCHR);			/* optional text trigger character */
 	optchr = (char)toupper((unsigned char)optchr);
 	opttxt = stgopt(OPTTXT);			/* optional text/help prompt */
 
@@ -619,7 +619,7 @@ void FUNC iniwara(void)
 	}
 
 	/* allocate memory for user data table */
-	warusr = (WARUSR *)alcblok(nships, sizeof(WARUSR));
+	warusr = (WARUSR *)alcblok((USHORT)nships, sizeof(WARUSR));
 
 	for (j = 0; j < nships; j++) {
 		setmem((void *)warusroff(j), sizeof(WARUSR), 0);
@@ -627,7 +627,7 @@ void FUNC iniwara(void)
 	geshocst(1, spr("GE:INF:User Mem: %ld", nships * sizeof(WARUSR)));
 
 	/* allocate memory for ship data table */
-	warshp = (WARSHP *)alcblok(nships, sizeof(WARSHP));
+	warshp = (WARSHP *)alcblok((USHORT)nships, sizeof(WARSHP));
 
 	for (j = 0; j < nships; j++) {
 		setmem((void *)warshpoff(j), sizeof(WARSHP), 0);
@@ -716,15 +716,15 @@ void FUNC iniwara(void)
 
 		s00[i].name = stgopt(++classbase);
 		s00[i].owner = stgopt(++classbase);
-		s00[i].type = numopt(++classbase, 0, 3);
+		s00[i].type = (SHORT)numopt(++classbase, 0, 3);
 
 		s00[i].xcoord = (double)numopt(++classbase, 100, 9900);
 		s00[i].xcoord = s00[i].xcoord / 10000.0;
 		s00[i].ycoord = (double)numopt(++classbase, 100, 9900);
 		s00[i].ycoord = s00[i].ycoord / 10000.0;
 
-		s00[i].env = numopt(++classbase, 0, 3);
-		s00[i].res = numopt(++classbase, 0, 3);
+		s00[i].env = (SHORT)numopt(++classbase, 0, 3);
+		s00[i].res = (SHORT)numopt(++classbase, 0, 3);
 
 		geshocst(1, spr("GE:INF:I/S00 %d %s", s00[i].type, s00[i].name));
 	}
@@ -908,7 +908,7 @@ void FUNC gemidnight(void)
 	sprintf(gechrbuf, "%ld", (dfaCountRec() / 2L));
 	geshocst(0, spr("GE:INF:Plnt DB Size %sk", gechrbuf));
 
-	if (dfaCountRec() >= max_plrec)
+	if (dfaCountRec() >= (unsigned long)max_plrec)
 		geshocst(0, "GE:INF:Max Sect Reached");
 
 	geshocst(1, spr("GE:INF:Cleanup Phase-3"));
@@ -1226,7 +1226,7 @@ int FUNC gepdb(int func, char *usrname, int shipnum, WARSHP *geptr)
 	rtn = 0;
 
 	strncpy(shpkey.userid, usrname, UIDSIZ);
-	shpkey.shipno = shipnum;
+	shpkey.shipno = (SHORT)shipnum;
 	logthis(spr("GEPDB called: F=%d,%s,%d,%s", func, usrname, shipnum, geptr->userid));
 	switch (func) {
 
@@ -1531,7 +1531,7 @@ void FUNC load_team_tab(void)
 					val = 0L;
 				else if (val > 65535L)
 					val = 65535L;
-				teamtab[i].teamcount = (unsigned int)val;
+				teamtab[i].teamcount = (USHORT)val;
 				logthis(spr(" Team Cnt [%s]", gechrbuf));
 
 				strncpy(gechrbuf, &buffer[48], 10);
@@ -1541,7 +1541,7 @@ void FUNC load_team_tab(void)
 					val = 0L;
 				else if (val > 65535L)
 					val = 65535L;
-				teamtab[i].teamdeldate = (unsigned int)val;
+				teamtab[i].teamdeldate = (USHORT)val;
 				logthis(spr(" Team Del [%s]", gechrbuf));
 
 				strncpy(teamtab[i].password, &buffer[59], 10);
@@ -1616,7 +1616,7 @@ void FUNC plarti(void)
 
 	if (passnum > planupd) {	/* we've run all the day's updates */
 		dfaAcqGE(&planet, &intkey, 2);
-		planet.plantimesave = plantime;
+		planet.plantimesave = (USHORT)plantime;
 		planet.timestamp = ((unsigned long)game_day << 4) | passnum;
 		gesdb(GEUPDATE, (PKEY *)&planet, (GALSECT *)&planet);
 		geshocst(1, spr("GE:INF:all planets updated for day %d", game_day));
@@ -1652,7 +1652,7 @@ void FUNC plarti(void)
 				if (plantime < 3)
 					plantime = 3;
 
-				if ((planet.timestamp >> 4) == game_day) {	/* game has already been up today */
+				if ((int)(planet.timestamp >> 4) == game_day) {	/* game has already been up today */
 					passnum = (int)(planet.timestamp & 0xF);
 					logthis(spr("resuming from planupd %d", planupd));
 				}
@@ -1679,7 +1679,7 @@ void FUNC plarti(void)
 				logthis(spr("updating Zygor (%s)", gechrbuf));
 				plptr = &planet;
 				update_plan_1();
-				planet.plantimesave = plantime;
+				planet.plantimesave = (USHORT)plantime;
 			}
 			else if (planet.xsect == 0 && planet.ysect == 0 && planet.plnum == 2) {
 				logthis(spr("updating T-Station (%s)", gechrbuf));
@@ -1694,11 +1694,11 @@ void FUNC plarti(void)
 			else {
 				logthis(spr("updating Planet %s (%s, %s)...", gechrbuf, planet.name, planet.userid));
 				/* updated in the last 7 days? catch up */
-				if ((planet.timestamp >> 4) >= game_day - 7 && (planet.timestamp >> 4) < game_day) {
+				if ((int)(planet.timestamp >> 4) >= game_day - 7 && (int)(planet.timestamp >> 4) < game_day) {
 					multnum = ((game_day - (int)(planet.timestamp >> 4) - 1) * planupd)
 						+ (planupd - (int)(planet.timestamp & 0xF)) + passnum;
 				}
-				else if ((planet.timestamp >> 4) == game_day) {
+				else if ((int)(planet.timestamp >> 4) == game_day) {
 					/* updated today but missed a pass? unlikely, but whatev */
 					multnum = passnum - (int)(planet.timestamp & 0xF);
 				}
@@ -2362,7 +2362,7 @@ int FUNC mnu_admenu1(void)
 			if (strlen(plptr->name) == 0) {
 				for (i = 0; i < NUMITEMS; ++i) {
 					plptr->items[i].rate = 0;
-					plptr->items[i].markup2a = baseprice[i];
+					plptr->items[i].markup2a = (USHORT)baseprice[i];
 				}
 
 				plptr->items[I_MEN].rate = 50;
@@ -2586,7 +2586,7 @@ int FUNC mnu_admenu2e(void)
 
 	for (i = 0; i < NUMITEMS; ++i) { /* skip notused */
 		if (sameto(kwrd[i], margv[0])) {
-			warsptr->titem = i;
+			warsptr->titem = (USHORT)i;
 			prfmsg(ADMEN2F1, item_name[warsptr->titem], plptr->items[warsptr->titem].rate);
 			outprfge(FLT_NONE, usrnum);
 			usrptr->substt = ADMEN2F1;
@@ -2618,7 +2618,7 @@ int FUNC mnu_admenu2f1(void)
 	}
 	amt = atoi(margv[0]);
 	if (margc == 1 && amt >= 0 && amt <= 100) {
-		titems[usrnum].rate = amt;
+		titems[usrnum].rate = (USHORT)amt;
 		prfmsg(ADMEN2F2, item_name[warsptr->titem], plptr->items[warsptr->titem].markup2a);
 		outprfge(FLT_NONE, usrnum);
 		usrptr->substt = ADMEN2F2;
@@ -2647,7 +2647,7 @@ int FUNC mnu_admenu2f2(void)
 	}
 	amt = atoi(margv[0]);
 	if (margc == 1 && amt >= 0 && amt <= 32000) {
-		titems[usrnum].markup2a = amt;
+		titems[usrnum].markup2a = (USHORT)amt;
 		prfmsg(ADMEN2F3, item_name[warsptr->titem], plptr->items[warsptr->titem].sell);
 		outprfge(FLT_NONE, usrnum);
 		usrptr->substt = ADMEN2F3;
@@ -2704,7 +2704,7 @@ int FUNC mnu_admenu2f4(void)
 	}
 	amt = atoi(margv[0]);
 	if (margc == 1 && amt >= 0 && amt <= 32000) {
-		titems[usrnum].reserve = amt;
+		titems[usrnum].reserve = (USHORT)amt;
 		update_items();
 		prfmsg(ADMENU2);
 		outprfge(FLT_NONE, usrnum);
@@ -2732,7 +2732,7 @@ int FUNC mnu_admenu2h(void)
 		if (!load_admin_planet())
 			return 1;
 
-		plptr->taxrate = amt;
+		plptr->taxrate = (SHORT)amt;
 
 		setsect(warsptr); /* build PKEY */
 		pkey.plnum = (SHORT)plnum;
@@ -3025,7 +3025,7 @@ void FUNC update_items(void)
 			pcnt += plptr->items[i].rate;
 
 	if ((titems[usrnum].rate + pcnt) > 100) {
-		titems[usrnum].rate = 100 - pcnt;
+		titems[usrnum].rate = (USHORT)(100 - pcnt);
 		if (titems[usrnum].rate > 100)
 			titems[usrnum].rate = 0;
 

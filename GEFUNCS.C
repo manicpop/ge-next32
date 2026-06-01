@@ -700,7 +700,7 @@ void FUNC firep(WARSHP *ptr, int usrn)
 					|| wuptr->teamcode != uptr->teamcode || ptr->lock == othusn)) {
 				heading = (unsigned)(vector(&ptr->coord,&wptr->coord) + 0.5);
 				/* phasers only affect targets that fall inside the current firing arc */
-				if (smallest(heading,deg) < ptr->percent + PHABIAS) {
+				if (smallest(heading,deg) < (unsigned)(ptr->percent + PHABIAS)) {
 					factor = pdamage(ptr,ddistance,ptr->percent);
 					factor *= 0.5 + (double)ptr->phasrtype / 2.0;
 					factor = ton_fact(wptr,factor);
@@ -2219,7 +2219,7 @@ void FUNC moveship(WARSHP *ptr, int usrn)
 	if (ptr->speed > 0) {
 		/* user ships pay movement energy while holding or climbing to their requested speed */
 		if (ptr->status == GESTAT_USER && ptr->speed <= ptr->speed2b) {
-			intspeed = ptr->speed / 1000.0;
+			intspeed = (int)(ptr->speed / 1000.0);
 			if (intspeed < 1)
 				movenergy = 1;
 			else
@@ -2373,7 +2373,7 @@ void FUNC moveship(WARSHP *ptr, int usrn)
 		if (ptr->speed > 0.0 && ptr->status == GESTAT_USER) {
 			unsigned int r = gernd();
 
-			intspeed = ptr->speed / 1000.0;
+			intspeed = (int)(ptr->speed / 1000.0);
 
 			/* track long-term overwarp abuse separately from the per-tick movement energy drain */
 			/* if this ship is exceeding top cruising speed and not in the process of going under it */
@@ -2388,15 +2388,15 @@ void FUNC moveship(WARSHP *ptr, int usrn)
 				}
 				else {
 					if (ptr->topspeed != newtop && ptr->topspeed != 0)
-						ptr->topspeed = (int)newtop;
+						ptr->topspeed = (SHORT)newtop;
 
 					/* for every 10% over cruising speed, increase potential random damage */
-					overamt = (intspeed * 100 / newtop) - 100;
+					overamt = (int)((intspeed * 100 / newtop) - 100);
 					if (ptr->upgrade & NCORE)
 						overadd = (unsigned)(r % ((overamt / 2) + 1));
 					else
 						overadd = (unsigned)(r % (overamt + 1));
-					ptr->overspeed += overadd;
+					ptr->overspeed = (USHORT)(ptr->overspeed + overadd);
 
 					/* if over twice new cruising speed, blow up the engines */
 					if (overamt >= 110 && ptr->topspeed != 0) {
@@ -2411,7 +2411,7 @@ void FUNC moveship(WARSHP *ptr, int usrn)
 							prfmsg(WARPFAST + (int)((overamt / 10) - 6));
 							outprfge(FLT_NONE, usrn);
 						}
-						ptr->warpmsg = overamt;
+						ptr->warpmsg = (byte)overamt;
 					}
 				}
 			}
@@ -2516,7 +2516,7 @@ void FUNC proximity(WARSHP *ptr, int usrn)
 					else {
 						lock_sector(ptr,usrn,LOCKWORM);
 						setsect(ptr); /* build PKEY */
-						pkey.plnum = i + 1;
+						pkey.plnum = (SHORT)(i + 1);
 						/* load the wormhole destination record before moving the ship */
 						if (!gesdb(GEGETNOW,&pkey,(GALSECT *)&worm)) {
 							geshocst(0,spr("GE:ERR:Worm Load Fail %d,%d,%d",xsect,ysect,pkey.plnum));
@@ -3219,7 +3219,7 @@ void FUNC checkmines(void)
 									if ((shipclass[wptr->shpclass].faction != shipclass[warshpoff(minechan)->shpclass].faction ||
 										shipclass[wptr->shpclass].faction == 0 || shipclass[warshpoff(minechan)->shpclass].faction == 0) &&
 										zothusn != minechan)
-										wptr->lastfired = minechan;
+										wptr->lastfired = (SHORT)minechan;
 									wuptr = warusroff(minechan);
 									set_dislike(wuptr,shipclass[wptr->shpclass].faction,(int)damfact);
 								}
@@ -3360,7 +3360,7 @@ void FUNC checktm(WARSHP *ptr, int usrn)
 					}
 					shres = shieldhit(ptr,(gernd() % 20) + 10);
 					if (shres == 1 || (shres == 2 && shmsg == 0))
-						shmsg = shres;
+						shmsg = (byte)shres;
 				}
 				else {
 					damfact = rndm(.5) + .5;
@@ -3407,7 +3407,7 @@ void FUNC checktm(WARSHP *ptr, int usrn)
 					}
 				}
 				if (tptr->distance > 0) {	/* torp still here? */
-					tptr->distance -= torpsped;
+					tptr->distance = (USHORT)(tptr->distance - torpsped);
 					if (tptr->distance > 0)
 						++track_cnt;
 				}
@@ -3490,7 +3490,7 @@ void FUNC checktm(WARSHP *ptr, int usrn)
 			}
 			/* heavy missiles up to half speed, light missiles up to 2x speed */
 			menergy = (float)mptr->energy + 300.0f;
-			mscale = sqrt(5000.0f / menergy);
+			mscale = (float)sqrt(5000.0f / menergy);
 			if (mscale > 2.0f)
 				mscale = 2.0f;
 			if (mscale < 0.5f)
@@ -3512,7 +3512,7 @@ void FUNC checktm(WARSHP *ptr, int usrn)
 				/* reduce the energy by the damage factor of this ship */
 				damfact = mptr->energy;
 				damfact = ton_fact(ptr,damfact);
-				mptr->energy = damfact;
+				mptr->energy = (USHORT)damfact;
 
 				if (ptr->shieldstat == SHIELDUP) {
 					damfact = damfact / 20000.0;
@@ -3539,10 +3539,10 @@ void FUNC checktm(WARSHP *ptr, int usrn)
 					}
 
 					power = mptr->energy / 999;
-					power = power * (rndm(.5) + .5);
+					power = (int)(power * (rndm(.5) + .5));
 					shres = shieldhit(ptr,power);
 					if (shres == 1 || (shres == 2 && shmsg == 0))
-						shmsg = shres;
+						shmsg = (byte)shres;
 				}
 				else {
 					damfact = damfact / 20000.0;
@@ -3586,7 +3586,7 @@ void FUNC checktm(WARSHP *ptr, int usrn)
 					}
 				}
 				if (mptr->distance > 0) {	/* missl still here? */
-					mptr->distance -= mstep;
+					mptr->distance = (USHORT)(mptr->distance - mstep);
 					if (ptr->speed > 100000.0 || mptr->distance > 50000U - (int)(ptr->speed / 6.5) ||
 						mptr->energy <= 500) {
 						mptr->distance = 0;
@@ -3597,8 +3597,8 @@ void FUNC checktm(WARSHP *ptr, int usrn)
 						}
 					}
 					else {
-						mptr->distance += (int)(ptr->speed / 6.5);
-						mptr->energy -= 500;	/* decrease energy over time */
+						mptr->distance = (USHORT)(mptr->distance + (int)(ptr->speed / 6.5));
+						mptr->energy = (USHORT)(mptr->energy - 500);	/* decrease energy over time */
 					}
 					if (mptr->distance > 0)
 						++track_cnt;
@@ -4268,7 +4268,7 @@ void FUNC randamage(WARSHP *ptr, int usrn, double hitdam)
 	case 0: /* missiles */
 		if (shipclass[ptr->shpclass].max_missl > 0) {
 			if (dosys == 1 && ptr->mislcntl == 0) {
-				ptr->mislcntl = 2 + r % (damcomb/3);
+				ptr->mislcntl = (byte)(2 + r % (damcomb/3));
 				prfmsg(RNDMISL);
 				dosys = 2;
 			}
@@ -4283,7 +4283,7 @@ void FUNC randamage(WARSHP *ptr, int usrn, double hitdam)
 	case 1: /* torpedoes */
 		if (shipclass[ptr->shpclass].max_torps > 0) {
 			if (dosys == 1 && ptr->torpcntl == 0) {
-				ptr->torpcntl = 2 + r % (damcomb/3);
+				ptr->torpcntl = (byte)(2 + r % (damcomb/3));
 				prfmsg(RNDTORP);
 				dosys = 2;
 			}
@@ -4298,7 +4298,7 @@ void FUNC randamage(WARSHP *ptr, int usrn, double hitdam)
 	case 2: /* decoys */
 		if (shipclass[ptr->shpclass].has_decoy > 0) {
 			if (dosys == 1 && ptr->decload >= 0) {
-				ptr->decload = -2 - r % (damcomb/3);
+				ptr->decload = (SHORT)(-2 - r % (damcomb/3));
 				prfmsg(RNDDECY);
 				dosys = 2;
 			}
@@ -4313,7 +4313,7 @@ void FUNC randamage(WARSHP *ptr, int usrn, double hitdam)
 	case 3: /* zippers */
 		if (shipclass[ptr->shpclass].has_zip > 0) {
 			if (dosys == 1 && ptr->zipload >= 0) {
-				ptr->zipload = -2 - r % (damcomb/3);
+				ptr->zipload = (SHORT)(-2 - r % (damcomb/3));
 				prfmsg(RNDZIPR);
 				dosys = 2;
 			}
@@ -4328,7 +4328,7 @@ void FUNC randamage(WARSHP *ptr, int usrn, double hitdam)
 	case 4: /* jammers */
 		if (shipclass[ptr->shpclass].has_jam > 0) {
 			if (dosys == 1 && ptr->jamload >= 0) {
-				ptr->jamload = -2 - r % (damcomb/3);
+				ptr->jamload = (SHORT)(-2 - r % (damcomb/3));
 				prfmsg(RNDJAMR);
 				dosys = 2;
 			}
@@ -4343,7 +4343,7 @@ void FUNC randamage(WARSHP *ptr, int usrn, double hitdam)
 	case 5: /* mines */
 		if (shipclass[ptr->shpclass].has_mine > 0) {
 			if (dosys == 1 && ptr->mineload >= 0) {
-				ptr->mineload = -2 - r % (damcomb/3);
+				ptr->mineload = (SHORT)(-2 - r % (damcomb/3));
 				prfmsg(RNDMINE);
 				dosys = 2;
 			}
@@ -4358,7 +4358,7 @@ void FUNC randamage(WARSHP *ptr, int usrn, double hitdam)
 	case 6: /* shields */
 		if (shipclass[ptr->shpclass].max_shlds > 0 && ptr->shieldstat != SHIELDDM && dosys == 1) {
 			prfmsg(SHDAMAG);
-			ptr->shield = (int)(-2 - r % (damcomb/3));
+			ptr->shield = (SHORT)(-2 - r % (damcomb/3));
 			ptr->shieldstat = SHIELDDM;
 			dosys = 2;
 		}
@@ -4367,7 +4367,7 @@ void FUNC randamage(WARSHP *ptr, int usrn, double hitdam)
 	case 7: /* phasers */
 		if (shipclass[ptr->shpclass].max_phasr > 0 && ptr->phasr >= 0 && dosys == 1) {
 			prfmsg(RNDPHSR);
-			ptr->phasr = (int)(-2 - r % (damcomb/3));
+			ptr->phasr = (double)(-2 - r % (damcomb/3));
 			dosys = 2;
 		}
 		break;
@@ -4375,7 +4375,7 @@ void FUNC randamage(WARSHP *ptr, int usrn, double hitdam)
 	case 8: /* cloak */
 		if (shipclass[ptr->shpclass].max_cloak > 0 && ptr->cloak >= 0 && dosys == 1) {
 			prfmsg(RNDCLOK);
-			ptr->cloak = -2 - r % (damcomb/3);
+			ptr->cloak = (SHORT)(-2 - r % (damcomb/3));
 			dosys = 2;
 		}
 		break;
@@ -4383,7 +4383,7 @@ void FUNC randamage(WARSHP *ptr, int usrn, double hitdam)
 	case 9: /* scanners */
 		if (ptr->tactical == 0 && dosys == 1) {
 			prfmsg(RNDTACT);
-			ptr->tactical = -2 - r % (damcomb/6);
+			ptr->tactical = (SHORT)(-2 - r % (damcomb/6));
 			dosys = 2;
 		}
 		break;
@@ -4391,7 +4391,7 @@ void FUNC randamage(WARSHP *ptr, int usrn, double hitdam)
 	case 10: /* helm */
 		if (ptr->helm == 0 && dosys == 1) {
 			prfmsg(RNDNAVG);
-			ptr->helm = -2 - r % (damcomb/9);
+			ptr->helm = (SHORT)(-2 - r % (damcomb/9));
 			dosys = 2;
 		}
 		break;
@@ -4652,8 +4652,8 @@ void FUNC setsect(WARSHP *ptr)
 	ysect = coord1(ptr->coord.ycoord);
 	xcord = coord2(ptr->coord.xcoord);
 	ycord = coord2(ptr->coord.ycoord);
-	pkey.xsect = xsect;
-	pkey.ysect = ysect;
+	pkey.xsect = (SHORT)xsect;
+	pkey.ysect = (SHORT)ysect;
 	pkey.plnum = 0;
 }
 
@@ -4923,10 +4923,10 @@ int FUNC shieldhit(WARSHP *wptr, int dam)   /* 0% to 100% damage */
 
 	knock = (int)(dmax * ddam);
 
-	wptr->shield -= knock;
+	wptr->shield = (SHORT)(wptr->shield - knock);
 	if (wptr->shield <=2 ) {
 		wptr->shieldstat = SHIELDDM;
-		wptr->shield -= (knock*3);
+		wptr->shield = (SHORT)(wptr->shield - (knock * 3));
 		return 1;
 	}
 	else if (wptr->shield < SHMINCHG )
@@ -4961,9 +4961,9 @@ void FUNC shieldchg(WARSHP *wptr, int usrn)
 	charge(wptr,&maxcharge,&pcnt); /* go figure maxcharge and percent */
 
 	if (wptr->shield < maxcharge) {
-		wptr->shield += (type * 3);
+		wptr->shield = (SHORT)(wptr->shield + (type * 3));
 		if (wptr->shield >= maxcharge) {
-			wptr->shield = maxcharge;
+			wptr->shield = (SHORT)maxcharge;
 			prfmsg(SHLDUP);
 			outprfge(FLT_NONE,usrn);
 		}
@@ -5211,7 +5211,7 @@ void FUNC set_dislike(WARUSR *wuptr, int facnum, int dislike)
 	if ((unsigned int)(wuptr->factions[facnum]) + dislike > 255)
 		wuptr->factions[facnum] = 255;
 	else
-		wuptr->factions[facnum] += dislike;
+		wuptr->factions[facnum] = (byte)(wuptr->factions[facnum] + dislike);
 }
 
 /**************************************************************************
@@ -5344,8 +5344,8 @@ void FUNC update_scantab(WARSHP *ptr, int usrn)
 				for (i = 0; i < NOSCANTAB; ++i) {
 					/* entry blank - fill it with this one */
 					if (tmp.ship[i].flag == 0) {
-						tmp.ship[i].flag = flag;
-						tmp.ship[i].shipno = othusn;
+						tmp.ship[i].flag = (CHAR)flag;
+						tmp.ship[i].shipno = (SHORT)othusn;
 						tmp.ship[i].dist = ddistance;
 						tmp.ship[i].letter = lettab[othusn];
 
@@ -5359,8 +5359,8 @@ void FUNC update_scantab(WARSHP *ptr, int usrn)
 								memcpy(&tmp.ship[j+1],&tmp.ship[j],sizeof(SHIPTAB));
 						}
 						/* fill the hole with the new ship */
-						tmp.ship[i].flag = flag;
-						tmp.ship[i].shipno = othusn;
+						tmp.ship[i].flag = (CHAR)flag;
+						tmp.ship[i].shipno = (SHORT)othusn;
 						tmp.ship[i].dist = ddistance;
 						tmp.ship[i].letter = lettab[othusn];
 						break;
@@ -5383,8 +5383,8 @@ void FUNC update_scantab(WARSHP *ptr, int usrn)
 		else {
 			j = tmp.ship[i].shipno;
 			wptr = warshpoff(j);
-			tmp.ship[i].bearing = cbearing(&ptr->coord,&(wptr->coord),ptr->heading);
-			tmp.ship[i].heading = cbearing(&(wptr->coord),&ptr->coord,wptr->heading);
+			tmp.ship[i].bearing = (SHORT)cbearing(&ptr->coord, &(wptr->coord), ptr->heading);
+			tmp.ship[i].heading = (SHORT)cbearing(&(wptr->coord), &ptr->coord, wptr->heading);
 			tmp.ship[i].speed = wptr->speed;
 		}
 	}
