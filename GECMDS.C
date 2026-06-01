@@ -271,9 +271,13 @@ struct cmd *FUNC gesearch(char *ptr, struct cmd tab[], int len)
 	hi = &tab[len-1];
 
 	while (lo <= hi) {
+#ifdef __BORLANDC__
 #pragma warn -sig
+#endif
 		md = lo + ((hi - lo)/2L);
+#ifdef __BORLANDC__
 #pragma warn +sig
+#endif
 		if ((c = strncmp(ptr,md->command,3)) < 0)
 			hi = md - 1;
 		else if (c > 0)

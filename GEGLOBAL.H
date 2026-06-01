@@ -43,7 +43,7 @@ extern DFAFILE *gebb1,		/* GEship.dat */
 	       *gebb4,		/* GEmail.dat */
 	       *gebb5;		/* GEuser.dat */
 
-extern FILE *gemb, *gehlpmb, *geshmb;
+extern HMCVFILE gemb, gehlpmb, geshmb;
 
 extern int numwar;		/* number of users in game */
 extern int decpass;		/* decoy expiry batching pass counter */

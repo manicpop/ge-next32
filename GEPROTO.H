@@ -32,7 +32,7 @@
   * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA            *
   *************************************************************************/
 
-#ifdef __STDC__
+#if defined(__STDC__) || defined(_MSC_VER)
 # define P(s) s
 #else
 # define P(s) ()
@@ -42,16 +42,16 @@
 void EXPORT init__mpogemp P((void));
 void FUNC dummy P((void));
 void FUNC iniwara P((void));
-int FUNC gelogon P((void));
+GBOOL FUNC gelogon P((void));
 void FUNC gedelete P((char *uid));
 void FUNC gemidnight P((void));
 void FUNC dump_roster_file P((void));
 void FUNC calc_networth P((void));
 unsigned FUNC long value_pl P((void));
-int FUNC warlof P((void));
+SHORT FUNC warlof P((void));
 void FUNC warhup P((void));
 void FUNC clswar P((void));
-int FUNC galemp P((void));
+GBOOL FUNC galemp P((void));
 void FUNC outwar P((int filter , unsigned exclude , unsigned channel , int mode));
 int FUNC gepdb P((int func , char *usrname , int shipnum , WARSHP *geptr));
 int FUNC geudb P((int func , char *usrname , WARUSR *geptr));

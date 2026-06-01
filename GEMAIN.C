@@ -71,9 +71,9 @@ DFAFILE *gebb1,		/* MPOGESHP.DAT */
 	*gebb4,		/* MPOGEMAL.DAT */
 	*gebb5;		/* MPOGEUSR.DAT */
 
-FILE *gemb,		/* MPOGEMSG.MSG: main GE messages */
-	*gehlpmb,	/* MPOGEHLP.MSG: GE help messages */
-	*geshmb;	/* MPOGESHP.MSG: ship class messages */
+HMCVFILE gemb,		/* MPOGEMSG.MSG: main GE messages */
+	gehlpmb,	/* MPOGEHLP.MSG: GE help messages */
+	geshmb;		/* MPOGESHP.MSG: ship class messages */
 
 static char *geuser,		/* configured user database name */
 	*geship,		/* configured ship database name */
@@ -754,7 +754,7 @@ void FUNC iniwara(void)
 ** User loged in routine                                                 **
 **************************************************************************/
 
-int FUNC gelogon(void)
+GBOOL FUNC gelogon(void)
 {
 	int i;
 	/* if classic GE is installed, don't send an additional login msg */
@@ -1075,7 +1075,7 @@ unsigned FUNC long value_pl(void)
 ** User logged off                                                       **
 **************************************************************************/
 
-int FUNC warlof(void)
+SHORT FUNC warlof(void)
 {
 	warsptr = warshpoff(usrnum);
 	waruptr = warusroff(usrnum);
@@ -1163,7 +1163,7 @@ void FUNC clswar(void)
 ** Main input loop                                                       **
 **************************************************************************/
 
-int FUNC galemp(void)
+GBOOL FUNC galemp(void)
 {
 	int i, rtn;
 
