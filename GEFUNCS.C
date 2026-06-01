@@ -5102,7 +5102,7 @@ void FUNC logthis(char *str)
 WARUSR * FUNC warusroff(int usrn)
 {
 	if (usrn >= 0 && usrn < nships)
-		return((WARUSR *)((long)(warusr_ecl + (usrn << 3)) << 16));
+		return((WARUSR *)ptrblok(warusr, (USHORT)usrn));
 	else {
 		geshocst(0,spr("GE:WARUSROFF:bad usrn [%d]",usrn));
 		return((WARUSR *)((long)0));
@@ -5116,7 +5116,7 @@ WARUSR * FUNC warusroff(int usrn)
 WARSHP * FUNC warshpoff(int usrn)
 {
 	if (usrn >= 0 && usrn < nships)
-		return((WARSHP *)((long)(warshp_ecl + (usrn << 3)) << 16));
+		return((WARSHP *)ptrblok(warshp, (USHORT)usrn));
 	else {
 		geshocst(0,"GE:BAD WARSHPOFF CALL");
 		logthis(spr("WARSHPOFF:bad usrn [%d]",usrn));

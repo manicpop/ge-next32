@@ -94,9 +94,6 @@ WARSHP *warshp,		/* base pointer to ship table */
 WARUSR *warusr,		/* base pointer to user table */
 	*waruptr;	/* current user pointer */
 
-int warusr_ecl,		/* expanded-memory handle for user table */
-	warshp_ecl;	/* expanded-memory handle for ship table */
-
 WARUSR tmpusr;		/* temporary user-record workspace */
 
 GALSECT sector;		/* current sector data workspace */
@@ -622,8 +619,7 @@ void FUNC iniwara(void)
 	}
 
 	/* allocate memory for user data table */
-	warusr_ecl = pltile(nships * (long)sizeof(WARUSR), 0, sizeof(WARUSR), sizeof(WARUSR));
-	warusr = MK_FP(warusr_ecl, 0);
+	warusr = (WARUSR *)alcblok(nships, sizeof(WARUSR));
 
 	for (j = 0; j < nships; j++) {
 		setmem((void *)warusroff(j), sizeof(WARUSR), 0);
@@ -631,8 +627,7 @@ void FUNC iniwara(void)
 	geshocst(1, spr("GE:INF:User Mem: %ld", nships * sizeof(WARUSR)));
 
 	/* allocate memory for ship data table */
-	warshp_ecl = pltile(nships * (long)sizeof(WARSHP), 0, sizeof(WARSHP), sizeof(WARSHP));
-	warshp = MK_FP(warshp_ecl, 0);
+	warshp = (WARSHP *)alcblok(nships, sizeof(WARSHP));
 
 	for (j = 0; j < nships; j++) {
 		setmem((void *)warshpoff(j), sizeof(WARSHP), 0);

@@ -51,7 +51,6 @@ extern int decpass;		/* decoy expiry batching pass counter */
 extern WARSHP tmpshp;		/* used to temporarly set up a new ship */
 extern WARSHP *warshp, *warsptr;
 extern WARUSR *warusr, *waruptr;
-extern int warusr_ecl, warshp_ecl;
 extern WARUSR tmpusr;
 
 extern GALSECT sector;
