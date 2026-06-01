@@ -33,14 +33,13 @@
   * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA            *
   *************************************************************************/
 
-
-
 #include "gcomm.h"
 #include "string.h"
 
-
 #include "math.h"
 #include "stdlib.h"
+
+/* bypass SDK warnings */
 struct usracc;
 struct user;
 #include "majorbbs.h"
@@ -61,8 +60,8 @@ struct module mpoge = {		/* module interface block		*/
 	galemp,			/* input routine if selected		*/
 	stshdlr,		/* status-input routine if selected	*/
 	NULL,			/* "injoth" routine for this module	*/
-	warlof,		/* user logoff supplemental routine	*/
-	warhup,		/* hangup (lost carrier) routine	*/
+	warlof,			/* user logoff supplemental routine	*/
+	warhup,			/* hangup (lost carrier) routine	*/
 	gemidnight,		/* midnight cleanup routine		*/
 	gedelete,		/* delete-account routine		*/
 	clswar			/* finish-up (sys shutdown) routine	*/
@@ -471,7 +470,7 @@ void FUNC iniwara(void)
 	opttbl = (long *)alcmem(n = nterms * sizeof(long));	/* per-user option-text offsets */
 	setmem(opttbl, n, 0);
 
-	gebb1 = dfaOpen(geship, sizeof(WARSHP), NULL);			/* open ship database */
+	gebb1 = dfaOpen(geship, sizeof(WARSHP), NULL);		/* open ship database */
 	gebb4 = dfaOpen(gemail, sizeof(GEMESSAGE), NULL);	/* open mail database */
 	gebb2 = dfaOpen(geplnt, sizeof(GALSECT), NULL);		/* open planet database */
 
@@ -1102,11 +1101,9 @@ void FUNC warhup(void)
 
 	if (warsptr->status == GESTAT_USER) {
 		if (ingegame(usrnum)) {
-		/* if modem hangup */
+			/* if modem hangup */
 			logthis(spr("User Hungup Status = %d", status));
-			if (warsptr->cantexit > 0)
-#ifndef MBBSEMU
-			{
+			if (warsptr->cantexit > 0) {
 				/* if we're in cleanup mode, don't killem */
 				if (status == RING && rsmodes[usrnum] != NORMRS) {
 					/* clear this user's projectile ownership from active torps and missiles */
@@ -1116,15 +1113,11 @@ void FUNC warhup(void)
 					gepdb(GEUPDATE, warsptr->userid, warsptr->shipno, warsptr);
 					geudb(GEUPDATE, waruptr->userid, waruptr);
 				}
-				else
-#endif
-				{
+				else {
 					killem(warsptr, usrnum);
 					warsptr->where = -1;
 				}
-#ifndef MBBSEMU
 			}
-#endif
 			else {
 				/* broadcast this user's departure to entry-message recipients */
 				exit_entrymsg(usrnum);

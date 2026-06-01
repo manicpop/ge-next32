@@ -33,17 +33,15 @@
   * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA            *
   *************************************************************************/
 
-
 #include "gcomm.h"
 #include "string.h"
 
-
+/* bypass SDK warnings */
 struct usracc;
 struct user;
 #include "majorbbs.h"
 
 #include "gemain.h"
-
 
 #define GEPLANET 1
 

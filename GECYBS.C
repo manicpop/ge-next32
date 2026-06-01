@@ -33,17 +33,15 @@
   * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA            *
   *************************************************************************/
 
-
 #include "gcomm.h"
 #include "string.h"
 
-
+/* bypass SDK warnings */
 struct usracc;
 struct user;
 #include "majorbbs.h"
 
 #include "gemain.h"
-
 
 #define GECYBS 1
 
@@ -412,11 +410,7 @@ void FUNC assign_cybs(int target_usrn, int call)
 int FUNC cyb_fast(WARSHP *ptr)
 {
 	return ptr->speed != 0.0 &&
-#ifdef MBBSEMU
-		(fabs(ptr->speed - (long)(ptr->speed / FARSPEED) * FARSPEED) < 1e-6);
-#else
 		(fmod(ptr->speed, FARSPEED) == 0.0);
-#endif
 }
 
 /**************************************************************************

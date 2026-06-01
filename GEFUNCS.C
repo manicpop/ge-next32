@@ -33,12 +33,13 @@
   * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA            *
   *************************************************************************/
 
-
 #include "gcomm.h"
 #include "string.h"
 #include "stdio.h"
 
 #include "math.h"
+
+/* bypass SDK warnings */
 struct usracc;
 struct user;
 #include "majorbbs.h"
@@ -4578,12 +4579,6 @@ void FUNC randamage(WARSHP *ptr, int usrn, double hitdam)
 double FUNC pdamage(WARSHP *wptr, double dist, int foc)
 {
 	double dd, fd, dp, factor, disfact, dam;
-
-#ifdef MBBSEMU
-	int i;
-	double fractional;
-#endif
-
 	if (wptr->where == 1) {
 		/* hyper-phasers fall off only with distance from the beam center */
 		factor = hpfirdst;
@@ -4591,21 +4586,7 @@ double FUNC pdamage(WARSHP *wptr, double dist, int foc)
 		dd = 1.0 - (dist / 40000.0);
 		if (dd < 0.0)
 			dd = 0.0;
-
-#ifdef MBBSEMU
-		dp = 1.0;
-		if (factor > 0.0) {
-			for (i = 0; i < (int)factor; ++i)
-				dp *= dd;
-			fractional = factor - (int)factor;
-			if (fractional > 0.0 && dd > 0.0)
-				dp *= 1.0 + fractional * (dd - 1.0);
-		}
-		else
-			dp = 0.0;
-#else
 		dp = pow(dd,factor);
-#endif
 		dam = hpdammax * dp;
 	}
 	else {
@@ -4618,24 +4599,8 @@ double FUNC pdamage(WARSHP *wptr, double dist, int foc)
 			dd = 0.0;
 		/* fd is the beam-focus factor: centered shots stay near 1.0, edge hits collapse toward 0.0 */
 		fd = 1.0 - ((double)foc / 11.0);
-
-#ifdef MBBSEMU
-		dp = 1.0;
-		if (factor > 0.0) {
-			for (i = 0; i < (int)factor; ++i)
-				dp *= dd;
-			fractional = factor - (int)factor;
-			if (fractional > 0.0 && dd > 0.0)
-				dp *= 1.0 + fractional * (dd - 1.0);
-		}
-		else {
-			dp = 0.0;
-		}
-		dp *= (fd * fd) * (wptr->phasr / 100.0);
-#else
 		/* dp is the final damage proportion after distance falloff, beam focus, and current phaser charge */
 		dp = (pow(dd,factor)) * (fd * fd) * (wptr->phasr / 100.0);
-#endif
 		dam = pdammax * dp;
 	}
 
@@ -5180,22 +5145,10 @@ char * FUNC showarp(double warp_speed)
 	if (warp_speed == 0.0)
 		sprintf(warpbuf,"0.00");
 	else
-#ifdef MBBSEMU
-	if (fabs(warp_speed - (long)(warp_speed / FARSPEED) * FARSPEED) < 1e-6)
-#else
 	if (fmod(warp_speed, FARSPEED) == 0.0)
-#endif
 		sprintf(warpbuf,"??.??");
 	else
 		sprintf(warpbuf,"%.2f",warp_speed/1000.0);
-#ifdef MBBSEMU
-	/* MBBSemu doesn't currently honor %.2f */
-	if (warpbuf[strlen(warpbuf) - 2] == '.')
-		strcat(warpbuf, "0");
-	else
-	if (warpbuf[strlen(warpbuf) - 3] != '.')
-		strcat(warpbuf, ".00");
-#endif
 	return warpbuf;
 }
 
