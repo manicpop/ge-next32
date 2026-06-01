@@ -227,7 +227,7 @@ static void droid_annoy(WARSHP *ptr, int usrn)
 	/* display friend or foe msg if not engaged with that user */
 	if (ptr->cybmine == 255) {
 		if (ptr->npcmsg == 0)			/* if starting fresh or coming back from cybmine set */
-			ptr->npcmsg = interval;
+			ptr->npcmsg = (byte)interval;
 		if (ptr->npcmsg > interval * 4)		/* cycle through msgs instead of rnd pick */
 			ptr->npcmsg = 1;
 		if (ptr->npcmsg % interval == 0)
@@ -322,7 +322,7 @@ static void droid_phaser(WARSHP *ptr, int usrn, WARSHP *wptr)
 	if (shipclass[ptr->shpclass].max_phasr > 0 && !neutral(&ptr->coord) &&
 		!neutral(&wptr->coord) && isvisible(ptr, wptr) &&
 		gernd() % (4 - (shipclass[ptr->shpclass].tough_factor / 2)) == 0) {
-		ptr->degrees = cbearing(&ptr->coord, &wptr->coord, ptr->heading);
+		ptr->degrees = (SHORT)cbearing(&ptr->coord, &wptr->coord, ptr->heading);
 		if (wptr->where == 1 && ptr->where == 1 && ptr->hypha == 0 && ptr->phasr >= 0)
 			firehp(ptr, usrn);
 		else if (ptr->where == 0 && (wptr->where == 0 || (wptr->where == 1 &&
@@ -782,7 +782,7 @@ static void droid_act_5(WARSHP *ptr, int usrn)
 			}
 			++ptr->npcmsg;
 			if (low_ship >= 0 && low_ship < nships)
-				ptr->cybmine = low_ship;
+				ptr->cybmine = (byte)low_ship;
 		}
 		/* if still not tracking */
 		if (ptr->cybmine == 255 && ptr->holdcourse == 0) {

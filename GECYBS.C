@@ -398,7 +398,7 @@ void FUNC assign_cybs(int target_usrn, int call)
 			return;
 
 		ptr = warshpoff(low_ship);
-		ptr->cybmine = target_usrn;
+		ptr->cybmine = (byte)target_usrn;
 		ptr->track_grace = CYBGRACE;
 	}
 }
@@ -545,7 +545,7 @@ static void cyb_annoy(WARSHP *ptr, int usrn, int msgtype)
 		ptr->npcmsg == LOATTACK) &&
 		(msgtype == TAUNT || msgtype == CYBTORP || msgtype == LOATTACK))
 		if (gernd() % (6 + (shipclass[ptr->shpclass].tough_factor)) != 0) {
-			ptr->npcmsg = msgtype;
+			ptr->npcmsg = (byte)msgtype;
 			return;
 		}
 
@@ -554,7 +554,7 @@ static void cyb_annoy(WARSHP *ptr, int usrn, int msgtype)
 		return;
 
 	/* remember which message type was called last (even if it doesn't necessarily get displayed) */
-	ptr->npcmsg = msgtype;
+	ptr->npcmsg = (byte)msgtype;
 
 	/* show some messages always, the rest sometimes */
 	if (msgtype == FLEE || msgtype == APPROACH || gernd() % 3 == 0)
@@ -613,7 +613,7 @@ static void cyb_attack(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn)
 
 	if (shipclass[ptr->shpclass].max_phasr > 0 && ptr->phasr >= PMINFIRE &&
 		gernd() % (4 - (shipclass[ptr->shpclass].tough_factor / 2)) == 0) {
-		ptr->degrees = cbearing(&ptr->coord, &wptr->coord, ptr->heading);
+		ptr->degrees = (SHORT)cbearing(&ptr->coord, &wptr->coord, ptr->heading);
 		ptr->percent = 2;
 		firep(ptr, usrn);
 		acted = 1;
@@ -919,7 +919,7 @@ static void cyb_check_lockon(WARSHP *ptr, int usrn)
 			if (low_dist * 10000 < shipclass[wptr->shpclass].scanrange &&
 				ptr->npcstate != (unsigned)low_ship) {
 				cyb_annoy(ptr, low_ship, APPROACH);
-				ptr->npcstate = low_ship;
+				ptr->npcstate = (USHORT)low_ship;
 			}
 		} else if (low_dist >= 2.85 + (.175 * (d_topspeed / shipclass[ptr->shpclass].max_accel))) {
 			/* fast ships with low accel brake earlier */
@@ -939,7 +939,7 @@ static void cyb_check_lockon(WARSHP *ptr, int usrn)
 			if (low_dist * 10000 < shipclass[wptr->shpclass].scanrange &&
 				ptr->npcstate != (unsigned)low_ship) {
 				cyb_annoy(ptr, low_ship, APPROACH);
-				ptr->npcstate = low_ship;
+				ptr->npcstate = (USHORT)low_ship;
 			}
 		} else if (wptr->where == 1 && d_topspeed >= 1000) {
 			inbound = FALSE;
@@ -1161,7 +1161,7 @@ void FUNC cyb_lives(WARSHP *ptr, int usrn)
 									misl(ptr, usrn, zothusn,
 										(shipclass[ptr->shpclass].tough_factor + 1) * 4000, 0);
 								else {
-									ptr->degrees = cbearing(&ptr->coord, &wptr->coord, ptr->heading);
+									ptr->degrees = (SHORT)cbearing(&ptr->coord, &wptr->coord, ptr->heading);
 									if (ptr->where == 1 &&
 										shipclass[ptr->shpclass].max_phasr > 0 &&
 										ptr->hypha == 0 && ptr->phasr >= 0)

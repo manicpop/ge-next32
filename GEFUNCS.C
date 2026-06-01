@@ -3803,32 +3803,32 @@ void FUNC validate_lock(WARSHP *ptr, int usrn)
 ** Credit projectile attackers and notify live user owners of impacts    **
 **************************************************************************/
 
-void FUNC acctm(WARSHP *ptr, int usrn, int mt, byte channel, int count)
+void FUNC acctm(WARSHP *ptr, int usrn, int mt, byte owner_channel, int count)
 {
-	if (channel < nships && ingegame(channel))
-		ptr->lastfired = channel;
+	if (owner_channel < nships && ingegame(owner_channel))
+		ptr->lastfired = owner_channel;
 	else
 		ptr->lastfired = -1;
 
 	/* any live ship keeps credit; only live real users get the attacker message */
-	if (channel < nterms && ingegame(channel)) {
+	if (owner_channel < nterms && ingegame(owner_channel)) {
 		if (count <= 1) {
 			if (ptr->status == GESTAT_AUTO)
-				prfmsg(MTACC1N + mt, shpltr(channel, usrn), ptr->shipname);
+				prfmsg(MTACC1N + mt, shpltr(owner_channel, usrn), ptr->shipname);
 			else if (ptr->shipname[0] == 0)
-				prfmsg(MTACC1NO + mt, shpltr(channel, usrn), ptr->userid);
+				prfmsg(MTACC1NO + mt, shpltr(owner_channel, usrn), ptr->userid);
 			else
-				prfmsg(MTACC1 + mt, shpltr(channel, usrn), ptr->shipname);
+				prfmsg(MTACC1 + mt, shpltr(owner_channel, usrn), ptr->shipname);
 		}
 		else {
 			if (ptr->status == GESTAT_AUTO)
-				prfmsg(MTACC3N + mt, count, shpltr(channel, usrn), ptr->shipname);
+				prfmsg(MTACC3N + mt, count, shpltr(owner_channel, usrn), ptr->shipname);
 			else if (ptr->shipname[0] == 0)
-				prfmsg(MTACC3NO + mt, count, shpltr(channel, usrn), ptr->userid);
+				prfmsg(MTACC3NO + mt, count, shpltr(owner_channel, usrn), ptr->userid);
 			else
-				prfmsg(MTACC3 + mt, count, shpltr(channel, usrn), ptr->shipname);
+				prfmsg(MTACC3 + mt, count, shpltr(owner_channel, usrn), ptr->shipname);
 		}
-		outprfge(FLT_NONE, channel);
+		outprfge(FLT_NONE, owner_channel);
 	}
 }
 
@@ -3919,7 +3919,7 @@ void FUNC clearitm(int usrn)
 ** Clear one attacker's ownership from every inbound projectile slot     **
 **************************************************************************/
 
-void FUNC cleartm(int channel)
+void FUNC cleartm(int owner_channel)
 {
 	MINE *mptr;
 	WARSHP *wptr;
@@ -3927,7 +3927,7 @@ void FUNC cleartm(int channel)
 	int zothusn;
 
 	for (i = 0, mptr = mines; i < nummines; ++i, ++mptr) {
-		if (mptr->channel == (byte)channel)
+		if (mptr->channel == (byte)owner_channel)
 			mptr->channel = 255;
 	}
 
@@ -3935,11 +3935,11 @@ void FUNC cleartm(int channel)
 		if (ingegame(zothusn)) {
 			wptr = warshpoff(zothusn);
 			for (j = 0; j < MAXTORPS; ++j) {
-				if (wptr->ltorps[j].channel == (byte)channel)
+				if (wptr->ltorps[j].channel == (byte)owner_channel)
 					wptr->ltorps[j].channel = 255;
 			}
 			for (j = 0; j < MAXMISSL; ++j) {
-				if (wptr->lmissl[j].channel == (byte)channel)
+				if (wptr->lmissl[j].channel == (byte)owner_channel)
 					wptr->lmissl[j].channel = 255;
 			}
 		}

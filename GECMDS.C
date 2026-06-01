@@ -563,7 +563,7 @@ void FUNC cmd_impulse(void)
 				if (warsptr->degrees != 0)
 					deg = (unsigned)normal(warsptr->heading + (double)warsptr->degrees);
 				else
-					deg = warsptr->head2b;
+					deg = (unsigned)warsptr->head2b;
 			}
 			prfmsg(ENGFIRE, deg);
 			outprfge(FLT_NONE, usrnum);
@@ -693,7 +693,7 @@ void FUNC cmd_warp(void)
 			if (warsptr->degrees != 0)
 				deg = (unsigned)normal(warsptr->heading + (double)warsptr->degrees);
 			else
-				deg = warsptr->head2b;
+				deg = (unsigned)warsptr->head2b;
 		}
 		prfmsg(ENGFIRE,deg);
 		outprfge(FLT_NONE,usrnum);
@@ -845,7 +845,7 @@ void FUNC cmd_orbit(void)
 				} else {
 					prfmsg(ORBIT1,plnum,plptr->name);
 				}
-				warsptr->where = 10 + plnum;
+				warsptr->where = (SHORT)(10 + plnum);
 				warsptr->speed = 0;
 				warsptr->speed2b = 0;
 			} else {
@@ -1538,7 +1538,7 @@ int FUNC laymine(WARSHP *ptr, int usrn, int timer)
 
 	ptr->cantexit = FIRETICKS;
 	mines[slot].channel = (byte)usrn;
-	mines[slot].timer = timer;
+	mines[slot].timer = (USHORT)timer;
 	mines[slot].coord.xcoord = ptr->coord.xcoord;
 	mines[slot].coord.ycoord = ptr->coord.ycoord;
 	--ptr->items[I_MINE];
@@ -1572,7 +1572,7 @@ void FUNC cmd_send(void)
 		} else if (margc == 3) {
 			val = atol(margv[2]);
 			if (val >= 0L && val <= 65535L) {
-				warsptr->freq = (unsigned)val;
+				warsptr->freq = (USHORT)val;
 				if (warsptr->freq == 0)
 					prfmsg(MSGSNT4N);
 				else
@@ -1608,7 +1608,7 @@ void FUNC cmd_send(void)
 			} else {
 				if (waruptr->teamcode > 0) {
 					for (i=0;i<MAXTEAMS;++i) {
-						if (teamtab[i].teamcode == waruptr->teamcode && teamtab[i].teamname[0] != '@') {
+						if ((ULONG)teamtab[i].teamcode == waruptr->teamcode && teamtab[i].teamname[0] != '@') {
 							validteam = TRUE;
 							break;
 						}
@@ -2308,7 +2308,7 @@ static void trans_down(int item)
 			sprintf(gechrbuf,"%lu",(unsigned long)amt);
 			prfmsg(TRANSFR5,gechrbuf,item_name[item]);
 			setsect(warsptr); /* build PKEY */
-			pkey.plnum = plnum;
+			pkey.plnum = (SHORT)plnum;
 			gesdb(GEUPDATE,&pkey,(GALSECT *)&planet);
 			gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
 			return;
@@ -2383,7 +2383,7 @@ static void trans_up(int item)
 				sprintf(gechrbuf,"%lu",(unsigned long)amt);
 				prfmsg(TRANSUP5,gechrbuf,item_name[item]);
 				setsect(warsptr); /* load PKEY */
-				pkey.plnum = plnum;
+				pkey.plnum = (SHORT)plnum;
 				gesdb(GEUPDATE,&pkey,(GALSECT *)&planet);
 				gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
 				return;
@@ -2454,7 +2454,7 @@ void FUNC cmd_abandon(void)
 		geudb(GEUPDATE,waruptr->userid,waruptr);
 
 		setsect(warsptr); /* build PKEY */
-		pkey.plnum = plnum;
+		pkey.plnum = (SHORT)plnum;
 		gesdb(GEUPDATE,&pkey,(GALSECT *)&planet);
 
 		prfmsg(ABAN02);
@@ -2743,7 +2743,7 @@ static int attack_men(unsigned long num)
 	}
 
 	setsect(warsptr);
-	pkey.plnum = plnum;
+	pkey.plnum = (SHORT)plnum;
 	gesdb(GEUPDATE, &pkey, (GALSECT *)&planet);
 	return won;
 }
@@ -2883,7 +2883,7 @@ static int attack_fig(unsigned long num)
 	}
 
 	setsect(warsptr);
-	pkey.plnum = plnum;
+	pkey.plnum = (SHORT)plnum;
 	gesdb(GEUPDATE, &pkey, (GALSECT *)&planet);
 	return won;
 }
@@ -3312,7 +3312,7 @@ static void buy(int item)
 										plptr->cash += tot;
 									}
 									setsect(warsptr);
-									pkey.plnum = plnum;
+									pkey.plnum = (SHORT)plnum;
 									gesdb(GEUPDATE, &pkey, (GALSECT *)&planet);
 								}
 								warsptr->items[item] += amt;
@@ -4139,7 +4139,7 @@ void FUNC cmd_sysop(void)
 				sprintf(gechrbuf,"%lu (%d)",plptr->timestamp >> 4,(int)plptr->timestamp & 0xF);
 				prf("Planet timestamp: %s\r",gechrbuf);
 				outprfge(FLT_NONE,usrnum);
-				warsptr->where = 10 + plnum;
+				warsptr->where = (SHORT)(10 + plnum);
 				warsptr->speed = 0;
 				warsptr->speed2b = 0;
 				return;
@@ -5405,7 +5405,7 @@ void FUNC cmd_spy(void)
 		strcpy(plptr->spyowner,warsptr->userid);
 
 		setsect(warsptr); /* build PKEY */
-		pkey.plnum = plnum;
+		pkey.plnum = (SHORT)plnum;
 		gesdb(GEUPDATE, &pkey, (GALSECT *)&planet);
 
 		return;

@@ -541,39 +541,39 @@ void FUNC iniwara(void)
 	/* each class is loaded from its fixed-width option block in MPOGESHP.MSG */
 	for (n = 0; n < tot_classes; ++n) {
 		classbase = class_tab[i];
-		shipclass[i].max_type = tokopt(classbase, "USER", "CYBORG", "DROID", "<NONE>", NULL);
+		shipclass[i].max_type = (USHORT)tokopt(classbase, "USER", "CYBORG", "DROID", "<NONE>", NULL);
 		shipclass[i].typename = stgopt(++classbase);
 		logthis(spr("Loaded class %d - %s", i, shipclass[i].typename));
 
 		shipclass[i].npcprefx = stgopt(++classbase);
 		logthis(spr("  NPC prefix %s", shipclass[i].npcprefx));
 
-		shipclass[i].max_shlds = numopt(++classbase, 0, 19);
-		shipclass[i].max_phasr = numopt(++classbase, 0, 19);
-		shipclass[i].max_torps = numopt(++classbase, 0, 3);
-		shipclass[i].max_missl = numopt(++classbase, 0, 3);
-		shipclass[i].has_decoy = ynopt(++classbase);
-		shipclass[i].has_jam = ynopt(++classbase);
-		shipclass[i].has_zip = ynopt(++classbase);
-		shipclass[i].has_mine = ynopt(++classbase);
-		shipclass[i].max_attk = ynopt(++classbase);
-		shipclass[i].max_cloak = ynopt(++classbase);
-		shipclass[i].max_accel = numopt(++classbase, 0, 32767);
-		shipclass[i].max_warp = numopt(++classbase, 0, 255);
+		shipclass[i].max_shlds = (byte)numopt(++classbase, 0, 19);
+		shipclass[i].max_phasr = (byte)numopt(++classbase, 0, 19);
+		shipclass[i].max_torps = (byte)numopt(++classbase, 0, 3);
+		shipclass[i].max_missl = (byte)numopt(++classbase, 0, 3);
+		shipclass[i].has_decoy = (byte)ynopt(++classbase);
+		shipclass[i].has_jam = (byte)ynopt(++classbase);
+		shipclass[i].has_zip = (byte)ynopt(++classbase);
+		shipclass[i].has_mine = (byte)ynopt(++classbase);
+		shipclass[i].max_attk = (byte)ynopt(++classbase);
+		shipclass[i].max_cloak = (byte)ynopt(++classbase);
+		shipclass[i].max_accel = (USHORT)numopt(++classbase, 0, 32767);
+		shipclass[i].max_warp = (byte)numopt(++classbase, 0, 255);
 		shipclass[i].max_tons = lngopt(++classbase, 1, 2000000000L);
 		shipclass[i].max_price = lngopt(++classbase, 1, 2000000000L);
-		shipclass[i].max_points = numopt(++classbase, 1, 32767);
+		shipclass[i].max_points = (USHORT)numopt(++classbase, 1, 32767);
 		shipclass[i].scanrange = lngopt(++classbase, 1, 9999999L);
-		shipclass[i].cybs_can_att = ynopt(++classbase);
-		shipclass[i].noclaim = numopt(++classbase, 0, 5);
-		shipclass[i].lowest_to_attk = numopt(++classbase, 0, 255);
-		shipclass[i].tot_to_create = numopt(++classbase, 0, 255);
-		shipclass[i].tough_factor = numopt(++classbase, 0, 4);
-		shipclass[i].damfact = numopt(++classbase, 0, 32767);
-		shipclass[i].faction = numopt(++classbase, 0, 32767);
-		shipclass[i].loadout = numopt(++classbase, 0, 32767);
+		shipclass[i].cybs_can_att = (byte)ynopt(++classbase);
+		shipclass[i].noclaim = (byte)numopt(++classbase, 0, 5);
+		shipclass[i].lowest_to_attk = (byte)numopt(++classbase, 0, 255);
+		shipclass[i].tot_to_create = (USHORT)numopt(++classbase, 0, 255);
+		shipclass[i].tough_factor = (byte)numopt(++classbase, 0, 4);
+		shipclass[i].damfact = (USHORT)numopt(++classbase, 0, 32767);
+		shipclass[i].faction = (USHORT)numopt(++classbase, 0, 32767);
+		shipclass[i].loadout = (USHORT)numopt(++classbase, 0, 32767);
 
-		shipclass[i].hlpmsg = ++classbase;
+		shipclass[i].hlpmsg = (SHORT)++classbase;
 
 		shipclass[i].init_func = NULL;
 		shipclass[i].tick_func = NULL;
@@ -947,7 +947,7 @@ void FUNC gemidnight(void)
 			if (tmpusr.teamcode > 0) {
 				/* verify that each saved team code still points to a live team entry */
 				for (i = 0; i < MAXTEAMS; ++i) {
-					if (teamtab[i].teamcode == tmpusr.teamcode
+					if ((ULONG)teamtab[i].teamcode == tmpusr.teamcode
 						&& teamtab[i].teamname[0] != '@') {
 						foundit = TRUE;
 						break;
@@ -1192,7 +1192,7 @@ void FUNC outwar(int filter, unsigned exclude, unsigned target_channel, int mode
 	int zothusn;
 
 	for (zothusn = 0; zothusn < nships; ++zothusn) {
-		if (zothusn != exclude && ingegame(zothusn)) {
+		if ((unsigned)zothusn != exclude && ingegame(zothusn)) {
 			if (mode == 0) {
 				/* send to every in-game ship except the excluded one */
 				outprfge(filter, zothusn);
@@ -1462,7 +1462,7 @@ void FUNC fixplanetteam(void)
 	if (plptr->teamcode > 0) {
 		/* verify that the planet still points at a live team entry */
 		for (i = 0; i < MAXTEAMS; ++i) {
-			if (teamtab[i].teamcode == plptr->teamcode
+			if ((ULONG)teamtab[i].teamcode == plptr->teamcode
 				&& teamtab[i].teamname[0] != '@') {
 				valid = TRUE;
 				break;
@@ -1475,7 +1475,7 @@ void FUNC fixplanetteam(void)
 		plptr->teamcode = 0;
 		plptr->password[0] = 0;
 		setsect(warsptr); /* build PKEY */
-		pkey.plnum = plnum;
+		pkey.plnum = (SHORT)plnum;
 		gesdb(GEUPDATE, (PKEY *)&pkey, (GALSECT *)&planet);
 	}
 }
@@ -2105,7 +2105,7 @@ void FUNC outsect(int filter, COORD *coordptr, unsigned exclude)
 	src_neb = (byte)innebula(coord1(coordptr->xcoord), coord1(coordptr->ycoord));
 
 	for (zothusn = 0; zothusn < nterms; ++zothusn) {
-		if (ingegame(zothusn) && zothusn != exclude) {
+		if (ingegame(zothusn) && (unsigned)zothusn != exclude) {
 			wptr = warshpoff(zothusn);
 			if (samesect(&(wptr->coord), coordptr)) {
 				oth_neb = (byte)innebula(coord1(wptr->coord.xcoord), coord1(wptr->coord.ycoord));
@@ -2372,7 +2372,7 @@ int FUNC mnu_admenu1(void)
 			setsect(warsptr); /* build PKEY */
 			gesdb(GEUPDATE, &pkey, &sector);
 
-			pkey.plnum = plnum;
+			pkey.plnum = (SHORT)plnum;
 			gesdb(GEUPDATE, (PKEY *)&pkey, (GALSECT *)&planet);
 
 			prfmsg(ADMENU1A);
@@ -2407,7 +2407,7 @@ static int mnu_admenu1a(void)
 		plptr->name[19] = 0;
 
 		setsect(warsptr); /* build PKEY */
-		pkey.plnum = plnum;
+		pkey.plnum = (SHORT)plnum;
 		gesdb(GEUPDATE, (PKEY *)&pkey, (GALSECT *)&planet);
 
 		if (warsptr->shipname[0] == 0)
@@ -2556,7 +2556,7 @@ int FUNC mnu_admenu2b(void)
 			waruptr->cash += amt;
 			plptr->tax -= amt;
 			setsect(warsptr); /* build PKEY */
-			pkey.plnum = plnum;
+			pkey.plnum = (SHORT)plnum;
 			gesdb(GEUPDATE, (PKEY *)&pkey, (GALSECT *)&planet);
 		}
 	}
@@ -2735,7 +2735,7 @@ int FUNC mnu_admenu2h(void)
 		plptr->taxrate = amt;
 
 		setsect(warsptr); /* build PKEY */
-		pkey.plnum = plnum;
+		pkey.plnum = (SHORT)plnum;
 		gesdb(GEUPDATE, (PKEY *)&pkey, (GALSECT *)&planet);
 
 		prfmsg(ADMENU2);
@@ -2768,7 +2768,7 @@ int FUNC mnu_admenu2i(void)
 		else if (sameas(plptr->password, "team")) {
 			if (waruptr->teamcode > 0) {
 				for (i = 0; i < MAXTEAMS; ++i) {
-					if (teamtab[i].teamcode == waruptr->teamcode
+					if ((ULONG)teamtab[i].teamcode == waruptr->teamcode
 						&& teamtab[i].teamname[0] != '@')
 						break;
 				}
@@ -2794,7 +2794,7 @@ int FUNC mnu_admenu2i(void)
 		}
 
 		setsect(warsptr); /* build PKEY */
-		pkey.plnum = plnum;
+		pkey.plnum = (SHORT)plnum;
 		gesdb(GEUPDATE, (PKEY *)&pkey, (GALSECT *)&planet);
 
 		prfmsg(ADMENU2);
@@ -2827,7 +2827,7 @@ int FUNC mnu_admenu2j(void)
 	}
 
 	setsect(warsptr); /* build PKEY */
-	pkey.plnum = plnum;
+	pkey.plnum = (SHORT)plnum;
 	gesdb(GEUPDATE, (PKEY *)&pkey, (GALSECT *)&planet);
 
 	prfmsg(ADMENU2);
@@ -3043,7 +3043,7 @@ void FUNC update_items(void)
 	plptr->items[warsptr->titem].reserve = titems[usrnum].reserve;
 	plptr->items[warsptr->titem].markup2a = titems[usrnum].markup2a;
 	setsect(warsptr); /* build PKEY */
-	pkey.plnum = plnum;
+	pkey.plnum = (SHORT)plnum;
 	gesdb(GEUPDATE, (PKEY *)&pkey, (GALSECT *)&planet);
 
 }

@@ -121,7 +121,7 @@ static void print_shiptab_data(SCANTAB *sptr, int shp)
 	if (sptr->ship[shp].flag == 2)
 		prf("%6s    %4s    %4s%9s","?????","????","????","??.??");
 	else
-		print_ship_data(sptr->ship[shp].dist, sptr->ship[shp].bearing, sptr->ship[shp].heading, sptr->ship[shp].speed);
+		print_ship_data((long)sptr->ship[shp].dist, sptr->ship[shp].bearing, sptr->ship[shp].heading, sptr->ship[shp].speed);
 }
 
 
@@ -461,7 +461,7 @@ static void print_range_summary(SCANTAB *sptr, int shp, long dist_filter, int ma
 		if (warsptr->jam_sev > (byte)7 && (gernd() % 2 == 0))
 			continue;
 
-		visible[count++] = shp;
+		visible[count++] = (byte)shp;
 	}
 
 	for (i = 0; i < count; i += 2) {
@@ -505,7 +505,7 @@ static void map_planets(void)
 	unsigned x, y;
 
 	getsector(&warsptr->coord);
-	for (i = 0; i < sector.numplan; ++i) {
+	for (i = 0; i < (int)sector.numplan; ++i) {
 		if (sector.ptab[i].coord.xcoord != 0) {
 			if (se_nebula && cdistance(&warsptr->coord,&sector.ptab[i].coord)*10000.0 > (double)NEBRNG
 				&& !owned_planet[i])
@@ -514,7 +514,7 @@ static void map_planets(void)
 			y = coord2(sector.ptab[i].coord.ycoord)+25;
 			if (map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] == '*')
 				mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '7';
-			map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '1' + i;
+			map[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = (char)('1' + i);
 			if (mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] != '7') {
 				if (sector.ptab[i].type == PLTYPE_WORM)
 					mapc[y/(SSMAX/(MAXY-1))][x/(SSMAX/(MAXX-1))] = '3';
@@ -666,7 +666,7 @@ static void scan_sh(void)
 
 	if (shpnum >= 0) {
 		wptr = warshpoff(shpnum);
-		scandist = cdistance(&warsptr->coord,&wptr->coord)*10000;
+		scandist = (long)(cdistance(&warsptr->coord,&wptr->coord) * 10000);
 		target_neb = innebula(coord1(wptr->coord.xcoord),coord1(wptr->coord.ycoord));
 		if ((nebmask || target_neb) && !(nebmask && target_neb && scandist < (long)NEBRNG)) {
 			if (nebmask)
@@ -690,7 +690,7 @@ static void scan_sh(void)
 
 		wptr = warshpoff(shpnum);
 		wuptr = warusroff(shpnum);
-		scandist = cdistance(&warsptr->coord,&wptr->coord)*10000;
+		scandist = (long)(cdistance(&warsptr->coord,&wptr->coord) * 10000);
 		if (scandist < ship_scanrange(warsptr)) {
 			bearing = cbearing(&warsptr->coord,&wptr->coord,warsptr->heading);
 			heading = cbearing(&wptr->coord,&warsptr->coord,wptr->heading);
@@ -1124,8 +1124,8 @@ static void scan_ra(void)
 	}
 
 	/* plot mines */
-	for (i = 0, mptr = mines; i < nummines; ++mptr, ++i) {
-		if (mptr->channel != 255) {
+	for (i = 0, mptr = mines; i < (int)nummines; ++mptr, ++i) {
+		if (mptr->channel != (byte)255) {
 			xf = ((mptr->coord.xcoord - x1) / xfactor) + ((double)MAXX)/2.0;
 			yf = ((mptr->coord.ycoord - y1) / yfactor) + ((double)MAXY)/2.0;
 
@@ -1204,7 +1204,7 @@ static void scan_se(void)
 	setsect(warsptr);
 	nebmask = innebula(xsect,ysect);
 	if (nebmask) {
-		for (i = 0; i < sector.numplan; ++i) {
+		for (i = 0; i < (int)sector.numplan; ++i) {
 			plnum = i + 1;
 			if (getplanetdat(usrnum) && sameas(plptr->userid,warsptr->userid))
 				owned_planet[i] = 1;
@@ -1216,11 +1216,11 @@ static void scan_se(void)
 
 	update_scantab(warsptr,usrnum);
 
-	for (i=0,mptr = mines; i<nummines;++mptr,++i) {
+	for (i=0,mptr = mines; i<(int)nummines;++mptr,++i) {
 		x = coord1(mptr->coord.xcoord);
 		y = coord1(mptr->coord.ycoord);
 
-		if (mptr->channel != 255 && (x==xsect && y==ysect)) {	/* if a live mine */
+		if (mptr->channel != (byte)255 && (x==xsect && y==ysect)) {	/* if a live mine */
 			if (nebmask && cdistance(&warsptr->coord,&mptr->coord)*10000.0 > (double)NEBRNG)
 				continue;
 			x = coord2(mptr->coord.xcoord) +50;
