@@ -507,7 +507,7 @@ void FUNC cmd_gehelp(void)
 
 void FUNC cmd_impulse(void)
 {
-	unsigned deg;
+	unsigned deg = (unsigned)warsptr->head2b;
 
 	if (margc < 2 || margc > 3) {
 		prfmsg(FORMAT, "IMPULSE");
@@ -581,7 +581,7 @@ void FUNC cmd_impulse(void)
 
 void FUNC cmd_warp(void)
 {
-	unsigned deg;
+	unsigned deg = (unsigned)warsptr->head2b;
 	int speed, topspeed, cap, classcap, capwarn;
 
 	if (margc < 2 || margc > 3) {
@@ -4155,8 +4155,7 @@ void FUNC cmd_sysop(void)
 		outprfge(FLT_NONE,usrnum);
 		return;
 	} else if (sameas("fill",margv[1])) {
-		if (margc == 2)
-			amt = ULCAP;
+		amt = ULCAP;
 		if (margc == 3)
 			amt = atol(margv[2]);
 		for (i = 0; i < NUMITEMS; ++i)

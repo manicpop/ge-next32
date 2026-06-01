@@ -416,7 +416,7 @@ void FUNC lock_simple(WARSHP *ptr, int usrn, int msg, int skipsame)
 {
 	WARSHP *lptr;
 	int i;
-	int px, py, lx, ly;
+	int px = 0, py = 0, lx, ly;
 	char letter;
 
 	if (skipsame) {
@@ -631,7 +631,7 @@ void FUNC firep(WARSHP *ptr, int usrn)
 {
 	WARSHP *wptr;
 	WARUSR *uptr;
-	WARUSR *wuptr;
+	WARUSR *wuptr = NULL;
 	unsigned deg;
 	double factor;
 	byte src_neb, targ_neb, nebmask, underone;
@@ -831,7 +831,7 @@ void FUNC firehp(WARSHP *ptr, int usrn)
 {
 	WARSHP *wptr;
 	WARUSR *uptr;
-	WARUSR *wuptr;
+	WARUSR *wuptr = NULL;
 	unsigned deg;
 	double factor;
 	byte src_neb, targ_neb, nebmask;
@@ -2704,7 +2704,7 @@ void FUNC killem(WARSHP *ptr, int usrn)
 	WARSHP *nearptr;
 	unsigned i;
 	unsigned long room100;
-	int who, comma, full, lospos, winpos, nearby;
+	int who, comma, full, lospos = 0, winpos = 0, nearby;
 	long scr, amt, bonus1, bonus2, ded_amt;
 	double ddist;
 	unsigned int r = gernd();
