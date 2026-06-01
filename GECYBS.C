@@ -452,7 +452,7 @@ static int notclaimed(WARSHP *ptr, int usrn)
 			noclaim = 5;
 	}
 
-	logthis(spr("notclaimed: nc = %d, cls = %d, cls.noclaim = %d",
+	logthis(spr("notclaimed: nc = %d, class = %d, class.noclaim = %d",
 		nc, ptr->shpclass, noclaim));
 	return nc < noclaim;
 }
@@ -864,7 +864,7 @@ static void cyb_check_lockon(WARSHP *ptr, int usrn)
 				/* if playing, visible, and not same faction */
 				if (ingegame(zothusn) && isvisible(ptr, wptr) &&
 					shipclass[wptr->shpclass].faction != shipclass[ptr->shpclass].faction &&
-				/* and high enough cls to attack, and not already claimed, and passes npc throttle */
+				/* and high enough class to attack, and not already claimed, and passes npc throttle */
 				lta <= wptr->shpclass && notclaimed(wptr, zothusn) &&
 				cyb_pick_fight(zothusn, 1) &&
 				/* and if a user or a droid that we target */
@@ -1142,10 +1142,10 @@ void FUNC cyb_lives(WARSHP *ptr, int usrn)
 						/* if target is NPC, and not traveling to neutral zone or is already targeting me */
 						((wptr->status == GESTAT_AUTO &&
 						((wptr->npcstate < 2 || wptr->npcstate > 7) || wptr->cybmine == usrn) &&
-						/* ...and is attackable cls and i've already targeted it or decide to do so */
+						/* ...and is attackable class and i've already targeted it or decide to do so */
 						(shipclass[wptr->shpclass].cybs_can_att &&
 						(ptr->cybmine == zothusn || cyb_pick_fight(zothusn, 0)))) ||
-						/* if target is user, and attackable cls... */
+						/* if target is user, and attackable class... */
 						(wptr->status == GESTAT_USER &&
 						(shipclass[wptr->shpclass].cybs_can_att ||
 						/* ...or i've fired recently or my target has fired recently or gets too close to me */

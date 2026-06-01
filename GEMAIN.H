@@ -255,7 +255,7 @@
 #define RANGEFULL 3
 #define RANGENAMES 4
 #define RANGEEXTRA 5
-#define LONG 6
+#define MAP_LONG 6
 #define RANGENOMAP 7
 #define SECTORNOMAP 8
 
