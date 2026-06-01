@@ -586,7 +586,7 @@ void FUNC cmd_impulse(void)
 void FUNC cmd_warp(void)
 {
 	unsigned deg = (unsigned)warsptr->head2b;
-	int speed, topspeed, cap, classcap, capwarn;
+	int warp_speed, topspeed, cap, classcap, capwarn;
 
 	if (margc < 2 || margc > 3) {
 		prfmsg(FORMAT, "WARP");
@@ -612,26 +612,26 @@ void FUNC cmd_warp(void)
 		return;
 	}
 
-	speed = atoi(margv[1]);
+	warp_speed = atoi(margv[1]);
 	topspeed = warsptr->topspeed;
 	cap = topspeed + (topspeed / 2);
 	classcap = shipclass[warsptr->shpclass].max_warp +
 		(shipclass[warsptr->shpclass].max_warp / 2);
 	capwarn = FALSE;
-	if (speed < 0) {
+	if (warp_speed < 0) {
 		prfmsg(FORMAT, "WARP");
 		outprfge(FLT_NONE, usrnum);
 		return;
 	}
 
-	if (speed > classcap && speed > warsptr->speed / 1000) {
+	if (warp_speed > classcap && warp_speed > warsptr->speed / 1000) {
 		prfmsg(WARP03);
 		outprfge(FLT_NONE, usrnum);
 		return;
 	}
 
 	/* if requsted speed is over 150% cruising speed and over current speed */
-	if (speed > cap && speed > warsptr->speed/1000) {
+	if (warp_speed > cap && warp_speed > warsptr->speed/1000) {
 		/* if current speed is over 100% cruising speed */
 		if (warsptr->speed/1000 > warsptr->topspeed) {
 			/* if current speed is over 150% cruising speed, don't change */
@@ -642,9 +642,9 @@ void FUNC cmd_warp(void)
 			}
 			/* if not, change to 150% cruising speed */
 			else {
-				speed = cap;
+				warp_speed = cap;
 				capwarn = TRUE;
-				prfmsg(WARPSPD4,speed);
+				prfmsg(WARPSPD4,warp_speed);
 				outprfge(FLT_NONE,usrnum);
 			}
 		} else {
@@ -672,7 +672,7 @@ void FUNC cmd_warp(void)
 		if (*gechrbuf2 != '@')
 			if (!valdegree(gechrbuf))
 				return;
-		if (speed > topspeed && capwarn == FALSE) {
+		if (warp_speed > topspeed && capwarn == FALSE) {
 			if (topspeed < shipclass[warsptr->shpclass].max_warp)
 				prfmsg(WARPSPD,topspeed);
 			else
@@ -697,9 +697,9 @@ void FUNC cmd_warp(void)
 		}
 		prfmsg(ENGFIRE,deg);
 		outprfge(FLT_NONE,usrnum);
-		if (ship_accel(warsptr) >= 1000.0 && warsptr->speed < 1000.0 && speed != 0)
+		if (ship_accel(warsptr) >= 1000.0 && warsptr->speed < 1000.0 && warp_speed != 0)
 			warsptr->speed = 0.0;	/* no fractional warp speeds */
-		warsptr->speed2b = 1000.0 * (float)speed;
+		warsptr->speed2b = 1000.0 * (float)warp_speed;
 		if (deg != warsptr->head2b)
 			warsptr->head2b = (double)deg;
 		} else {
@@ -1017,7 +1017,7 @@ void FUNC cmd_missl(void)
 {
 	int shpnum;
 	WARSHP *wptr;
-	unsigned energy;
+	unsigned missile_energy;
 	byte nebmask;
 
 	if (shipclass[warsptr->shpclass].max_missl == 0) {
@@ -1045,14 +1045,14 @@ void FUNC cmd_missl(void)
 	}
 
 	if (margc == 2)
-		energy = 5000;
+		missile_energy = 5000;
 	else {
 		if (atol(margv[2]) > 20000L)
-			energy = 20000;
+			missile_energy = 20000;
 		else if (atol(margv[2]) < 2000L)
-			energy = 2000;
+			missile_energy = 2000;
 		else
-			energy = (unsigned)(atol(margv[2]));
+			missile_energy = (unsigned)(atol(margv[2]));
 	}
 
 	nebmask = (byte)innebula(coord1(warsptr->coord.xcoord),coord1(warsptr->coord.ycoord));
@@ -1090,7 +1090,7 @@ void FUNC cmd_missl(void)
 			}
 			if (warsptr->shieldstat == SHIELDUP)
 				shielddn(warsptr,usrnum);
-			misl(warsptr,usrnum,shpnum,energy,energy);
+			misl(warsptr,usrnum,shpnum,missile_energy,missile_energy);
 		}
 	} else {
 		if (nebmask)

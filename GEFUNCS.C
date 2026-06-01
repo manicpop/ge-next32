@@ -60,7 +60,7 @@ static void	pick_letter(SCANTAB *ptr);
 int FUNC lockon(WARSHP *ptr, int type, int ship, int usrn)
 {
 	WARSHP *wptr;
-	double dist, speed, fact = 0.0;
+	double dist, closing_speed, fact = 0.0;
 
 	if (type == 0 && ptr->torpcntl > 0) {
 		prfmsg(TRBROKE);
@@ -90,13 +90,13 @@ int FUNC lockon(WARSHP *ptr, int type, int ship, int usrn)
 
 	dist = cdistance(&ptr->coord,&(wptr->coord));
 	if (wptr->cloak < 10 && (dist * 10000.0) < (double)ship_scanrange(ptr)) {
-		speed = ptr->speed + wptr->speed;
+		closing_speed = ptr->speed + wptr->speed;
 
 		if (type == 0) { /* torpedo */
 			if (wptr->speed > 999)
 				fact = 0.0;
 			else {
-				fact = (1.2 - (speed / 5000));
+				fact = (1.2 - (closing_speed / 5000));
 				fact *= ((5.0 - dist) / tor_fact);
 			}
 		}
@@ -1041,7 +1041,7 @@ int FUNC torp(WARSHP *ptr, int usrn, int shpnum)
 ** Launch a missile at a locked target                                   **
 **************************************************************************/
 
-int FUNC misl(WARSHP *ptr, int usrnum, int shpnum, unsigned energy, unsigned eng_flu)
+int FUNC misl(WARSHP *ptr, int usrn, int shpnum, unsigned payload_energy, unsigned eng_flu)
 {
 	WARSHP *wptr;
 	WARSHP *optr;
@@ -1050,11 +1050,11 @@ int FUNC misl(WARSHP *ptr, int usrnum, int shpnum, unsigned energy, unsigned eng
 
 	if (ptr->damage >= 100.0) {
 		prfmsg(RNDMISL);
-		outprfge(FLT_NONE,usrnum);
+		outprfge(FLT_NONE,usrn);
 		return 0;
 	}
 
-	if (lockon(ptr,1,shpnum,usrnum) == 1) {
+	if (lockon(ptr,1,shpnum,usrn) == 1) {
 		wptr = warshpoff(shpnum);
 		slot = -1;
 		/* incoming missiles are tracked on the target ship, one slot per live inbound round */
@@ -1069,7 +1069,7 @@ int FUNC misl(WARSHP *ptr, int usrnum, int shpnum, unsigned energy, unsigned eng
 			ocount = 0;
 			for (i = 0; i < MAXMISSL; ++i) {
 				if (wptr->lmissl[i].distance > 0
-					&& wptr->lmissl[i].channel != (byte)usrnum
+					&& wptr->lmissl[i].channel != (byte)usrn
 					&& wptr->lmissl[i].channel < nships
 					&& ingegame((int)wptr->lmissl[i].channel)) {
 					found = 0;
@@ -1094,7 +1094,7 @@ int FUNC misl(WARSHP *ptr, int usrnum, int shpnum, unsigned energy, unsigned eng
 				strcat(gechrbuf,(ocount > 1) ? " are" : " is");
 				prfmsg(MISMANY2,gechrbuf);
 			}
-			outprfge(FLT_NONE,usrnum);
+			outprfge(FLT_NONE,usrn);
 			return 0;
 		}
 		if (ptr->missl_fired >= shipclass[ptr->shpclass].max_missl) {
@@ -1103,28 +1103,28 @@ int FUNC misl(WARSHP *ptr, int usrnum, int shpnum, unsigned energy, unsigned eng
 					prfmsg(MISSRELS);
 				else
 					prfmsg(MISSRELM);
-				outprfge(FLT_NONE,usrnum);
+				outprfge(FLT_NONE,usrn);
 			}
 			return 0;
 		}
-		if (fluxstat(ptr,usrnum,eng_flu) == 0) {
+		if (fluxstat(ptr,usrn,eng_flu) == 0) {
 			prfmsg(MISSHRT);
-			outprfge(FLT_NONE,usrnum);
+			outprfge(FLT_NONE,usrn);
 			return 0;
 		}
-		prfmsg(MFIRE1,energy);
-		outprfge(FLT_NONE,usrnum);
+		prfmsg(MFIRE1,payload_energy);
+		outprfge(FLT_NONE,usrn);
 		--ptr->items[I_MISSILE];
 		++ptr->missl_fired;
 		ptr->energy -= eng_flu;
-		lock_proj(usrnum,shpnum,LOCKMIS,LOCKMISN);
-		prfmsg(MFIRE2,shpltr(shpnum,usrnum));
+		lock_proj(usrn,shpnum,LOCKMIS,LOCKMISN);
+		prfmsg(MFIRE2,shpltr(shpnum,usrn));
 		outprfge(FLT_NONE,shpnum);
 		/* store the initial travel distance plus a small offset, along with the missile's payload energy */
 		wptr->lmissl[slot].distance = (unsigned)(cdistance(&ptr->coord,&(wptr->coord))*10000);
 		wptr->lmissl[slot].distance += 20;
-		wptr->lmissl[slot].channel = (byte)usrnum;
-		wptr->lmissl[slot].energy = energy;
+		wptr->lmissl[slot].channel = (byte)usrn;
+		wptr->lmissl[slot].energy = payload_energy;
 		wptr->cantexit = FIRETICKS;
 		ptr->cantexit = FIRETICKS;
 		return 1;
@@ -1493,7 +1493,7 @@ void FUNC tossingegame(void)
 
 int FUNC initshp(char *userid, int type)
 {
-	double ddistance;
+	double planet_dist;
 	int i, flag;
 
 	logthis(spr("GE:DBG:initship %d",type));
@@ -1521,8 +1521,8 @@ int FUNC initshp(char *userid, int type)
 			flag = 0;
 			for (i = 0; i < sector.numplan; ++i) {
 				if (sector.ptab[i].coord.xcoord != 0) {
-					ddistance = cdistance(&tmpshp.coord,&sector.ptab[i].coord) * 10000;
-					if (ddistance < 1000)
+					planet_dist = cdistance(&tmpshp.coord,&sector.ptab[i].coord) * 10000;
+					if (planet_dist < 1000)
 						flag = 1;
 				}
 			}
@@ -3051,9 +3051,9 @@ void FUNC recharge(WARSHP *ptr)
 ** Check flux status                                                     **
 **************************************************************************/
 
-int FUNC fluxstat(WARSHP *ptr, int usrn, unsigned energy)
+int FUNC fluxstat(WARSHP *ptr, int usrn, unsigned needed_energy)
 {
-	if (ptr->energy < energy) {
+	if (ptr->energy < needed_energy) {
 		if (ptr->items[I_FLUXPOD] > 0) {
 			ptr->energy = ENGYMAX;
 			--ptr->items[I_FLUXPOD];
@@ -5173,19 +5173,19 @@ char * FUNC showupg(WARSHP *ptr)
 ** Format one displayed warp-speed string                                **
 **************************************************************************/
 
-char * FUNC showarp(double speed)
+char * FUNC showarp(double warp_speed)
 {
-	if (speed == 0.0)
+	if (warp_speed == 0.0)
 		sprintf(warpbuf,"0.00");
 	else
 #ifdef MBBSEMU
-	if (fabs(speed - (long)(speed / FARSPEED) * FARSPEED) < 1e-6)
+	if (fabs(warp_speed - (long)(warp_speed / FARSPEED) * FARSPEED) < 1e-6)
 #else
-	if (fmod(speed, FARSPEED) == 0.0)
+	if (fmod(warp_speed, FARSPEED) == 0.0)
 #endif
 		sprintf(warpbuf,"??.??");
 	else
-		sprintf(warpbuf,"%.2f",speed/1000.0);
+		sprintf(warpbuf,"%.2f",warp_speed/1000.0);
 #ifdef MBBSEMU
 	/* MBBSemu doesn't currently honor %.2f */
 	if (warpbuf[strlen(warpbuf) - 2] == '.')
@@ -5271,19 +5271,19 @@ void FUNC rospos(WARUSR *losptr, WARUSR *winptr, int *lospos, int *winpos)
 ** Convert a raw damage number to descriptive text                       **
 **************************************************************************/
 
-void FUNC damstr(int damage)
+void FUNC damstr(int damage_amt)
 {
-	if (damage == 0)
+	if (damage_amt == 0)
 		strcpy(gechrbuf,"no");
-	else if (damage < 2)
+	else if (damage_amt < 2)
 		strcpy(gechrbuf,"negligible");
-	else if (damage < 12)
+	else if (damage_amt < 12)
 		strcpy(gechrbuf,"very light");
-	else if (damage < 25)
+	else if (damage_amt < 25)
 		strcpy(gechrbuf,"light");
-	else if (damage < 50)
+	else if (damage_amt < 50)
 		strcpy(gechrbuf,"moderate");
-	else if (damage < 75)
+	else if (damage_amt < 75)
 		strcpy(gechrbuf,"heavy");
 	else
 		strcpy(gechrbuf,"severe");

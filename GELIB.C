@@ -102,12 +102,12 @@ static double clamp_acos(double v)
 ** Return the signed relative bearing from ptr1 to ptr2                  **
 **************************************************************************/
 
-int FUNC cbearing(COORD *ptr1, COORD *ptr2, double heading)
+int FUNC cbearing(COORD *ptr1, COORD *ptr2, double base_heading)
 {
 	double b;
 
 	b = vector(ptr1, ptr2);
-	b = normal(360.0 - heading + b);
+	b = normal(360.0 - base_heading + b);
 
 	/* fold the absolute angle into the signed -180..180 display range */
 	if (b > 180.0)
@@ -200,18 +200,18 @@ double FUNC normal(double angle)
 ** Convert degrees to radians                                            **
 **************************************************************************/
 
-double FUNC degtorad(double value)
+double FUNC degtorad(double degrees)
 {
-	return value * (PI / 180);
+	return degrees * (PI / 180);
 }
 
 /**************************************************************************
 ** Convert radians to degrees                                            **
 **************************************************************************/
 
-double FUNC radtodeg(double value)
+double FUNC radtodeg(double radians)
 {
-	return value * (180 / PI);
+	return radians * (180 / PI);
 }
 
 /**************************************************************************

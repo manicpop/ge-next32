@@ -475,7 +475,7 @@ static int xgetsector(COORD *sect, int wormy)
 {
 	int p, i, k, j;
 	double ddist;
-	byte tooclose;
+	byte planet_too_close;
 
 	/* Build the integer key for lookup */
 	pkey.xsect = coord1(sect->xcoord);
@@ -568,13 +568,13 @@ static int xgetsector(COORD *sect, int wormy)
 				do {
 					sector.ptab[i].coord.xcoord = (((double)pkey.xsect) + rndm(0.800)) + .1;
 					sector.ptab[i].coord.ycoord = (((double)pkey.ysect) + rndm(0.800)) + .1;
-					tooclose = FALSE;
+					planet_too_close = FALSE;
 					for (j = 0; j < i; ++j) {
 						ddist = cdistance(&sector.ptab[i].coord, &sector.ptab[j].coord);
 						if (ddist < 0.0700)
-							tooclose = TRUE;
+							planet_too_close = TRUE;
 					}
-					} while (tooclose == TRUE);
+					} while (planet_too_close == TRUE);
 
 				sector.numplan = p;
 				sector.type = SECTYPE_NORMAL;

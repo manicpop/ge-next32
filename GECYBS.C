@@ -328,7 +328,7 @@ void FUNC cyb_init(WARSHP *ptr, int usrn, int cls)
 ** Assign closest cybs to ship entering game or going through wormhole   **
 **************************************************************************/
 
-void FUNC assign_cybs(int usrnum, int call)
+void FUNC assign_cybs(int target_usrn, int call)
 {
 	WARSHP *wptr;
 	WARSHP *ptr;
@@ -347,7 +347,7 @@ void FUNC assign_cybs(int usrnum, int call)
 		ptr = warshpoff(zothusn);
 		if (ptr->status == GESTAT_AUTO &&
 			shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG &&
-			ptr->cybmine == usrnum) {
+			ptr->cybmine == target_usrn) {
 			if (call == 0)
 				ptr->cybmine = 255;
 			else
@@ -355,7 +355,7 @@ void FUNC assign_cybs(int usrnum, int call)
 		}
 	}
 
-	wptr = warshpoff(usrnum);
+	wptr = warshpoff(target_usrn);
 	/* if we're not clearing, only claim enough to fill claims */
 	noclaim = shipclass[wptr->shpclass].noclaim;
 	if (wptr->upgrade & TPONDER) {
@@ -398,7 +398,7 @@ void FUNC assign_cybs(int usrnum, int call)
 			return;
 
 		ptr = warshpoff(low_ship);
-		ptr->cybmine = usrnum;
+		ptr->cybmine = target_usrn;
 		ptr->track_grace = CYBGRACE;
 	}
 }

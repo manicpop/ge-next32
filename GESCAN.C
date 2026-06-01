@@ -62,9 +62,9 @@ static void scan_lo(void);
 ** Functions for printmap()                                              **
 **************************************************************************/
 
-static void set_map_color(int color)
+static void set_map_color(int map_color)
 {
-	switch (color) {
+	switch (map_color) {
 	case 1: prf(CLR_RED2); break;
 	case 2: prf(CLR_GREEN2); break;
 	case 3: prf(CLR_YELLOW2); break;
@@ -75,29 +75,29 @@ static void set_map_color(int color)
 	}
 }
 
-static void print_ship_letter(int othusn, char letter)
+static void print_ship_letter(int shipno, char letter)
 {
-	int type = shipclass[warshpoff(othusn)->shpclass].max_type;
+	int ship_type = shipclass[warshpoff(shipno)->shpclass].max_type;
 
 	if (warsptr->jam_sev > (byte)2 && (gernd()%(10 / warsptr->jam_sev)) == (byte)0)
 		letter = '?';
 
 	if (letter == '?')
 		prf("%s%c", CLR_WHITE2, letter);
-	else if (type == CLASSTYPE_CYBORG)
+	else if (ship_type == CLASSTYPE_CYBORG)
 		prf("%s%c%s", CLR_RED2, letter, CLR_WHITE2);
-	else if (type == CLASSTYPE_DROID)
+	else if (ship_type == CLASSTYPE_DROID)
 		prf("%s%c%s", CLR_BLUE2, letter, CLR_WHITE2);
 	else
 		prf("%s%c%s", CLR_GREEN2, letter, CLR_WHITE2);
 }
 
-static void print_ship_data(long dist, int bearing, int heading, double speed)
+static void print_ship_data(long dist, int rel_bearing, int rel_heading, double warp_speed)
 {
 	int i;
 
 	/* build base string */
-	sprintf(gechrbuf, "%s    %4d    %4d%9s", spr("%6ld", dist), bearing, heading, showarp(speed));
+	sprintf(gechrbuf, "%s    %4d    %4d%9s", spr("%6ld", dist), rel_bearing, rel_heading, showarp(warp_speed));
 
 	/* heavy jamming: total scramble */
 	if (warsptr->jam_sev > (byte)7) {
@@ -125,14 +125,14 @@ static void print_shiptab_data(SCANTAB *sptr, int shp)
 }
 
 
-static int build_ship_name(int othusn)
+static int build_ship_name(int shipno)
 {
 	WARSHP *wptr;
 	int ulen, slen, show, maxlen;
 
-	wptr = warshpoff(othusn);
+	wptr = warshpoff(shipno);
 	maxlen = 36;
-	if ((warsptr->lock == othusn || wptr->distress != 255) && warsptr->jam_sev < (byte)3)
+	if ((warsptr->lock == shipno || wptr->distress != 255) && warsptr->jam_sev < (byte)3)
 		maxlen -= 2;
 
 	if (wptr->status == GESTAT_AUTO) {
@@ -172,13 +172,13 @@ static int build_ship_name(int othusn)
 	return((int)strlen(gechrbuf));
 }
 
-static void print_ship_name(int othusn)
+static void print_ship_name(int shipno)
 {
 	int len, k;
 	unsigned int rseed = gernd();
 
 	/* user ships show userid, or userid plus ship name if one exists */
-	len = build_ship_name(othusn);
+	len = build_ship_name(shipno);
 
 	if (warsptr->jam_sev > (byte)7)
 		for (k = 0; k < len; k++)
@@ -192,9 +192,9 @@ static void print_ship_name(int othusn)
 				gechrbuf[k] = '?';
 		}
 
-	if (warsptr->lock == othusn && warsptr->jam_sev < (byte)3)
+	if (warsptr->lock == shipno && warsptr->jam_sev < (byte)3)
 		prf("%s*%s%s%s*", CLR_RED1, CLR_CYAN1, gechrbuf, CLR_RED1);
-	else if (warshpoff(othusn)->distress != 255 && warsptr->jam_sev < (byte)3)
+	else if (warshpoff(shipno)->distress != 255 && warsptr->jam_sev < (byte)3)
 		prf("%s*%s%s%s*", CLR_GREEN2, CLR_CYAN1, gechrbuf, CLR_GREEN2);
 	else
 		prf(" %s%s", CLR_CYAN1, gechrbuf);
@@ -372,33 +372,33 @@ static void print_map_row(int i, int maptype)
 /* RANGEEXTRA / RANGENOMAP pairs */
 static void print_ship_pair(SCANTAB *sptr, int left, int right, long dist_filter)
 {
-	int i, pad, othusn;
+	int i, pad, shipno;
 
-	othusn = sptr->ship[left].shipno;
+	shipno = sptr->ship[left].shipno;
 	prf("   ");
-	print_ship_letter(othusn, sptr->ship[left].letter);
+	print_ship_letter(shipno, sptr->ship[left].letter);
 	prf("   ");
 	print_shiptab_data(sptr,left);
 
 	if (right < NOSCANTAB && sptr->ship[right].flag != 0 && (long)(sptr->ship[right].dist) < dist_filter) {
-		othusn = sptr->ship[right].shipno;
+		shipno = sptr->ship[right].shipno;
 		prf("  ");
-		print_ship_letter(othusn, sptr->ship[right].letter);
+		print_ship_letter(shipno, sptr->ship[right].letter);
 		prf("   ");
 		print_shiptab_data(sptr,right);
 	}
 	prf("\r");
 
-	othusn = sptr->ship[left].shipno;
-	pad = build_ship_name(othusn);
+	shipno = sptr->ship[left].shipno;
+	pad = build_ship_name(shipno);
 	prf("   ");
-	print_ship_name(othusn);
+	print_ship_name(shipno);
 	for (i = 0; i < 36 - pad; ++i)
 		prf(" ");
 
 	if (right < NOSCANTAB && sptr->ship[right].flag != 0 && (long)(sptr->ship[right].dist) < dist_filter) {
-		othusn = sptr->ship[right].shipno;
-		print_ship_name(othusn);
+		shipno = sptr->ship[right].shipno;
+		print_ship_name(shipno);
 	}
 
 	prf("\r");
@@ -407,20 +407,20 @@ static void print_ship_pair(SCANTAB *sptr, int left, int right, long dist_filter
 /* RANGENAMES (or first eight of RANGEEXTRA) */
 static int print_range_line(SCANTAB *sptr, int shp, int *ff, long dist_filter)
 {
-	int othusn;
+	int shipno;
 
 	if (shp < NOSCANTAB && sptr->ship[shp].flag != 0 &&
 		shp < (MAXY + 1) / 2 && (long)(sptr->ship[shp].dist) < dist_filter) {
-		othusn = sptr->ship[shp].shipno;
+		shipno = sptr->ship[shp].shipno;
 		prf("     ");
 
 		if (*ff == 0) {
-			print_ship_letter(othusn, sptr->ship[shp].letter);
+			print_ship_letter(shipno, sptr->ship[shp].letter);
 			prf("   ");
 			print_shiptab_data(sptr,shp);
 			*ff = 1;
 		} else {
-			print_ship_name(othusn);
+			print_ship_name(shipno);
 			*ff = 0;
 			return 1; /* move onto next ship */
 		}
@@ -431,12 +431,12 @@ static int print_range_line(SCANTAB *sptr, int shp, int *ff, long dist_filter)
 /* RANGEFULL */
 static int print_fullrange_line(SCANTAB *sptr, int shp, long dist_filter)
 {
-	int othusn;
+	int shipno;
 
 	if (shp < NOSCANTAB && sptr->ship[shp].flag != 0 && (long)(sptr->ship[shp].dist) < dist_filter) {
-		othusn = sptr->ship[shp].shipno;
+		shipno = sptr->ship[shp].shipno;
 		prf("     ");
-		print_ship_letter(othusn, sptr->ship[shp].letter);
+		print_ship_letter(shipno, sptr->ship[shp].letter);
 		prf("   ");
 		print_shiptab_data(sptr,shp);
 		return 1; /* move onto next ship */

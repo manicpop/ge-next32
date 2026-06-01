@@ -1175,7 +1175,7 @@ GBOOL FUNC galemp(void)
 
 	for (i = 0; i < MENUNUM; ++i) {
 		if (menu[i].substt == usrptr->substt) {
-			rtn = menu[i].func();
+			rtn = (GBOOL)menu[i].func();
 			clrprf();
 			return rtn;
 		}
@@ -1187,7 +1187,7 @@ GBOOL FUNC galemp(void)
 ** Send message to all ships                                             **
 **************************************************************************/
 
-void FUNC outwar(int filter, unsigned exclude, unsigned channel, int mode)
+void FUNC outwar(int filter, unsigned exclude, unsigned target_channel, int mode)
 {
 	int zothusn;
 
@@ -1199,13 +1199,13 @@ void FUNC outwar(int filter, unsigned exclude, unsigned channel, int mode)
 			}
 			else if (mode == 1) {
 				/* send only to ships tuned to the requested frequency */
-				if (channel == warshpoff(zothusn)->freq) {
+				if (target_channel == warshpoff(zothusn)->freq) {
 					outprfge(filter, zothusn);
 				}
 			}
 			else if (mode == 2) {
 				/* send only to members of the requested team */
-				if (channel == warusroff(zothusn)->teamcode) {
+				if (target_channel == warusroff(zothusn)->teamcode) {
 					outprfge(filter, zothusn);
 				}
 			}
