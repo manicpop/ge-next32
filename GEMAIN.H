@@ -497,7 +497,7 @@ typedef struct warshp {
 /*310*/
 	byte holdcourse;	/* hold-course timer/state (NPC-only)      */
 /*311*/
-	CHAR filler[197];	/* pad WARSHP to the 512-byte V10 record   */
+	CHAR filler[201];	/* pad WARSHP to the 512-byte V10 record   */
 } WARSHP;
 
 typedef struct item {
@@ -575,7 +575,7 @@ typedef struct _galplnt {
 /*440*/
 	ULONG nebseed;		/* random seed for nebula map (Zygor only) */
 /*444*/
-	CHAR filler[67];	/* pad GALPLNT to the 512-byte V10 record  */
+	CHAR filler[68];	/* pad GALPLNT to the 512-byte V10 record  */
 } GALPLNT;
 
 typedef struct galworm {
@@ -771,6 +771,15 @@ typedef struct _team {
 	CHAR secret[11];	/* team secret                             */
 	SHORT flag;		/* unused                                  */
 } TEAM;
+
+typedef char ge_assert_coord_size[(sizeof(COORD) == 16) ? 1 : -1];
+typedef char ge_assert_item_size[(sizeof(ITEM) == 16) ? 1 : -1];
+typedef char ge_assert_plntcoord_size[(sizeof(PLNTCOORD) == 24) ? 1 : -1];
+typedef char ge_assert_warusr_size[(sizeof(WARUSR) == 256) ? 1 : -1];
+typedef char ge_assert_warshp_size[(sizeof(WARSHP) == 512) ? 1 : -1];
+typedef char ge_assert_galsect_size[(sizeof(GALSECT) == 512) ? 1 : -1];
+typedef char ge_assert_galplnt_size[(sizeof(GALPLNT) == 512) ? 1 : -1];
+typedef char ge_assert_galworm_size[(sizeof(GALWORM) == 512) ? 1 : -1];
 
 
 #define FUNC EXPORT

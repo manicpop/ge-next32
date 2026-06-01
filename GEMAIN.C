@@ -625,7 +625,7 @@ void FUNC iniwara(void)
 	for (j = 0; j < nships; j++) {
 		setmem((void *)warusroff(j), sizeof(WARUSR), 0);
 	}
-	geshocst(1, spr("GE:INF:User Mem: %ld", nships * sizeof(WARUSR)));
+	geshocst(1, spr("GE:INF:User Mem: %ld", (long)(nships * sizeof(WARUSR))));
 
 	/* allocate memory for ship data table */
 	warshp = (WARSHP *)alcblok((USHORT)nships, sizeof(WARSHP));
@@ -634,7 +634,7 @@ void FUNC iniwara(void)
 		setmem((void *)warshpoff(j), sizeof(WARSHP), 0);
 		warshpoff(j)->status = GESTAT_AVAIL;
 	}
-	geshocst(1, spr("GE:INF:Ship Mem: %ld", nships * sizeof(WARSHP)));
+	geshocst(1, spr("GE:INF:Ship Mem: %ld", (long)(nships * sizeof(WARSHP))));
 
 	/* allocate memory for planet table */
 	ptab = (PLANETAB *)alcmem(n = nships * sizeof(PLANETAB));
