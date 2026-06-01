@@ -54,7 +54,7 @@ unsigned FUNC smallest(unsigned a1, unsigned a2)
 {
 	int a;
 
-	a = abs(a1 - a2);
+	a = abs((int)a1 - (int)a2);
 
 	if (a > 180)
 		return 360 - a;
@@ -224,7 +224,7 @@ unsigned FUNC coord2(double dcoord)
 	int d3;
 
 	d2 = modf(1 + modf(dcoord, &d1), &d1);
-	d3 = (d2 * SSMAX);
+	d3 = (int)(d2 * SSMAX);
 
 	return (unsigned)d3;
 }

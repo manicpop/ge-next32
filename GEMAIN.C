@@ -1165,7 +1165,8 @@ void FUNC clswar(void)
 
 GBOOL FUNC galemp(void)
 {
-	int i, rtn;
+	int i;
+	GBOOL rtn;
 
 	dfaSetBlk(gebb1);
 	setmbk(gemb);

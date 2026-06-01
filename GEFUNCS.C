@@ -3268,7 +3268,7 @@ void FUNC checktm(WARSHP *ptr, int usrn)
 	WARUSR *wuptr;
 	MISSILE *mptr;
 	TORPEDO *tptr;
-	unsigned *dptr;
+	USHORT *dptr;
 	double damfact;
 	WARSHP *sptr;
 	byte ptr_neb, src_neb;
@@ -5074,8 +5074,8 @@ char * FUNC username(WARSHP *ptr)
 void FUNC logthis(char *str)
 {
 	FILE *hdl;
-	int idate, itime;
-	char *c_date, *c_time;
+	USHORT idate, itime;
+	const CHAR *c_date, *c_time;
 
 	if (!logflag)
 		return;
