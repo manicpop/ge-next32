@@ -1673,9 +1673,9 @@ void FUNC cmd_report(void)
 		return;
 	}
 
-	energy = (unsigned)warsptr->energy + .5;
-	damage = (unsigned)warsptr->damage + .5;
-	speed = ((unsigned)warsptr->speed + .5);
+	energy = (unsigned)(warsptr->energy + .5);
+	damage = (unsigned)(warsptr->damage + .5);
+	speed = (unsigned)(warsptr->speed + .5);
 	heading = (int)(warsptr->heading + .5);
 
 	if (warsptr->shipname[0] == 0)
@@ -3290,10 +3290,10 @@ static void buy(int item)
 				}
 				if (sameas("ALL", margv[1]))
 					amt = amt4sale(item);
-				if ((sameas(plptr->userid, warsptr->userid) && amt > SLCAP / baseprice[item])
+				if ((sameas(plptr->userid, warsptr->userid) && amt > (unsigned long)(SLCAP / baseprice[item]))
 					|| (!sameas(plptr->userid, warsptr->userid)
 						&& plptr->items[item].markup2a > 0
-						&& amt > SLCAP / (long)plptr->items[item].markup2a)) {
+						&& amt > (unsigned long)(SLCAP / (long)plptr->items[item].markup2a))) {
 					prfmsg(TOOMUCH);
 					return;
 				}
@@ -3619,7 +3619,7 @@ void FUNC cmd_new(void)
 						prfmsg(NEW21);
 					} else {
 						price = upg_price(warsptr, upidx);
-						if (price <= waruptr->cash) {
+						if ((unsigned long)price <= waruptr->cash) {
 							waruptr->cash -= price;
 							warsptr->upgrade |= upbit;
 							if (upbit == TPONDER) {
@@ -3665,7 +3665,7 @@ void FUNC cmd_new(void)
 				}
 				if (!(warsptr->upgrade & TPONDER)) {
 					price = upg_price(warsptr, 6);
-					if (price <= waruptr->cash) {
+					if ((unsigned long)price <= waruptr->cash) {
 						waruptr->cash -= price;
 						warsptr->upgrade |= TPONDER;
 						warsptr->tponder = tpmode;
@@ -3706,7 +3706,7 @@ void FUNC cmd_new(void)
 			type = atoi(margv[2]) - 1;
 			if (type >= 0 && type < cyb_class && shipclass[type].max_type == CLASSTYPE_USER) {
 				if (waruptr->noships < maxships) {
-					if (shipclass[type].max_price <= waruptr->cash) {
+					if ((unsigned long)shipclass[type].max_price <= waruptr->cash) {
 						waruptr->cash -= shipclass[type].max_price;
 						prfmsg(NEW3, shipclass[type].typename);
 						initshp(waruptr->userid, type);
@@ -3761,10 +3761,10 @@ void FUNC cmd_new(void)
 					delta = 1000;
 				}
 
-				if (delta <= waruptr->cash) {
+				if ((unsigned long)delta <= waruptr->cash) {
 					waruptr->cash -= delta;
 					waruptr->cash += credit;
-					warsptr->shieldtype = type;
+					warsptr->shieldtype = (byte)type;
 					if (delta == 0) {
 						prfmsg(NEW13, type);
 					} else {
@@ -3817,10 +3817,10 @@ void FUNC cmd_new(void)
 					delta = 1000;
 				}
 
-				if (delta <= waruptr->cash) {
+				if ((unsigned long)delta <= waruptr->cash) {
 					waruptr->cash -= delta;
 					waruptr->cash += credit;
-					warsptr->phasrtype = type;
+					warsptr->phasrtype = (byte)type;
 					if (delta == 0) {
 						prfmsg(NEW14, type);
 					} else {
@@ -3997,7 +3997,7 @@ void FUNC cmd_sysop(void)
 	} else if (sameas("class",margv[1]) && margc == 3) {
 		i = atoi(margv[2]) - 1;
 		if (VALID_SHPCLASS(i) && shipclass[i].max_type != CLASSTYPE_NONE) {
-			warsptr->shpclass = i;
+			warsptr->shpclass = (SHORT)i;
 			warsptr->topspeed = shipclass[warsptr->shpclass].max_warp;
 			prfmsg(SYSCLS,shipclass[warsptr->shpclass].typename);
 			outprfge(FLT_NONE, usrnum);
@@ -4006,7 +4006,7 @@ void FUNC cmd_sysop(void)
 	} else if (sameas("shieldtype",margv[1]) && margc == 3) {
 		i = atoi(margv[2]);
 		if (i >= 0 && i < 255) {
-			warsptr->shieldtype = i;
+			warsptr->shieldtype = (byte)i;
 			prfmsg(NEW7,"0",warsptr->shieldtype);
 			outprfge(FLT_NONE, usrnum);
 			return;
@@ -4014,7 +4014,7 @@ void FUNC cmd_sysop(void)
 	} else if (sameas("phasertype",margv[1]) && margc == 3) {
 		i = atoi(margv[2]);
 		if (i >= 0 && i < 255) {
-			warsptr->phasrtype = i;
+			warsptr->phasrtype = (byte)i;
 			prfmsg(NEW10,"0",warsptr->phasrtype);
 			outprfge(FLT_NONE, usrnum);
 			return;
@@ -4291,12 +4291,12 @@ void FUNC cmd_lock(void)
 			outprfge(FLT_NONE, usrnum);
 			return;
 		}
-		warsptr->lock = shpnum;
+		warsptr->lock = (SHORT)shpnum;
 		warsptr->track_grace = LOCKGRACE;
 		if (warshpoff(shpnum)->status == GESTAT_AUTO
 			&& shipclass[warshpoff(shpnum)->shpclass].max_type == CLASSTYPE_CYBORG
 			&& warshpoff(shpnum)->cybmine == 255) {
-			warshpoff(shpnum)->cybmine = usrnum;	/* engage user */
+			warshpoff(shpnum)->cybmine = (byte)usrnum;	/* engage user */
 			warshpoff(shpnum)->track_grace = CYBGRACE;
 			warshpoff(shpnum)->tick = 2;		/* do it fast */
 			warshpoff(shpnum)->npcmsg = 255;	/* reset annoy msg tracking */
@@ -4585,7 +4585,7 @@ void FUNC cmd_team(void)
 	int tmflag[MAXTEAMS];
 	char oldteamname[31];
 	unsigned int olddel;
-	long highscore;
+	unsigned long highscore;
 	int highpos;
 	TEAM tmp;
 	int temptab[MAXTEAMS];
@@ -4598,7 +4598,7 @@ void FUNC cmd_team(void)
 	if (sameas(margv[1],"join")) {
 		if (waruptr->teamcode > 0) {
 			for (i=0; i<MAXTEAMS; ++i) {
-				if (waruptr->teamcode == teamtab[i].teamcode
+				if (waruptr->teamcode == (ULONG)teamtab[i].teamcode
 					&& teamtab[i].teamname[0] != '@')
 					break;
 			}
@@ -4636,7 +4636,7 @@ void FUNC cmd_team(void)
 		tmp.teamcode = atol(gechrbuf);
 
 		if (waruptr->teamcode > 0) {
-			if (waruptr->teamcode == tmp.teamcode)
+			if (waruptr->teamcode == (ULONG)tmp.teamcode)
 				prfmsg(TEAMALR2);
 			else
 				prfmsg(TEAMALRD);
@@ -4704,7 +4704,7 @@ void FUNC cmd_team(void)
 
 				if (tmpusr.teamcode > 0) {
 					for (i=0; i<MAXTEAMS; ++i) {
-						if (teamtab[i].teamcode == tmpusr.teamcode
+						if ((ULONG)teamtab[i].teamcode == tmpusr.teamcode
 							&& teamtab[i].teamname[0] != '@') {
 							++tmcount[i];
 							tmscore[i] += (tmpusr.plscore + tmpusr.klscore);
@@ -4753,7 +4753,7 @@ void FUNC cmd_team(void)
 	} else if (sameas(margv[1],"unjoin")) {
 		if (waruptr->teamcode > 0) {
 			for (i=0; i<MAXTEAMS; ++i) {
-				if (waruptr->teamcode == teamtab[i].teamcode
+				if (waruptr->teamcode == (ULONG)teamtab[i].teamcode
 					&& teamtab[i].teamname[0] != '@')
 					break;
 			}
@@ -4766,7 +4766,7 @@ void FUNC cmd_team(void)
 		if (waruptr->teamcode > 0) {
 			/* verify that this is still a good team */
 			for (i=0; i<MAXTEAMS; ++i) {
-				if (waruptr->teamcode == teamtab[i].teamcode
+				if (waruptr->teamcode == (ULONG)teamtab[i].teamcode
 					&& teamtab[i].teamname[0] != '@') {
 					prfmsg(TEAMUNJN,teamname(waruptr));
 					outprfge(FLT_NONE,usrnum);
@@ -4801,7 +4801,7 @@ void FUNC cmd_team(void)
 	} else if (sameas(margv[1],"start")) {
 		if (waruptr->teamcode > 0) {
 			for (i=0; i<MAXTEAMS; ++i) {
-				if (waruptr->teamcode == teamtab[i].teamcode
+				if (waruptr->teamcode == (ULONG)teamtab[i].teamcode
 					&& teamtab[i].teamname[0] != '@')
 					break;
 			}
@@ -4936,7 +4936,7 @@ void FUNC cmd_team(void)
 	} else if (sameas(margv[1],"members")) {
 		if (waruptr->teamcode > 0) {
 			for (i=0; i<MAXTEAMS; ++i) {
-				if (waruptr->teamcode == teamtab[i].teamcode
+				if (waruptr->teamcode == (ULONG)teamtab[i].teamcode
 					&& teamtab[i].teamname[0] != '@')
 					break;
 			}
@@ -4994,7 +4994,7 @@ void FUNC cmd_team(void)
 
 		/* locate this players team in the list */
 		for (i=0; i<MAXTEAMS; ++i) {
-			if (waruptr->teamcode == teamtab[i].teamcode
+			if (waruptr->teamcode == (ULONG)teamtab[i].teamcode
 				&& teamtab[i].teamname[0] != '@') {
 				strncpy(oldteamname,teamtab[i].teamname,30);
 				oldteamname[30] = 0;
@@ -5009,7 +5009,7 @@ void FUNC cmd_team(void)
 					if (geudb(GELOOKUP,tmpusr.userid,&tmpusr)) {
 						dfaAbsRec(&tmpusr,0);
 						/* check if the player is currently on this team */
-						if (tmpusr.teamcode == teamtab[i].teamcode) {
+						if (tmpusr.teamcode == (ULONG)teamtab[i].teamcode) {
 							/* reset the teamcode */
 							tmpusr.teamcode = 0;
 							/* re-write the users record */
@@ -5073,7 +5073,7 @@ void FUNC cmd_team(void)
 
 		/* locate this players team in the list */
 		for (i=0; i<MAXTEAMS; ++i) {
-			if (waruptr->teamcode == teamtab[i].teamcode
+			if (waruptr->teamcode == (ULONG)teamtab[i].teamcode
 				&& teamtab[i].teamname[0] != '@') {
 				/* check to see that the passwords match */
 				if (sameas(margv[2],teamtab[i].secret)) {
@@ -5111,7 +5111,7 @@ void FUNC cmd_team(void)
 
 		/* locate this players team in the list */
 		for (i=0; i<MAXTEAMS; ++i) {
-			if (waruptr->teamcode == teamtab[i].teamcode
+			if (waruptr->teamcode == (ULONG)teamtab[i].teamcode
 				&& teamtab[i].teamname[0] != '@') {
 				/* check to see that the passwords match */
 				if (sameas(margv[2],teamtab[i].secret)) {
@@ -5167,7 +5167,7 @@ char *FUNC teamname(WARUSR *ptr)
 	int i;
 
 	for (i=0; i<MAXTEAMS; ++i) {
-		if (ptr->teamcode == teamtab[i].teamcode
+		if (ptr->teamcode == (ULONG)teamtab[i].teamcode
 			&& teamtab[i].teamname[0] != '@') {
 			return teamtab[i].teamname;
 		}

@@ -1190,7 +1190,7 @@ static void scan_ra(void)
 
 static void scan_se(void)
 {
-	unsigned i, x, y;
+	int i, x, y;
 	WARSHP *wptr;
 	MINE *mptr;
 	int nebmask;
