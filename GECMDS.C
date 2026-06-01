@@ -2514,7 +2514,7 @@ static void call_4_help(int send_spy_mail, int won)
 		prfmsg(ATTACK7);
 		outprfge(FLT_NONE, usrnum);
 		clrprf();
-	} else if (onsys(plptr->userid) && user[othusn].state != fse_state) {
+	} else if (onsys(plptr->userid) && usroff(othusn)->state != fse_state) {
 		prfmsg(ATTACK6A);
 		injoth();
 		prfmsg(ATTACK7);

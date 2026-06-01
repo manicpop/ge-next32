@@ -2033,7 +2033,7 @@ void FUNC outprfge(int cls, int shpno)
 	byte msgfilter;
 
 	if (shpno >= 0 && shpno < nterms) {
-		if (user[shpno].state == gestt) {
+		if (usroff(shpno)->state == gestt) {
 			msgfilter = warusroff(shpno)->options[MSG_FILTER];
 			switch (cls) {
 			case FLT_NONE:
@@ -2167,7 +2167,7 @@ int FUNC ingegame(int shpno)
 		return FALSE;
 
 	if (shpno < nterms)
-		if (user[shpno].state == gestt && user[shpno].substt >= FIGHTSUB)
+		if (usroff(shpno)->state == gestt && usroff(shpno)->substt >= FIGHTSUB)
 			return TRUE;
 
 	if (shpno >= nterms && warshpoff(shpno)->status == GESTAT_AUTO)

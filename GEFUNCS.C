@@ -2630,7 +2630,7 @@ void FUNC checkdam(WARSHP *ptr, int usrn)
 			ptr->status = GESTAT_AVAIL;
 
 		if (ptr->status == GESTAT_USER) {
-			user[usrn].substt = 0;
+			usroff(usrn)->substt = 0;
 			--numwar;
 			ptr->where = -1;
 		}
