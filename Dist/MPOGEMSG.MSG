@@ -5,7 +5,7 @@ LEVEL0 {}
 
 FILE01 {MPOGEMSG.MSG} Galactic Empire
 
-LEVEL3 {}
+LEVEL3 {ge-next}
 
 Define the KEY the player must have to play GE.
 
@@ -23,7 +23,7 @@ Feel free to put any eight digit number here.
 
 REGNO {12345678} S 8 Registration Number
 
-LEVEL4 {}
+LEVEL4 {ge-next}
 
 This Option is maintained for backward compatibility and
 has no effect in Version 6+ of MajorBBS. If you are using
@@ -1910,7 +1910,7 @@ are at least a 2 to 100 attacking ratio
 PLATTRT2 {Max percent of planets killed by attacker: 35 } N 5 1000
 
 
-LEVEL6 {}
+LEVEL6 {ge-next}
 
 
 

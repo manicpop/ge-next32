@@ -1,6 +1,6 @@
 Galactic Empire Help Message Database
 
-LEVEL6 {}
+LEVEL6 {ge-next}
 
 HLPINDEX {
 [1;36mHelp is available on the following commands and topics:
