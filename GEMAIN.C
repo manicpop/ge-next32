@@ -297,6 +297,8 @@ void EXPORT init__mpogemp(void)
 	stzcpy(mpoge.descrp, gmdnam("MPOGEMP.MDF"), MNMSIZ);
 #endif
 
+	/* seems we need to explicitly seed random on v10 */
+	srand(now());
 	iniwara();
 	gestt = register_module(&mpoge);
 }
