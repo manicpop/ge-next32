@@ -4813,9 +4813,12 @@ int FUNC sendit(void)
 
 	setmem(gemsg,FIXEDMSGSIZ,0);
 
-	strcpy(gemsg->m.from,"** Galactic Empire **");
-	strcpy(gemsg->m.to,mail.userid);
-	strcpy(gemsg->m.topic,mail.topic);
+	strncpy(gemsg->m.from, "** Galactic Empire **", sizeof(gemsg->m.from));
+	gemsg->m.from[sizeof(gemsg->m.from) - 1] = 0;
+	strncpy(gemsg->m.to, mail.userid, sizeof(gemsg->m.to));
+	gemsg->m.to[sizeof(gemsg->m.to) - 1] = 0;
+	strncpy(gemsg->m.topic, mail.topic, sizeof(gemsg->m.topic));
+	gemsg->m.topic[sizeof(gemsg->m.topic) - 1] = 0;
 	gemsg->m.flags = mail.mailclass;
 
 	gemsg->m.crdate=today();
