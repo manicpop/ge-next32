@@ -1107,6 +1107,7 @@ void FUNC warhup(void)
 			if (warsptr->cantexit > 0) {
 				/* if we're in cleanup mode, don't killem */
 				if (status == RING && rsmodes[usrnum] != NORMRS) {
+					warsptr->cantexit = 0;
 					/* clear this user's projectile ownership from active torps and missiles */
 					cleartm(usrnum);
 					/* clear torps and missiles currently inbound to this user */
