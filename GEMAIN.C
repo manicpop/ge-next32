@@ -1897,7 +1897,7 @@ void FUNC autorti(void)
 			/* initialize the non-user ship areas */
 			if (cls > -1 && shipclass[cls].init_func != NULL) {
 				logthis(spr("Calling init_func 4 cls %d", cls));
-				logthis(spr("   Name: %s", shipclass[i].typename));
+				logthis(spr("   Name: %s", shipclass[cls].typename));
 
 				(*(shipclass[cls].init_func))(wptr, zothusn, cls);
 			}
