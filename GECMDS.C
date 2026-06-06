@@ -3039,9 +3039,13 @@ void FUNC cmd_planet(void)
 {
 	int page = 1;
 	int stepper = 0;
+	int printed = 0;
+	int more = FALSE;
+	int requested_page = FALSE;
 	int inc;
 
 	if (margc > 1) {
+		requested_page = TRUE;
 		page = atoi(margv[1]);
 		if (page < 1 || page > ((max_plnts + 19) / 20) || margc > 2) {
 			prfmsg(FORMAT, "PLANET");
@@ -3056,33 +3060,48 @@ void FUNC cmd_planet(void)
 
 	if (dfaQueryLO(0)) {
 		if (dfaQueryEQ(warsptr->userid, 1)) {
-			prfmsg(PLAMSG1);
 			do {
 				dfaAbsRec(&planet, 1);
 				if (sameas(planet.userid, warsptr->userid)) {
 					if (stepper >= inc) {
+						if (printed >= 20) {
+							more = TRUE;
+							break;
+						}
+						if (printed == 0)
+							prfmsg(PLAMSG1);
 						prf("%-24s %6d %6d  %6d\r", planet.name, planet.xsect, planet.ysect, planet.plnum);
+						++printed;
 					}
 					++stepper;
 					if (stepper > inc && ((stepper - inc) % 5) == 0) /* cat five lines then print */
 						outprfge(FLT_NONE, usrnum);
-					if (stepper >= inc + 20) {
-						prfmsg(PLAMSG3, page + 1);
-						outprfge(FLT_NONE, usrnum);
-						return;
-					}
 				} else {
 					break;
 				}
 			} while (dfaQueryNX());
-			if (stepper > inc && ((stepper - inc) % 5) != 0)
+			if (printed == 0 && requested_page) {
+				prfmsg(FORMAT, "PLANET");
+				outprfge(FLT_NONE, usrnum);
+			}
+			else if (more) {
+				prfmsg(PLAMSG3, page + 1);
+				outprfge(FLT_NONE, usrnum);
+			}
+			else if (printed > 0 && (printed % 5) != 0)
 				outprfge(FLT_NONE, usrnum);
 		} else {
-			prfmsg(PLAMSG2);
+			if (requested_page && page > 1)
+				prfmsg(FORMAT, "PLANET");
+			else
+				prfmsg(PLAMSG2);
 			outprfge(FLT_NONE, usrnum);
 		}
 	} else {
-		prfmsg(PLAMSG2);
+		if (requested_page && page > 1)
+			prfmsg(FORMAT, "PLANET");
+		else
+			prfmsg(PLAMSG2);
 		outprfge(FLT_NONE, usrnum);
 	}
 }
