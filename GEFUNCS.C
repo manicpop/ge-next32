@@ -633,6 +633,14 @@ void FUNC npc_lay_decoys(WARSHP *ptr)
 ** Fire standard phasers at targets inside the current firing arc        **
 **************************************************************************/
 
+void FUNC prf_cloak_blocked(WARSHP *ptr, char *system)
+{
+	if (ptr->cloak == 3)
+		prfmsg(PCLOKUP2, system);
+	else
+		prfmsg(PCLOKUP, system);
+}
+
 void FUNC firep(WARSHP *ptr, int usrn)
 {
 	WARSHP *wptr;
@@ -649,7 +657,7 @@ void FUNC firep(WARSHP *ptr, int usrn)
 	uptr = warusroff(usrn);
 
 	if (ptr->cloak > 0) {
-		prfmsg(PCLOKUP,"The phasers are");
+		prf_cloak_blocked(ptr, "The phasers are");
 		outprfge(FLT_NONE,usrn);
 		return;
 	}

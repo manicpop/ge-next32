@@ -944,7 +944,7 @@ void FUNC cmd_torp(void)
 	}
 
 	if (warsptr->cloak > 0 ) {
-		prfmsg(PCLOKUP,"The torpedo launcher is");
+		prf_cloak_blocked(warsptr, "The torpedo launcher is");
 		outprfge(FLT_NONE,usrnum);
 		return;
 	}
@@ -1029,7 +1029,7 @@ void FUNC cmd_missl(void)
 	}
 
 	if (warsptr->cloak > 0) {
-		prfmsg(PCLOKUP,"The missile launcher is");
+		prf_cloak_blocked(warsptr, "The missile launcher is");
 		outprfge(FLT_NONE,usrnum);
 		return;
 	}
@@ -1217,7 +1217,7 @@ void FUNC cmd_decoy(void)
 	}
 
 	if (warsptr->cloak > 0) {
-		prfmsg(PCLOKUP,"The decoy launcher is");
+		prf_cloak_blocked(warsptr, "The decoy launcher is");
 		outprfge(FLT_NONE,usrnum);
 		return;
 	}
@@ -1267,7 +1267,7 @@ void FUNC cmd_decoy(void)
 void FUNC cmd_jammer(void)
 {
 	if (warsptr->cloak > 0 ) {
-		prfmsg(PCLOKUP,"The jammer launcher is");
+		prf_cloak_blocked(warsptr, "The jammer launcher is");
 		outprfge(FLT_NONE,usrnum);
 		return;
 	}
@@ -1373,7 +1373,7 @@ void FUNC cmd_zipper(void)
 	}
 
 	if (warsptr->cloak > 0 ) {
-		prfmsg(PCLOKUP,"The zipper launcher is");
+		prf_cloak_blocked(warsptr, "The zipper launcher is");
 		outprfge(FLT_NONE,usrnum);
 		return;
 	}
@@ -1462,7 +1462,7 @@ void FUNC cmd_mine(void)
 	}
 
 	if (warsptr->cloak > 0 ) {
-		prfmsg(PCLOKUP,"The mine launcher is");
+		prf_cloak_blocked(warsptr, "The mine launcher is");
 		outprfge(FLT_NONE,usrnum);
 		return;
 	}
@@ -4294,7 +4294,7 @@ void FUNC cmd_lock(void)
 	}
 
 	if (warsptr->cloak > 0) {
-		prfmsg(PCLOKUP, "Scanner lock is");
+		prf_cloak_blocked(warsptr, "Scanner lock is");
 		outprfge(FLT_NONE, usrnum);
 		return;
 	}
