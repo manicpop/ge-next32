@@ -8,6 +8,6 @@ Contents include:
 - `MPOGE*.DAT` seed/runtime data files
 - `MPOGE*.VIR` reset/blank data files for Btrieve-backed databases
 - `MPOGEMNU.TXT` menu/help text
-- release packaging documentation and license files
+- release packaging documentation, license files, and contribution terms
 
 The DAT/VIR files are based on the V10-proven elwge containers and renamed for MPOGEMP.
