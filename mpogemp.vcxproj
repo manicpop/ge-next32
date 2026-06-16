@@ -79,7 +79,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;GCWINNT;GCMVC;BBSVER=1000;USE_DEF_FILE;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;__BUILDV10MODULE</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)inc;$(SolutionDir)inc\msg\wg32;$(SolutionDir)src\api\gcommlib;$(SolutionDir)src\api\gcommlib\wnt</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)inc;$(SolutionDir)inc\msg\wg32;$(SolutionDir)src\api\gcommlib;$(SolutionDir)src\api\gcommlib\wnt;$(SolutionDir)..\inc;$(SolutionDir)..\lib\importlibs</AdditionalIncludeDirectories>
       <StructMemberAlignment>8Bytes</StructMemberAlignment>
       <AdditionalOptions>/J %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -88,7 +88,7 @@
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\importlibs;$(SolutionDir)lib\wg32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\lib\importlibs;$(SolutionDir)..\lib\wg32</AdditionalLibraryDirectories>
       <AdditionalDependencies>wgserver_lib.lib; galgsbl_lib.lib; galme_lib.lib</AdditionalDependencies>
       <ModuleDefinitionFile>MPOGEMP_EXP.DEF</ModuleDefinitionFile>
     </Link>
