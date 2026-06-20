@@ -2342,7 +2342,6 @@ static void trans_down(int item)
 static void trans_up(int item)
 {
 	long amt;
-	unsigned long room100;
 
 	if (!load_orbit_planet(usrnum))
 		return;
@@ -2350,8 +2349,12 @@ static void trans_up(int item)
 	/* you must own this planet or NOBODY must own it to xfer up */
 	if (sameas(plptr->userid,warsptr->userid) || plptr->userid[0] == 0) {
 		if (sameas("MAX",margv[2])) {
-			room100 = ((unsigned long)shipclass[warsptr->shpclass].max_tons * 100UL) - cargo_weight100(warsptr);
-			amt = (long)(room100 / (unsigned long)weight[item]);
+			unsigned long room;
+			room = cargo_room_for_item(warsptr,item);
+			if (room > (unsigned long)SLCAP)
+				amt = SLCAP;
+			else
+				amt = (long)room;
 			if (amt <= 0L) {
 				/* user wants max but not even one will fit */
 				prfmsg(TRANSUP6);
@@ -3315,15 +3318,12 @@ static long price(unsigned item, unsigned long amt)
 static void buy(int item)
 {
 	unsigned long amt, avail, tot, ptot;
-	unsigned long room100;
 
 	if (plptr->userid[0] != 0) {
 		if ((amt = atol(margv[1])) > 0 || sameas("MAX", margv[1]) || sameas("ALL", margv[1])) {
 			if (sameas(plptr->userid, warsptr->userid) || plptr->items[item].sell == 'Y') {
-				if (sameas("MAX", margv[1])) {
-					room100 = ((unsigned long)shipclass[warsptr->shpclass].max_tons * 100UL) - cargo_weight100(warsptr);
-					amt = room100 / (unsigned long)weight[item];
-				}
+				if (sameas("MAX", margv[1]))
+					amt = cargo_room_for_item(warsptr,item);
 				if (sameas("ALL", margv[1]))
 					amt = amt4sale(item);
 				if ((sameas(plptr->userid, warsptr->userid) && amt > (unsigned long)(SLCAP / baseprice[item]))

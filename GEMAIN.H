@@ -62,7 +62,7 @@
 /* the DATA command is currently in disrepair and disabled */
 /* #define DATACMD 1 */
 
-#define VERSION "ge-next32 0.3"
+#define VERSION "ge-next32 0.3.1b"
 #define GEHELP  "MPOGEHLP.MCV"
 #define GEMSG   "MPOGEMSG.MCV"
 

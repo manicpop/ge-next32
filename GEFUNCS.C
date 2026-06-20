@@ -2755,7 +2755,6 @@ void FUNC killem(WARSHP *ptr, int usrn)
 	WARSHP *nearptr;
 	int i;
 	unsigned long loot_amt;
-	unsigned long room100;
 	int who, comma, full, lospos = 0, winpos = 0, nearby;
 	long scr, amt, bonus1, bonus2, ded_amt;
 	double ddist;
@@ -2802,50 +2801,41 @@ void FUNC killem(WARSHP *ptr, int usrn)
 		else
 			prfmsg(KILLGOT1,ptr->shipname);
 
-		if ((unsigned long)shipclass[wptr->shpclass].max_tons <= calcweight(wptr)) {
-			full = TRUE;
-			comma = TRUE;
-			prf(" nothing");
-		}
-		else {
-			/* get gold drop first, complete amount */
-			loot_amt = ptr->items[I_GOLD];
-			if (loot_amt > 0) {
-				if (!chkweight(wptr,I_GOLD,loot_amt)) {
-					room100 = ((unsigned long)shipclass[wptr->shpclass].max_tons * 100UL) - cargo_weight100(wptr);
-					loot_amt = room100 / (unsigned long)weight[I_GOLD];
-					full = TRUE;
-				}
-				if (loot_amt > 0) {
-					wptr->items[I_GOLD] += loot_amt;
-					sprintf(gechrbuf2,"%lu",loot_amt);
-					prf(" %s %s",gechrbuf2,item_name[I_GOLD]);
-					comma = TRUE;
-				}
+		/* get gold drop first, complete amount */
+		loot_amt = ptr->items[I_GOLD];
+		if (loot_amt > 0) {
+			if (!chkweight(wptr,I_GOLD,loot_amt)) {
+				loot_amt = cargo_room_for_item(wptr,I_GOLD);
+				full = TRUE;
 			}
-			/* get the rest except casualties, random amounts */
-			for (i = 1; i < NUMITEMS; ++i) {
-				if (full == TRUE)
-					break;
-				if (i != I_MEN && i != I_TROOPS && i != I_SPY && i != I_GOLD &&
-					!(shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG && i == I_FOOD)) {
-					loot_amt = ptr->items[i] / (r % 5 + 1);
-					/* only collect as much as we can hold */
+			if (loot_amt > 0) {
+				wptr->items[I_GOLD] += loot_amt;
+				sprintf(gechrbuf2,"%lu",loot_amt);
+				prf(" %s %s",gechrbuf2,item_name[I_GOLD]);
+				comma = TRUE;
+			}
+		}
+		/* get the rest except casualties, random amounts */
+		for (i = 1; i < NUMITEMS; ++i) {
+			if (full == TRUE)
+				break;
+			if (i != I_MEN && i != I_TROOPS && i != I_SPY && i != I_GOLD &&
+				!(shipclass[ptr->shpclass].max_type == CLASSTYPE_CYBORG && i == I_FOOD)) {
+				loot_amt = ptr->items[i] / (r % 5 + 1);
+				/* only collect as much as we can hold */
+				if (loot_amt > 0) {
+					if (!chkweight(wptr,i,loot_amt)) {
+						loot_amt = cargo_room_for_item(wptr,i);
+						full = TRUE;
+					}
 					if (loot_amt > 0) {
-						if (!chkweight(wptr,i,loot_amt)) {
-							room100 = ((unsigned long)shipclass[wptr->shpclass].max_tons * 100UL) - cargo_weight100(wptr);
-							loot_amt = room100 / (unsigned long)weight[i];
-							full = TRUE;
-						}
-						if (loot_amt > 0) {
-							wptr->items[i] += loot_amt;
-							sprintf(gechrbuf2,"%lu",loot_amt);
-							if (comma == TRUE)
-								prf(", %s %s",gechrbuf2,item_name[i]);
-							else {
-								prf(" %s %s",gechrbuf2,item_name[i]);
-								comma = TRUE;
-							}
+						wptr->items[i] += loot_amt;
+						sprintf(gechrbuf2,"%lu",loot_amt);
+						if (comma == TRUE)
+							prf(", %s %s",gechrbuf2,item_name[i]);
+						else {
+							prf(" %s %s",gechrbuf2,item_name[i]);
+							comma = TRUE;
 						}
 					}
 				}
@@ -5017,39 +5007,95 @@ void FUNC charge(WARSHP *wptr, int *max, int *pct)
 ** Cargo size functions                                                  **
 **************************************************************************/
 
-unsigned long FUNC cargo_weight100(WARSHP *wptr)
+static int cargo_total_weight(WARSHP *wptr, unsigned long cap,
+	unsigned long *tons, unsigned *rem100)
 {
+	unsigned __int64 total100, cap100;
 	int i;
-	unsigned long total = 0;
 
+	total100 = 0;
+	cap100 = (unsigned __int64)cap * 100;
+
+	/* ge-next32 divergence: use a 64-bit accumulator instead of 16-bit overflow decomposition. */
 	for (i = 0; i < NUMITEMS; ++i)
-		total += wptr->items[i] * (unsigned long)weight[i];
+		total100 += (unsigned __int64)wptr->items[i] * (unsigned long)weight[i];
 
-	return total;
+	if (total100 > cap100)
+		return FALSE;
+
+	*tons = (unsigned long)(total100 / 100);
+	*rem100 = (unsigned)(total100 % 100);
+
+	return TRUE;
 }
-
-/* check if the goods to be added will cause weight to be exceeded */
 
 int FUNC chkweight(WARSHP *wptr, int itm, unsigned long amt)
 {
-	unsigned long total;
-	unsigned long add;
+	unsigned __int64 total100, cap100, add100;
+	unsigned long cap, tons;
+	unsigned rem100;
 
-	total = cargo_weight100(wptr);
-	add = amt * (unsigned long)weight[itm];
+	/* reject item-count overflow before calculating cargo weight */
+	if (wptr->items[itm] > ULCAP - amt)
+		return FALSE;
 
-	return (total + add) <= ((unsigned long)shipclass[wptr->shpclass].max_tons * 100UL)
-		&& (wptr->items[itm] <= ULCAP - amt);
+	cap = (unsigned long)shipclass[wptr->shpclass].max_tons;
+	if (!cargo_total_weight(wptr, cap, &tons, &rem100))
+		return FALSE;
+
+	/* ge-next32 divergence: compare the added weight directly in 64-bit hundredths. */
+	total100 = (unsigned __int64)tons * 100 + rem100;
+	cap100 = (unsigned __int64)cap * 100;
+	add100 = (unsigned __int64)amt * (unsigned long)weight[itm];
+
+	return add100 <= cap100 - total100;
 }
 
-/* tell the total weight on board */
+unsigned long FUNC cargo_room_for_item(WARSHP *wptr, int itm)
+{
+	unsigned __int64 total100, cap100, room;
+	unsigned long cap, tons, maxqty;
+	unsigned rem100;
+
+	/* no more can fit if this item count is already saturated */
+	if (wptr->items[itm] == ULCAP)
+		return 0UL;
+
+	cap = (unsigned long)shipclass[wptr->shpclass].max_tons;
+	if (!cargo_total_weight(wptr, cap, &tons, &rem100))
+		return 0UL;
+
+	maxqty = ULCAP - wptr->items[itm];
+	if (weight[itm] == 0)
+		return maxqty;
+
+	/* ge-next32 divergence: calculate room once instead of repeatedly scanning in a binary search. */
+	total100 = (unsigned __int64)tons * 100 + rem100;
+	cap100 = (unsigned __int64)cap * 100;
+	room = (cap100 - total100) / (unsigned long)weight[itm];
+
+	if (room > maxqty)
+		return maxqty;
+	return (unsigned long)room;
+}
 
 unsigned long FUNC calcweight(WARSHP *wptr)
 {
-	unsigned long total100;
+	unsigned long tons;
+	unsigned rem100;
 
-	total100 = cargo_weight100(wptr);
-	return (total100 + 99UL) / 100UL;
+	/* use ULCAP as the display cap so corrupt totals saturate instead of wrap */
+	if (!cargo_total_weight(wptr, ULCAP, &tons, &rem100))
+		return ULCAP;
+
+	/* reports display whole tons, so any fractional cargo rounds up */
+	if (rem100 > 0) {
+		if (tons == ULCAP)
+			return ULCAP;
+		++tons;
+	}
+
+	return tons;
 }
 
 
