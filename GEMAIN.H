@@ -59,10 +59,9 @@
 /* if FASTPLANET defined updates happen every 3 seconds */
 /* #define FASTPLANET 1 */
 
-/* the DATA command is currently in disrepair and disabled */
-/* #define DATACMD 1 */
-
-#define VERSION "ge-next32 0.3.1b"
+#define PROJECT_NAME "ge-next32"
+#define PROJECT_VERSION "0.3.1"
+#define PROJECT_ARCH "32-bit"
 #define GEHELP  "MPOGEHLP.MCV"
 #define GEMSG   "MPOGEMSG.MCV"
 
@@ -225,6 +224,10 @@
 #define	FLT_ENTRY 6
 #define	FLT_SHIP 7
 #define	FLT_NONE 8
+
+/* per-session DATA state flags */
+#define GEDATA_ACCESS 0x01
+#define GEDATA_METADATA 0x02
 
 /* how many seconds to delay 'reduced' entry messages */
 #define	ENTRYWAIT 30

@@ -1509,6 +1509,7 @@ void FUNC tossingegame(void)
 	byte *sentptr;
 	byte mask;
 
+	data_enabled[usrnum] = FALSE;
 	start_entrymsg(usrnum);
 
 	prfmsg(ENTSHP,waruptr->userid);

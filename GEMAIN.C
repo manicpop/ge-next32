@@ -149,6 +149,8 @@ int				nships;		/* total number of ship slots in game */
 int				heading;	/* shared heading workspace */
 unsigned			speed;		/* shared speed workspace */
 int				game_day;	/* current in-game day value */
+char				*frontend;	/* configured frontend pairing code */
+byte				*data_enabled;	/* per-session DATA state flags */
 
 /* do not touch the next two definitions !!! */
 int				xsect,ysect;	/* current sector coordinate workspace */
@@ -328,6 +330,7 @@ void FUNC iniwara(void)
 
 	gemb = opnmsg(GEMSG);
 	endmark = stgopt(ENDMARK);
+	frontend = stgopt(FRONTEND);
 	if (!sameas(endmark, "ENDMARK")) {
 		catastro("GE:ERR:MPOGEMSG.MCV Corrupted");
 	}
@@ -678,6 +681,9 @@ void FUNC iniwara(void)
 	entrypend = (byte *)alcmem(n = nterms * entrybytes);	/* per-entrant bitmaps of recipients still pending entry */
 	setmem(entrypend, n, 0);
 
+	data_enabled = (byte *)alcmem(n = nterms * sizeof(byte));	/* per-session DATA state flags */
+	setmem(data_enabled, n, 0);
+
 	/* allocate memory for S00 table */
 	s00 = (S00 *)alcmem(n = s00plnum * sizeof(S00));
 	setmem(s00, n, 0);
@@ -748,7 +754,7 @@ void FUNC iniwara(void)
 	load_team_tab();
 
 	/* tell everyone that we are up */
-	geshocst(0, spr("Galactic Empire %s", VERSION));
+	geshocst(0, spr("Galactic Empire %s %s", PROJECT_NAME, PROJECT_VERSION));
 	geshocst(0, spr("Registration # %s", stgopt(REGNO)));
 
 	rtkick(TICKTIME, warrti);
@@ -1093,6 +1099,7 @@ SHORT FUNC warlof(void)
 {
 	warsptr = warshpoff(usrnum);
 	waruptr = warusroff(usrnum);
+	data_enabled[usrnum] = FALSE;
 
 	logthis(spr("WARLOF called 4 %s", waruptr->userid));
 	return 0;
@@ -1109,6 +1116,7 @@ void FUNC warhup(void)
 
 	warsptr = warshpoff(usrnum);
 	waruptr = warusroff(usrnum);
+	data_enabled[usrnum] = FALSE;
 
 	logthis(spr("WARHUP called 4 %s", waruptr->userid));
 
@@ -2033,6 +2041,25 @@ void FUNC warrti3(void)
 ** OUTPRF special, apply filters, don't send to NPCs                     **
 **************************************************************************/
 
+static void outprf_metadata(int cls, int shpno)
+{
+	static char header[32], footer[32];
+	unsigned flen, hlen, len;
+
+	sprintf(header,"{{GE;MSG;%d;BEGIN}}",cls);
+	sprintf(footer,"{{GE;MSG;%d;END}}",cls);
+	hlen = strlen(header);
+	flen = strlen(footer);
+	len = strlen(prfbuf);
+	if (len + hlen + flen < OUTSIZ) {
+		memmove(prfbuf + hlen,prfbuf,len + 1);
+		memcpy(prfbuf,header,hlen);
+		memcpy(prfbuf + hlen + len,footer,flen + 1);
+		prfptr += hlen + flen;
+	}
+	outprf(shpno);
+}
+
 void FUNC outprfge(int cls, int shpno)
 {
 	byte msgfilter;
@@ -2046,50 +2073,82 @@ void FUNC outprfge(int cls, int shpno)
 				return;
 			case FLT_CYB_ALL:
 				if ((msgfilter & MSGF_CYBS_MASK) == 0x00) {
-					outprf(shpno);
+					if (data_enabled != NULL
+						&& (data_enabled[shpno] & GEDATA_METADATA))
+						outprf_metadata(cls,shpno);
+					else
+						outprf(shpno);
 					return;
 				}
 				break;
 			case FLT_CYB_BAT:
 				if ((msgfilter & MSGF_CYBS_MASK) == 0x00 ||
 					(msgfilter & MSGF_CYBS_MASK) == 0x01) {
-					outprf(shpno);
+					if (data_enabled != NULL
+						&& (data_enabled[shpno] & GEDATA_METADATA))
+						outprf_metadata(cls,shpno);
+					else
+						outprf(shpno);
 					return;
 				}
 				break;
 			case FLT_CYB_APP:
 				if ((msgfilter & MSGF_CYBS_MASK) != 0x03) {
-					outprf(shpno);
+					if (data_enabled != NULL
+						&& (data_enabled[shpno] & GEDATA_METADATA))
+						outprf_metadata(cls,shpno);
+					else
+						outprf(shpno);
 					return;
 				}
 				break;
 			case FLT_DISTRESS:
 				if (!(msgfilter & MSGF_DISTRESS)) {
-					outprf(shpno);
+					if (data_enabled != NULL
+						&& (data_enabled[shpno] & GEDATA_METADATA))
+						outprf_metadata(cls,shpno);
+					else
+						outprf(shpno);
 					return;
 				}
 				break;
 			case FLT_BEACON:
 				if (!(msgfilter & MSGF_BEACON)) {
-					outprf(shpno);
+					if (data_enabled != NULL
+						&& (data_enabled[shpno] & GEDATA_METADATA))
+						outprf_metadata(cls,shpno);
+					else
+						outprf(shpno);
 					return;
 				}
 				break;
 			case FLT_HAIL:
 				if (!(msgfilter & MSGF_HAIL)) {
-					outprf(shpno);
+					if (data_enabled != NULL
+						&& (data_enabled[shpno] & GEDATA_METADATA))
+						outprf_metadata(cls,shpno);
+					else
+						outprf(shpno);
 					return;
 				}
 				break;
 			case FLT_ENTRY:
 				if ((msgfilter & MSGF_ENTRY_MASK) != 0x40) {
-					outprf(shpno);
+					if (data_enabled != NULL
+						&& (data_enabled[shpno] & GEDATA_METADATA))
+						outprf_metadata(cls,shpno);
+					else
+						outprf(shpno);
 					return;
 				}
 				break;
 			case FLT_SHIP:
 				if (!(msgfilter & MSGF_SHIP)) {
-					outprf(shpno);
+					if (data_enabled != NULL
+						&& (data_enabled[shpno] & GEDATA_METADATA))
+						outprf_metadata(cls,shpno);
+					else
+						outprf(shpno);
 					return;
 				}
 				break;
@@ -2098,7 +2157,6 @@ void FUNC outprfge(int cls, int shpno)
 	}
 	clrprf();
 }
-
 
 /**************************************************************************
 ** Send message to all ships in this sector                              **
@@ -2226,7 +2284,7 @@ void FUNC geshocst(int opt, char *str)
 
 int FUNC mnu_main(void)
 {
-	prfmsg(INTRO, VERSION);
+	prfmsg(INTRO, spr("%s %s", PROJECT_NAME, PROJECT_VERSION));
 	disp_main_menu();
 	outprfge(FLT_NONE, usrnum);
 	usrptr->substt = 1;
@@ -2325,6 +2383,7 @@ int FUNC mnu_fightsub(void)
 			gepdb(GEUPDATE, warsptr->userid, warsptr->shipno, warsptr);
 			geudb(GEUPDATE, waruptr->userid, waruptr);
 			/* return the player to the GE main menu and mark the ship slot free */
+			data_enabled[usrnum] = FALSE;
 			disp_main_menu();
 			outprfge(FLT_NONE, usrnum);
 			exit_entrymsg(usrnum);
