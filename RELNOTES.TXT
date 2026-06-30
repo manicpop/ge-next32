@@ -1,17 +1,30 @@
 
-ge-next32 RELEASE NOTES
+ge-next RELEASE NOTES
 
 ge-next is developed by ManicPop.org and based on Galactic Empire,
 copyright (c) 2025 Elwynor Technologies.
 
-https://manicpop.org/ge-next  https://github.com/manicpop/ge-next32
+https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
 https://github.com/elwynor/elwge  https://www.elwynor.com/
 https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
 Please contact me with thoughts and suggestions.
 
-=== 0.3 === 2026-06-16
+=== 0.3.1 === 2026-06-30:
 
-This is the first version of ge-next available for MajorBBS v10.
+* Cargo size calculation routines were rewritten with separate
+  16-bit and 32-bit implementations. There were still some
+  overflow issues; should all be fixed now.
+* The DATA command has been rewritten. See FRONTEND.TXT for more
+  information on how to use this command.
+* A build specifically for MBBSEmu is now available.
+
+=== 0.3 === 2026-06-16:
+
+ge-next's main executable is now MPOGEMP.DLL and all MBM*
+filenames have been moved to MPO*. ge-next should now run
+alongside classic Galactic Empire. There have been significant
+structural changes starting with 0.3 RC2, previous saved games
+are not compatible.
 
 The main focus of 0.3 is enhancements for user ships:
 * A new "overspeed" routine has been implemented that will
