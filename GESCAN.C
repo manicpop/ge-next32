@@ -1828,7 +1828,7 @@ static void data_ordnance(void)
 {
 	WARSHP *ptr;
 	double ddist;
-	int i, zothusn, none, bearing;
+	int i, zothusn, none, minebrg;
 
 	none = TRUE;
 	for (i=0; i<MAXTORPS; ++i) {
@@ -1949,13 +1949,13 @@ static void data_ordnance(void)
 				continue;
 			none = FALSE;
 			ddist = cdistance(&warsptr->coord,&mines[i].coord) * 10000.0;
-			bearing = cbearing(&warsptr->coord,&mines[i].coord,warsptr->heading);
+			minebrg = cbearing(&warsptr->coord,&mines[i].coord,warsptr->heading);
 			prf("ORD6:%d,%d,%u,",
 				(int)mines[i].coord.xcoord,
 				(int)mines[i].coord.ycoord,
 				mines[i].timer);
 			if (warsptr->jam_sev <= (byte)2)
-				prf("%d,%s*\r",bearing,spr("%ld",(long)ddist));
+				prf("%d,%s*\r",minebrg,spr("%ld",(long)ddist));
 			else
 				prf("????,?????*\r");
 			outprfge(FLT_NONE,usrnum);
@@ -1970,7 +1970,7 @@ static int data_damage_eta(WARSHP *ptr, int steps, int active, int fuzz)
 {
 	int secs;
 
-	/* Preserve why REPORT SYS omitted a numeric ETA without exposing steps. */
+	/* preserve why REPORT SYS omitted a numeric ETA without exposing steps */
 	if (steps <= 0)
 		return 0;
 	if (ptr->repair > 0)
@@ -2111,7 +2111,7 @@ static void data_shipscan_text(char *buf, unsigned int *rseed)
 
 static void data_shipscan_damage(WARSHP *wptr)
 {
-	int damage, phaserstate, shieldstat;
+	int scandmg, phaserstate, shieldstat;
 	int show_shields, show_enhanced;
 
 	if (warsptr->jam_sev >= (byte)3
@@ -2124,8 +2124,8 @@ static void data_shipscan_damage(WARSHP *wptr)
 		|| ((warsptr->upgrade & ENHSCAN) && wptr->where != 1);
 	show_enhanced = (warsptr->upgrade & ENHSCAN) && wptr->where != 1;
 
-	damage = (int)(wptr->damage + .5);
-	damstr(damage);
+	scandmg = (int)(wptr->damage + .5);
+	damstr(scandmg);
 	prf("SHIPSCAN2:");
 	data_text(gechrbuf);
 
@@ -2216,7 +2216,7 @@ static void data_shipscan(void)
 	char *tname;
 	unsigned int rseed;
 	long scandist;
-	int bearing, gheading, heading, nebmask, shpnum, target_neb;
+	int scanbrg, gheading, scanhdg, nebmask, shpnum, target_neb;
 
 	if (warsptr->tactical != 0 || warsptr->damage >= 100.0) {
 		prf("SHIPSCAN:UNAVAILABLE*\rSTOP:SHIPSCAN*\r");
@@ -2310,8 +2310,8 @@ static void data_shipscan(void)
 		return;
 	}
 
-	bearing = cbearing(&warsptr->coord,&wptr->coord,warsptr->heading);
-	heading = cbearing(&wptr->coord,&warsptr->coord,wptr->heading);
+	scanbrg = cbearing(&warsptr->coord,&wptr->coord,warsptr->heading);
+	scanhdg = cbearing(&wptr->coord,&warsptr->coord,wptr->heading);
 	gheading = (int)(wptr->heading + .5);
 	setsect(wptr);
 
@@ -2340,10 +2340,10 @@ static void data_shipscan(void)
 		prf(",,,");
 	prf(",");
 
-	sprintf(gechrbuf,"%d",bearing);
+	sprintf(gechrbuf,"%d",scanbrg);
 	data_shipscan_text(gechrbuf,&rseed);
 	prf(",");
-	sprintf(gechrbuf,"%d",heading);
+	sprintf(gechrbuf,"%d",scanhdg);
 	data_shipscan_text(gechrbuf,&rseed);
 	prf(",");
 	sprintf(gechrbuf,"%ld",scandist);
@@ -2362,7 +2362,7 @@ static void data_shipscan(void)
 		if (wptr->status == GESTAT_AUTO)
 			prf(",%u,0,0,0*\r",wptr->kills);
 		else
-			prf(",%d,%u,%u,%u*\r",wptr->kills,wptr->ukills,wuptr->kills,wuptr->ukills);
+			prf(",%u,%u,%u,%u*\r",wptr->kills,wptr->ukills,wuptr->kills,wuptr->ukills);
 	}
 	else
 		prf(",,,,*\r");
@@ -2382,7 +2382,7 @@ static void data_user(void)
 	data_text(waruptr->userid);
 	prf(",");
 	data_text(tname == NULL ? "" : tname);
-	prf(",%d,%u,%u,%u*\r",
+	prf(",%u,%u,%u,%u*\r",
 		waruptr->noships,
 		waruptr->kills,
 		waruptr->ukills,
