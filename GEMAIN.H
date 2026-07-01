@@ -59,7 +59,7 @@
 /* if FASTPLANET defined updates happen every 3 seconds */
 /* #define FASTPLANET 1 */
 
-#define PROJECT_NAME "ge-next32"
+#define PROJECT_NAME "ge-next"
 #define PROJECT_VERSION "0.3.1"
 #define PROJECT_ARCH "32-bit"
 #define GEHELP  "MPOGEHLP.MCV"

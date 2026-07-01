@@ -62,7 +62,7 @@ FRONTEND set to any other string:
 
     Example:
 
-        ON:COOLBBS,ge-next32,0.3.1b,32-bit*
+        ON:COOLBBS,ge-next,0.3.1,32-bit*
         STOP:ON*
 
     An incorrect code and all other DATA commands behave like invalid game
