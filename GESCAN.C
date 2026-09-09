@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ge-next32 GESCAN.C                                                        *
  *                                                                           *
- * ge-next32 modifications by Anthony Schmidt / ManicPop.org                 *
+ * ge-next32 modifications ONLY copyright (C) 2024-2026 Anthony Schmidt     *
  * Based on Galactic Empire (c) 2025 Elwynor Technologies                    *
  *                                                                           *
  * https://manicpop.org/ge-next/  https://github.com/manicpop/ge-next32      *
@@ -24,28 +24,6 @@
  *                                                                           *
  * You should have received a copy of the GNU Affero General Public License  *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.     *
- *                                                                           *
- * Additional Terms for Contributors:                                        *
- * 1. By contributing to this project, you agree to assign all right, title, *
- *    and interest, including all copyrights, in and to your contributions   *
- *    to Rick Hadsall and Elwynor Technologies.                              *
- * 2. You grant Rick Hadsall and Elwynor Technologies a non-exclusive,       *
- *    royalty-free, worldwide license to use, reproduce, prepare derivative  *
- *    works of, publicly display, publicly perform, sublicense, and          *
- *    distribute your contributions                                          *
- * 3. You represent that you have the legal right to make your contributions *
- *    and that the contributions do not infringe any third-party rights.     *
- * 4. Rick Hadsall and Elwynor Technologies are not obligated to incorporate *
- *    any contributions into the project.                                    *
- * 5. This project is licensed under the AGPL v3, and any derivative works   *
- *    must also be licensed under the AGPL v3.                               *
- * 6. If you create an entirely new project (a fork) based on this work, it  *
- *    must also be licensed under the AGPL v3, you assign all right, title,  *
- *    and interest, including all copyrights, in and to your contributions   *
- *    to Rick Hadsall and Elwynor Technologies, and you must include these   *
- *    additional terms in your project's LICENSE file(s).                    *
- *                                                                           *
- * By contributing to this project, you agree to these terms.                *
  *                                                                           *
  *****************************************************************************/
 
@@ -76,8 +54,10 @@ static void scan_pl(void);
 static void scan_ra(void);
 static void scan_se(void);
 static void scan_lo(void);
+#ifndef GE_ARENA
 static void data_shipscan(void);
 static void data_shipscan_systems(WARSHP *wptr);
+#endif
 
 /**************************************************************************
 ** Functions for printmap()                                              **
@@ -839,10 +819,10 @@ static void scan_sh(void)
 			prfmsg(DASHES);
 			outprfge(FLT_NONE, usrnum);
 
-			/* if beyond the "scanned" ships range disply this msg */
+			/* if beyond the "scanned" ships range display this msg */
 			/* if scanner is already locked onto target, suppress scan notification */
 			if (warsptr->jam_sev < (byte)3 && warsptr->lock != shpnum) {
-				if ((long)scandist > shipclass[wptr->shpclass].scanrange) {
+				if ((long)scandist > ship_scanrange(wptr)) {
 					bearing = cbearing(&wptr->coord, &warsptr->coord, wptr->heading);
 					prfmsg(SCAN2, bearing);
 				} else {
@@ -868,9 +848,63 @@ static void scan_sh(void)
 	}
 }
 
+#ifdef GE_ARENA
+static void arena_scan_item(int item)
+{
+	if (plptr->items[item].qty == 0)
+		return;
+	sprintf(gechrbuf,"%s%s%12lu",item_name[item],
+	    gedots(26 - (int)strlen(item_name[item])),plptr->items[item].qty);
+	gechrbuf[0] = (char)toupper((unsigned char)gechrbuf[0]);
+	prf("%s\r",gechrbuf);
+}
+
+static void arena_scan_powerup(char *name, int value)
+{
+	if (value > 0) {
+		sprintf(gechrbuf,"%d",value);
+		prf("%s%s%12s\r",name,gedots(26 - (int)strlen(name)),gechrbuf);
+	}
+	else
+		prf("%s%s%12d\r",name,gedots(26 - (int)strlen(name)),1);
+}
+
+static void arena_scan_planet_contents(void)
+{
+	arena_scan_item(I_TORPEDO);
+	arena_scan_item(I_MISSILE);
+	arena_scan_item(I_MINE);
+	arena_scan_item(I_JAMMERS);
+	arena_scan_item(I_DECOYS);
+	arena_scan_item(I_ZIPPERS);
+	arena_scan_item(I_FLUXPOD);
+	if (arena_mode == ARENA_MODE_HOARD)
+		arena_scan_item(I_GOLD);
+	if (plptr->arena_shield_boost)
+		arena_scan_powerup("Shield booster",plptr->arena_shield_boost);
+	if (plptr->arena_phaser_boost)
+		arena_scan_powerup("Phaser booster",plptr->arena_phaser_boost);
+	if (plptr->arena_flags & ARENA_PL_SCAN)
+		arena_scan_powerup("Enhanced scanners",0);
+	if (plptr->arena_flags & ARENA_PL_ARMOR)
+		arena_scan_powerup("Armor plating",0);
+	if (plptr->arena_flags & ARENA_PL_ACCEL)
+		arena_scan_powerup("Acceleration booster",0);
+	if (plptr->arena_flags & ARENA_PL_CORE)
+		arena_scan_powerup("Reinforced neutron core",0);
+	if (plptr->arena_flags & ARENA_PL_INSTANT)
+		prf("%s%s%12d\r","Instant maintenance",
+		    gedots(26 - (int)strlen("Instant maintenance")),1);
+	if (plptr->arena_flags & ARENA_PL_MAINT)
+		prf("Maintenance depot available\r");
+}
+#endif
+
 static void scan_pl(void)
 {
+#ifndef GE_ARENA
 	unsigned i;
+#endif
 	unsigned int rseed = gernd();
 	int nebmask;
 
@@ -944,6 +978,11 @@ static void scan_pl(void)
 			}
 			prfmsg(SCAN12,gechrbuf2,gechrbuf3);
 
+#ifdef GE_ARENA
+			if (warsptr->where != 1 &&
+			    (warsptr->jam_sev < (byte)3 || warsptr->where - 10 == plnum))
+				arena_scan_planet_contents();
+#else
 			if (warsptr->where != 1 && (warsptr->jam_sev < (byte)3 || warsptr->where - 10 == plnum)) {
 				prfmsg(SCAN13);
 				if (plptr->enviorn == 0)
@@ -1036,6 +1075,7 @@ static void scan_pl(void)
 						prfmsg(SCAN32);
 				}
 			}
+#endif
 				prfmsg(DASHES);
 				outprfge(FLT_NONE,usrnum);
 		} else if (plptr->type == PLTYPE_WORM) {
@@ -1171,7 +1211,7 @@ static void scan_ra(void)
 
 	/* plot mines */
 	for (i = 0, mptr = mines; i < (int)nummines; ++mptr, ++i) {
-		if (mptr->channel != (byte)255) {
+		if (mptr->channel != MINE_UNUSED) {
 			xf = ((mptr->coord.xcoord - x1) / xfactor) + ((double)MAXX)/2.0;
 			yf = ((mptr->coord.ycoord - y1) / yfactor) + ((double)MAXY)/2.0;
 
@@ -1266,7 +1306,7 @@ static void scan_se(void)
 		x = coord1(mptr->coord.xcoord);
 		y = coord1(mptr->coord.ycoord);
 
-		if (mptr->channel != (byte)255 && (x==xsect && y==ysect)) {	/* if a live mine */
+		if (mptr->channel != MINE_UNUSED && (x==xsect && y==ysect)) {	/* if a live mine */
 			if (nebmask && cdistance(&warsptr->coord,&mptr->coord)*10000.0 > (double)NEBRNG)
 				continue;
 			x = coord2(mptr->coord.xcoord) +50;
@@ -1476,6 +1516,7 @@ static void scan_lo(void)
 ** DATA scan helpers                                                     **
 **************************************************************************/
 
+#ifndef GE_ARENA
 static void data_text(const char *text)
 {
 	while (*text) {
@@ -1656,7 +1697,7 @@ static void data_scan(void)
 		shifty = yfactor;
 
 	for (i=0, mptr=mines; i<nummines; ++i, ++mptr) {
-		if (mptr->channel == 255)
+		if (mptr->channel == MINE_UNUSED)
 			continue;
 		xf = ((mptr->coord.xcoord - x1) / xfactor)
 			+ ((double)MAXX)/2.0 + shiftx / xfactor;
@@ -1776,7 +1817,7 @@ static void data_sector(void)
 
 	minecount = 0;
 	for (i=0, mptr=mines; i<nummines; ++i, ++mptr) {
-		if (mptr->channel == 255 || !samesect(&mptr->coord,&warsptr->coord))
+		if (mptr->channel == MINE_UNUSED || !samesect(&mptr->coord,&warsptr->coord))
 			continue;
 		dist = cdistance(&warsptr->coord,&mptr->coord) * 10000.0;
 		if (nebula && dist > (double)NEBRNG)
@@ -2191,7 +2232,7 @@ static void data_shipscan_notify(int shpnum, long scandist)
 		return;
 
 	wptr = warshpoff(shpnum);
-	if ((long)scandist > shipclass[wptr->shpclass].scanrange) {
+	if ((long)scandist > ship_scanrange(wptr)) {
 		target_bearing = cbearing(&wptr->coord,&warsptr->coord,wptr->heading);
 		prfmsg(SCAN2,target_bearing);
 	}
@@ -2574,3 +2615,10 @@ void FUNC cmd_data(void)
 	prfmsg(INVCMD);
 	outprfge(FLT_NONE,usrnum);
 }
+#else
+void FUNC cmd_data(void)
+{
+	prfmsg(INVCMD);
+	outprfge(FLT_NONE,usrnum);
+}
+#endif

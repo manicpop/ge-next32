@@ -18,4 +18,6 @@ ge-next32 began in May 2026 by [Anthony Schmidt](https://github.com/manicpop), u
 
 ## License
 
-ge-next32 is free software released under the GNU Affero General Public License v3.0 with the additional terms in [LICENSE](LICENSE). Contribution terms are provided in [CONTRIBUTING.txt](CONTRIBUTING.txt).
+ge-next32 modifications ONLY are copyright (C) 2024-2026 Anthony Schmidt. This notice does not apply to the underlying Galactic Empire code.
+
+ge-next32 is free software released under the GNU Affero General Public License, version 3 or later. Contribution guidelines are provided in [CONTRIBUTING.txt](CONTRIBUTING.txt).

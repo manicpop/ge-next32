@@ -1,0 +1,773 @@
+Galactic Empire Help Message Database
+
+LEVEL6 {}
+
+HLPINDEX {
+[1;36mHelp is available on the following commands and topics:
+
+Commands: [1;32madmin  [1;33mcls[1;32m  decoy  [1;33mhelp[1;32m  impulse  jammer  jettison  lock
+          maintenance  mine  missile  navigate  orbit  phaser  rename  report
+          [1;33mroster[1;32m  rotate  scan  send  [1;33mset[1;32m  shield  [1;33mstatus[1;32m  stop  torpedo
+          transfer  warp  [1;33mwho  x[1;32m  zipper
+
+[1;36mTopics:   [1;32mbattle  class  flux  galaxy  modes  moving  nebulas
+          scoring  upgrades  wormholes  Cybertrons
+
+[1;33mYellow[1;36m commands are also available in the arena lobby.
+
+[1;36mEnter [1;37mHELP[1;36m followed by any of these commands or topics for more information.[1;37m
+} T GE help list of subjects message
+
+
+HLPGALXY {
+[1;36mTopic: Galaxy
+The game takes place in a galaxy made up of sectors. Each sector is 10000 by
+10000 subsectors square. The size of the galaxy is based on the game mode and
+how many players are participating. Sectors are mapped on a two coordinate
+system, and each sector is measured from the top left to bottom right as shown
+below:
+
+[0;31m+-------------------------------+   +-------------------------------+
+|[1;37m-300 -300              300 -300[0;31m|   |[1;37m0 0                      0 9999[0;31m|
+|                               |   |                               |
+|                               |   |                               |
+|[1;37m       Sample galaxy map       [0;31m|   |[1;37m       Sample sector map       [0;31m|
+|                               |   |                               |
+|                               |   |                               |
+|                               |   |                               |
+|[1;37m              0 0              [0;31m|   |[1;37m           5000 5000           [0;31m|
+|                               |   |                               |
+|                               |   |                               |
+|                               |   |                               |
+|                               |   |                               |
+|                               |   |                               |
+|                               |   |                               |
+|[1;37m-300 300                300 300[0;31m|   |[1;37m9999 0                9999 9999[0;31m|
++-------------------------------+   +-------------------------------+[1;37m
+} T GE help galaxy message
+
+HLPNAVIG {
+[1;36mTopic: Moving (Navigating)
+All directional information in Galactic Empire functions on a 360 degree
+compass and is strictly two dimensional. The major bearings are as follows:
+
+       [1;37m315  0  45
+          \ | /
+           \|/
+     270----*----90
+           /|\
+          / | \
+       225 180 135[1;36m
+
+BEARING -- Bearing is always used to indicate where a particular ship or planet
+is in relation to you. It is relative to the direction you are facing and
+expressed in a number from -179 to 180. If an object is bearing -90, it is to
+the left of you, if 90 it is to the right of you, if 0 it is directly in front
+of you, and if 180 it is directly behind you.
+
+HEADING -- Heading is the relative direction of the other ship. It is used to
+indicate when a ship is facing toward or away from you. A heading of 0 means
+the ship is facing toward you, while a heading of 180 is away from you.
+
+GALACTIC HEADING -- This is the absolute heading in the galaxy. A galactic
+heading of 0 means you (or the other ship) is facing north up.
+[1;37m} T GE help navigate message
+
+HLPBATTL {
+[1;36mTopic: Battle strategy
+
+The flexibility of Galactic Empire precludes an exhaustive discussion of all
+the strategies involved in user-versus-user battling. Some suggestions are
+simply put forth here to get you started.
+
+When in a potential battle situation make sure your shields are up, and keep
+moving. The easiest target is a ship with shields down, sitting still.
+
+If you have incoming torpedoes, you can ditch them easily by making a jump to
+light speed (provided you have warp drive). Missiles, however, can travel
+through hyperspace; you can only shake them off by fleeing at high warp.
+
+The more charge a missile carries, the more damage it does when it hits, but
+heavily charged missiles travel more slowly. Missiles use energy as they
+travel, and will eventually run out of charge and disappear if they don't hit
+their target. Since the payload from a missile is mostly flux energy, shields
+are incredibly effective at absorbing a missile blast.
+
+Type [1;37mHELP BATTLE2[1;36m for more information on battling.
+[1;37m} T GE help battle message
+
+HLPBATT2 {
+[1;36mTopic: Battle strategy (section 2)
+
+Launching decoys does not guarantee that the incoming missiles or torpedoes
+will be destroyed. Launching more decoys than incoming weapons increases the
+chance of destroying an incoming weapon.
+
+If a target goes to light speed, be prepared to make the jump with them and use
+hyper-phasers as soon as you pass warp 1.
+
+If you get hit with a hyper-phaser, immediately go into a series of high speed
+turns as your opponent will have difficulty locating you.
+
+When you destroy another ship, you will get some of the goods that were on that
+ship. This can be very helpful when you are running low.
+[1;36m} T GE help battle 2 message
+
+HLPCYBER {
+[1;36mTopic: Cybertrons
+
+Cybertrons are a race of automatons which command a class of ship manufactured
+specifically for them, also called the Cybertron. Both pilot and ship function
+as a single fighting unit, and they can be quite deadly.
+
+All Cybertrons are equipped with a pursuit capability to identify non-Cybertron
+ships throughout the galaxy, and are capable of traversing the galaxy in
+mere moments to reach a ship, at speeds far beyond warp as currently
+understood. All attempts by the Galactic Command to reverse engineer this
+technology have so far failed. A scan of a Cybertron ship traveling at this
+pursuit speed will display "??.??" for speed.
+
+The least powerful Cybertron is a Cybertron Interceptor, which can be
+identified by its "1x" marking. The top cruising speed of a Cybertron
+Interceptor is warp 8.0, and it is equipped only with phaser, shield, and
+torpedo systems. As you destroy Cybertrons and upgrade to more powerful ships,
+you will find more powerful classes of Cybertrons will be dispatched to
+intercept you. It is up to you to discover the capabilities of these ships.
+
+Cybertrons do not spawn in all game modes.
+[1;37m} T GE help Cybertron message
+
+HLPSCORE {
+[1;36mTopic: Scoring
+
+Scores are based upon the class of kills you have accumulated in ship-to-ship
+combat.  Each class of ship is worth a different number of points.
+
+Cybertron Scouts are worth 1000 points. More powerful Cybertrons are worth
+more; you will have to destroy them to find how much.
+
+Enter [1;37mHELP CLASS[1;36m to view the points awarded for destroying user ships.
+Additionally, you are awarded a small percentage of the defeated player's score
+in addition to the ship points.
+
+Finally, when you destroy another player's ship, their score also goes down.
+
+Scoring is not used in all game modes.
+[1;37m} T GE help scoring message
+
+HLPMODES {
+[1;36mTopic: Arena modes
+
+Matches last 15 minutes unless fewer than two players remain, with 10 second
+respawns. Each mode has its own selection of ships and starting equipment.
+
+  [1;32m1[1;36m - [1;37mBattle[1;36m
+      Free-for-all combat without Cybertrons; the player with most kills wins.
+  [1;32m2[1;36m - [1;37mHoard[1;36m
+      Gather gold from planets, Cybertrons, and defeated players. The player
+      carrying the most gold when time expires wins.
+  [1;32m3[1;36m - [1;37mKing[1;36m
+      Spend the most total time in the active sector, which starts in 0 0 and
+      moves every three minutes. No Cybertrons.
+  [1;32m4[1;36m - [1;37mBase[1;36m
+      Destroy the most Cyber-Bases. Destroying other players does not score.
+      The player that scores the final, deciding hit on the base gets credit.
+  [1;32m5[1;36m - [1;37mScored[1;36m
+      Earn standard Galactic Empire points from player and Cybertron kills.
+      The highest score wins, and scores can fall below zero.
+
+A tie for first is settled by a last-ship-standing tiebreaker in sector 0 0.
+If there is no winner after two minutes, it's a true tie.
+
+Use [1;37mHELP CLASS[1;36m to see the ships available for the current mode.
+[1;37m} T GE help arena modes message
+
+HLPWORM {
+[1;36mTopic: Wormholes
+
+Wormholes are fairly rare galactic anomalies caused by a paired spatial
+singularity. In effect, they create a means of "leaping" across the galaxy to
+another sector. To navigate through a wormhole you must carefully approach it
+directly at about 1/4 impulse. You will be pulled into the wormhole and emerge
+at the terminal sector. If you approach too fast, you will simply miss the
+event horizon. If you approach too slow, you may oscillate between terminal
+sectors.
+
+Each time you pass through a wormhole, some damage to systems may occur.
+Passing through a wormhole while severely damaged is not recommended. Wormholes
+are usually bidirectional, but an even rarer form of one way wormhole has been
+speculated to exist.
+[1;37m} T GE help wormhole message
+
+HLPNEB {
+[1;36mTopic: Nebulas
+
+Nebulas are sectors in the galaxy filled with ionized hydrogen and cosmic dust.
+Inside a nebula, your ship's scanners will be extremely limited. Scanners will
+only be able to work within a small radius around the ship in sector view and
+all scanner functionality outside the nebula will be blocked.
+
+A ship inside the nebula is also completely shielded from all scans from
+outside the nebula. This means a nebula can be an effective place to hide, but
+you won't have any idea what's going on outside of it.
+
+Phaser fire is not affected by nebulas, and you can fire into and out of them
+as you please. If you think someone's hiding in a nebula, that's certainly an
+effective way to check.
+
+Planets and wormholes can exist in a nebula just like any other sector, but
+your scanners will not be able to locate them unless they're very close to you.
+[1;37m} T GE help nebula message
+
+HLPUPG {
+[1;36mTopic: Ship upgrades
+
+Various upgrades for your ship's systems are available amongst the items you
+can pick up from planets. Each class of ship has different upgrades that are
+applicable to that class of ship. If your ship can't support a particular
+upgrade, it will not be transferred up from the planet.
+
+To see what upgrades are available for your ship, enter [1;37mHELP CLASS [1;32m[number][1;36m.
+
+Installed upgrades are shown in [1;37mREP UPG[1;36m. Upgraded ships will be shown with
+[1;37m+[1;36m symbols added to the ship's class in scans.
+[1;37m} T GE help upgrade message
+
+HLPADM {
+[1;36mThe [1;37mADMIN[1;36m command renames an unowned planet you are orbiting.
+[1;37m} T GE help admin message
+
+HLPCLS {
+[1;36mThe [1;37mCLS[1;36m command simply clears the screen.
+
+This command is also available in the lobby.
+[1;37m} T GE help cls message
+
+HLPDEC {
+[1;36mThe [1;37mDECOY[1;36m command deploys a single decoy. Decoys proceed away from your ship
+and send a sensor signature that resembles your ship. If a torpedo or missile
+comes near the decoy, the decoy will explode and destroy the inbound weapon.
+The decoy will self-destruct after a period of time to prevent stray decoys
+floating around in your navigation path. You can deploy up to ten decoys at a
+time, and the more that are deployed, the greater the odds are of a successful
+interception.
+[1;37m} T GE help decoy message
+
+HLPFLU {
+[1;36mTopic: Neutron flux
+
+All ships operate by the power provided by the neutron flux drive. The neutron
+flux is recharged by loading in a new flux pod. Until recently, this was
+occasionally a challenging process, as many ship systems would sometimes
+completely drain the flux before a pod could be replaced. All ships will now
+automatically replace flux pods as needed; it is no longer necessary to
+manually switch pods.
+
+If you wish, you can enter [1;37mFLUX[1;36m to replace your current flux pod. This command
+presumes that you want it changed now, and does not warn you if there is still
+a good percentage of power left in the old pod. The old pod is jettisoned. Your
+power is restored to full charge automatically.
+
+Ships are also capable of recharging the flux pile by absorbing the naturally
+occurring background ion radiation of the galaxy, at a rate of 2 units every
+three seconds. This means a ship can still travel at impulse even if a ship has
+run out of flux pods.
+
+It is your responsibility to make sure that you keep your ship stocked with
+flux pods, because if you run out, you will be limited to impulse until you
+can find more (or lose your ship).
+[1;37m} T GE help flux message
+
+HLPHEL {
+[1;36mThe [1;37mHELP[1;36m command will display a vast amount of information on Galactic Empire.
+Type [1;37mhelp[1;36m for a list of subjects, and [1;37mhelp [1;32m[subject][1;36m for information on that
+subject.
+
+This command is also available in the lobby.
+[1;37m} T GE help help message
+
+HLPHYP {
+[1;36mIn hyperspace, a ship's standard phasers are useless. The hyper-phaser,
+however, can be deadly. The hyper-phaser beam is very narrow but very powerful
+and can destroy another ship with only a few well placed shots. Unlike the
+standard phaser, you can't adjust the width of the beam. When in hyperspace,
+issue the [1;37mPHASER[1;36m command as follows:
+
+[1;37mphaser [1;32m[direction]
+
+  [1;32mdirection[1;36m = the heading at which to fire the phasers, usually the bearing
+              of another ship given in the "scan sh" command. With the
+              hyper-phaser, you must be pinpoint accurate to score a hit.
+
+Examples: [1;37mphaser 4       [1;36mfire 4 degrees off starboard
+          [1;37mpha 180        [1;36mfire directly behind you
+[1;37m} T GE help hyper message
+
+HLPIMP {
+[1;36mThe [1;37mIMPULSE[1;36m command directs your impulse (sub-light) engines and sets your
+course and speed. Issue the impulse command as follows:
+
+  [1;37mimpulse [1;32m[speed] [degrees/[1;37m@[1;32mheading]
+
+  [1;32mspeed [1;36m= the impulse speed between 0 and 99 (99 is .99 light speed)
+  [1;32mdegrees [1;36m= degrees to rotate to port (negative) or starboard (positive)
+  [1;32mheading [1;36m= the absolute direction regardless of your current heading
+
+Examples: [1;37mimpulse 5     [1;36malter the speed to warp 0.05, not changing the heading
+          [1;37mimpulse 10 5  [1;36malter the speed to warp 0.10 and turn the ship
+                        5 degrees to the starboard (right)
+          [1;37mimp 20 -25    [1;36malter the speed to warp 0.20 and turn the ship
+                        25 degrees to the port (left)
+          [1;37mimp 50 @140   [1;36malter the speed to warp 0.50 and turn the ship
+                        140 degrees absolute
+[1;37m} T GE help impulse message
+
+HLPJAM {
+[1;36mThe [1;37mJAMMER[1;36m command will launch a jammer device from your ship. It disrupts all
+scanner systems on all ships within range of the device, yours included. It is
+useful for covering an escape or distracting an opponent. The closer you are to
+the jammer, the more severe the jamming effect is, so don't assume someone
+can't see you just because you can't see them.
+[1;37m} T GE help jam message
+
+HLPLOC {
+[1;36mThe [1;37mLOCK[1;36m command locks your fire control systems onto a ship. As long as the
+ship is within scanner range, the fire control systems will remain locked onto
+that specific ship.
+
+Commands like [1;37mMISSILE[1;36m, [1;37mTORPEDO[1;36m, and [1;37mSCAN[1;36m can then be used with [1;37m@[1;36m instead of the
+ship letter. When you are locked onto a ship, its name will appear highlighted
+in scans and reports.
+
+When you lock onto a ship, that ship's scanners will detect the lock and report
+that information to the ship's commander, however once the lock is engaged,
+that ship will not be able to detect how often you are scanning it.
+
+Cybertrons are known to consider setting a scanner lock to be a hostile act.
+
+Issue the command as follows:
+
+  [1;37mlock [1;32m[ship letter]
+
+[1;36mOnce a ship is destroyed the lock is released automatically. Use the [1;37mLOCK[1;36m
+command with no options to release the lock.
+[1;37m} T GE help lock message
+
+HLPMAI { [1;36mUse the [1;37mMAINTENANCE[1;36m command when you are in orbit at a planet with a
+maintenance depot. (If a planet has instant maintenance, simply [1;37mTRA UP[1;36m.)
+
+Leaving orbit early will cease all repairs on the ship.
+
+Maintenance crews will not operate on any ship that is determined to be engaged
+in hostilities, as defined by the Galactic Codes of Engagement.
+
+[1;37m} T GE help maintenance message
+
+HLPMIN {
+[1;36mThe [1;37mMINE[1;36m command causes a neutron mine to be deposited at your current
+location. You specify how long until detonation (between 1 and 50 ticks, each
+tick being about six seconds), permitting you time to leave the spot for
+safety. Mines are useful when you are being tailed by another ship. Be aware
+that they are very powerful and you can also be damaged by them if you don't
+get far enough away. Issue the command as follows:
+
+  [1;37mmine [1;32m[time]
+
+  time [1;36m= the time until detonation in ticks (approx 6 seconds)
+[1;37m} T GE help mine message
+
+HLPMIS {
+[1;36mThe [1;37mMISSILE[1;36m command fires a hyper-missile at a given ship with a given charge.
+This missile guidance system will attempt to lock on the ship prior to firing
+the missile. If a lock is made, the missile is launched.
+
+Missiles must be charged from your neutron flux pile, and will drain your
+ship's flux pile by the amount of the charge. A missile's charge can be between
+2000 and 20000; if you don't specify the default of 5000 is used.
+
+Issue the command as follows:
+
+  [1;37mmissile [1;32m[ship letter/[1;37m@[1;32m] [energy]
+
+  ship letter [1;36m= the ship you are firing upon (or [1;37m@[1;36m for the locked on ship)
+  [1;32menergy [1;36m= the energy from your neutron flux pile to charge into the missile.
+
+Examples: [1;37mmissile A 2000   [1;36mfires a missile at ship A which cause minor (if any)
+                   damage, and drains your ship's flux by 2000
+          [1;37mmissile C 20000  [1;36mfires a missile at ship C which will cause major
+                   damage, and drains your ship's flux by 20000
+          [1;37mmis @            [1;36mfires on the ship that a previous [1;37mLOCK[1;36m command has
+                   locked onto, and drains your ship's flux by 5000
+
+Type [1;37mHELP BATTLE[1;36m for more information on missiles.
+[1;37m} T GE help missile message
+
+HLPNAV {
+[1;36mThe [1;37mNAVIGATE[1;36m command will display the bearing and distance to the center of the
+sector you specify. If you do not specify a sector, a default of [1;34m0 0[1;36m will be
+used. Issue the command as follows:
+
+  [1;37mnavigate [1;32m[sector]
+[1;37m} T GE help navigate message
+
+HLPORB {
+[1;36mThe [1;37mORBIT[1;36m command is used to orbit a given planet. You must be traveling at
+impulse or at a dead stop. If you are traveling at impulse, issuing the command
+will stop the impulse engines.
+
+Issue the command as follows:
+
+[1;37m  orbit [1;32m[planet number]
+[1;36m
+You must be within 250 subsectors of a planet to establish an orbit.
+[1;37m} T GE help orbit message
+
+HLPPHA {
+[1;36mThe [1;37mPHASER[1;36m command fires your ship's phasers in a given direction with a given
+beam spread. The narrowest and most powerful spread is 0, whereas 5 covers the
+widest range but is the least powerful. Wider beams can be useful when an
+opponent is cloaked but you have a general idea of where they are, or when they
+are moving quickly. If you do not specify a spread, a default of 1 is assumed.
+
+Issue the command as follows:
+
+  [1;37mphaser [1;32m[direction] [spread][1;37m
+
+  [1;32mdirection[1;36m = the heading at which to fire the phasers, usually the bearing
+              of another ship given in the "scan sh" command.
+
+Examples: [1;37mphaser -15     [1;36mfire 15 degrees off port, focus 1.
+          [1;37mpha 4 2        [1;36mfire 4 degrees off starboard, focus 2.
+          [1;37mphaser 180 5   [1;36mfire directly behind, focus 5.
+
+If you are traveling at warp speed, the hyper-phasers will be used instead. For
+more information on hyper-phasers, see [1;37mHELP HYPER[1;36m.
+[1;37m} T GE help phaser message
+
+HLPREN {
+[1;36mThe [1;37mRENAME[1;36m command will change the name assigned to your ship. Issue the
+command as follows:
+
+[1;37m  rename [1;32m[new ship name]
+
+[1;36mYour ship name can be up to 19 characters long. Ship names are optional; to
+clear your ship name simply enter [1;37mRENAME[1;36m.
+[1;37m} T GE help rename message
+
+HLPREP {
+[1;36mThe [1;37mREPORT[1;36m command gives you status information on navigation, ship systems,
+inventory, deployed ordnance, and installed upgrades. Issue the command as
+follows:
+
+  [1;37mreport [1;32m[[1;37mnav[1;32m/[1;37msys[1;32m/[1;37minv[1;32m/[1;37mord[1;32m/[1;37mupg[1;32m]
+
+[1;36mExamples: [1;37mreport nav [1;36m produces a navigational report
+          [1;37mreport sys [1;36m produces a systems report
+          [1;37mreport inv [1;36m produces an inventory report
+          [1;37mrep ord    [1;36m produces an ordnance report
+          [1;37mrep upg    [1;36m produces an upgrade report
+[1;37m} T GE help report message
+
+HLPROS {
+[1;36mThe [1;37mROSTER[1;36m command will display the top players roster. Your current ranking
+number will also be displayed. Players that have yet to win any matches will
+not be displayed unless you specify [1;37mall[1;36m.
+
+Issue the command as follows:
+
+  [1;37mroster [1;32m[[1;37mall[1;32m]
+
+[1;36mExamples: [1;37mroster [1;36mdisplays the top players
+          [1;37mroster all [1;36mdisplays all players
+
+This command is also available in the lobby.
+[1;37m} T GE help roster message
+
+HLPROT {
+[1;36mThe [1;37mROTATE[1;36m command will cause the directional thrusters to rotate the ship a
+specified number of degrees, or to a specified heading. If you specify an
+absolute heading, the ship will automatically turn in the direction which
+causes the shortest arc to arrive at the given heading. Issue the command as
+follows:
+
+[1;37m  rotate [1;32m[degrees]
+[1;36m      or
+[1;37m  rotate @[1;32m[heading]
+
+[1;32m  degrees [1;36m= degrees to rotate to port (negative) or starboard (positive)
+[1;32m  heading [1;36m= the absolute direction regardless of your current heading
+
+  examples: [1;37mrotate 5   [1;36mturns the ship 5 degrees to the starboard (right)
+            [1;37mrotate -5  [1;36mturns the ship 5 degrees to the port (left)
+            [1;37mrot @5     [1;36mturns the ship to 5 degrees absolute
+[1;37m} T GE help rotate message
+
+HLPSET {
+[1;36mThe [1;37mSET[1;36m command lets you set user-configurable options. Issue the command as
+follows:
+
+[1;37m  set [1;32m[option/[1;37m?[1;32m] [setting]
+[1;36m
+  [1;32moptions[1;36m:
+[1;37m    scan [1;36m-- change SCAN SE/RA display
+[1;37m       simple       [1;36m-- display maps only
+[1;37m       full         [1;36m-- display maps with list of ships or planets
+[1;37m       fullnames    [1;36m-- include ship names in list on second line
+[1;37m       fullextra    [1;36m-- include more than 8 ships if necessary
+[1;37m       nomap        [1;36m-- do not display map, text only
+
+[1;37m    display [1;36m-- adjust messages shown
+[1;36mEnter [1;37mHELP SET2[1;36m for more information on display filters.
+
+[1;36mEnter [1;37mSET ?[1;36m to show a list of options and their current settings.
+
+Examples:
+[1;37m  set scan fullnames
+  set display cybs off
+  set ?     
+
+This command is also available in the lobby.
+} T GE help set message
+
+HLPSET2 {
+[1;36mThe type of messages displayed can be filtered with the [1;37mSET DISPLAY[1;36m command:
+
+[1;37mcybs (off / approach / battle / on)
+[1;36m  OFF -- show no Cybertron hails
+  APPROACH -- only show hails from Cybertron tracking you as they approach
+  BATTLE -- only show battle messages (includes APPROACH)
+  ON -- show all Cybertron hails, including taunts
+[1;37mhail (off / on)
+[1;36m  show hailing messages from users (SEND ALL)
+[1;37mship (off / on)
+[1;36m  show non-critical ship functions (e.g. flux reload, sector change)
+
+Examples:
+[1;37m  set display hail on
+  set display cybs off
+
+[1;37m} T GE help set2 message
+
+HLPSCA {
+[1;36mThe [1;37mSCAN[1;36m command displays information from your ship's tactical scanners. Issue
+the command as follows:
+
+[1;37m  scan [1;32m[type] [ship letter/planet number/range]
+
+[1;32mtype[1;36m:
+  [1;37msh[1;36m = ship scan showing detail on [1;32mship letter
+  [1;37mpl[1;36m = planet scan showing detail on [1;32mplanet number
+  [1;37mse[1;36m = sector scan showing the ships, planets, and mines in this sector
+  [1;37mra[1;36m = close range scan showing ships and mines
+     [1;32mrange 1 to 9[1;36m can be specified, with 9 being full range, and the rest
+     shrinking quadratically. Alternatively, [1;32mh[1;36m can be specified for half range,
+     and [1;32mq[1;36m for one quarter range.
+  [1;37mlo[1;36m = long range scan (10x) showing ships
+     [1;32mh[1;36m can be specified for half range, and [1;32mq[1;36m for one quarter range.
+
+[1;36mExamples: [1;37mscan se            scan sh a
+          scan sh @          scan pl 1
+          sca ra             sca ra 4
+          sca lo             sca lo q
+
+[1;36mSee the [1;37mSET[1;36m command for additional configuration options for [1;37mSCAN[1;36m.[1;37m
+} T GE help scan message
+
+HLPSEN {
+[1;36mUse the [1;37mSEND[1;36m command to communicate with other ships and team members. Issue
+the command as follows:
+
+  [1;37msend [1;32m[type] [message]
+
+  [1;32mtype [1;36m= [A]LL, [T]EAM, or [E]NCODED
+
+ALL messages are sent on all standard hyperspace hailing frequencies and will
+be received by all ships in the galaxy. You can also use the [1;37m>[1;36m shortcut.
+
+TEAM messages will be received by all ships belonging to members of your team;
+you must be on a team to use this.
+
+ENCODED messages will be received only by ships that have their communications
+module tuned to the same hyperspace frequency. Use [1;37mSEND FREQ [1;32mxxxxx[1;36m to set the
+current ship's frequency. Valid frequencies are 1-65535; set to 0 to turn off.
+[1;37mSEND FREQ[1;36m by itself will display the current frequency.
+
+Examples: [1;37msend A This is a warning to all ships, I am here!
+          sen TEAM OK, now is the time to strike!
+          sen E No one else can know about this secret!
+          send FREQ 38146
+          > What's up everyone
+
+Use [1;37m>[1;36m to chat in the lobby.
+} T GE help send message
+
+HLPSHI {
+[1;36mThe [1;37mSHIELD[1;36m command will raise or lower the ship's shields. The shields will
+begin charging upon being raised for the first time. They provide immediate yet
+limited protection until fully charged. When fully charged, the shields come up
+immediately when issued. The shields do drain on the neutron flux pile, and
+will automatically come down when the energy drops to dangerously low levels.
+Issue the command as follows:
+
+  [1;37mshield [1;32m[[1;37mup[1;32m/[1;37mdown[1;32m]
+
+[1;36mWhen firing a weapon with the shields up, the shields will be automatically
+lowered. They WILL NOT be automatically raised after the firing.
+[1;37m} T GE help shield message
+
+HLPTOR {
+[1;36mThe [1;37mTORPEDO[1;36m command fires a torpedo at a given ship. The torpedo guidance
+system will attempt to lock on the ship prior to firing the torpedo. If a lock
+is made, the torpedo is launched.
+
+Issue the command as follows:
+
+  [1;37mtorpedo [1;32m[ship letter/[1;37m@[1;32m]
+
+  [1;32mship letter[1;36m = the ship you are firing upon
+  [1;37m@[1;36m = to fire at the locked on ship
+
+  examples: [1;37mtorpedo A   [1;36mfires a torpedo at ship A.
+            [1;37mtor @       [1;36mfires at the ship you locked on with the [1;37mLOCK[1;36m cmd
+
+Type [1;37mHELP BATTLE[1;36m for more information on torpedoes.
+[1;37m} T GE help torpedo message
+
+HLPTRA {
+[1;36mThe [1;37mTRANSFER[1;36m command permits you to transfer goods from your ship to a planet
+or from a planet to your ship.
+
+To transfer up, simply use the command [1;37mTRANSFER UP[1;36m. This will transfer
+up everything on the planet and install any usable upgrades.
+
+If you wish to transfer anything down to a planet:
+
+[1;37m  transfer [1;32m[[1;37md(own)[1;32m] [([1;37m-[1;32m)amount/[1;37mall[1;32m] [item]
+
+  amount[1;36m = the amount to transfer (use - sign for all but this amount)
+           [1;37mall[1;36m to transfer down all onboard
+
+  [1;32mitem[1;36m:
+[1;37m    mis [1;36m= transfer missiles     [1;37mmin [1;36m= transfer mines
+[1;37m    tor [1;36m= transfer torpedoes    [1;37mjam [1;36m= transfer jammers
+[1;37m    dec [1;36m= transfer decoys       [1;37mzip [1;36m= transfer zippers
+[1;37m    flu [1;36m= transfer flux pods    [1;37mgol [1;36m= transfer gold
+
+} T GE help transfer message
+
+HLPWAR {
+[1;36mThe [1;37mWARP[1;36m command starts the warp drives (provided your type of ship has them)
+and directs your course and speed. Issue the command as follows:
+
+  [1;37mwarp [1;32m[speed] [degrees/[1;37m@[1;32mheading]
+
+  [1;32mspeed [1;36m= the warp speed
+  [1;32mdegrees [1;36m= degrees to rotate to port (negative) or starboard (positive)
+  [1;32mheading [1;36m= the absolute direction regardless of your current heading
+
+Examples: [1;37mwarp 5     [1;36malters the speed to warp 5 and does not change the heading
+          [1;37mwarp 10 5  [1;36malters the speed to warp 10 and turns the ship 5 degrees
+                     to the starboard (right).
+          [1;37mwar 20 -10 [1;36malters the speed to warp 20 and turns the ship 10 degrees
+                     to the port (left).
+          [1;37mwar 8 @90  [1;36malters the speed to warp 8 and turns the ship to 90
+                     degrees absolute.
+[1;37m} T GE help warp message
+
+HLPSTAT {
+[1;36mThe [1;37mSTATUS[1;36m command displays the current arena status and player list.
+
+In the lobby, STATUS shows which players are ready, observing, or serving as
+host, along with any automatic-start countdown.
+
+During a match, STATUS shows the time remaining and whether each player is
+playing or observing. Scoring for the current mode is shown as well.
+[1;37m} T GE help status message
+
+HLPSTO {
+[1;36mThe [1;37mSTOP[1;36m command cuts the engines and brings your ship to a complete stop, even
+if your ship's helm is damaged and not accepting commands.
+[1;37m} T GE help stop message
+
+
+HLPZIP {
+[1;36mThe [1;37mZIPPER[1;36m command launches a defensive (and sometimes offensive) weapon which
+interferes with the timing mechanism on mines. The effect is to trip all mines
+in the vicinity of the player's ship into exploding immediately. This weapon
+can trip an opponent's mines after they have laid them but before they can
+distance themself from them, causing the mines to do damage to the
+opponent's own ship.
+[1;37m} T GE help zipper message
+
+HLPCLS1 {
+[1;36mThese are the ships available for %s: [0;37m
+                                   W  S  P T M M   D J Z     A    S    T     P
+                                   r  h  h o i i   e a i     c    c    o     t
+                                   p  i  a r s n   c m p     l    n    n     s
+} T GE help class header
+
+HLPCLS2 {
+[1;36mFor more details on a class of ship, enter [1;37mHELP CLASS [1;32m[class number][1;36m.
+[1;37m} T GE help class trailer
+
+HLPCLS3 {
+[1;36mType [1;37mHELP CLASS[1;36m for a list of valid ship classes.
+[1;37m 
+} T GE help class invalid class message
+
+HLPJET {
+[1;36mThe [1;37mJETTISON[1;36m command permits you to dump goods from your ship. You can dump a
+specific number, or all you have of an item type. You are not allowed to
+jettison people. Issue the command as follows:
+
+[1;37m  jettison [1;32m[[1;37mall[1;32m/amount] [item]
+
+  amount[1;36m = the amount you want to jettison (or [1;37mall[1;36m)
+
+  [1;32mitem[1;36m:
+    [1;37mmis[1;36m = jettison missiles     [1;37mmin[1;36m = jettison mines
+    [1;37mtor[1;36m = jettison torpedoes    [1;37mjam[1;36m = jettison jammers
+    [1;37mdec[1;36m = jettison decoys       [1;37mzip[1;36m = jettison zippers
+    [1;37mflu[1;36m = jettison flux pods    [1;37mgol[1;36m = jettison gold
+
+Examples: [1;37mjettison ALL mis
+          jet 50 min
+} T GE help jettison message
+
+HLPSYS {
+[1;36mLucky you, you have access to the [1;37mSYS[1;36m command. The following commands are
+available for the use of sysops, game administrators, or their designees:
+
+Except for SYS HELP and SYS CLASSLIST, these commands are available only while
+actively playing in a match.
+
+[1;37m  sys nebseed[1;36m -- show the current match nebula seed
+[1;37m  sys get [1;32m[amount] [item][1;36m -- get this many items, regardless of cargo size
+[1;37m  sys kill [1;32m[user][1;36m -- destroy the ship of the user specified
+[1;37m  sys goto [1;32m[sector][1;36m -- teleport to this sector
+[1;37m  sys class [1;32m[number][1;36m -- change current ship to specified class number
+[1;37m  sys shieldtype [1;32m[number][1;36m -- change current ship shield to specified class
+[1;37m  sys phasertype [1;32m[number][1;36m -- change current ship phaser to specified class
+[1;37m  sys maint [1;32m[[1;37mnow[1;32m][1;36m -- repair ship without having to orbit
+[1;37m  sys unjam[1;36m -- clear jamming
+[1;37m  sys list [1;32m[number][1;36m -- list 50 ships in game beginning with specified number
+[1;37m  sys classlist[1;36m -- show ship classes configured for the current mode
+[1;37m  sys orbit [1;32m[number][1;36m -- orbit planet in the current sector, even if not close
+[1;37m  sys fill [1;32m[number][1;36m -- fill your ship with this many of each item
+[1;37m
+} T GE help sys message 
+
+HLPWHO {
+[1;36mThe [1;37mWHO[1;36m command displays a list of users online.
+
+This command is also available in the lobby.
+[1;37m} T GE help who message
+
+HLPEXT {
+[1;36mThe [1;37mX[1;36m command, when used from the lobby, exits ge-arena.
+
+When used during a match, you will forfeit and return to the lobby, and
+observe the match until it ends.
+[1;37m} T GE help exit message
+
+

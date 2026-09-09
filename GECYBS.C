@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ge-next32 GECYBS.C                                                        *
  *                                                                           *
- * ge-next32 modifications by Anthony Schmidt / ManicPop.org                 *
+ * ge-next32 modifications ONLY copyright (C) 2024-2026 Anthony Schmidt     *
  * Based on Galactic Empire (c) 2025 Elwynor Technologies                    *
  *                                                                           *
  * https://manicpop.org/ge-next/  https://github.com/manicpop/ge-next32      *
@@ -25,28 +25,6 @@
  * You should have received a copy of the GNU Affero General Public License  *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.     *
  *                                                                           *
- * Additional Terms for Contributors:                                        *
- * 1. By contributing to this project, you agree to assign all right, title, *
- *    and interest, including all copyrights, in and to your contributions   *
- *    to Rick Hadsall and Elwynor Technologies.                              *
- * 2. You grant Rick Hadsall and Elwynor Technologies a non-exclusive,       *
- *    royalty-free, worldwide license to use, reproduce, prepare derivative  *
- *    works of, publicly display, publicly perform, sublicense, and          *
- *    distribute your contributions                                          *
- * 3. You represent that you have the legal right to make your contributions *
- *    and that the contributions do not infringe any third-party rights.     *
- * 4. Rick Hadsall and Elwynor Technologies are not obligated to incorporate *
- *    any contributions into the project.                                    *
- * 5. This project is licensed under the AGPL v3, and any derivative works   *
- *    must also be licensed under the AGPL v3.                               *
- * 6. If you create an entirely new project (a fork) based on this work, it  *
- *    must also be licensed under the AGPL v3, you assign all right, title,  *
- *    and interest, including all copyrights, in and to your contributions   *
- *    to Rick Hadsall and Elwynor Technologies, and you must include these   *
- *    additional terms in your project's LICENSE file(s).                    *
- *                                                                           *
- * By contributing to this project, you agree to these terms.                *
- *                                                                           *
  *****************************************************************************/
 
 #include "gcomm.h"
@@ -69,10 +47,65 @@ static char cybname[UIDSIZ];
 int cybhaltflg = 0;
 double d_topspeed;
 
+#ifdef GE_ARENA
+/* place a Base objective outside 0 0, nebulas, and occupied base sectors */
+static int cyb_place_arena_base(WARSHP *ptr, int usrn)
+{
+	WARSHP *other;
+	int attempt;
+	int duplicate;
+	int i;
+	int span;
+	int x;
+	int y;
+
+	span = (univmax * 2) + 1;
+	for (attempt = 0; attempt < 200; ++attempt) {
+		x = (int)(gernd() % span) - univmax;
+		y = (int)(gernd() % span) - univmax;
+		if ((x == 0 && y == 0) || innebula(x,y))
+			continue;
+		duplicate = FALSE;
+		for (i = nterms; i < nships; ++i) {
+			if (i == usrn)
+				continue;
+			other = warshpoff(i);
+			if (other->status == GESTAT_AUTO &&
+			    VALID_SHPCLASS(other->shpclass) &&
+			    shipclass[other->shpclass].arena_mode == ARENA_MODE_BASE &&
+			    shipclass[other->shpclass].max_accel == 0 &&
+			    coord1(other->coord.xcoord) == x &&
+			    coord1(other->coord.ycoord) == y) {
+				duplicate = TRUE;
+				break;
+			}
+		}
+		if (duplicate)
+			continue;
+		ptr->coord.xcoord = (double)x + rndm(.9998) + .0001;
+		ptr->coord.ycoord = (double)y + rndm(.9998) + .0001;
+		return TRUE;
+	}
+	return FALSE;
+}
+#endif
+
+/* use arena combat rules without changing ge-next neutral-zone behavior */
+static int cyb_in_neutral(WARSHP *ptr, int usrn)
+{
+#ifdef GE_ARENA
+	return arena_neutral_fire_blocked(ptr,usrn);
+#else
+	usrn = usrn;
+	return neutral(&ptr->coord);
+#endif
+}
+
 /**************************************************************************
 ** Validate a saved cyborg ship record for the current cyb slot          **
 **************************************************************************/
 
+#ifndef GE_ARENA
 static int valid_cyb_ship(WARSHP *ptr, int usrn, int cls)
 {
 	if (strncmp(ptr->userid, cybname, UIDSIZ) != 0)
@@ -154,6 +187,7 @@ static int load_cyb_ship(WARSHP *ptr, int usrn, int cls)
 
 	return have_ship;
 }
+#endif
 
 /**************************************************************************
 ** Initialize or load a cyborg ship                                      **
@@ -162,9 +196,11 @@ static int load_cyb_ship(WARSHP *ptr, int usrn, int cls)
 void FUNC cyb_init(WARSHP *ptr, int usrn, int cls)
 {
 	WARSHP *wptr;
-	int i, goldwin, goldspin, goldtry, zothusn;
+	int zothusn;
+	int i, goldwin, goldspin, goldtry;
 	double ddist;
 	int have_ship = FALSE;
+	int have_user;
 	int expected_class;
 
 	logthis(spr("@Cyb_init usrn=%d,cls=%d", usrn, cls));
@@ -184,15 +220,23 @@ void FUNC cyb_init(WARSHP *ptr, int usrn, int cls)
 	strncpy(cybname, "@Cybrg-", UIDSIZ);
 	sprintf(&cybname[7], "%d", usrn);
 
+	waruptr = warusroff(usrn);
+
+#ifdef GE_ARENA
+	initusr(cybname);
+	memcpy(waruptr, &tmpusr, sizeof(WARUSR));
+	have_user = TRUE;
+#else
 	if (!geudb(GELOOKUP, cybname, &tmpusr)) {
 		initusr(cybname);
 		geudb(GEADD, tmpusr.userid, &tmpusr);
 		logthis(spr("GE:INF:Adding %s user", tmpusr.userid));
 	}
+	have_user = geudb(GELOOKUP, cybname, waruptr);
+#endif
 
-	waruptr = warusroff(usrn);
-
-	if (geudb(GELOOKUP, cybname, waruptr)) {
+	if (have_user) {
+#ifndef GE_ARENA
 		if (!geudb(GEGET, cybname, waruptr)) {
 			geshocst(0, spr("GE:ERR:CYBGETUSR usrn=%d uid=%s",
 				usrn, cybname));
@@ -215,15 +259,18 @@ void FUNC cyb_init(WARSHP *ptr, int usrn, int cls)
 			ptr->tick = CYBTICKTIME + gernd() % (CYBTICKTIME * 5);
 			have_ship = TRUE;
 		}
+#endif
 
 		if (!have_ship) {
 			/* make me a Cybertron */
 			logthis(spr("GE:INF:Adding %s ship - %d", cybname, cls));
 
 			initshp(cybname, cls);
+#ifndef GE_ARENA
 			if (!gepdb(GEADD, tmpshp.userid, tmpshp.shipno, &tmpshp))
 				geshocst(0, spr("GE:ERR:CYBADDSHP uid=%s shipno=%d",
 					tmpshp.userid, tmpshp.shipno));
+#endif
 			memcpy(ptr, &tmpshp, sizeof(WARSHP));	/* make is the current ship */
 
 			logthis(spr("GE:INF:Add shp,cls=%d/%d", cls, ptr->shpclass));
@@ -236,6 +283,18 @@ void FUNC cyb_init(WARSHP *ptr, int usrn, int cls)
 
 			waruptr->kills = 0;	/* new cyb so clear this */
 
+#ifdef GE_ARENA
+			if (arena_mode == ARENA_MODE_BASE &&
+			    shipclass[ptr->shpclass].arena_mode == ARENA_MODE_BASE &&
+			    shipclass[ptr->shpclass].max_accel == 0) {
+				if (!cyb_place_arena_base(ptr,usrn)) {
+					ptr->status = GESTAT_AVAIL;
+					ptr->where = -1;
+					return;
+				}
+			}
+			else
+#endif
 			if (shipclass[ptr->shpclass].max_accel == 0 && univmax > 100) {
 				/* make sure bases aren't too close to 0 0 */
 				ptr->coord.xcoord = rndm((double)univmax - 60) + 50.0;
@@ -269,6 +328,9 @@ void FUNC cyb_init(WARSHP *ptr, int usrn, int cls)
 			ptr->npcmsg = (byte)255;
 			ptr->holdcourse = 0;
 			ptr->cantexit = 0;
+#ifdef GE_ARENA
+			ptr->damage_notice = 0;
+#endif
 			ptr->shield = 40 + (ptr->shieldtype * 10);
 			ptr->phasr = 100;
 
@@ -290,7 +352,11 @@ void FUNC cyb_init(WARSHP *ptr, int usrn, int cls)
 			/* level 2 gets one spin of the wheel, other levels get mulitple */
 			/* higher levels get the best outcome, lowest the worst */
 
+#ifdef GE_ARENA
+			if (arena_mode == ARENA_MODE_HOARD && cyb_gold > 0) {
+#else
 			if (cyb_gold > 0) {
+#endif
 				goldwin = gernd() % cyb_gold;
 				goldtry = abs(shipclass[ptr->shpclass].tough_factor - 2);
 
@@ -309,9 +375,11 @@ void FUNC cyb_init(WARSHP *ptr, int usrn, int cls)
 
 			ptr->cybupdate = 1;
 
+#ifndef GE_ARENA
 			if (!gepdb(GEUPDATE, ptr->userid, ptr->shipno, ptr))
 				geshocst(0, spr("GE:ERR:CYBUPDSHP uid=%s shipno=%d",
 					ptr->userid, ptr->shipno));
+#endif
 
 			/* show users sector of new Cyb if in scan range */
 			/* show bearing if far away */
@@ -512,6 +580,14 @@ static void cyb_annoy(WARSHP *ptr, int usrn, int msgtype)
 		(double)shipclass[warshpoff(usrn)->shpclass].scanrange)
 		return;
 
+#ifdef GE_ARENA
+	/* Base mode suppresses ambient chatter; only its current target hears it. */
+	if (arena_mode == ARENA_MODE_BASE &&
+	    shipclass[ptr->shpclass].max_accel == 0 &&
+	    (msgtype == CYBBASEA || usrn != ptr->cybmine))
+		return;
+#endif
+
 	/* if we are fleeing from this user, don't send other msgs to this user until done */
 	/* allow an explicit flee message to print when transitioning from silent missile avoidance */
 	if (usrn == ptr->cybmine && ptr->npcmsg == FLEE &&
@@ -573,12 +649,14 @@ static void cyb_annoy(WARSHP *ptr, int usrn, int msgtype)
 		cyb_msg(ptr, usrn, msgtype);
 }
 /**************************************************************************
-** Count down and perform cyb database updates                           **
+** Count down Cyborg state refreshes and persistent updates              **
 **************************************************************************/
 
 static void db_update(WARSHP *ptr, int usrn)
 {
+#ifndef GE_ARENA
 	WARUSR *wuptr;
+#endif
 
 	if (ptr->cybupdate > 1) {
 		--ptr->cybupdate;
@@ -593,6 +671,7 @@ static void db_update(WARSHP *ptr, int usrn)
 		return;
 	}
 	if (ptr->cybupdate == 0) {
+#ifndef GE_ARENA
 		wuptr = warusroff(usrn);
 		logthis(spr("GE:DBG:Cyb UUpd %s", wuptr->userid));
 		if (!geudb(GEUPDATE, wuptr->userid, wuptr))
@@ -601,6 +680,7 @@ static void db_update(WARSHP *ptr, int usrn)
 		if (!gepdb(GEUPDATE, ptr->userid, ptr->shipno, ptr))
 			geshocst(0, spr("GE:ERR:CYBUPDSHP uid=%s shipno=%d",
 				ptr->userid, ptr->shipno));
+#endif
 		ptr->cybupdate = 100 + gernd() % 100;
 		return;
 	}
@@ -618,9 +698,9 @@ static void cyb_attack(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn)
 
 	acted = 0;
 
-	if (neutral(&ptr->coord))
+	if (cyb_in_neutral(ptr,usrn))
 		return;
-	if (neutral(&wptr->coord))
+	if (cyb_in_neutral(wptr,zothusn))
 		return;
 
 	if (shipclass[ptr->shpclass].max_phasr > 0 && ptr->phasr >= PMINFIRE &&
@@ -685,7 +765,7 @@ static void cyb_check_damage(WARSHP *ptr, int usrn)
 		if (shipclass[ptr->shpclass].has_mine
 			&& ptr->items[I_MINE] > 0
 			&& ptr->mineload == 0
-			&& !neutral(&ptr->coord)
+			&& !cyb_in_neutral(ptr,usrn)
 			&& gernd() % 8 == 0)
 			laymine(ptr, usrn, 10);
 
@@ -1005,7 +1085,8 @@ static void cyb_check_lockon(WARSHP *ptr, int usrn)
 					spr("%ld",(long)hyperdist1),spr("%ld",(long)hyperdist2),spr("%ld",(long)low_dist));
 			outwar(ALWAYS,usrn,0); */
 		} else if ((shipclass[wptr->shpclass].cybs_can_att ||
-			wptr->cantexit > 0 || ptr->cantexit > 0) && !neutral(&wptr->coord)) {
+			wptr->cantexit > 0 || ptr->cantexit > 0) &&
+			!cyb_in_neutral(wptr,low_ship)) {
 			if (low_dist > .5) {
 				if (ptr->where == 0 && wptr->where == 0 &&
 					wptr->speed >= 990.0 && d_topspeed >= 1000.0 && low_dist > 1.5) {
@@ -1057,7 +1138,7 @@ static void cyb_check_lockon(WARSHP *ptr, int usrn)
 				ptr->head2b = normal(vector(&ptr->coord, &wptr->coord) + 30.0 + rndm(60.0));
 			if (shipclass[wptr->shpclass].cybs_can_att == 0)
 				cyb_annoy(ptr, low_ship, CYBIGNORE);
-			else if (neutral(&wptr->coord))
+			else if (cyb_in_neutral(wptr,low_ship))
 				cyb_annoy(ptr, low_ship, NEUTRAL);
 			ptr->holdcourse = (gernd() % 3) + 2;
 		}
@@ -1141,7 +1222,7 @@ void FUNC cyb_lives(WARSHP *ptr, int usrn)
 					wptr->status == GESTAT_USER)
 					ptr->tick = CYBTICKTIME +
 						gernd() % (5 - shipclass[ptr->shpclass].tough_factor);
-				if (!neutral(&ptr->coord) &&
+				if (!cyb_in_neutral(ptr,usrn) &&
 					ddist < (double)shipclass[ptr->shpclass].scanrange) {
 					/* bases don't approach... so send msg when wptr approaches */
 					if (shipclass[ptr->shpclass].max_accel == 0 &&
@@ -1150,7 +1231,7 @@ void FUNC cyb_lives(WARSHP *ptr, int usrn)
 					/* in range, and target not in neutral zone, AND... */
 					if (ddist < 30000.0 +
 						((double)shipclass[ptr->shpclass].tough_factor * 2000.0) &&
-						!neutral(&wptr->coord) &&
+						!cyb_in_neutral(wptr,zothusn) &&
 						/* if target is NPC, and not traveling to neutral zone or is already targeting me */
 						((wptr->status == GESTAT_AUTO &&
 						((wptr->npcstate < 2 || wptr->npcstate > 7) || wptr->cybmine == usrn) &&
@@ -1202,7 +1283,8 @@ void FUNC cyb_lives(WARSHP *ptr, int usrn)
 			/* as long as they can't see ... the other player must be trying to get
 			away.... might as well mine the area */
 			if (shipclass[ptr->shpclass].has_mine && ptr->items[I_MINE] > 0 &&
-				ptr->mineload == 0 && !neutral(&ptr->coord) && gernd() % 5 == 0) {
+				ptr->mineload == 0 && !cyb_in_neutral(ptr,usrn) &&
+				gernd() % 5 == 0) {
 				laymine(ptr, usrn, 10);
 				npc_cruise(ptr, usrn, 2);
 			}

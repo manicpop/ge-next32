@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ge-next32 GEPLANET.C                                                      *
  *                                                                           *
- * ge-next32 modifications by Anthony Schmidt / ManicPop.org                 *
+ * ge-next32 modifications ONLY copyright (C) 2024-2026 Anthony Schmidt     *
  * Based on Galactic Empire (c) 2025 Elwynor Technologies                    *
  *                                                                           *
  * https://manicpop.org/ge-next/  https://github.com/manicpop/ge-next32      *
@@ -25,28 +25,6 @@
  * You should have received a copy of the GNU Affero General Public License  *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.     *
  *                                                                           *
- * Additional Terms for Contributors:                                        *
- * 1. By contributing to this project, you agree to assign all right, title, *
- *    and interest, including all copyrights, in and to your contributions   *
- *    to Rick Hadsall and Elwynor Technologies.                              *
- * 2. You grant Rick Hadsall and Elwynor Technologies a non-exclusive,       *
- *    royalty-free, worldwide license to use, reproduce, prepare derivative  *
- *    works of, publicly display, publicly perform, sublicense, and          *
- *    distribute your contributions                                          *
- * 3. You represent that you have the legal right to make your contributions *
- *    and that the contributions do not infringe any third-party rights.     *
- * 4. Rick Hadsall and Elwynor Technologies are not obligated to incorporate *
- *    any contributions into the project.                                    *
- * 5. This project is licensed under the AGPL v3, and any derivative works   *
- *    must also be licensed under the AGPL v3.                               *
- * 6. If you create an entirely new project (a fork) based on this work, it  *
- *    must also be licensed under the AGPL v3, you assign all right, title,  *
- *    and interest, including all copyrights, in and to your contributions   *
- *    to Rick Hadsall and Elwynor Technologies, and you must include these   *
- *    additional terms in your project's LICENSE file(s).                    *
- *                                                                           *
- * By contributing to this project, you agree to these terms.                *
- *                                                                           *
  *****************************************************************************/
 
 #include "gcomm.h"
@@ -68,10 +46,119 @@ struct user;
 WORMTAB	wormtab[MAXPLANETS];
 int	wormnum;
 
+#ifdef GE_ARENA
+static int arena_chance(int pct)
+{
+	return rndm(100.0) < (double)pct;
+}
+
+static byte arena_planet_qty(void)
+{
+	unsigned r;
+
+	r = (unsigned)rndm(100.0);
+	if (r < 55)
+		return 0;
+	if (r < 75)
+		return 1;
+	if (r < 87)
+		return 2;
+	if (r < 94)
+		return 3;
+	if (r < 98)
+		return (byte)(4 + (gernd() % 3));
+	if (r < 99)
+		return (byte)(7 + (gernd() % 3));
+	return 10;
+}
+
+static byte arena_planet_boost(void)
+{
+	unsigned r;
+
+	r = (unsigned)rndm(100.0);
+	if (r < 88)
+		return 0;
+	if (r < 96)
+		return 1;
+	if (r < 99)
+		return 2;
+	return 3;
+}
+
+static unsigned long arena_planet_gold(void)
+{
+	unsigned r;
+
+	r = (unsigned)rndm(100.0);
+	if (r < 55)
+		return 0UL;
+	if (r < 80)
+		return 1UL + (unsigned long)(gernd() % 40);
+	if (r < 92)
+		return 41UL + (unsigned long)(gernd() % 60);
+	if (r < 98)
+		return 101UL + (unsigned long)(gernd() % 60);
+	return 161UL + (unsigned long)(gernd() % 40);
+}
+
+static void arena_init_planet_loot(void)
+{
+	unsigned maint_roll;
+
+	planet.items[I_TORPEDO].qty = arena_planet_qty();
+	planet.items[I_MISSILE].qty = arena_planet_qty();
+	planet.items[I_MINE].qty = arena_planet_qty();
+	planet.items[I_JAMMERS].qty = arena_planet_qty();
+	planet.items[I_DECOYS].qty = arena_planet_qty();
+	planet.items[I_ZIPPERS].qty = arena_planet_qty();
+	planet.items[I_FLUXPOD].qty = arena_planet_qty();
+	if (arena_mode == ARENA_MODE_HOARD)
+		planet.items[I_GOLD].qty = arena_planet_gold();
+
+	if (arena_mode == ARENA_MODE_BASE) {
+		planet.arena_shield_boost = 0;
+		planet.arena_phaser_boost = 0;
+	}
+	else {
+		planet.arena_shield_boost = arena_planet_boost();
+		planet.arena_phaser_boost = arena_planet_boost();
+	}
+	planet.arena_flags = 0;
+	if (arena_chance(6))
+		planet.arena_flags |= ARENA_PL_SCAN;
+	if (arena_chance(6))
+		planet.arena_flags |= ARENA_PL_ARMOR;
+	if (arena_chance(6))
+		planet.arena_flags |= ARENA_PL_ACCEL;
+	if (arena_chance(6))
+		planet.arena_flags |= ARENA_PL_CORE;
+	maint_roll = (unsigned)rndm(100.0);
+	if (maint_roll < 6)
+		planet.arena_flags |= ARENA_PL_INSTANT;
+	else if (maint_roll < 31)
+		planet.arena_flags |= ARENA_PL_MAINT;
+}
+
+static void arena_init_empty_planet(void)
+{
+	int i;
+
+	for (i = 0; i < NUMITEMS; ++i) {
+		planet.items[i].qty = 0;
+		planet.items[i].sell = 'N';
+	}
+	planet.arena_shield_boost = 0;
+	planet.arena_phaser_boost = 0;
+	planet.arena_flags = 0;
+}
+#endif
+
 /**************************************************************************
 ** Check Spy Function                                                    **
 **************************************************************************/
 
+#ifndef GE_ARENA
 void FUNC check_spy(void)
 {
 	int spycnt, odds, i, j;
@@ -352,6 +439,7 @@ void FUNC multiply(int final_mult)
 		}
 	}
 }
+#endif
 
 /**************************************************************************
 ** build special planet # 1                                              **
@@ -380,12 +468,18 @@ static void build_plan_1(int idx)
 	planet.coord.xcoord = ((double)planet.xsect) + s00[idx].xcoord;
 	planet.coord.ycoord = ((double)planet.ysect) + s00[idx].ycoord;
 	planet.type = PLTYPE_PLNT;
+#ifndef GE_ARENA
 	planet.nebseed = nebseed;
 	if (planet.nebseed == 0L)
 		planet.nebseed = 1L;
+#endif
 
 	plptr = &planet;
+#ifdef GE_ARENA
+	arena_init_empty_planet();
+#else
 	update_plan_1();
+#endif
 
 	logthis("Zygor build first time");
 }
@@ -415,7 +509,11 @@ static void build_plan_2(int idx)
 	planet.type = PLTYPE_PLNT;
 
 	plptr = &planet;
+#ifdef GE_ARENA
+	arena_init_empty_planet();
+#else
 	update_plan_2();
+#endif
 
 	logthis("T-Station build first time");
 }
@@ -619,6 +717,9 @@ static int xgetsector(COORD *sect, int wormy)
 
 					for (k = 0; k < NUMITEMS; ++k)
 						planet.items[k].sell = 'N';
+#ifdef GE_ARENA
+					arena_init_planet_loot();
+#else
 					if (rndm(3.99) > 3) {
 						for (k = 0; k < NUMITEMS; ++k)
 							planet.items[k].rate = (USHORT)rndm(5.1);
@@ -628,6 +729,7 @@ static int xgetsector(COORD *sect, int wormy)
 						planet.items[I_FOOD].qty = (unsigned long)rndm(3200.0);
 						planet.items[I_FOOD].rate = (USHORT)(15 + (unsigned int)rndm(15.0));
 					}
+#endif
 					logthis("GE:DBG:Getsector-write planet record");
 					/* write the database record */
 					gesdb(GEADD, (PKEY *)&planet, (GALSECT *)&planet);
@@ -792,6 +894,7 @@ int FUNC innebula(int x, int y)
 	return (unsigned)(work % (unsigned long)dmod) == 0;
 }
 
+#ifndef GE_ARENA
 void FUNC update_plan_1(void)
 {
 	int i;
@@ -829,3 +932,4 @@ void FUNC update_plan_3(void)
 		plptr->items[i].sell = 'N';
 	}
 }
+#endif

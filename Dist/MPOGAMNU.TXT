@@ -1,0 +1,13 @@
+[1;33;44m+----------------------------------------------------------------------------+[0m
+[1;33;44m+ [37mGALACTIC EMPIRE ge-arena 0.3  [1;31;44m ******** What's new this release ******** [1;33;44m  +[0m
+[1;33;44m+----------------------------------------------------------------------------+[0m
+[1;37m
+ge-next is developed by ManicPop.org and based on Galactic Empire,
+copyright (c) 2025 Elwynor Technologies.
+
+https://manicpop.org/ge-next  https://github.com/manicpop/ge-next
+https://github.com/elwynor/elwge  https://www.elwynor.com/
+https://discord.gg/SqhYmZvWsn  anthony@manicpop.org
+Please contact me with thoughts and suggestions.
+
+This is the initial release of ge-arena. I hope you like it.

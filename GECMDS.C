@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ge-next32 GECMDS.C                                                        *
  *                                                                           *
- * ge-next32 modifications by Anthony Schmidt / ManicPop.org                 *
+ * ge-next32 modifications ONLY copyright (C) 2024-2026 Anthony Schmidt     *
  * Based on Galactic Empire (c) 2025 Elwynor Technologies                    *
  *                                                                           *
  * https://manicpop.org/ge-next/  https://github.com/manicpop/ge-next32      *
@@ -24,28 +24,6 @@
  *                                                                           *
  * You should have received a copy of the GNU Affero General Public License  *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.     *
- *                                                                           *
- * Additional Terms for Contributors:                                        *
- * 1. By contributing to this project, you agree to assign all right, title, *
- *    and interest, including all copyrights, in and to your contributions   *
- *    to Rick Hadsall and Elwynor Technologies.                              *
- * 2. You grant Rick Hadsall and Elwynor Technologies a non-exclusive,       *
- *    royalty-free, worldwide license to use, reproduce, prepare derivative  *
- *    works of, publicly display, publicly perform, sublicense, and          *
- *    distribute your contributions                                          *
- * 3. You represent that you have the legal right to make your contributions *
- *    and that the contributions do not infringe any third-party rights.     *
- * 4. Rick Hadsall and Elwynor Technologies are not obligated to incorporate *
- *    any contributions into the project.                                    *
- * 5. This project is licensed under the AGPL v3, and any derivative works   *
- *    must also be licensed under the AGPL v3.                               *
- * 6. If you create an entirely new project (a fork) based on this work, it  *
- *    must also be licensed under the AGPL v3, you assign all right, title,  *
- *    and interest, including all copyrights, in and to your contributions   *
- *    to Rick Hadsall and Elwynor Technologies, and you must include these   *
- *    additional terms in your project's LICENSE file(s).                    *
- *                                                                           *
- * By contributing to this project, you agree to these terms.                *
  *                                                                           *
  *****************************************************************************/
 
@@ -183,6 +161,28 @@ struct	cmd	gecmds[]={
 			{"zip",	cmd_zipper,	1}
 };
 
+#ifdef GE_ARENA
+static int arena_invalid_command(void)
+{
+	prfmsg(INVCMD);
+	outprfge(FLT_NONE,usrnum);
+	return TRUE;
+}
+
+static void arena_admin_rename(void)
+{
+	if (plptr->userid[0] != 0) {
+		prfmsg(ADMIN2);
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+
+	prfmsg(ADMENU2G);
+	outprfge(FLT_NONE,usrnum);
+	usrptr->substt = ADMENU1A;
+}
+#endif
+
 
 /* If you wish to add your own help commands to the list simply add the command
 	name to the list and the name of the message in the MSG file. Also add the
@@ -194,15 +194,21 @@ struct hlpcmd	{
 		};
 
 struct hlpcmd gehlp[] = {
+#ifndef GE_ARENA
 		{"abandon",			HLPABA},
 		{"abort",			HLPABO},
+#endif
 		{"admin",			HLPADM},
+#ifndef GE_ARENA
 		{"attack",			HLPATT},
 		{"buy",				HLPBUY},
 		{"cloak",			HLPCLO},
+#endif
 		{"cls",				HLPCLS},
 		{"decoy",			HLPDEC},
+#ifndef GE_ARENA
 		{"destruct",			HLPDES},
+#endif
 		{"help",			HLPHEL},
 		{"hyper",			HLPHYP},
 		{"impulse",			HLPIMP},
@@ -213,26 +219,39 @@ struct hlpcmd gehlp[] = {
 		{"mine",			HLPMIN},
 		{"missile",			HLPMIS},
 		{"navigate",			HLPNAV},
+#ifndef GE_ARENA
 		{"new",				HLPNEW},
 		{"newprice",			HLPNEW2},
+#endif
 		{"orbit",			HLPORB},
 		{"phaser",			HLPPHA},
+#ifndef GE_ARENA
 		{"planet",			HLPPLA},
 		{"price",			HLPPRI},
+#endif
 		{"rename",			HLPREN},
 		{"report",			HLPREP},
 		{"roster",			HLPROS},
 		{"rotate",			HLPROT},
 		{"scan",			HLPSCA},
+#ifndef GE_ARENA
 		{"sell",			HLPSEL},
+#endif
 		{"send",			HLPSEN},
 		{"set",				HLPSET},
 		{"set2",			HLPSET2},
 		{"shield",			HLPSHI},
+#ifndef GE_ARENA
 		{"spy",				HLPSPY},
+#endif
+#ifdef GE_ARENA
+		{"status",			HLPSTAT},
+#endif
 		{"stop",			HLPSTO},
 		{"sys",				HLPSYS},
+#ifndef GE_ARENA
 		{"team",			HLPTEA},
+#endif
 		{"torpedo",			HLPTOR},
 		{"transfer",			HLPTRA},
 		{"warp",			HLPWAR},
@@ -244,29 +263,46 @@ struct hlpcmd gehlp[] = {
 
 		{"battle",			HLPBATTL},
 		{"battle2",			HLPBATT2},
+#ifndef GE_ARENA
 		{"battle3",			HLPBATT3},
 		{"battle4",			HLPBATT4},
+#endif
 		{"class",			HLPCLS1},
 		{"cybertrons",			HLPCYBER},
+#ifndef GE_ARENA
 		{"distress",			HLPDIST},
+#endif
 		{"flux",			HLPFLU},
 		{"galaxy",			HLPGALXY},
+#ifndef GE_ARENA
 		{"lydorians",			HLPLYDO},
 		{"murdonians",			HLPMURD},
+#endif
+#ifdef GE_ARENA
+		{"modes",			HLPMODES},
+#endif
 		{"moving",			HLPNAVIG},
 		{"nebulas",			HLPNEB},
+#ifndef GE_ARENA
 		{"planets",			HLPPLANT},
 		{"planets2",			HLPPLAN2},
 		{"planets3",			HLPPLAN3},
 		{"sartens",			HLPSART},
+#endif
 		{"scoring",			HLPSCORE},
+#ifndef GE_ARENA
 		{"starting",			HLPSTART},
 		{"strategy",			HLPSTRAT},
 		{"tryklons",			HLPTRYK},
+#endif
 		{"upgrades",			HLPUPG},
+#ifndef GE_ARENA
 		{"vakories",			HLPVAKO},
+#endif
 		{"wormholes",			HLPWORM},
+#ifndef GE_ARENA
 		{"zygorians",			HLPZYGO},
+#endif
 
 		{NULL,				0}
 };
@@ -381,8 +417,10 @@ void FUNC warnop(void)
 void FUNC cmd_gehelp(void)
 {
 	int ndx, i, syshelp;
+#ifndef GE_ARENA
 	char gechrbuf4[12], gechrbuf5[12], gechrbuf6[12], gechrbuf7[12];
 	char gechrbuf8[12], gechrbuf9[12];
+#endif
 
 	if ((!syscmds) || (sysonly && !(hasmkey(SYSKEY))))
 		syshelp = FALSE;
@@ -412,8 +450,11 @@ void FUNC cmd_gehelp(void)
 
 	if (sameto(margv[1],"class")) {
 		if (margc == 2) {
+#ifdef GE_ARENA
+			arena_show_ship_classes();
+#else
 			prfmsg(HLPCLS1);
-			for (i=0; i<cyb_class; ++i) {
+			for (i=0; i<tot_classes; ++i) {
 				if (shipclass[i].max_type == CLASSTYPE_USER) {
 					if (shipclass[i].max_tons >999999L)
 						sprintf(gechrbuf,"%ldm",shipclass[i].max_tons/1000000L);
@@ -483,11 +524,18 @@ void FUNC cmd_gehelp(void)
 				}
 			}
 			prfmsg(HLPCLS2);
+#endif
 			outprfge(FLT_NONE,usrnum);
 			return;
 		} else if (margc == 3) {
+#ifdef GE_ARENA
+			i = arena_parse_ship_choice(margv[2]);
+			if (i >= 0)
+				i = arena_shipclass_for_choice(i);
+#else
 			i = atoi(margv[2])-1;
-			if (i >= 0 && i < cyb_class && shipclass[i].max_type == CLASSTYPE_USER) {
+#endif
+			if (i >= 0 && i < tot_classes && shipclass[i].max_type == CLASSTYPE_USER) {
 				setmbk(geshmb);
 				prfmsg(shipclass[i].hlpmsg);
 				outprfge(FLT_NONE,usrnum);
@@ -999,14 +1047,16 @@ void FUNC cmd_torp(void)
 				prfmsg(NOSHIP);
 			outprfge(FLT_NONE,usrnum);
 		} else {
+#ifdef GE_ARENA
+			if (arena_neutral_fire_blocked(warsptr,usrnum)) {
+#else
 			if (neutral(&warsptr->coord)) {
+#endif
 				zaphim(warsptr,usrnum);
 				prfmsg(FRCTER);
 				outprfge(FLT_NONE,usrnum);
 				return;
 			}
-			if (warsptr->shieldstat == SHIELDUP)
-				shielddn(warsptr,usrnum);
 			torp(warsptr,usrnum,shpnum);
 		}
 	} else {
@@ -1015,10 +1065,6 @@ void FUNC cmd_torp(void)
 		else
 			prfmsg(NOSHIP);
 		outprfge(FLT_NONE,usrnum);
-	}
-
-	if (warsptr->shieldstat == SHIELDUP) {
-		shieldup(warsptr,usrnum);
 	}
 }
 
@@ -1095,14 +1141,16 @@ void FUNC cmd_missl(void)
 				prfmsg(NOSHIP);
 			outprfge(FLT_NONE,usrnum);
 		} else {
+#ifdef GE_ARENA
+			if (arena_neutral_fire_blocked(warsptr,usrnum)) {
+#else
 			if (neutral(&warsptr->coord)) {
+#endif
 				zaphim(warsptr,usrnum);
 				prfmsg(FRCTER);
 				outprfge(FLT_NONE,usrnum);
 				return;
 			}
-			if (warsptr->shieldstat == SHIELDUP)
-				shielddn(warsptr,usrnum);
 			misl(warsptr,usrnum,shpnum,missile_energy,missile_energy);
 		}
 	} else {
@@ -1111,10 +1159,6 @@ void FUNC cmd_missl(void)
 		else
 			prfmsg(NOSHIP);
 		outprfge(FLT_NONE,usrnum);
-	}
-
-	if (warsptr->shieldstat == SHIELDUP) {
-		shieldup(warsptr,usrnum);
 	}
 }
 
@@ -1425,7 +1469,7 @@ void FUNC zip(WARSHP *ptr)
 	double ddist;
 
 	for (i=0,mptr = mines; i<nummines;++mptr,++i) {
-		if (mptr->channel != 255) {
+		if (mptr->channel != MINE_UNUSED) {
 			ddist = cdistance(&ptr->coord,&mptr->coord);
 			ddist *= 10000;
 			if (ddist < (double)ship_scanrange(ptr)) {
@@ -1466,11 +1510,20 @@ void FUNC cmd_mine(void)
 		return;
 	}
 
+#ifdef GE_ARENA
+	if (arena_neutral_fire_blocked(warsptr,usrnum)) {
+		zaphim(warsptr,usrnum);
+		prfmsg(MINE7);
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+#else
 	if (neutral(&warsptr->coord)) {
 		prfmsg(MINE7);
 		outprfge(FLT_NONE,usrnum);
 		return;
 	}
+#endif
 
 	if (warsptr->cloak > 0 ) {
 		prf_cloak_blocked(warsptr, "The mine launcher is");
@@ -1533,7 +1586,7 @@ int FUNC laymine(WARSHP *ptr, int usrn, int timer)
 	for (i=0; i<nummines;++i) {
 		if (mines[i].channel == (byte)usrn)
 			++cnt;
-		else if (slot < 0 && mines[i].channel == 255)
+		else if (slot < 0 && mines[i].channel == MINE_UNUSED)
 			slot = i;
 	}
 
@@ -1674,7 +1727,9 @@ void FUNC cmd_send(void)
 void FUNC cmd_report(void)
 {
 	WARSHP *ptr;
+#ifndef GE_ARENA
 	char *tname;
+#endif
 	int max, pcnt, i, none, zothusn;
 	double ddist;
 
@@ -1685,6 +1740,14 @@ void FUNC cmd_report(void)
 		outprfge(FLT_NONE,usrnum);
 		return;
 	}
+
+#ifdef GE_ARENA
+	if (sameas(margv[1],"acc")) {
+		prfmsg(FORMAT,"REPORT");
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+#endif
 
 	energy = (unsigned)(warsptr->energy + .5);
 	damage = (unsigned)(warsptr->damage + .5);
@@ -1802,6 +1865,7 @@ void FUNC cmd_report(void)
 
 		sprintf(gechrbuf2,"%lu",calcweight(warsptr));
 		prfmsg(REP37,gechrbuf2);
+#ifndef GE_ARENA
 	} else if (sameas(margv[1],"acc")) {
 		prfmsg(REP25);
 
@@ -1829,6 +1893,7 @@ void FUNC cmd_report(void)
 			if (tname != NULL)
 				prfmsg(REP33,tname);
 		}
+#endif
 	} else if (sameas(margv[1],"ord")) {
 		prfmsg(REP41);
 		none = TRUE;
@@ -1840,12 +1905,30 @@ void FUNC cmd_report(void)
 					ptr = warshpoff(warsptr->ltorps[i].channel);
 					prf("\r ");
 					if (warsptr->lock == warsptr->ltorps[i].channel)
+#ifdef GE_ARENA
+						prf(" %s*%s%s%s*%s  ",CLR_RED1,CLR_BLUE2,
+						    warsptr->ltorps[i].channel < nterms ?
+						    warusroff(warsptr->ltorps[i].channel)->userid : username(ptr),
+						    CLR_RED1,CLR_WHITE2);
+#else
 						prf(" %s*%s%s%s*%s  ",CLR_RED1,CLR_BLUE2,username(ptr),CLR_RED1,CLR_WHITE2);
+#endif
 					else
+#ifdef GE_ARENA
+						prf("  %s%s%s   ",CLR_BLUE2,
+						    warsptr->ltorps[i].channel < nterms ?
+						    warusroff(warsptr->ltorps[i].channel)->userid : username(ptr),
+						    CLR_WHITE2);
+#else
 						prf("  %s%s%s   ",CLR_BLUE2,username(ptr),CLR_WHITE2);
+#endif
 				}
 				if (warsptr->ltorps[i].channel == 255)
+#ifdef GE_ARENA
+					prf("\r  (departed)   ");
+#else
 					prf("\r  (destroyed)   ");
+#endif
 				if (warsptr->jam_sev <= (byte)2)
 					prf("Dist: %u",warsptr->ltorps[i].distance);
 				else
@@ -1865,12 +1948,30 @@ void FUNC cmd_report(void)
 					ptr = warshpoff(warsptr->lmissl[i].channel);
 					prf("\r ");
 					if (warsptr->lock == warsptr->lmissl[i].channel)
+#ifdef GE_ARENA
+						prf(" %s*%s%s%s*%s  ",CLR_RED1,CLR_BLUE2,
+						    warsptr->lmissl[i].channel < nterms ?
+						    warusroff(warsptr->lmissl[i].channel)->userid : username(ptr),
+						    CLR_RED1,CLR_WHITE2);
+#else
 						prf(" %s*%s%s%s*%s  ",CLR_RED1,CLR_BLUE2,username(ptr),CLR_RED1,CLR_WHITE2);
+#endif
 					else
+#ifdef GE_ARENA
+						prf("  %s%s%s   ",CLR_BLUE2,
+						    warsptr->lmissl[i].channel < nterms ?
+						    warusroff(warsptr->lmissl[i].channel)->userid : username(ptr),
+						    CLR_WHITE2);
+#else
 						prf("  %s%s%s   ",CLR_BLUE2,username(ptr),CLR_WHITE2);
+#endif
 				}
 				if (warsptr->lmissl[i].channel == 255)
+#ifdef GE_ARENA
+					prf("\r  (departed)   ");
+#else
 					prf("\r  (destroyed)   ");
+#endif
 				if (warsptr->jam_sev <= (byte)2)
 					prf("Dist: %u",warsptr->lmissl[i].distance);
 				else
@@ -2161,6 +2262,12 @@ void FUNC cmd_shields(void)
 ** Turn cloaking on and off                                              **
 **************************************************************************/
 
+#ifdef GE_ARENA
+void FUNC cmd_cloak(void)
+{
+	arena_invalid_command();
+}
+#else
 void FUNC cmd_cloak(void)
 {
 	if (shipclass[warsptr->shpclass].max_cloak == 0) {
@@ -2252,10 +2359,146 @@ void FUNC cmd_cloak(void)
 	prfmsg(FORMAT,"CLOAK");
 	outprfge(FLT_NONE,usrnum);
 }
+#endif
 
 /**************************************************************************
 ** Transfer goods between ship and planet                                **
 **************************************************************************/
+
+#ifdef GE_ARENA
+#define ARENA_USED_SHIELD 0x01
+#define ARENA_USED_PHASER 0x02
+#define ARENA_USED_MAINT 0x04
+
+static int arena_planet_transfer_item(int item, int *full, int *listed)
+{
+	unsigned long qty, room, amt;
+
+	qty = plptr->items[item].qty;
+	if (qty == 0UL)
+		return FALSE;
+	room = cargo_room_for_item(warsptr,item);
+	if (room > ULCAP - warsptr->items[item])
+		room = ULCAP - warsptr->items[item];
+	amt = qty;
+	if (amt > room)
+		amt = room;
+	if (amt == 0UL) {
+		*full = TRUE;
+		return FALSE;
+	}
+	plptr->items[item].qty -= amt;
+	warsptr->items[item] += amt;
+	prf_item_list_add(listed,amt,item_name[item]);
+	if (amt < qty)
+		*full = TRUE;
+	return TRUE;
+}
+
+static int arena_planet_apply_boosts(int *listed, byte *used)
+{
+	int changed, max, amount;
+
+	changed = FALSE;
+	if (plptr->arena_shield_boost) {
+		max = shipclass[warsptr->shpclass].max_shlds;
+		if (warsptr->shieldtype < max) {
+			amount = max - warsptr->shieldtype;
+			if (amount > plptr->arena_shield_boost)
+				amount = plptr->arena_shield_boost;
+			warsptr->shieldtype += (byte)amount;
+			plptr->arena_shield_boost -= (byte)amount;
+			prf_item_list_add(listed,(unsigned long)amount,"shield boosters");
+			*used |= ARENA_USED_SHIELD;
+			changed = TRUE;
+		}
+	}
+	if (plptr->arena_phaser_boost) {
+		max = shipclass[warsptr->shpclass].max_phasr;
+		if (warsptr->phasrtype < max) {
+			amount = max - warsptr->phasrtype;
+			if (amount > plptr->arena_phaser_boost)
+				amount = plptr->arena_phaser_boost;
+			warsptr->phasrtype += (byte)amount;
+			plptr->arena_phaser_boost -= (byte)amount;
+			prf_item_list_add(listed,(unsigned long)amount,"phaser boosters");
+			*used |= ARENA_USED_PHASER;
+			changed = TRUE;
+		}
+	}
+	return changed;
+}
+
+static int arena_planet_apply_upgrade(byte flag, byte upg, char *name,
+	int *listed)
+{
+	if (!(plptr->arena_flags & flag))
+		return FALSE;
+	if (!(shipclass[warsptr->shpclass].loadout & upg))
+		return FALSE;
+	if (warsptr->upgrade & upg)
+		return FALSE;
+	warsptr->upgrade |= upg;
+	plptr->arena_flags = (byte)(plptr->arena_flags & ~flag);
+	prf_item_list_add(listed,1UL,name);
+	return TRUE;
+}
+
+static void arena_transfer_up(void)
+{
+	int changed, full, listed;
+	byte used;
+
+	if (!load_orbit_planet(usrnum))
+		return;
+	changed = FALSE;
+	full = FALSE;
+	listed = FALSE;
+	used = 0;
+	prfmsg(PLTRANS);
+	changed |= arena_planet_transfer_item(I_TORPEDO,&full,&listed);
+	changed |= arena_planet_transfer_item(I_MISSILE,&full,&listed);
+	changed |= arena_planet_transfer_item(I_MINE,&full,&listed);
+	changed |= arena_planet_transfer_item(I_JAMMERS,&full,&listed);
+	changed |= arena_planet_transfer_item(I_DECOYS,&full,&listed);
+	changed |= arena_planet_transfer_item(I_ZIPPERS,&full,&listed);
+	changed |= arena_planet_transfer_item(I_FLUXPOD,&full,&listed);
+	if (arena_mode == ARENA_MODE_HOARD)
+		changed |= arena_planet_transfer_item(I_GOLD,&full,&listed);
+	changed |= arena_planet_apply_boosts(&listed,&used);
+	changed |= arena_planet_apply_upgrade(ARENA_PL_SCAN,ENHSCAN,
+	    "enhanced scanners",&listed);
+	changed |= arena_planet_apply_upgrade(ARENA_PL_ARMOR,ARMOR,
+	    "armor plating",&listed);
+	changed |= arena_planet_apply_upgrade(ARENA_PL_ACCEL,ACCELBST,
+	    "acceleration boosters",&listed);
+	changed |= arena_planet_apply_upgrade(ARENA_PL_CORE,NCORE,
+	    "reinforced neutron core",&listed);
+	if (plptr->arena_flags & ARENA_PL_INSTANT) {
+		if (repair_needed(warsptr)) {
+			fullrepair(warsptr);
+			plptr->arena_flags = (byte)(plptr->arena_flags & ~ARENA_PL_INSTANT);
+			prf_item_list_add(&listed,1UL,"instant maintenance");
+			used |= ARENA_USED_MAINT;
+			changed = TRUE;
+		}
+	}
+	prf_item_list_end(listed);
+	if (used & ARENA_USED_SHIELD)
+		prfmsg(NEW13,warsptr->shieldtype);
+	if (used & ARENA_USED_PHASER)
+		prfmsg(NEW14,warsptr->phasrtype);
+	if (used & ARENA_USED_MAINT)
+		prfmsg(MAINT7);
+	if (full)
+		prfmsg(KILLFULL);
+	if (!changed)
+		return;
+	setsect(warsptr);
+	pkey.plnum = plnum;
+	gesdb(GEUPDATE,&pkey,(GALSECT *)&planet);
+}
+#endif
 
 static void trans_down(int item)
 {
@@ -2323,7 +2566,9 @@ static void trans_down(int item)
 			setsect(warsptr); /* build PKEY */
 			pkey.plnum = (SHORT)plnum;
 			gesdb(GEUPDATE,&pkey,(GALSECT *)&planet);
+#ifndef GE_ARENA
 			gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
+#endif
 			return;
 		} else {
 			/* not enough on board */
@@ -2401,7 +2646,9 @@ static void trans_up(int item)
 				setsect(warsptr); /* load PKEY */
 				pkey.plnum = (SHORT)plnum;
 				gesdb(GEUPDATE,&pkey,(GALSECT *)&planet);
+#ifndef GE_ARENA
 				gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
+#endif
 				return;
 			} else {
 				/* not enough on planet */
@@ -2427,6 +2674,14 @@ void FUNC cmd_transfer(void)
 		return;
 	}
 
+#ifdef GE_ARENA
+	if (margc >= 2 && sameto("u",margv[1])) {
+		arena_transfer_up();
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+#endif
+
 	if (margc == 4) {
 		for (i=0; i < NUMITEMS; ++i) {
 			if (sameto(kwrd[i],margv[3])) {
@@ -2450,6 +2705,12 @@ void FUNC cmd_transfer(void)
 ** abandon a colony                                                      **
 **************************************************************************/
 
+#ifdef GE_ARENA
+void FUNC cmd_abandon(void)
+{
+	arena_invalid_command();
+}
+#else
 void FUNC cmd_abandon(void)
 {
 	if (warsptr->where < 10) {
@@ -2480,6 +2741,7 @@ void FUNC cmd_abandon(void)
 		outprfge(FLT_NONE,usrnum);
 	}
 }
+#endif
 
 /**************************************************************************
 ** establish a colony or administer it                                   **
@@ -2496,6 +2758,9 @@ void FUNC cmd_admin(void)
 	if (!load_orbit_planet(usrnum))
 		return;
 
+#ifdef GE_ARENA
+	arena_admin_rename();
+#else
 	if (plptr->userid[0] == 0) {
 		if (waruptr->planets >= max_plnts) {
 			prfmsg(ADMIN4,max_plnts);
@@ -2517,12 +2782,14 @@ void FUNC cmd_admin(void)
 		prfmsg(ADMIN2);
 		outprfge(FLT_NONE,usrnum);
 	}
+#endif
 }
 
 /**************************************************************************
 ** Notify the owner about a planetary attack                             **
 **************************************************************************/
 
+#ifndef GE_ARENA
 static void call_4_help(int send_spy_mail, int won)
 {
 	if (instat(plptr->userid, gestt) && othusp->substt >= FIGHTSUB) {
@@ -2903,11 +3170,18 @@ static int attack_fig(unsigned long num)
 	gesdb(GEUPDATE, &pkey, (GALSECT *)&planet);
 	return won;
 }
+#endif
 
 /**************************************************************************
 ** Attack Command                                                        **
 **************************************************************************/
 
+#ifdef GE_ARENA
+void FUNC cmd_attack(void)
+{
+	arena_invalid_command();
+}
+#else
 void FUNC cmd_attack(void)
 {
 	int won;
@@ -2991,6 +3265,7 @@ void FUNC cmd_attack(void)
 	}
 	outprfge(FLT_NONE,usrnum);
 }
+#endif
 
 /**************************************************************************
 ** Roster Command                                                        **
@@ -3007,6 +3282,12 @@ void FUNC cmd_geroster(void)
 
 	j = gemaxlist;
 
+#ifdef GE_ARENA
+	if (margc == 2 && sameas(margv[1], "all"))
+		j = 200;
+	prfmsg(ROSTER1);
+	outprfge(FLT_NONE, usrnum);
+#else
 	if (margc == 2 && sameas(margv[1], "all")) {
 		prfmsg(ROSTER1);
 		outprfge(FLT_NONE, usrnum);
@@ -3015,6 +3296,7 @@ void FUNC cmd_geroster(void)
 		prfmsg(ROSTER2, gemaxlist);
 		outprfge(FLT_NONE, usrnum);
 	}
+#endif
 
 	if (usaptr->userid[0] != 0 && usaptr->userid[0] != '@' && dfaQueryEQ(usaptr->userid, 0))
 		target = dfaAbs();
@@ -3025,9 +3307,22 @@ void FUNC cmd_geroster(void)
 			logthis(spr("ROS:Got %s Score %lu", tmpusr.userid, tmpusr.score));
 			if ((tmpusr.score > 0 || j == 200) && tmpusr.userid[0] != '@') {
 				++i;
+#ifdef GE_ARENA
+				sprintf(gechrbuf, "%lu", tmpusr.score);
+				sprintf(gechrbuf2, "%u",
+				    tmpusr.arena_wins[ARENA_WIN_BATTLE]);
+				sprintf(gechrbuf3, "%u",
+				    tmpusr.arena_wins[ARENA_WIN_HOARD]);
+				prf("%-29s%7s%8s%7s%6u%6u%8u\r", tmpusr.userid, gechrbuf,
+				    gechrbuf2, gechrbuf3,
+				    tmpusr.arena_wins[ARENA_WIN_KING],
+				    tmpusr.arena_wins[ARENA_WIN_BASE],
+				    tmpusr.arena_wins[ARENA_WIN_SCORED]);
+#else
 				sprintf(gechrbuf, "%11lu", tmpusr.score);
 				sprintf(gechrbuf2, " %10.2fm", ((float)tmpusr.population) / 100.0);
 				prf("%-29s%s%6u%6u%4u%s\r", tmpusr.userid, gechrbuf, tmpusr.kills, tmpusr.ukills, tmpusr.planets, gechrbuf2);
+#endif
 				if (target != 0 && dfaAbs() == target)
 					rank = i;
 				if (i % 5 == 0)
@@ -3049,6 +3344,12 @@ void FUNC cmd_geroster(void)
 ** Planet command                                                        **
 **************************************************************************/
 
+#ifdef GE_ARENA
+void FUNC cmd_planet(void)
+{
+	arena_invalid_command();
+}
+#else
 void FUNC cmd_planet(void)
 {
 	int page = 1;
@@ -3119,11 +3420,13 @@ void FUNC cmd_planet(void)
 		outprfge(FLT_NONE, usrnum);
 	}
 }
+#endif
 
 /**************************************************************************
 ** Sell goods helper                                                     **
 **************************************************************************/
 
+#ifndef GE_ARENA
 static void sell(int item)
 {
 	unsigned long amt, gross, fee, net;
@@ -3227,11 +3530,18 @@ static void sell(int item)
 		prfmsg(SELL3, item_name[item]);
 	}
 }
+#endif
 
 /**************************************************************************
 ** Sell goods                                                            **
 **************************************************************************/
 
+#ifdef GE_ARENA
+void FUNC cmd_sell(void)
+{
+	arena_invalid_command();
+}
+#else
 void FUNC cmd_sell(void)
 {
 	int i;
@@ -3274,11 +3584,13 @@ void FUNC cmd_sell(void)
 	prfmsg(FORMAT, "SELL");
 	outprfge(FLT_NONE, usrnum);
 }
+#endif
 
 /**************************************************************************
 ** Buy-side helpers                                                      **
 **************************************************************************/
 
+#ifndef GE_ARENA
 static unsigned long amt4sale(int item)
 {
 	unsigned long forsale = 0;
@@ -3400,11 +3712,18 @@ static void buy(int item)
 		prfmsg(BUY7);
 	}
 }
+#endif
 
 /**************************************************************************
 ** Buy goods                                                             **
 **************************************************************************/
 
+#ifdef GE_ARENA
+void FUNC cmd_buy(void)
+{
+	arena_invalid_command();
+}
+#else
 void FUNC cmd_buy(void)
 {
 	int i;
@@ -3459,11 +3778,18 @@ void FUNC cmd_buy(void)
 	prfmsg(FORMAT, "BUY");
 	outprfge(FLT_NONE, usrnum);
 }
+#endif
 
 /**************************************************************************
 ** Price goods                                                           **
 **************************************************************************/
 
+#ifdef GE_ARENA
+void FUNC cmd_price(void)
+{
+	arena_invalid_command();
+}
+#else
 void FUNC cmd_price(void)
 {
 	int i;
@@ -3495,6 +3821,7 @@ void FUNC cmd_price(void)
 	prfmsg(FORMAT, "PRICE");
 	outprfge(FLT_NONE, usrnum);
 }
+#endif
 
 /**************************************************************************
 ** Maintenance and repair                                                **
@@ -3502,7 +3829,9 @@ void FUNC cmd_price(void)
 
 void FUNC cmd_maint(void)
 {
+#ifndef GE_ARENA
 	unsigned price;
+#endif
 
 	if (warsptr->where < 10) {
 		prfmsg(MAINT1);
@@ -3512,6 +3841,32 @@ void FUNC cmd_maint(void)
 
 	if (!load_orbit_planet(usrnum))
 		return;
+
+#ifdef GE_ARENA
+	if (plptr->arena_flags & ARENA_PL_MAINT) {
+		if (warsptr->cantexit > 0) {
+			prfmsg(MAINT9);
+			outprfge(FLT_NONE, usrnum);
+			return;
+		}
+		if (warsptr->repair > 0) {
+			prfmsg(MAINT11);
+			outprfge(FLT_NONE, usrnum);
+			return;
+		}
+		if (!repair_needed(warsptr))
+			prfmsg(MAINT13);
+		else {
+			warsptr->repair = 1;
+			prfmsg(MAINT5, repair_eta(warsptr));
+		}
+		outprfge(FLT_NONE, usrnum);
+		return;
+	}
+	prfmsg(MAINT8);
+	outprfge(FLT_NONE, usrnum);
+	return;
+#else
 
 	if (!sameas(plptr->password, "none") && margc < 2) {
 		prfmsg(MAINT2);
@@ -3578,6 +3933,7 @@ void FUNC cmd_maint(void)
 	}
 
 	outprfge(FLT_NONE, usrnum);
+#endif
 }
 
 
@@ -3585,6 +3941,7 @@ void FUNC cmd_maint(void)
 ** New ship or goods command                                             **
 **************************************************************************/
 
+#ifndef GE_ARENA
 static int upg_allowed(WARSHP *ptr, unsigned int loadout, int idx)
 {
 	if (!(loadout & upgdefs[idx].bit))
@@ -3599,7 +3956,14 @@ static long upg_price(WARSHP *ptr, int idx)
 	return((long)(((double)upgrprice[upgdefs[idx].priceidx] *
 		shipclass[ptr->shpclass].damfact) / 100.0));
 }
+#endif
 
+#ifdef GE_ARENA
+void FUNC cmd_new(void)
+{
+	arena_invalid_command();
+}
+#else
 void FUNC cmd_new(void)
 {
 	int type, ctype, upidx, i;
@@ -3872,6 +4236,7 @@ void FUNC cmd_new(void)
 	}
 	outprfge(FLT_NONE, usrnum);
 }
+#endif
 
 /**************************************************************************
 ** SYSOP commands                                                        **
@@ -3882,7 +4247,11 @@ void FUNC cmd_sysop(void)
 	int i, j;
 	unsigned long amt;
 	int gotone;
+#ifndef GE_ARENA
 	int count, cls, clscnt;
+#else
+	int match_only;
+#endif
 	WARSHP *ptr;
 
 	if ((!syscmds) || (sysonly && !(hasmkey(SYSKEY)))) {
@@ -3890,22 +4259,44 @@ void FUNC cmd_sysop(void)
 		outprfge(FLT_NONE, usrnum);
 		return;
 	}
-	if (sameas("factions",margv[1]) && margc == 2) {
+
+#ifdef GE_ARENA
+	match_only = margc >= 2 &&
+	    (sameas("nebseed",margv[1]) || sameas("get",margv[1]) ||
+	    sameas("kill",margv[1]) || sameas("goto",margv[1]) ||
+	    sameas("class",margv[1]) || sameas("shieldtype",margv[1]) ||
+	    sameas("phasertype",margv[1]) || sameas("maint",margv[1]) ||
+	    sameas("unjam",margv[1]) || sameas("list",margv[1]) ||
+	    sameas("orbit",margv[1]) || sameas("fill",margv[1]));
+	if (match_only && (arena_player == NULL ||
+	    !ARENA_MATCH_ACTIVE(arena_state) ||
+	    arena_player[usrnum].state != ARENA_P_PLAYING ||
+	    (arena_player[usrnum].flags & ARENA_F_NEEDSHIP))) {
+		prfmsg(FORMAT,"SYS");
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+#endif
+
+	if (sameas("help",margv[1]) && margc == 2) {
+		setmbk(gehlpmb);
+		prfmsg(HLPSYS);
+		outprfge(FLT_NONE, usrnum);
+		return;
+#ifndef GE_ARENA
+	} else if (sameas("factions",margv[1]) && margc == 2) {
 		for (i = 0; i < 8; ++i) {
 			prfmsg(FACNAME0 + i);
 			prf("... %d\r",waruptr->factions[i]);
 		}
 		outprfge(FLT_NONE, usrnum);
 		return;
-	} else if (sameas("help",margv[1]) && margc == 2) {
-		setmbk(gehlpmb);
-		prfmsg(gehlp[37].helptxt);
-		outprfge(FLT_NONE, usrnum);
-		return;
+#endif
 	} else if (sameas("nebseed",margv[1]) && margc == 2) {
 		prf("\rNebula seed: %s\r",spr("%lu",nebseed));
 		outprfge(FLT_NONE, usrnum);
 		return;
+#ifndef GE_ARENA
 	} else if (sameas("fillslots",margv[1]) && margc == 2) {
 		count = 0;
 		for (j = nterms; j < nships; ++j) {
@@ -3932,6 +4323,7 @@ void FUNC cmd_sysop(void)
 		prf("%d NPC slots filled.\r",count);
 		outprfge(FLT_NONE, usrnum);
 		return;
+#endif
 	} else if (sameas("get",margv[1]) && margc == 4) {
 		if (margc == 4) {
 			for (i=0; i < NUMITEMS; ++i) {
@@ -3962,6 +4354,7 @@ void FUNC cmd_sysop(void)
 			outprfge(FLT_NONE, usrnum);
 		}
 		return;
+#ifndef GE_ARENA
 	} else if (sameas("cash",margv[1]) && (margc == 2 || margc == 3)) {
 		long delta;
 		unsigned long amount;
@@ -4006,10 +4399,11 @@ void FUNC cmd_sysop(void)
 				teamtab[i].teamdeldate,
 				teamtab[i].password,
 				teamtab[i].secret);
-			prf(gechrbuf);
+			prf("%s",gechrbuf);
 			outprfge(FLT_NONE, usrnum);
 		}
 		return;
+#endif
 	} else if (sameas("goto",margv[1]) && margc == 4) {
 		if (margc == 4) {
 			i = atoi(margv[2]);
@@ -4046,7 +4440,11 @@ void FUNC cmd_sysop(void)
 		i = atoi(margv[2]);
 		if (i >= 0 && i < 255) {
 			warsptr->shieldtype = (byte)i;
+#ifdef GE_ARENA
+			prfmsg(NEW13,warsptr->shieldtype);
+#else
 			prfmsg(NEW7,"0",warsptr->shieldtype);
+#endif
 			outprfge(FLT_NONE, usrnum);
 			return;
 		}
@@ -4054,7 +4452,11 @@ void FUNC cmd_sysop(void)
 		i = atoi(margv[2]);
 		if (i >= 0 && i < 255) {
 			warsptr->phasrtype = (byte)i;
+#ifdef GE_ARENA
+			prfmsg(NEW14,warsptr->phasrtype);
+#else
 			prfmsg(NEW10,"0",warsptr->phasrtype);
+#endif
 			outprfge(FLT_NONE, usrnum);
 			return;
 		}
@@ -4111,7 +4513,11 @@ void FUNC cmd_sysop(void)
 	} else if (sameas("classlist",margv[1])) {
 		prfmsg(SYSCLL);
 		for (i=0; i<tot_classes; ++i) {
-			if (shipclass[i].max_type != CLASSTYPE_NONE) {
+			if (shipclass[i].max_type != CLASSTYPE_NONE
+#ifdef GE_ARENA
+			    && shipclass[i].arena_mode == arena_mode
+#endif
+			    ) {
 				prf("%3d %-34s %5d %10d \r",i+1,
 					shipclass[i].typename,
 					shipclass[i].cybs_can_att,
@@ -4120,6 +4526,7 @@ void FUNC cmd_sysop(void)
 		}
 		outprfge(FLT_NONE,usrnum);
 		return;
+#ifndef GE_ARENA
 	} else if (sameas("cybpause",margv[1]) && margc == 3) {
 		i = atoi(margv[2]);
 		prfmsg(SYSCYB,i);
@@ -4152,6 +4559,7 @@ void FUNC cmd_sysop(void)
 		prfmsg(SYSNP);
 		outprfge(FLT_NONE,usrnum);
 		return;
+#endif
 	} else if (sameas("orbit",margv[1]) && (margc == 3)) {
 		if (warsptr->where >= 10) {
 			prfmsg(ORBIT3);
@@ -4192,11 +4600,13 @@ void FUNC cmd_sysop(void)
 			outprfge(FLT_NONE,usrnum);
 			return;
 		}
-	} else if (sameas("assigncybs",margv[1]) && margc == 2) {
-		assign_cybs(usrnum,0);
-		prfmsg(SYSACY);
-		outprfge(FLT_NONE,usrnum);
-		return;
+#ifndef GE_ARENA
+		} else if (sameas("assigncybs",margv[1]) && margc == 2) {
+			assign_cybs(usrnum,0);
+			prfmsg(SYSACY);
+			outprfge(FLT_NONE,usrnum);
+			return;
+#endif
 	} else if (sameas("fill",margv[1])) {
 		amt = ULCAP;
 		if (margc == 3)
@@ -4235,6 +4645,12 @@ void FUNC cmd_rename(void)
 ** Self Destruct                                                         **
 **************************************************************************/
 
+#ifdef GE_ARENA
+void FUNC cmd_destruct(void)
+{
+	arena_invalid_command();
+}
+#else
 void FUNC cmd_destruct(void)
 {
 	if (!neutral(&warsptr->coord)) {
@@ -4251,11 +4667,18 @@ void FUNC cmd_destruct(void)
 	prfmsg(SELFD1A);
 	outprfge(FLT_NONE, usrnum);
 }
+#endif
 
 /**************************************************************************
 ** Abort Self Destruct                                                   **
 **************************************************************************/
 
+#ifdef GE_ARENA
+void FUNC cmd_abort(void)
+{
+	arena_invalid_command();
+}
+#else
 void FUNC cmd_abort(void)
 {
 	if (warsptr->destruct > (byte)0) {
@@ -4273,6 +4696,7 @@ void FUNC cmd_abort(void)
 	}
 	outprfge(FLT_NONE, usrnum);
 }
+#endif
 
 /**************************************************************************
 ** Lock command...                                                       **
@@ -4422,14 +4846,27 @@ void FUNC cmd_navigate(void)
 void FUNC cmd_who(void)
 {
 	int zothusn;
+#ifdef GE_ARENA
+	WARUSR *wuptr;
+#else
 	WARSHP *wptr;
+#endif
 
+#ifdef GE_ARENA
+	for (zothusn = 0; zothusn < nterms; ++zothusn) {
+		if (arena_player[zothusn].state != ARENA_P_EMPTY) {
+			wuptr = warusroff(zothusn);
+			prf("%s ", wuptr->userid);
+		}
+	}
+#else
 	for (zothusn=0; zothusn < nterms; zothusn++)
 		if (ingegame(zothusn)) {
 			wptr = warshpoff(zothusn);
 			if (wptr->status == GESTAT_USER)
 				prf("%s ", username(wptr));
 		}
+#endif
 	prf("\r");
 	outprfge(FLT_NONE, usrnum);
 }
@@ -4480,6 +4917,7 @@ void FUNC cmd_set(void)
 				msgfilter |= 0x03;
 			else
 				invalid = TRUE;
+#ifndef GE_ARENA
 		} else if (sameas(margv[2],"distress")) {
 			msgfilter &= ~MSGF_DISTRESS;
 			if (sameas(margv[3],"on"))
@@ -4496,6 +4934,7 @@ void FUNC cmd_set(void)
 				msgfilter |= MSGF_BEACON;
 			else
 				invalid = TRUE;
+#endif
 		} else if (sameas(margv[2],"hail")) {
 			msgfilter &= ~MSGF_HAIL;
 			if (sameas(margv[3],"on"))
@@ -4504,6 +4943,7 @@ void FUNC cmd_set(void)
 				msgfilter |= MSGF_HAIL;
 			else
 				invalid = TRUE;
+#ifndef GE_ARENA
 		} else if (sameas(margv[2],"entry")) {
 			msgfilter &= ~MSGF_ENTRY_MASK;
 			if (sameas(margv[3],"on"))
@@ -4514,6 +4954,7 @@ void FUNC cmd_set(void)
 				msgfilter |= 0x40;
 			else
 				invalid = TRUE;
+#endif
 		} else if (sameas(margv[2],"ship")) {
 			msgfilter &= ~MSGF_SHIP;
 			if (sameas(margv[3],"on"))
@@ -4554,6 +4995,7 @@ void FUNC cmd_set(void)
 				prfmsg(SETOPT2,"display","cybs","off");
 				break;
 		}
+#ifndef GE_ARENA
 		if (waruptr->options[MSG_FILTER] & MSGF_DISTRESS)
 			prfmsg(SETOPT2,"display","distress","off");
 		else
@@ -4562,10 +5004,12 @@ void FUNC cmd_set(void)
 			prfmsg(SETOPT2,"display","beacon","off");
 		else
 			prfmsg(SETOPT2,"display","beacon","on");
+#endif
 		if (waruptr->options[MSG_FILTER] & MSGF_HAIL)
 			prfmsg(SETOPT2,"display","hail","off");
 		else
 			prfmsg(SETOPT2,"display","hail","on");
+#ifndef GE_ARENA
 		switch (waruptr->options[MSG_FILTER] & MSGF_ENTRY_MASK) {
 			case 0x00:
 				prfmsg(SETOPT2,"display","entry","on");
@@ -4577,6 +5021,7 @@ void FUNC cmd_set(void)
 				prfmsg(SETOPT2,"display","entry","off");
 				break;
 		}
+#endif
 		if (waruptr->options[MSG_FILTER] & MSGF_SHIP)
 			prfmsg(SETOPT2,"display","ship","off");
 		else
@@ -4588,6 +5033,9 @@ void FUNC cmd_set(void)
 	if (invalid == TRUE)
 		prfmsg(FORMAT,"SET");
 	if (invalid == FALSE) {
+#ifdef GE_ARENA
+		geudb(GEUPDATE,waruptr->userid,waruptr);
+#endif
 		if (margc == 4)
 			prfmsg(SETOPT2,margv[1],margv[2],margv[3]);
 		else
@@ -4616,6 +5064,12 @@ void FUNC cmd_set(void)
 **                                                                       **
 **************************************************************************/
 
+#ifdef GE_ARENA
+void FUNC cmd_team(void)
+{
+	arena_invalid_command();
+}
+#else
 void FUNC cmd_team(void)
 {
 	int i, j, next;
@@ -4628,6 +5082,7 @@ void FUNC cmd_team(void)
 	int highpos;
 	TEAM tmp;
 	int temptab[MAXTEAMS];
+
 	if (margc < 2) {
 		prfmsg(FORMAT,"TEAM");
 		outprfge(FLT_NONE,usrnum);
@@ -4778,11 +5233,13 @@ void FUNC cmd_team(void)
 			j = temptab[i];
 			if (teamtab[j].teamcode > 0
 				&& teamtab[j].teamname[0] != '@') {
-				prf("%-6s %-38s%7u %15lu\r",
-					spr("%ld",teamtab[j].teamcode),
+				sprintf(gechrbuf, "%ld", teamtab[j].teamcode);
+				sprintf(gechrbuf2, "%lu", tmscore[j]);
+				prf("%-6s %-38s%7u %15s\r",
+					gechrbuf,
 					teamtab[j].teamname,
 					tmcount[j],
-					tmscore[j]);
+					gechrbuf2);
 				outprfge(FLT_NONE,usrnum);
 			}
 		}
@@ -4879,7 +5336,7 @@ void FUNC cmd_team(void)
 
 			if (next < 0) {
 				prfmsg(TOOMANY,MAXTEAMS);
-				outprf(usrnum);
+				outprfge(FLT_NONE,usrnum);
 				return;
 			}
 		}
@@ -5200,6 +5657,7 @@ void FUNC cmd_team(void)
 	prfmsg(FORMAT,"TEAM");
 	outprfge(FLT_NONE,usrnum);
 }
+#endif
 
 char *FUNC teamname(WARUSR *ptr)
 {
@@ -5240,6 +5698,12 @@ char *FUNC gedots(int numdots)
 ** Spy Command                                                           **
 **************************************************************************/
 
+#ifdef GE_ARENA
+void FUNC cmd_spy(void)
+{
+	arena_invalid_command();
+}
+#else
 void FUNC cmd_spy(void)
 {
 	if (warsptr->where < 10) {
@@ -5279,6 +5743,7 @@ void FUNC cmd_spy(void)
 	}
 	outprfge(FLT_NONE,usrnum);
 }
+#endif
 
 /**************************************************************************
 ** Jettison helper                                                       **
@@ -5307,7 +5772,9 @@ static void jettison(int item)
 		else
 			prfmsg(JETT3,spr("%lu",amt),item_name[item]);
 		outprfge(FLT_NONE,usrnum);
+#ifndef GE_ARENA
 		gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
+#endif
 		return;
 	} else if ((req = atol(margv[1])) > 0L) {
 		amt = (unsigned long)req;
@@ -5318,7 +5785,9 @@ static void jettison(int item)
 			else
 				prfmsg(JETT3,spr("%lu",amt),item_name[item]);
 			outprfge(FLT_NONE,usrnum);
+#ifndef GE_ARENA
 			gepdb(GEUPDATE,warsptr->userid,warsptr->shipno,warsptr);
+#endif
 			return;
 		} else {
 			prfmsg(JETT1);

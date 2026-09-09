@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ge-next32 GEGLOBAL.H                                                      *
  *                                                                           *
- * ge-next32 modifications by Anthony Schmidt / ManicPop.org                 *
+ * ge-next32 modifications ONLY copyright (C) 2024-2026 Anthony Schmidt     *
  * Based on Galactic Empire (c) 2025 Elwynor Technologies                    *
  *                                                                           *
  * https://manicpop.org/ge-next/  https://github.com/manicpop/ge-next32      *
@@ -25,28 +25,6 @@
  * You should have received a copy of the GNU Affero General Public License  *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.     *
  *                                                                           *
- * Additional Terms for Contributors:                                        *
- * 1. By contributing to this project, you agree to assign all right, title, *
- *    and interest, including all copyrights, in and to your contributions   *
- *    to Rick Hadsall and Elwynor Technologies.                              *
- * 2. You grant Rick Hadsall and Elwynor Technologies a non-exclusive,       *
- *    royalty-free, worldwide license to use, reproduce, prepare derivative  *
- *    works of, publicly display, publicly perform, sublicense, and          *
- *    distribute your contributions                                          *
- * 3. You represent that you have the legal right to make your contributions *
- *    and that the contributions do not infringe any third-party rights.     *
- * 4. Rick Hadsall and Elwynor Technologies are not obligated to incorporate *
- *    any contributions into the project.                                    *
- * 5. This project is licensed under the AGPL v3, and any derivative works   *
- *    must also be licensed under the AGPL v3.                               *
- * 6. If you create an entirely new project (a fork) based on this work, it  *
- *    must also be licensed under the AGPL v3, you assign all right, title,  *
- *    and interest, including all copyrights, in and to your contributions   *
- *    to Rick Hadsall and Elwynor Technologies, and you must include these   *
- *    additional terms in your project's LICENSE file(s).                    *
- *                                                                           *
- * By contributing to this project, you agree to these terms.                *
- *                                                                           *
  *****************************************************************************/
 
 /* GEMAIN Global Defs ****************************************************/
@@ -54,10 +32,14 @@
 #ifndef GEMAIN
 extern int gestt;
 
-extern DFAFILE *gebb1,		/* GEship.dat */
-	       *gebb2,		/* GEplanet.dat */
-	       *gebb4,		/* GEmail.dat */
-	       *gebb5;		/* GEuser.dat */
+#ifndef GE_ARENA
+extern DFAFILE *gebb1;		/* MPOGESHP.DAT */
+#endif
+extern DFAFILE *gebb2,		/* MPOGEPLT.DAT or MPOGAPLT.DAT */
+#ifndef GE_ARENA
+	       *gebb4,		/* MPOGEMAL.DAT */
+#endif
+	       *gebb5;		/* MPOGEUSR.DAT or MPOGAUSR.DAT */
 
 extern HMCVFILE gemb, gehlpmb, geshmb;
 
@@ -88,7 +70,18 @@ extern byte *entrysent;
 extern byte *entrypend;
 extern int entrybytes;
 
+#ifdef GE_ARENA
+extern ARENAPLAYER *arena_player;
+extern int arena_state;
+extern int arena_host;
+extern int arena_ticks;
+extern int arena_match_ticks;
+extern int arena_mode;
+#endif
+
+#ifndef GE_ARENA
 extern GEMESSAGE *gemsg;
+#endif
 
 extern int nships;
 extern int heading;
@@ -141,7 +134,9 @@ extern int gemaxplrs,
 	   pfirdist,
 	   pdammax,
 	   jamtime,
+#ifndef GE_ARENA
 	   maildays,
+#endif
 	   torpsped,
 	   mislsped,
 	   decodds,
@@ -169,12 +164,16 @@ extern int gemaxplrs,
 	   planupd,
 	   passnum;
 
+#ifndef GE_ARENA
 extern char *frontend;		/* configured frontend pairing code */
+#endif
 extern char *opttxt;		/* option-text menu prompt */
 extern char optchr;		/* option-text trigger character */
 
 extern long *opttbl;		/* per-user option-text file offsets */
+#ifndef GE_ARENA
 extern byte *data_enabled;	/* per-session DATA state flags */
+#endif
 
 extern double tor_fact,		/* torpedo hit-distance factor */
 	      tdammax,		/* torpedo max damage factor */
@@ -192,8 +191,10 @@ extern double tor_fact,		/* torpedo hit-distance factor */
 	      plattrt1,		/* planet troop-vs-attacker damage factor 1 */
 	      plattrt2;		/* planet troop-vs-attacker damage factor 2 */
 
+#ifndef GE_ARENA
 extern SHPKEY shpkey;
 extern MAILKEY mailkey;
+#endif
 
 extern SHIP *shipclass;
 

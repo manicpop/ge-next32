@@ -24,46 +24,31 @@
     <None Include="Dist\LICENSE.txt">
       <Filter>Dist</Filter>
     </None>
-    <None Include="Dist\MPOGEHLP.MSG">
+    <None Include="Dist\MPOGAHLP.MSG">
       <Filter>Dist</Filter>
     </None>
-    <None Include="Dist\MPOGEMAL.DAT">
+    <None Include="Dist\MPOGAMNU.TXT">
       <Filter>Dist</Filter>
     </None>
-    <None Include="Dist\MPOGEMAL.VIR">
+    <None Include="Dist\MPOGA.MDF">
       <Filter>Dist</Filter>
     </None>
-    <None Include="Dist\MPOGEMNU.TXT">
+    <None Include="Dist\MPOGAMSG.MSG">
       <Filter>Dist</Filter>
     </None>
-    <None Include="Dist\MPOGEMP.MDF">
+    <None Include="Dist\MPOGAPLT.DAT">
       <Filter>Dist</Filter>
     </None>
-    <None Include="Dist\MPOGEMSG.MSG">
+    <None Include="Dist\MPOGAPLT.VIR">
       <Filter>Dist</Filter>
     </None>
-    <None Include="Dist\MPOGEPLT.DAT">
+    <None Include="Dist\MPOGASHP.MSG">
       <Filter>Dist</Filter>
     </None>
-    <None Include="Dist\MPOGEPLT.VIR">
+    <None Include="Dist\MPOGAUSR.DAT">
       <Filter>Dist</Filter>
     </None>
-    <None Include="Dist\MPOGESHP.DAT">
-      <Filter>Dist</Filter>
-    </None>
-    <None Include="Dist\MPOGESHP.MSG">
-      <Filter>Dist</Filter>
-    </None>
-    <None Include="Dist\MPOGESHP.VIR">
-      <Filter>Dist</Filter>
-    </None>
-    <None Include="Dist\MPOGETEA.DAT">
-      <Filter>Dist</Filter>
-    </None>
-    <None Include="Dist\MPOGEUSR.DAT">
-      <Filter>Dist</Filter>
-    </None>
-    <None Include="Dist\MPOGEUSR.VIR">
+    <None Include="Dist\MPOGAUSR.VIR">
       <Filter>Dist</Filter>
     </None>
     <None Include="Dist\README.md">
@@ -72,22 +57,16 @@
     <None Include="GALCAPS.ALT">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="MPOGEMAL.BCR">
+    <None Include="MPOGAPLT.BCR">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="MPOGEPLT.BCR">
+    <None Include="MPOGAUSR.BCR">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="MPOGESHP.BCR">
+    <None Include="MPOGA_EXP.DEF">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="MPOGEUSR.BCR">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="MPOGEMP_EXP.DEF">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="MPOGEMP_LIB.DEF">
+    <None Include="MPOGA_LIB.DEF">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
@@ -101,13 +80,13 @@
     <ClInclude Include="GEPROTO.H">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mpogehlp.h">
+    <ClInclude Include="mpogahlp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mpogemsg.h">
+    <ClInclude Include="mpogamsg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mpogeshp.h">
+    <ClInclude Include="mpogashp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -118,7 +97,7 @@
     <ClCompile Include="GECYBS.C">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GEDROIDS.C">
+    <ClCompile Include="GEARENA.C">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GEFUNCS.C">

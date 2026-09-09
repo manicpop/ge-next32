@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ge-next32 GEMAIN.H                                                        *
  *                                                                           *
- * ge-next32 modifications by Anthony Schmidt / ManicPop.org                 *
+ * ge-next32 modifications ONLY copyright (C) 2024-2026 Anthony Schmidt     *
  * Based on Galactic Empire (c) 2025 Elwynor Technologies                    *
  *                                                                           *
  * https://manicpop.org/ge-next/  https://github.com/manicpop/ge-next32      *
@@ -25,28 +25,6 @@
  * You should have received a copy of the GNU Affero General Public License  *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.     *
  *                                                                           *
- * Additional Terms for Contributors:                                        *
- * 1. By contributing to this project, you agree to assign all right, title, *
- *    and interest, including all copyrights, in and to your contributions   *
- *    to Rick Hadsall and Elwynor Technologies.                              *
- * 2. You grant Rick Hadsall and Elwynor Technologies a non-exclusive,       *
- *    royalty-free, worldwide license to use, reproduce, prepare derivative  *
- *    works of, publicly display, publicly perform, sublicense, and          *
- *    distribute your contributions                                          *
- * 3. You represent that you have the legal right to make your contributions *
- *    and that the contributions do not infringe any third-party rights.     *
- * 4. Rick Hadsall and Elwynor Technologies are not obligated to incorporate *
- *    any contributions into the project.                                    *
- * 5. This project is licensed under the AGPL v3, and any derivative works   *
- *    must also be licensed under the AGPL v3.                               *
- * 6. If you create an entirely new project (a fork) based on this work, it  *
- *    must also be licensed under the AGPL v3, you assign all right, title,  *
- *    and interest, including all copyrights, in and to your contributions   *
- *    to Rick Hadsall and Elwynor Technologies, and you must include these   *
- *    additional terms in your project's LICENSE file(s).                    *
- *                                                                           *
- * By contributing to this project, you agree to these terms.                *
- *                                                                           *
  *****************************************************************************/
 
 #ifndef TRUE
@@ -59,15 +37,34 @@
 /* if FASTPLANET defined updates happen every 3 seconds */
 /* #define FASTPLANET 1 */
 
+#ifndef GE_ARENA
 #define PROJECT_NAME "ge-next"
-#define PROJECT_VERSION "0.3.1"
+#else
+#define PROJECT_NAME "ge-arena"
+#endif
+
+#define PROJECT_VERSION "0.3.2"
 #define PROJECT_ARCH "32-bit"
+
+#ifndef GE_ARENA
 #define GEHELP  "MPOGEHLP.MCV"
 #define GEMSG   "MPOGEMSG.MCV"
+#define GEMDF   "MPOGEMP.MDF"
+#else
+#define GEHELP  "MPOGAHLP.MCV"
+#define GEMSG   "MPOGAMSG.MCV"
+#define GEMDF   "MPOGA.MDF"
+#endif
 
+#ifndef GE_ARENA
 #include "mpogemsg.h"
 #include "mpogehlp.h"
 #include "mpogeshp.h"
+#else
+#include "mpogamsg.h"
+#include "mpogahlp.h"
+#include "mpogashp.h"
+#endif
 
 #include "gme.h"
 
@@ -123,12 +120,20 @@
 #define MAXMISSL 3
 #define MAXDECOY 10
 
+/* mine owner channels cannot conflict because nships is capped at 125 */
+#define MINE_NO_USER 254
+#define MINE_UNUSED 255
+
 #define DECOYTIME 15		/* times TICKTIME how long a decoy lives   */
 #define TICKTIME 6		/* main ship-state tick interval in seconds */
 #define TICKTIME2 1		/* movement tick interval in seconds       */
 #define CYBTICKTIME 5		/* Cyborgs do stuff this fast              */
 
+#ifdef GE_ARENA
+#define FIRETICKS 4		/* shorter battle lock for arena matches   */
+#else
 #define FIRETICKS 10		/* normal cantexit delay when in battle    */
+#endif
 
 #define LOCKGRACE 5		/* ticks to retain a hidden lock target    */
 #define CYBGRACE 10		/* ticks to retain hidden cyb target       */
@@ -225,9 +230,11 @@
 #define	FLT_SHIP 7
 #define	FLT_NONE 8
 
+#ifndef GE_ARENA
 /* per-session DATA state flags */
 #define GEDATA_ACCESS 0x01
 #define GEDATA_METADATA 0x02
+#endif
 
 /* how many seconds to delay 'reduced' entry messages */
 #define	ENTRYWAIT 30
@@ -311,12 +318,90 @@
 #define byte unsigned char
 #endif
 
+#ifdef GE_ARENA
+#define ARENASUB 2
+#define ARENA_MAX_PLAYERS 16
+
+#define ARENA_IDLE 0
+#define ARENA_QUEUE 1
+#define ARENA_STAGING 2
+#define ARENA_RUNNING 3
+#define ARENA_TIE_STAGING 4
+#define ARENA_TIE_RUNNING 5
+
+#define ARENA_MATCH_ACTIVE(s) ((s) == ARENA_STAGING || (s) == ARENA_RUNNING || \
+	(s) == ARENA_TIE_STAGING || (s) == ARENA_TIE_RUNNING)
+#define ARENA_COMBAT_ACTIVE(s) \
+	((s) == ARENA_RUNNING || (s) == ARENA_TIE_RUNNING)
+#define ARENA_CONFINED(s) \
+	((s) == ARENA_STAGING || (s) == ARENA_TIE_STAGING || \
+	(s) == ARENA_TIE_RUNNING)
+
+#define ARENA_MODE_BATTLE 1
+#define ARENA_MODE_HOARD 2
+#define ARENA_MODE_KING 3
+#define ARENA_MODE_BASE 4
+#define ARENA_MODE_SCORED 5
+
+#define ARENA_WIN_BATTLE 0
+#define ARENA_WIN_HOARD 1
+#define ARENA_WIN_KING 2
+#define ARENA_WIN_BASE 3
+#define ARENA_WIN_SCORED 4
+#define ARENA_WIN_SLOTS 8
+
+#define ARENA_SORT_NONE 0
+#define ARENA_SORT_KILLS 1
+#define ARENA_SORT_GOLD 2
+#define ARENA_SORT_TIME 3
+#define ARENA_SORT_BASES 4
+#define ARENA_SORT_SCORE 5
+
+#define ARENA_STAGING_TIME 60
+#define ARENA_AUTOSTART_TIME 60
+#define ARENA_MATCH_TIME 900
+#define ARENA_RESPAWN_TIME 10
+#define ARENA_TIE_STAGING_TIME 10
+#define ARENA_TIE_TIME 120
+
+#define ARENA_P_EMPTY 0
+#define ARENA_P_READY 1
+#define ARENA_P_OBSERVE 2
+#define ARENA_P_PLAYING 3
+#define ARENA_P_RESPAWN 4
+
+#define ARENA_F_NEEDSHIP 1
+#define ARENA_F_FINALIST 2
+
+#define ARENA_PL_SCAN 0x01
+#define ARENA_PL_ARMOR 0x02
+#define ARENA_PL_ACCEL 0x04
+#define ARENA_PL_CORE 0x08
+#define ARENA_PL_INSTANT 0x10
+#define ARENA_PL_MAINT 0x20
+
+typedef struct _arenaplayer {
+	byte state;
+	byte ready;
+	byte flags;
+	byte respawn;
+	byte shipclass;
+	SHORT kills;
+	USHORT deaths;
+	USHORT kingtime;
+	USHORT basekills;
+	LONG score;
+} ARENAPLAYER;
+#endif
+
+#ifndef GE_ARENA
 /* MPOGEMAL.DAT stores a V10 message header plus fixed GE text payload. */
 #define GEMESSAGE struct _gemessage
 GEMESSAGE {
 	struct message m;	/* V10 message header; Btrieve keys use m.to and m.flags */
 	CHAR text[GEMSGSIZ];	/* fixed GE mail text payload             */
 };
+#endif
 
 #define COORD struct _coord
 
@@ -347,7 +432,11 @@ typedef struct warusr {
 /*30*/
 	byte options[30];	/* per-user options                        */
 /*60*/
+#ifdef GE_ARENA
+	ULONG score;		/* total arena wins; Btrieve key 1         */
+#else
 	ULONG score;		/* player score; Btrieve key 1             */
+#endif
 /*64*/
 	ULONG cash;		/* cash on hand                            */
 /*68*/
@@ -373,7 +462,14 @@ typedef struct warusr {
 /*98*/
 	byte factions[8];	/* do NPCs like me                         */
 /*106*/
+
+#ifdef GE_ARENA
+	USHORT arena_wins[ARENA_WIN_SLOTS]; /* wins by arena mode              */
+/*122*/
+	CHAR filler[134];	/* pad WARUSR to the 256-byte V10 record   */
+#else
 	CHAR filler[150];	/* pad WARUSR to the 256-byte V10 record   */
+#endif
 } WARUSR;
 
 typedef struct warshp {
@@ -501,7 +597,14 @@ typedef struct warshp {
 /*310*/
 	byte holdcourse;	/* hold-course timer/state (NPC-only)      */
 /*311*/
+
+#ifdef GE_ARENA
+	byte damage_notice;	/* arena NPC damage milestone              */
+/*312*/
+	CHAR filler[200];	/* pad WARSHP to the 512-byte V10 record   */
+#else
 	CHAR filler[201];	/* pad WARSHP to the 512-byte V10 record   */
+#endif
 } WARSHP;
 
 typedef struct item {
@@ -579,7 +682,15 @@ typedef struct _galplnt {
 /*440*/
 	ULONG nebseed;		/* random seed for nebula map (Zygor only) */
 /*444*/
+
+#ifdef GE_ARENA
+	byte arena_shield_boost;
+	byte arena_phaser_boost;
+	byte arena_flags;
+	CHAR filler[65];	/* keep GALPLNT at 512 bytes               */
+#else
 	CHAR filler[68];	/* pad GALPLNT to the 512-byte V10 record  */
+#endif
 } GALPLNT;
 
 typedef struct galworm {
@@ -706,6 +817,12 @@ typedef struct _ship {
 	byte has_mine;		/* mine capability                         */
 	byte max_attk;		/* fighter capability                      */
 	byte max_cloak;		/* cloak capability                        */
+#ifdef GE_ARENA
+	byte arena_start_phaser;	/* starting phaser class                    */
+	byte arena_start_shield;	/* starting shield class                    */
+	byte arena_start_items[NUMITEMS]; /* starting inventory quantities       */
+	byte arena_mode;		/* arena mode that uses this class          */
+#endif
 	USHORT max_accel;	/* max acceleration                        */
 	byte max_warp;		/* max warp cruising speed                 */
 	LONG max_tons;		/* cargo capacity                          */

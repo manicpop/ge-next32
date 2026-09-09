@@ -1,0 +1,4 @@
+; Filename: MPOGA_EXP.DEF
+LIBRARY MPOGA.DLL
+EXPORTS
+    _init__mpoga=init__mpoga @1
