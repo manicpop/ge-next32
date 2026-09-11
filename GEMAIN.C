@@ -236,14 +236,10 @@ int				gemaxplrs,	/* max simultaneous GE players */
 
 char				*opttxt,	/* option-text menu prompt */
 				optchr;		/* option-text trigger character */
-#ifndef GE_ARENA
 char				*frontend;	/* configured frontend pairing code */
-#endif
 
 long				*opttbl;	/* per-user option-text file offsets */
-#ifndef GE_ARENA
 byte				*data_enabled;	/* per-session DATA state flags */
-#endif
 
 double				tor_fact,	/* torpedo hit-distance factor */
 				tdammax,	/* torpedo max damage factor */
@@ -362,9 +358,7 @@ void FUNC iniwara(void)
 
 	gemb = opnmsg(GEMSG);
 	endmark = stgopt(ENDMARK);
-#ifndef GE_ARENA
 	frontend = stgopt(FRONTEND);
-#endif
 	if (!sameas(endmark, "ENDMARK")) {
 		catastro(spr("GE:ERR:%s Corrupted", GE_MESSAGE_FILE));
 	}
@@ -803,11 +797,8 @@ void FUNC iniwara(void)
 	setmem(entrysent, n, 0);
 	entrypend = (byte *)alcmem(n = nterms * entrybytes);	/* per-entrant bitmaps of recipients still pending entry */
 	setmem(entrypend, n, 0);
-
-#ifndef GE_ARENA
 	data_enabled = (byte *)alcmem(n = nterms * sizeof(byte));	/* per-session DATA state flags */
 	setmem(data_enabled, n, 0);
-#endif
 
 #ifdef GE_ARENA
 	arena_player = (ARENAPLAYER *)alcmem(n = nterms * sizeof(ARENAPLAYER));
@@ -1284,9 +1275,7 @@ SHORT FUNC warlof(void)
 {
 	warsptr = warshpoff(usrnum);
 	waruptr = warusroff(usrnum);
-#ifndef GE_ARENA
 	data_enabled[usrnum] = FALSE;
-#endif
 #ifdef GE_ARENA
 	arena_leave(usrnum);
 #endif
@@ -1308,9 +1297,7 @@ void FUNC warhup(void)
 
 	warsptr = warshpoff(usrnum);
 	waruptr = warusroff(usrnum);
-#ifndef GE_ARENA
 	data_enabled[usrnum] = FALSE;
-#endif
 #ifdef GE_ARENA
 	arena_leave(usrnum);
 	logthis(spr("WARHUP called 4 %s", waruptr->userid));
@@ -2291,7 +2278,6 @@ void FUNC warrti3(void)
 ** OUTPRF special, apply filters, don't send to NPCs                     **
 **************************************************************************/
 
-#ifndef GE_ARENA
 static void outprf_metadata(int cls, int shpno)
 {
 	static char header[32], footer[32];
@@ -2311,7 +2297,6 @@ static void outprf_metadata(int cls, int shpno)
 	}
 	outprf(shpno);
 }
-#endif
 
 /* attempt one delivery without clearing the buffer shared by broadcasts */
 static int sendprfge(int cls, int shpno)
@@ -2327,12 +2312,10 @@ static int sendprfge(int cls, int shpno)
 				return TRUE;
 			case FLT_CYB_ALL:
 				if ((msgfilter & MSGF_CYBS_MASK) == 0x00) {
-#ifndef GE_ARENA
 					if (data_enabled != NULL
 						&& (data_enabled[shpno] & GEDATA_METADATA))
 						outprf_metadata(cls,shpno);
 					else
-#endif
 						outprf(shpno);
 					return TRUE;
 				}
@@ -2340,84 +2323,70 @@ static int sendprfge(int cls, int shpno)
 			case FLT_CYB_BAT:
 				if ((msgfilter & MSGF_CYBS_MASK) == 0x00 ||
 					(msgfilter & MSGF_CYBS_MASK) == 0x01) {
-#ifndef GE_ARENA
 					if (data_enabled != NULL
 						&& (data_enabled[shpno] & GEDATA_METADATA))
 						outprf_metadata(cls,shpno);
 					else
-#endif
 						outprf(shpno);
 					return TRUE;
 				}
 				break;
 			case FLT_CYB_APP:
 				if ((msgfilter & MSGF_CYBS_MASK) != 0x03) {
-#ifndef GE_ARENA
 					if (data_enabled != NULL
 						&& (data_enabled[shpno] & GEDATA_METADATA))
 						outprf_metadata(cls,shpno);
 					else
-#endif
 						outprf(shpno);
 					return TRUE;
 				}
 				break;
 			case FLT_DISTRESS:
 				if (!(msgfilter & MSGF_DISTRESS)) {
-#ifndef GE_ARENA
 					if (data_enabled != NULL
 						&& (data_enabled[shpno] & GEDATA_METADATA))
 						outprf_metadata(cls,shpno);
 					else
-#endif
 						outprf(shpno);
 					return TRUE;
 				}
 				break;
 			case FLT_BEACON:
 				if (!(msgfilter & MSGF_BEACON)) {
-#ifndef GE_ARENA
 					if (data_enabled != NULL
 						&& (data_enabled[shpno] & GEDATA_METADATA))
 						outprf_metadata(cls,shpno);
 					else
-#endif
 						outprf(shpno);
 					return TRUE;
 				}
 				break;
 			case FLT_HAIL:
 				if (!(msgfilter & MSGF_HAIL)) {
-#ifndef GE_ARENA
 					if (data_enabled != NULL
 						&& (data_enabled[shpno] & GEDATA_METADATA))
 						outprf_metadata(cls,shpno);
 					else
-#endif
 						outprf(shpno);
 					return TRUE;
 				}
 				break;
 			case FLT_ENTRY:
 				if ((msgfilter & MSGF_ENTRY_MASK) != 0x40) {
-#ifndef GE_ARENA
 					if (data_enabled != NULL
 						&& (data_enabled[shpno] & GEDATA_METADATA))
 						outprf_metadata(cls,shpno);
 					else
-#endif
 						outprf(shpno);
 					return TRUE;
 				}
 				break;
 			case FLT_SHIP:
 				if (!(msgfilter & MSGF_SHIP)) {
-#ifndef GE_ARENA
 					if (data_enabled != NULL
 						&& (data_enabled[shpno] & GEDATA_METADATA))
 						outprf_metadata(cls,shpno);
 					else
-#endif
 						outprf(shpno);
 					return TRUE;
 				}

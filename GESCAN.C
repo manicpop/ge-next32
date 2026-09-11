@@ -54,10 +54,8 @@ static void scan_pl(void);
 static void scan_ra(void);
 static void scan_se(void);
 static void scan_lo(void);
-#ifndef GE_ARENA
 static void data_shipscan(void);
 static void data_shipscan_systems(WARSHP *wptr);
-#endif
 
 /**************************************************************************
 ** Functions for printmap()                                              **
@@ -1516,8 +1514,7 @@ static void scan_lo(void)
 ** DATA scan helpers                                                     **
 **************************************************************************/
 
-#ifndef GE_ARENA
-static void data_text(const char *text)
+void FUNC data_text(const char *text)
 {
 	while (*text) {
 		switch (*text) {
@@ -1850,7 +1847,12 @@ static void data_inventory(void)
 	prf("*\r");
 	sprintf(gechrbuf,"%lu",calcweight(warsptr));
 	sprintf(gechrbuf2,"%ld",shipclass[warsptr->shpclass].max_tons);
-	prf("INV2:%s,%s*\r",gechrbuf,gechrbuf2);
+#ifdef GE_ARENA
+	if (arena_mode == ARENA_MODE_HOARD)
+		prf("INV2:%s,*\r",gechrbuf);
+	else
+#endif
+		prf("INV2:%s,%s*\r",gechrbuf,gechrbuf2);
 	prf("STOP:INV*\r");
 }
 
@@ -1881,7 +1883,11 @@ static void data_ordnance(void)
 				data_text(username(ptr));
 				prf(",%d,",warsptr->lock == warsptr->ltorps[i].channel);
 			} else if (warsptr->ltorps[i].channel == 255)
+#ifdef GE_ARENA
+				prf("ORD1:departed,0,");
+#else
 				prf("ORD1:destroyed,0,");
+#endif
 			else
 				prf("ORD1:,0,");
 			if (warsptr->jam_sev <= (byte)2)
@@ -1907,7 +1913,11 @@ static void data_ordnance(void)
 				data_text(username(ptr));
 				prf(",%d,",warsptr->lock == warsptr->lmissl[i].channel);
 			} else if (warsptr->lmissl[i].channel == 255)
+#ifdef GE_ARENA
+				prf("ORD2:departed,0,");
+#else
 				prf("ORD2:destroyed,0,");
+#endif
 			else
 				prf("ORD2:,0,");
 			if (warsptr->jam_sev <= (byte)2)
@@ -2373,8 +2383,10 @@ static void data_shipscan(void)
 			data_text(username(wptr));
 		prf(",");
 		tname = NULL;
+#ifndef GE_ARENA
 		if (wptr->status == GESTAT_USER && wuptr->teamcode > 0)
 			tname = teamname(wuptr);
+#endif
 		data_text(tname == NULL ? "" : tname);
 	}
 	else
@@ -2402,8 +2414,15 @@ static void data_shipscan(void)
 	if (warsptr->jam_sev < (byte)3) {
 		if (wptr->status == GESTAT_AUTO)
 			prf(",%u,0,0,0*\r",wptr->kills);
+#ifdef GE_ARENA
+		else
+			prf(",%u,%u,%d,*\r",(unsigned)wptr->kills,
+				(unsigned)wptr->ukills,
+				arena_player[shpnum].kills);
+#else
 		else
 			prf(",%u,%u,%u,%u*\r",wptr->kills,wptr->ukills,wuptr->kills,wuptr->ukills);
+#endif
 	}
 	else
 		prf(",,,,*\r");
@@ -2416,6 +2435,18 @@ static void data_shipscan(void)
 
 static void data_user(void)
 {
+#ifdef GE_ARENA
+	sprintf(gechrbuf,"%lu",arena_total_wins(waruptr));
+	prf("USER1:");
+	data_text(waruptr->userid);
+	prf("*\rUSER2:%s,%u,%u,%u,%u,%u*\r",
+		gechrbuf,
+		(unsigned)waruptr->arena_wins[ARENA_WIN_BATTLE],
+		(unsigned)waruptr->arena_wins[ARENA_WIN_HOARD],
+		(unsigned)waruptr->arena_wins[ARENA_WIN_KING],
+		(unsigned)waruptr->arena_wins[ARENA_WIN_BASE],
+		(unsigned)waruptr->arena_wins[ARENA_WIN_SCORED]);
+#else
 	char *tname;
 
 	tname = waruptr->teamcode > 0 ? teamname(waruptr) : NULL;
@@ -2432,6 +2463,7 @@ static void data_user(void)
 	sprintf(gechrbuf2,"%lu",waruptr->cash);
 	sprintf(gechrbuf3,"%lu",waruptr->population);
 	prf("USER2:%s,%s,%s*\r",gechrbuf,gechrbuf2,gechrbuf3);
+#endif
 	prf("STOP:USER*\r");
 }
 
@@ -2494,6 +2526,16 @@ static void data_capabilities(void)
 	prf("STOP:CAP*\r");
 }
 
+#ifdef GE_ARENA
+static int data_ship_available(void)
+{
+	return arena_player != NULL &&
+		arena_player[usrnum].state == ARENA_P_PLAYING &&
+		!(arena_player[usrnum].flags & ARENA_F_NEEDSHIP) &&
+		warsptr->status == GESTAT_USER;
+}
+#endif
+
 void FUNC cmd_data(void)
 {
 	if (sameas(frontend,"OFF")) {
@@ -2547,7 +2589,27 @@ void FUNC cmd_data(void)
 		return;
 	}
 
+#ifdef GE_ARENA
+	if (margc == 2 && sameas(margv[1],"arena")) {
+		arena_data_status();
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+	if (margc == 2 && sameas(margv[1],"players")) {
+		arena_data_players();
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+#endif
+
 	if (margc == 3 && sameas(margv[1],"SHIPSCAN")) {
+#ifdef GE_ARENA
+		if (!data_ship_available()) {
+			prfmsg(INVCMD);
+			outprfge(FLT_NONE,usrnum);
+			return;
+		}
+#endif
 		data_shipscan();
 		return;
 	}
@@ -2558,6 +2620,23 @@ void FUNC cmd_data(void)
 		return;
 	}
 
+	if (sameas(margv[1],"user")) {
+		data_user();
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+	if (sameas(margv[1],"msg")) {
+		data_messages();
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+#ifdef GE_ARENA
+	if (!data_ship_available()) {
+		prfmsg(INVCMD);
+		outprfge(FLT_NONE,usrnum);
+		return;
+	}
+#endif
 	if (sameas(margv[1],"cap")) {
 		data_capabilities();
 		outprfge(FLT_NONE,usrnum);
@@ -2568,18 +2647,8 @@ void FUNC cmd_data(void)
 		outprfge(FLT_NONE,usrnum);
 		return;
 	}
-	if (sameas(margv[1],"user")) {
-		data_user();
-		outprfge(FLT_NONE,usrnum);
-		return;
-	}
 	if (sameas(margv[1],"upg")) {
 		data_upgrades();
-		outprfge(FLT_NONE,usrnum);
-		return;
-	}
-	if (sameas(margv[1],"msg")) {
-		data_messages();
 		outprfge(FLT_NONE,usrnum);
 		return;
 	}
@@ -2615,10 +2684,3 @@ void FUNC cmd_data(void)
 	prfmsg(INVCMD);
 	outprfge(FLT_NONE,usrnum);
 }
-#else
-void FUNC cmd_data(void)
-{
-	prfmsg(INVCMD);
-	outprfge(FLT_NONE,usrnum);
-}
-#endif
