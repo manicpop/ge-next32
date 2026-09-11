@@ -2495,7 +2495,7 @@ static void arena_transfer_up(void)
 	if (!changed)
 		return;
 	setsect(warsptr);
-	pkey.plnum = plnum;
+	pkey.plnum = (SHORT)plnum;
 	gesdb(GEUPDATE,&pkey,(GALSECT *)&planet);
 }
 #endif

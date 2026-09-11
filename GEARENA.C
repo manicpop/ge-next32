@@ -173,7 +173,7 @@ static void arena_record_win(int usrn)
 	if (usrn < 0 || usrn >= nterms || slot < 0 || slot >= ARENA_WIN_SLOTS)
 		return;
 	wuptr = warusroff(usrn);
-	if (wuptr->arena_wins[slot] != (USHORT)~0U)
+	if (wuptr->arena_wins[slot] != 0xFFFFU)
 		++wuptr->arena_wins[slot];
 	wuptr->score = arena_total_wins(wuptr);
 	geudb(GEUPDATE,wuptr->userid,wuptr);
@@ -268,7 +268,7 @@ void FUNC arena_select_ship(int usrn, int choice)
 		return;
 	arena_player[usrn].shipclass = (byte)cls;
 	ptr = warshpoff(usrn);
-	ptr->shpclass = arena_selected_shipclass(usrn);
+	ptr->shpclass = (SHORT)arena_selected_shipclass(usrn);
 	ptr->topspeed = shipclass[ptr->shpclass].max_warp;
 	ptr->speed = 0.0;
 	ptr->speed2b = 0.0;
@@ -1397,7 +1397,7 @@ static void arena_king_score_tick(void)
 		if (ptr->status == GESTAT_USER &&
 		    coord1(ptr->coord.xcoord) == arena_king_x &&
 		    coord1(ptr->coord.ycoord) == arena_king_y &&
-		    arena_player[i].kingtime != (USHORT)~0U)
+		    arena_player[i].kingtime != 0xFFFFU)
 			++arena_player[i].kingtime;
 	}
 }
@@ -2340,7 +2340,7 @@ void FUNC arena_cyb_destroyed(WARSHP *ptr, int usrn)
 	who = ptr->lastfired;
 	if (arena_credit_last_attacker(ptr,usrn)) {
 		if (arena_mode == ARENA_MODE_BASE && arena_is_base_ship(ptr) &&
-		    arena_player[who].basekills != (USHORT)~0U)
+		    arena_player[who].basekills != 0xFFFFU)
 			++arena_player[who].basekills;
 		wptr = warshpoff(who);
 		prfmsg(KILLDNPC,username(ptr),warusroff(who)->userid);
