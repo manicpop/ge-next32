@@ -75,9 +75,9 @@ double FUNC rndm(double mod)
 ** Generate a raw integer random value                                   **
 **************************************************************************/
 
-unsigned int FUNC gernd(void)
+USHORT FUNC gernd(void)
 {
-	return rand();
+	return (USHORT)rand();
 }
 
 

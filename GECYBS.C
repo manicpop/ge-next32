@@ -276,7 +276,8 @@ void FUNC cyb_init(WARSHP *ptr, int usrn, int cls)
 			logthis(spr("GE:INF:Add shp,cls=%d/%d", cls, ptr->shpclass));
 			strncpy(ptr->shipname, shipclass[cls].npcprefx, sizeof(ptr->shipname) - 1);
 			ptr->shipname[sizeof(ptr->shipname) - 1] = 0;
-			sprintf(gechrbuf, "%u", usrn * usrn + gernd() % (2 * usrn + 1) + 1000);
+			sprintf(gechrbuf, "%u",
+				(unsigned int)(usrn * usrn + gernd() % (2 * usrn + 1) + 1000));
 			strncat(ptr->shipname, gechrbuf,
 				sizeof(ptr->shipname) - strlen(ptr->shipname) - 1);
 			logthis(spr("  Named: %s", ptr->shipname));

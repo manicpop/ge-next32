@@ -322,7 +322,7 @@ void FUNC update_plan_3 P((void));
 /* gelib.c */
 unsigned FUNC smallest P((unsigned a1 , unsigned a2));
 double FUNC rndm P((double mod));
-unsigned int FUNC gernd P((void));
+USHORT FUNC gernd P((void));
 int FUNC cbearing P((COORD *ptr1 , COORD *ptr2 , double base_heading));
 double FUNC cdistance P((COORD *ptr1 , COORD *ptr2));
 double FUNC vector P((COORD *ptr1 , COORD *ptr2));

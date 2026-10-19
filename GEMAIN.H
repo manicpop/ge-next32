@@ -43,7 +43,7 @@
 #define PROJECT_NAME "ge-arena"
 #endif
 
-#define PROJECT_VERSION "0.3.2"
+#define PROJECT_VERSION "0.3.3"
 #define PROJECT_ARCH "32-bit"
 
 #ifndef GE_ARENA
@@ -229,6 +229,7 @@
 #define	FLT_ENTRY 6
 #define	FLT_SHIP 7
 #define	FLT_NONE 8
+#define	FLT_HAIL_DIRECT 9	/* unfiltered user message; metadata remains HAIL */
 
 /* per-session DATA state flags */
 #define GEDATA_ACCESS 0x01
