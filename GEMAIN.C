@@ -133,7 +133,7 @@ MINE *mines;			/* base pointer to active mine table */
 MAIL mail;			/* temporary mail record workspace */
 MAILSTAT tmpstat;		/* temporary mail-status workspace */
 
-byte beacontimer;		/* beacon timing state */
+byte beacontimer;		/* elapsed pass (1-60) in the shared beacon round */
 ENTRYTAB *entrytab;		/* delayed entry-message state table */
 byte *entrysent;		/* per-entrant sent-recipient bitsets */
 byte *entrypend;		/* per-entrant pending-recipient bitsets */
@@ -678,7 +678,7 @@ void FUNC iniwara(void)
 		shipclass[i].lowest_to_attk = (byte)numopt(++classbase, 0, 255);
 		shipclass[i].tot_to_create = (USHORT)numopt(++classbase, 0, 255);
 		shipclass[i].tough_factor = (byte)numopt(++classbase, 0, 4);
-		shipclass[i].damfact = (USHORT)numopt(++classbase, 0, 32767);
+		shipclass[i].damfact = (USHORT)numopt(++classbase, 30, 32767);
 		shipclass[i].faction = (USHORT)numopt(++classbase, 0, 32767);
 		shipclass[i].loadout = (USHORT)numopt(++classbase, 0, 32767);
 #ifdef GE_ARENA
@@ -748,9 +748,9 @@ void FUNC iniwara(void)
 
 	/* ships in game is at least number of terminal channels */
 	nships = nterms + numships;
-	if (nships > 125) {
+	if (nships > MAX_SHIP_SLOTS) {
 		geshocst(0, spr("GE:ERR:Too many ships defined"));
-		nships = 125;
+		nships = MAX_SHIP_SLOTS;
 	}
 
 	/* allocate memory for user data table */
@@ -2210,8 +2210,9 @@ void FUNC warrti2(void)
 
 	logthis("TICK:PWarrti2 entered");
 
-	if (beacontimer > 0)
-		--beacontimer;
+	/* Open each beacon round for three passes so every ship group gets a turn. */
+	if (++beacontimer > 60)
+		beacontimer = 1;
 
 #ifdef GE_ARENA
 	setmbk(gemb);
