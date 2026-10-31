@@ -124,12 +124,6 @@ int FUNC lockon(WARSHP *ptr, int type, int ship, int usrn)
 			fact = ((5.0 - dist) / mis_fact);
 
 		if (fact > .7) {
-			if (wptr->status == GESTAT_AUTO) {	/* if npc... */
-				wptr->cybmine = (byte)usrn;	/* engage user */
-				wptr->track_grace = CYBGRACE;
-				wptr->tick = 2;		/* do it fast */
-				wptr->npcmsg = 255;	/* reset annoy msg tracking */
-			}
 			return 1;
 		} else {
 			prfmsg(FCNOLOCK,shpltr(usrn,ship));
@@ -1100,6 +1094,12 @@ int FUNC torp(WARSHP *ptr, int usrn, int shpnum)
 		wptr->ltorps[slot].channel = (byte)usrn;
 		wptr->cantexit = FIRETICKS;
 		ptr->cantexit = FIRETICKS;
+		if (wptr->status == GESTAT_AUTO) {	/* if npc... */
+			wptr->cybmine = (byte)usrn;	/* engage user */
+			wptr->track_grace = CYBGRACE;
+			wptr->tick = 2;		/* do it fast */
+			wptr->npcmsg = 255;	/* reset annoy msg tracking */
+		}
 		return 1;
 	}
 	return 0;
@@ -1197,6 +1197,12 @@ int FUNC misl(WARSHP *ptr, int usrn, int shpnum, unsigned payload_energy, unsign
 		wptr->lmissl[slot].energy = (USHORT)payload_energy;
 		wptr->cantexit = FIRETICKS;
 		ptr->cantexit = FIRETICKS;
+		if (wptr->status == GESTAT_AUTO) {	/* if npc... */
+			wptr->cybmine = (byte)usrn;	/* engage user */
+			wptr->track_grace = CYBGRACE;
+			wptr->tick = 2;		/* do it fast */
+			wptr->npcmsg = 255;	/* reset annoy msg tracking */
+		}
 		return 1;
 	}
 	return 0;
