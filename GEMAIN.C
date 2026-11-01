@@ -2918,7 +2918,6 @@ int FUNC mnu_admenu2(void)
 
 int FUNC mnu_admenu2b(void)
 {
-	long val;
 	unsigned long amt;
 
 	if (!load_admin_planet())
@@ -2928,15 +2927,13 @@ int FUNC mnu_admenu2b(void)
 		outprfge(FLT_NONE, usrnum);
 		return 1;
 	}
-	val = atol(margv[0]);
-	if (val < 0L) {
+	if (!parse_ulong(margv[0], &amt)) {
 		prfmsg(ADMENU2D);
 		prfmsg(ADMENU2);
 		outprfge(FLT_NONE, usrnum);
 		usrptr->substt = ADMENU2;
 		return 1;
 	}
-	amt = (unsigned long)val;
 
 	if (amt <= plptr->tax) {
 		if (waruptr->cash > ULCAP - amt) {
