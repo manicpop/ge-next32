@@ -299,10 +299,10 @@ void FUNC cyb_init(WARSHP *ptr, int usrn, int cls)
 			if (shipclass[ptr->shpclass].max_accel == 0 && univmax > 100) {
 				/* make sure bases aren't too close to 0 0 */
 				ptr->coord.xcoord = rndm((double)univmax - 60) + 50.0;
-				if (gernd() % 2 == 0)
+				if (ge_rand_bits(1) == 0)
 					ptr->coord.xcoord *= -1.0;
 				ptr->coord.ycoord = rndm((double)univmax - 60) + 50.0;
-				if (gernd() % 2 == 0)
+				if (ge_rand_bits(1) == 0)
 					ptr->coord.ycoord *= -1.0;
 			} else {
 				ptr->coord.xcoord = rndm((double)univmax * 2.0) - (double)univmax;
@@ -548,7 +548,7 @@ static void cyb_msg(WARSHP *ptr, int usrn, int msgtype)
 
 	base = CYBBASEM + (msgtype * 4);
 
-	sel = base + (gernd() % 4) + 1;
+	sel = base + ge_rand_bits(2) + 1;
 
 	if (sel < CYBLASTM) {
 		prfmsg(sel, ptr->shipname);
@@ -613,7 +613,7 @@ static void cyb_annoy(WARSHP *ptr, int usrn, int msgtype)
 
 	/* add in and increase likelihood of base battle messages */
 	if ((msgtype == LOATTACK || msgtype == HIATTACK || msgtype == CYBTORP) &&
-		shipclass[ptr->shpclass].max_accel == 0 && gernd() % 2 == 0)
+		shipclass[ptr->shpclass].max_accel == 0 && ge_rand_bits(1) == 0)
 		msgtype = CYBBASEB;
 
 	/* let some of these through on occasion */
@@ -726,7 +726,7 @@ static void cyb_attack(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn)
 	if (tden < 1)
 		tden = 1;
 	for (j = 0; j < shipclass[ptr->shpclass].max_torps; ++j) {
-		if (ptr->items[I_TORPEDO] > 0 && gernd() % tden == 0 &&
+		if (ptr->items[I_TORPEDO] > 0 && (tden == 1 || gernd() % tden == 0) &&
 			torp(ptr, usrn, zothusn) == 1)
 			acted = 2;
 	}
@@ -735,9 +735,10 @@ static void cyb_attack(WARSHP *ptr, int usrn, WARSHP *wptr, int zothusn)
 	zipden = 12 - (shipclass[ptr->shpclass].tough_factor * 2);
 	if (zipden < 3)
 		zipden = 3;
-	if (gernd() % zipden == 0 && shipclass[ptr->shpclass].has_zip &&
+	if (shipclass[ptr->shpclass].has_zip &&
 		ptr->items[I_ZIPPERS] > 0 && ptr->zipload == 0 &&
-		shipclass[ptr->shpclass].max_accel > 0 && wptr->minesnear == TRUE) {
+		shipclass[ptr->shpclass].max_accel > 0 && wptr->minesnear == TRUE &&
+		gernd() % zipden == 0) {
 		zip(ptr);
 		acted = 1;
 		/* get the hell out of here ...then come back */
@@ -767,7 +768,7 @@ static void cyb_check_damage(WARSHP *ptr, int usrn)
 			&& ptr->items[I_MINE] > 0
 			&& ptr->mineload == 0
 			&& !cyb_in_neutral(ptr,usrn)
-			&& gernd() % 8 == 0)
+			&& ge_rand_bits(3) == 0)
 			laymine(ptr, usrn, 10);
 
 		if (shipclass[ptr->shpclass].has_jam

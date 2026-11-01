@@ -47,27 +47,25 @@ WORMTAB	wormtab[MAXPLANETS];
 int	wormnum;
 
 #ifdef GE_ARENA
-static int arena_chance(int pct)
-{
-	return rndm(100.0) < (double)pct;
-}
+/* ceil(pct * 32767 / 100), folded at compile time for the literal percentages. */
+#define ARENA_PCT_LIMIT(pct) ((unsigned)(((unsigned long)(pct) * 32767UL + 99UL) / 100UL))
 
 static byte arena_planet_qty(void)
 {
 	unsigned r;
 
-	r = (unsigned)rndm(100.0);
-	if (r < 55)
+	r = gernd();
+	if (r < ARENA_PCT_LIMIT(55))
 		return 0;
-	if (r < 75)
+	if (r < ARENA_PCT_LIMIT(75))
 		return 1;
-	if (r < 87)
+	if (r < ARENA_PCT_LIMIT(87))
 		return 2;
-	if (r < 94)
+	if (r < ARENA_PCT_LIMIT(94))
 		return 3;
-	if (r < 98)
+	if (r < ARENA_PCT_LIMIT(98))
 		return (byte)(4 + (gernd() % 3));
-	if (r < 99)
+	if (r < ARENA_PCT_LIMIT(99))
 		return (byte)(7 + (gernd() % 3));
 	return 10;
 }
@@ -76,12 +74,12 @@ static byte arena_planet_boost(void)
 {
 	unsigned r;
 
-	r = (unsigned)rndm(100.0);
-	if (r < 88)
+	r = gernd();
+	if (r < ARENA_PCT_LIMIT(88))
 		return 0;
-	if (r < 96)
+	if (r < ARENA_PCT_LIMIT(96))
 		return 1;
-	if (r < 99)
+	if (r < ARENA_PCT_LIMIT(99))
 		return 2;
 	return 3;
 }
@@ -90,14 +88,14 @@ static unsigned long arena_planet_gold(void)
 {
 	unsigned r;
 
-	r = (unsigned)rndm(100.0);
-	if (r < 55)
+	r = gernd();
+	if (r < ARENA_PCT_LIMIT(55))
 		return 0UL;
-	if (r < 80)
+	if (r < ARENA_PCT_LIMIT(80))
 		return 1UL + (unsigned long)(gernd() % 40);
-	if (r < 92)
+	if (r < ARENA_PCT_LIMIT(92))
 		return 41UL + (unsigned long)(gernd() % 60);
-	if (r < 98)
+	if (r < ARENA_PCT_LIMIT(98))
 		return 101UL + (unsigned long)(gernd() % 60);
 	return 161UL + (unsigned long)(gernd() % 40);
 }
@@ -125,18 +123,18 @@ static void arena_init_planet_loot(void)
 		planet.arena_phaser_boost = arena_planet_boost();
 	}
 	planet.arena_flags = 0;
-	if (arena_chance(6))
+	if (gernd() < ARENA_PCT_LIMIT(6))
 		planet.arena_flags |= ARENA_PL_SCAN;
-	if (arena_chance(6))
+	if (gernd() < ARENA_PCT_LIMIT(6))
 		planet.arena_flags |= ARENA_PL_ARMOR;
-	if (arena_chance(6))
+	if (gernd() < ARENA_PCT_LIMIT(6))
 		planet.arena_flags |= ARENA_PL_ACCEL;
-	if (arena_chance(6))
+	if (gernd() < ARENA_PCT_LIMIT(6))
 		planet.arena_flags |= ARENA_PL_CORE;
-	maint_roll = (unsigned)rndm(100.0);
-	if (maint_roll < 6)
+	maint_roll = gernd();
+	if (maint_roll < ARENA_PCT_LIMIT(6))
 		planet.arena_flags |= ARENA_PL_INSTANT;
-	else if (maint_roll < 31)
+	else if (maint_roll < ARENA_PCT_LIMIT(31))
 		planet.arena_flags |= ARENA_PL_MAINT;
 }
 
@@ -410,7 +408,7 @@ void FUNC multiply(int final_mult)
 		if (men > qty) {
 			if (gernd() % 10 == 0) {
 				logthis("Revolt!!");
-				cnt = plptr->items[I_TROOPS].qty / ((gernd() % 8) + 2);
+				cnt = plptr->items[I_TROOPS].qty / (ge_rand_bits(3) + 2);
 				plptr->items[I_TROOPS].qty = cnt;
 
 				/* decrement planet counter for this user */
@@ -711,8 +709,8 @@ static int xgetsector(COORD *sect, int wormy)
 					planet.coord.xcoord = sector.ptab[i].coord.xcoord;
 					planet.coord.ycoord = sector.ptab[i].coord.ycoord;
 					planet.type = sector.ptab[i].type;
-					planet.enviorn = (char)(rndm(3.999));
-					planet.resource = (char)(rndm(3.999));
+					planet.enviorn = (char)ge_rand_bits(2);
+					planet.resource = (char)ge_rand_bits(2);
 					strcpy(planet.password, "none");
 
 					for (k = 0; k < NUMITEMS; ++k)
@@ -720,9 +718,11 @@ static int xgetsector(COORD *sect, int wormy)
 #ifdef GE_ARENA
 					arena_init_planet_loot();
 #else
-					if (rndm(3.99) > 3) {
+					/* Same population cutoff as rndm(3.99) > 3. */
+					if (gernd() > 24636U) {
+						/* Preserve the uncommon 5 from truncated rndm(5.1). */
 						for (k = 0; k < NUMITEMS; ++k)
-							planet.items[k].rate = (USHORT)rndm(5.1);
+							planet.items[k].rate = (USHORT)(gernd() / 6425U);
 
 						planet.items[I_MEN].qty = (unsigned long)rndm(50000.0);
 						planet.items[I_MEN].rate = (USHORT)(5 + (unsigned int)rndm(25.0));
