@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ge-next32 GEMAIN.H                                                        *
  *                                                                           *
- * ge-next32 modifications ONLY copyright (C) 2024-2026 Anthony Schmidt     *
+ * ge-next32 modifications ONLY copyright (C) 2024-2026 Anthony Schmidt      *
  * Based on Galactic Empire (c) 2025 Elwynor Technologies                    *
  *                                                                           *
  * https://manicpop.org/ge-next/  https://github.com/manicpop/ge-next32      *
@@ -849,7 +849,6 @@ typedef struct _ship {
 struct cmd {
 	CHAR *command;		/* command keyword                         */
 	void (*func)(void);	/* command handler                         */
-	byte cando;		/* 0 = payers only, 1 = all players        */
 };
 
 typedef struct _shiptab {

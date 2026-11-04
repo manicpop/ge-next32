@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ge-next32 GEPROTO.H                                                       *
  *                                                                           *
- * ge-next32 modifications ONLY copyright (C) 2024-2026 Anthony Schmidt     *
+ * ge-next32 modifications ONLY copyright (C) 2024-2026 Anthony Schmidt      *
  * Based on Galactic Empire (c) 2025 Elwynor Technologies                    *
  *                                                                           *
  * https://manicpop.org/ge-next/  https://github.com/manicpop/ge-next32      *
@@ -39,7 +39,6 @@ void EXPORT init__mpoga P((void));
 #else
 void EXPORT init__mpogemp P((void));
 #endif
-void FUNC dummy P((void));
 void FUNC iniwara P((void));
 GBOOL FUNC gelogon P((void));
 void FUNC gedelete P((char *uid));

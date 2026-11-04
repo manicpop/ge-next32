@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ge-next32 GEMAIN.C                                                        *
  *                                                                           *
- * ge-next32 modifications ONLY copyright (C) 2024-2026 Anthony Schmidt     *
+ * ge-next32 modifications ONLY copyright (C) 2024-2026 Anthony Schmidt      *
  * Based on Galactic Empire (c) 2025 Elwynor Technologies                    *
  *                                                                           *
  * https://manicpop.org/ge-next/  https://github.com/manicpop/ge-next32      *
@@ -47,15 +47,15 @@ struct user;
 /* LOCAL GLOBAL DEFS *****************************************************/
 
 #ifdef GE_ARENA
-#define GE_MODULE_BLOCK mpoga
-#define GE_ROSTER_FILE  "MPOGAROS.TXT"
-#define GE_MENU_FILE    "MPOGAMNU.TXT"
-#define GE_MESSAGE_FILE "MPOGAMSG.MCV"
+#define GE_MODULE_BLOCK	mpoga
+#define GE_ROSTER_FILE	"MPOGAROS.TXT"
+#define GE_MENU_FILE	"MPOGAMNU.TXT"
+#define GE_MESSAGE_FILE	"MPOGAMSG.MCV"
 #else
-#define GE_MODULE_BLOCK mpoge
-#define GE_ROSTER_FILE  "MPOGEROS.TXT"
-#define GE_MENU_FILE    "MPOGEMNU.TXT"
-#define GE_MESSAGE_FILE "MPOGEMSG.MCV"
+#define GE_MODULE_BLOCK	mpoge
+#define GE_ROSTER_FILE	"MPOGEROS.TXT"
+#define GE_MENU_FILE	"MPOGEMNU.TXT"
+#define GE_MESSAGE_FILE	"MPOGEMSG.MCV"
 #endif
 
 int gestt;			/* module number */
@@ -183,7 +183,6 @@ unsigned			plantime;	/* time between planet updates */
 unsigned long			nebseed;	/* nebula random seed */
 
 int				gemaxplrs,	/* max simultaneous GE players */
-				gefreebies,	/* free-account/newbie access toggle */
 				gemaxlist,	/* max roster/list output count */
 				gerostxt,	/* nightly roster text-file export toggle */
 				maxships,	/* max ships per user */
@@ -344,10 +343,6 @@ void EXPORT init__mpogemp(void)
 	gestt = register_module(&GE_MODULE_BLOCK);
 }
 
-void FUNC dummy(void)
-{
-}
-
 void FUNC iniwara(void)
 {
 	int i, n, type, classbase;
@@ -376,7 +371,6 @@ void FUNC iniwara(void)
 #ifndef GE_ARENA
 	gemaxplrs = numopt(MAXPLRS, 1, 256);	/* max simultaneous GE players */
 #endif
-	gefreebies = numopt(FREEBIES, 0, 1);	/* allow non-paying/freebie access */
 	gemaxlist = numopt(MAXLIST, 3, 50);	/* max entries shown in GE lists */
 	gerostxt = ynopt(GEROSTXT);		/* nightly roster text-file export enabled */
 #ifndef GE_ARENA
@@ -2032,7 +2026,7 @@ void FUNC warrti(void)
 	WARSHP *wptr;
 	int cntr;
 
-	logthis("TICK:Warrtia entered");
+	logthis("TICK:Warrti entered");
 
 	cntr = 0;
 
@@ -2208,7 +2202,7 @@ void FUNC warrti2(void)
 
 	static int clicker = 0;
 
-	logthis("TICK:PWarrti2 entered");
+	logthis("TICK:Warrti2 entered");
 
 	/* Open each beacon round for three passes so every ship group gets a turn. */
 	if (++beacontimer > 60)
@@ -2256,7 +2250,7 @@ void FUNC warrti3(void)
 {
 	COORD tmpcoord;
 
-	logthis("TICK:Warrti3a entered");
+	logthis("TICK:Warrti3 entered");
 
 	setmbk(gemb);
 	prfmsg(ZAPHIM2);

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ge-next32 GEGLOBAL.H                                                      *
  *                                                                           *
- * ge-next32 modifications ONLY copyright (C) 2024-2026 Anthony Schmidt     *
+ * ge-next32 modifications ONLY copyright (C) 2024-2026 Anthony Schmidt      *
  * Based on Galactic Empire (c) 2025 Elwynor Technologies                    *
  *                                                                           *
  * https://manicpop.org/ge-next/  https://github.com/manicpop/ge-next32      *
@@ -113,7 +113,6 @@ extern long max_plrec,
 	    startcash;
 
 extern int gemaxplrs,
-	   gefreebies,
 	   gemaxlist,
 	   gerostxt,
 	   maxships,
@@ -246,8 +245,5 @@ extern int cybhaltflg;
 
 #ifndef GESCAN
 #endif
-
-/* MAJORBBS Global Defs **************************************************/
-
 
 #include "geproto.h"
