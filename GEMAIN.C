@@ -167,7 +167,9 @@ char				*gechrbuf,*gechrbuf2,*gechrbuf3;	/* shared general-purpose text buffers 
 char				*warpbuf;	/* shared warp-speed formatting buffer */
 int				plnum;		/* current planet number workspace */
 GALPLNT				*plptr;		/* current planet pointer workspace */
+#ifndef GE_ARENA
 ITEM				*titems;	/* per-user temporary item-edit table */
+#endif
 TEAM				*teamtab;	/* base pointer to team table */
 
 int				tmp_usrnum;	/* temporary user-number workspace */
@@ -277,16 +279,20 @@ int				arena_match_ticks;	/* remaining match time */
 int				arena_mode;	/* selected arena game mode */
 #endif
 
+#ifndef GE_ARENA
 long shieldprice[TOPSHIELD];		/* shield upgrade prices */
 long phaserprice[TOPPHASOR];		/* phaser upgrade prices */
 long upgrprice[8];			/* general ship upgrade prices */
 unsigned baseprice[NUMITEMS];		/* base item prices */
 
 double maxpl[NUMITEMS];			/* max items a planet can hold (adjusted later) */
+#endif
 
 long weight[NUMITEMS];			/* net weight of each item */
+#ifndef GE_ARENA
 long value[NUMITEMS];			/* net score value of each item on a planet */
 long manhours[NUMITEMS];		/* items produced per 1000 men per day */
+#endif
 
 typedef struct _menu {
 	int	substt;
@@ -769,10 +775,12 @@ void FUNC iniwara(void)
 	setmem(ptab, n, 0);
 	geshocst(1, spr("GE:INF:Planet Table Mem: %d", n));
 
+#ifndef GE_ARENA
 	/* allocate memory for a temporary item table */
 	titems = (ITEM *)alcmem(n = nships * sizeof(ITEM));
 	setmem(titems, n, 0);
 	geshocst(1, spr("GE:INF:Temp Items Mem: %d", n));
+#endif
 
 	/* allocate memory for a team table */
 	teamtab = (TEAM *)alcmem(n = MAXTEAMS * sizeof(TEAM));

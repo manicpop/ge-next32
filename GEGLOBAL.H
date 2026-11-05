@@ -98,7 +98,9 @@ extern char *gechrbuf, *gechrbuf2, *gechrbuf3;
 extern char *warpbuf;
 extern int plnum;
 extern GALPLNT *plptr;
+#ifndef GE_ARENA
 extern ITEM *titems;
+#endif
 extern TEAM *teamtab;
 
 extern int tmp_usrnum;
@@ -198,14 +200,18 @@ extern int s00plnum;
 
 extern SCANTAB *scantab;
 
+#ifndef GE_ARENA
 extern long shieldprice[TOPSHIELD];
 extern long phaserprice[TOPPHASOR];
 extern long upgrprice[8];
 extern unsigned baseprice[NUMITEMS];
 extern double maxpl[NUMITEMS];
+#endif
 extern long weight[NUMITEMS];
+#ifndef GE_ARENA
 extern long value[NUMITEMS];
 extern long manhours[NUMITEMS];
+#endif
 #endif
 
 /* GECMDS Global Defs ****************************************************/
