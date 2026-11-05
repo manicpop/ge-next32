@@ -161,9 +161,12 @@ extern int gemaxplrs,
 	   meneat,
 	   showdoc,
 	   cattkd,
-	   gcnum,
 	   planupd,
 	   passnum;
+
+#ifndef GE_ARENA
+extern int gcnum;
+#endif
 
 extern char *frontend;		/* configured frontend pairing code */
 extern char *opttxt;		/* option-text menu prompt */
