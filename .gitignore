@@ -1,0 +1,35 @@
+# Visual Studio build products and per-user state (both games).
+.vs/
+[Dd]ebug/
+[Rr]elease/
+[Oo]bj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.[oO][bB][jJ]
+*.[pP][dD][bB]
+*.[eE][xX][pP]
+*.[lL][iI][bB]
+*.[iI][lL][kK]
+*.[tT][lL][oO][gG]
+*.log
+
+# Message-bank outputs, not handwritten GE headers.
+MPOG[AE]HLP.[hH]
+MPOG[AE]MSG.[hH]
+MPOG[AE]SHP.[hH]
+mpog[ae]hlp.[hH]
+mpog[ae]msg.[hH]
+mpog[ae]shp.[hH]
+*.[mM][cC][vV]
+
+# Clean VIRs are authoritative; release packaging derives DATs from them.
+/Dist/*.[dD][aA][tT]
+*.[dD][bB]
+*.db-wal
+*.db-shm
+
+# Superseded solution and machine-local compatibility launcher.
+/mpogemp.sln
+/sync-to-windows.sh

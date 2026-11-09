@@ -44,6 +44,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <GEMessageCompiler Condition="'$(GEMessageCompiler)'==''">C:\BBSV10\wgsmsx.exe</GEMessageCompiler>
+    <CustomBuildBeforeTargets>ClCompile</CustomBuildBeforeTargets>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
@@ -96,16 +100,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="generate-headers.cmd" />
     <None Include="Dist\CONTRIBUTING.txt" />
     <None Include="Dist\LICENSE.txt" />
-    <None Include="Dist\MPOGAHLP.MSG" />
+    <CustomBuild Include="Dist\MPOGAHLP.MSG">
+      <Message>Generating MPOGAHLP header and MCV</Message>
+      <Command>call &quot;$(ProjectDir)generate-headers.cmd&quot; &quot;%(Filename)&quot; &quot;$(GEMessageCompiler)&quot;</Command>
+      <AdditionalInputs>$(ProjectDir)generate-headers.cmd;$(GEMessageCompiler);%(AdditionalInputs)</AdditionalInputs>
+      <Outputs>$(ProjectDir)MPOGAHLP.h;$(ProjectDir)Dist\MPOGAHLP.MCV</Outputs>
+      <LinkObjects>false</LinkObjects>
+    </CustomBuild>
     <None Include="Dist\MPOGAMNU.TXT" />
     <None Include="Dist\MPOGA.MDF" />
-    <None Include="Dist\MPOGAMSG.MSG" />
-    <None Include="Dist\MPOGAPLT.DAT" />
+    <CustomBuild Include="Dist\MPOGAMSG.MSG">
+      <Message>Generating MPOGAMSG header and MCV</Message>
+      <Command>call &quot;$(ProjectDir)generate-headers.cmd&quot; &quot;%(Filename)&quot; &quot;$(GEMessageCompiler)&quot;</Command>
+      <AdditionalInputs>$(ProjectDir)generate-headers.cmd;$(GEMessageCompiler);%(AdditionalInputs)</AdditionalInputs>
+      <Outputs>$(ProjectDir)MPOGAMSG.h;$(ProjectDir)Dist\MPOGAMSG.MCV</Outputs>
+      <LinkObjects>false</LinkObjects>
+    </CustomBuild>
     <None Include="Dist\MPOGAPLT.VIR" />
-    <None Include="Dist\MPOGASHP.MSG" />
-    <None Include="Dist\MPOGAUSR.DAT" />
+    <CustomBuild Include="Dist\MPOGASHP.MSG">
+      <Message>Generating MPOGASHP header and MCV</Message>
+      <Command>call &quot;$(ProjectDir)generate-headers.cmd&quot; &quot;%(Filename)&quot; &quot;$(GEMessageCompiler)&quot;</Command>
+      <AdditionalInputs>$(ProjectDir)generate-headers.cmd;$(GEMessageCompiler);%(AdditionalInputs)</AdditionalInputs>
+      <Outputs>$(ProjectDir)MPOGASHP.h;$(ProjectDir)Dist\MPOGASHP.MCV</Outputs>
+      <LinkObjects>false</LinkObjects>
+    </CustomBuild>
     <None Include="Dist\MPOGAUSR.VIR" />
     <None Include="Dist\README.md" />
     <None Include="GALCAPS.ALT" />

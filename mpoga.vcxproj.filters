@@ -24,30 +24,24 @@
     <None Include="Dist\LICENSE.txt">
       <Filter>Dist</Filter>
     </None>
-    <None Include="Dist\MPOGAHLP.MSG">
+    <CustomBuild Include="Dist\MPOGAHLP.MSG">
       <Filter>Dist</Filter>
-    </None>
+    </CustomBuild>
     <None Include="Dist\MPOGAMNU.TXT">
       <Filter>Dist</Filter>
     </None>
     <None Include="Dist\MPOGA.MDF">
       <Filter>Dist</Filter>
     </None>
-    <None Include="Dist\MPOGAMSG.MSG">
+    <CustomBuild Include="Dist\MPOGAMSG.MSG">
       <Filter>Dist</Filter>
-    </None>
-    <None Include="Dist\MPOGAPLT.DAT">
-      <Filter>Dist</Filter>
-    </None>
+    </CustomBuild>
     <None Include="Dist\MPOGAPLT.VIR">
       <Filter>Dist</Filter>
     </None>
-    <None Include="Dist\MPOGASHP.MSG">
+    <CustomBuild Include="Dist\MPOGASHP.MSG">
       <Filter>Dist</Filter>
-    </None>
-    <None Include="Dist\MPOGAUSR.DAT">
-      <Filter>Dist</Filter>
-    </None>
+    </CustomBuild>
     <None Include="Dist\MPOGAUSR.VIR">
       <Filter>Dist</Filter>
     </None>
